@@ -1,3 +1,4 @@
+use backend::logging::setup_logging;
 use dioxus::prelude::*;
 
 mod backend;
@@ -7,6 +8,7 @@ mod route;
 use crate::route::Route;
 
 fn main() {
+    setup_logging();
     dioxus::launch(App);
 }
 

@@ -1,13 +1,14 @@
+#[cfg(feature = "server")]
 use std::io::ErrorKind;
 
 #[cfg(feature = "server")]
 use dioxus::prelude::{error, info};
 
-#[cfg(feature = "server")]
-use crate::backend::database::tables::table_tape::TableTape;
 use crate::backend::database::tables::{
     table::Table, table_manufacturer::TableManufacturer, table_tape_type::TableTapeType,
 };
+#[cfg(feature = "server")]
+use crate::backend::{database::tables::table_tape::TableTape, env::get_database_path};
 
 //static DB_VERSION_INIT: isize = 0;
 static DB_VERSION_LATEST: isize = 0;
@@ -15,15 +16,20 @@ static DB_VERSION_LATEST: isize = 0;
 #[cfg(feature = "server")]
 thread_local! {
     pub static DB: std::sync::LazyLock<rusqlite::Connection> = std::sync::LazyLock::new(|| {
-        match std::fs::create_dir("database") {
+        let mut db_path = get_database_path();
+        info!("Database path: {}", db_path);
+
+        match std::fs::create_dir_all(&db_path) {
             Ok(_) => {},
             Err(err) => {
                 if err.kind() != ErrorKind::AlreadyExists {
                     // log::error!("Failed to create dir {e}"); FIXME
+                    error!("Failed to create database dir: {}", err);
                 }
             },
         }
-        let conn = rusqlite::Connection::open("database/database.db").expect("Failed to open database");
+        db_path.push_str("/database.db");
+        let conn = rusqlite::Connection::open(db_path).expect("Failed to open database");
         let current_database_version: isize = 0;
 
         // FIXME handle errors

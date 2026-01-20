@@ -13,6 +13,17 @@
             "problemMatcher": [],
         },
         {
+            "label": "Check::Tasks",
+            "type": "shell",
+            "command": "bash dev.tasks.check.sh",
+            "icon": {
+                "id": "debug-console",
+                "color": "terminal.ansiCyan"
+            },
+            "group": "test",
+            "problemMatcher": [],
+        },
+        {
             "label": "Build::Clean",
             "type": "shell",
             "command": "rm -rf target/dx",
@@ -36,8 +47,8 @@
         },
         {
             "label": "Build::Release",
-            "type": "shell",
-            "command": "dx build --release",
+            "type": "shell", // Remove public dir as previous release build files will not be removed
+            "command": "rm -rf target/dx/openltomanager/release/web/public/ && dx build --web --release --debug-symbols=false",
             "icon": {
                 "id": "gear",
                 "color": "terminal.ansiGreen"
@@ -66,6 +77,17 @@
             },
             "group": "test",
             "problemMatcher": [],
-        }
+        },
+        {
+            "label": "Run::tests",
+            "type": "shell",
+            "command": "cargo test",
+            "icon": {
+                "id": "run-all",
+                "color": "terminal.ansiYellow"
+            },
+            "group": "test",
+            "problemMatcher": [],
+        },
     ]
 }
