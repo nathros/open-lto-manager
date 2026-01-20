@@ -6,11 +6,11 @@ use crate::backend::database::{models::model_tape_type::RecordTapeType, tables::
 pub struct TableTapeType {}
 
 impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
-    fn create_table(db: &Connection) -> Result<(), Error> {
+    fn create_table(db: &Connection) -> Result<bool, Error> {
         match db.table_exists(None, "tape_type") {
             std::result::Result::Ok(exist) => {
                 if exist == true {
-                    return Ok(());
+                    return Ok(false);
                 }
             }
             Err(e) => return Err(e),
@@ -240,11 +240,15 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             return Err(e);
         }
 
-        return Ok(());
+        return Ok(true);
     }
 
-    fn update_table(_current_version: isize, _latest_version: isize) -> Result<(), Error> {
-        Ok(())
+    fn update_table(
+        _db: &Connection,
+        _current_version: isize,
+        _latest_version: isize,
+    ) -> Result<bool, Error> {
+        Ok(false)
     }
 
     fn get(db: &Connection, record_id: i64) -> Result<RecordTapeType, Error> {

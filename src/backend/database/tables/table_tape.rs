@@ -7,11 +7,11 @@ use crate::backend::database::{
 pub struct TableTape {}
 
 impl Table<RecordTape, RecordTapeJoin> for TableTape {
-    fn create_table(db: &Connection) -> Result<(), Error> {
+    fn create_table(db: &Connection) -> Result<bool, Error> {
         match db.table_exists(None, "tape") {
             std::result::Result::Ok(exist) => {
                 if exist == true {
-                    return Ok(());
+                    return Ok(false);
                 }
             }
             Err(e) => return Err(e),
@@ -38,11 +38,15 @@ impl Table<RecordTape, RecordTapeJoin> for TableTape {
         ) {
             return Err(e); // Failed to create table
         }
-        return Ok(());
+        return Ok(true);
     }
 
-    fn update_table(_current_version: isize, _latest_version: isize) -> Result<(), Error> {
-        Ok(())
+    fn update_table(
+        _db: &Connection,
+        _current_version: isize,
+        _latest_version: isize,
+    ) -> Result<bool, Error> {
+        Ok(false)
     }
 
     fn get(_db: &Connection, _record_id: i64) -> Result<RecordTape, Error> {

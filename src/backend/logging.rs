@@ -7,13 +7,14 @@ pub fn setup_logging() {
         use tracing_subscriber::{filter, fmt, layer::Layer, prelude::*, Registry};
 
         let mut log_file_path = get_logging_path();
-        log_file_path.push_str("/logfile.log");
+        log_file_path.push_str("/main.log");
 
+        std::fs::remove_file(&log_file_path).expect_err("No such file or directory");
         let file = OpenOptions::new()
-            .append(true)
             .create(true)
+            .append(true)
             .open(log_file_path)
-            .unwrap();
+            .unwrap(); // FIXME if log file create fails
 
         let subscriber = Registry::default()
             .with(

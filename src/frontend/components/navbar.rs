@@ -11,7 +11,7 @@ pub fn Navbar() -> Element {
             Link { to: Route::Show {}, "Show" }
             Link { to: Route::Test {}, "Test" }
             Link { to: Route::Tape { id: (0) }, "Tape" }
-            Link { to: Route::DBMan {}, "database-man" }
+            Link { style: "margin-left:auto", to: Route::DBMan {}, "database-man" }
             Link { to: Route::DBType {}, "database-type" }
         }
 

@@ -4,5 +4,11 @@
         "editor.defaultFormatter": "rust-lang.rust-analyzer",
         "editor.formatOnSave": true,
     },
-    "workbench.editor.wrapTabs": true
+    "workbench.editor.wrapTabs": true,
+    "cSpell.words": [
+        "dioxus",
+        "rusqlite",
+        "rustfmt",
+        "stylesheet"
+    ]
 }

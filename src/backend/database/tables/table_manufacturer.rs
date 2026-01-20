@@ -7,11 +7,11 @@ use crate::backend::database::{
 pub struct TableManufacturer {}
 
 impl Table<RecordManufacturer, RecordManufacturer> for TableManufacturer {
-    fn create_table(db: &Connection) -> Result<(), Error> {
+    fn create_table(db: &Connection) -> Result<bool, Error> {
         match db.table_exists(None, "manufacturer") {
             std::result::Result::Ok(exist) => {
                 if exist == true {
-                    return Ok(());
+                    return Ok(false);
                 }
             }
             Err(e) => return Err(e),
@@ -54,11 +54,15 @@ impl Table<RecordManufacturer, RecordManufacturer> for TableManufacturer {
             }
         }
 
-        return Ok(());
+        return Ok(true);
     }
 
-    fn update_table(_current_version: isize, _latest_version: isize) -> Result<(), Error> {
-        Ok(())
+    fn update_table(
+        _db: &Connection,
+        _current_version: isize,
+        _latest_version: isize,
+    ) -> Result<bool, Error> {
+        Ok(false)
     }
 
     fn get(db: &Connection, record_id: i64) -> Result<RecordManufacturer, Error> {
@@ -130,7 +134,7 @@ mod tests {
         );
         assert!(
             TableManufacturer::create_table(&conn).is_ok(),
-            "Failded to create table"
+            "Failed to create table"
         );
         assert_eq!(
             conn.table_exists(None, "manufacturer").unwrap(),
@@ -154,10 +158,10 @@ mod tests {
             "Should end with 'Other' manufacturer"
         );
         let test_index = all_records.len() / 2;
-        let orginal_record: RecordManufacturer = all_records.get(test_index).unwrap().clone();
+        let original_record: RecordManufacturer = all_records.get(test_index).unwrap().clone();
 
         let new_name = "abc".to_string();
-        let mut update_record: RecordManufacturer = orginal_record.clone();
+        let mut update_record: RecordManufacturer = original_record.clone();
         update_record.name = new_name;
         assert!(
             TableManufacturer::update_record(&db, &update_record).is_ok(),
