@@ -13,6 +13,7 @@ pub fn Navbar() -> Element {
             Link { to: Route::Tape { id: (0) }, "Tape" }
             Link { style: "margin-left:auto", to: Route::DBMan {}, "database-man" }
             Link { to: Route::DBType {}, "database-type" }
+            Link { to: Route::DBTape {}, "database-tape" }
         }
 
         Outlet::<Route> {}

@@ -1,9 +1,7 @@
-#[cfg(feature = "server")]
 pub mod table;
-
-#[cfg(feature = "server")]
+pub mod table_file;
 pub mod table_manufacturer;
-#[cfg(feature = "server")]
 pub mod table_tape;
-#[cfg(feature = "server")]
 pub mod table_tape_type;
+pub mod table_user;
+pub mod table_version;

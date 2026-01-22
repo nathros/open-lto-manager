@@ -6,7 +6,10 @@
     },
     "workbench.editor.wrapTabs": true,
     "cSpell.words": [
+        "chrono",
         "dioxus",
+        "LTFS",
+        "repr",
         "rusqlite",
         "rustfmt",
         "stylesheet"

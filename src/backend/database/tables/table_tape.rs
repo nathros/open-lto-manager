@@ -41,11 +41,7 @@ impl Table<RecordTape, RecordTapeJoin> for TableTape {
         return Ok(true);
     }
 
-    fn update_table(
-        _db: &Connection,
-        _current_version: isize,
-        _latest_version: isize,
-    ) -> Result<bool, Error> {
+    fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, Error> {
         Ok(false)
     }
 
@@ -135,26 +131,43 @@ impl Table<RecordTape, RecordTapeJoin> for TableTape {
         db.execute("DELETE FROM tape WHERE id = ?1;", params![record_id])
     }
 
-    fn fill(_row: &rusqlite::Row<'_>, _offset: usize) -> Result<RecordTape, Error> {
-        todo!()
+    fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordTape, Error> {
+        Ok(RecordTape {
+            id: row.get(offset + 0)?,
+            manufacturer_id: row.get(offset + 1)?,
+            tape_type_id: row.get(offset + 2)?,
+            barcode: row.get(offset + 3)?,
+            serial: row.get(offset + 4)?,
+            format: row.get(offset + 5)?,
+            worm: row.get(offset + 6)?,
+            encrypted: row.get(offset + 7)?,
+            compressed: row.get(offset + 8)?,
+            used_space: row.get(offset + 9)?,
+            created: row.get(offset + 10)?,
+            last_used: row.get(offset + 11)?,
+        })
     }
 }
 
-/*impl TableTape {
-    pub fn get_all(db: &Connection) -> Result<Vec<RecordManufacturer>, rusqlite::Error> {
+impl TableTape {
+    pub fn get_all(db: &Connection) -> Result<Vec<RecordTape>, rusqlite::Error> {
         db.prepare(
-            "SELECT id, name FROM manufacturer ORDER BY
-                    CASE id
-                        WHEN 1 THEN 2
-                    END,
-                    name", // Order by name then "Other" [id=1] to be last
+            "SELECT
+                    id,
+                    manufacturer_id,
+                    tape_type_id,
+                    barcode,
+                    serial,
+                    format,
+                    worm,
+                    encrypted,
+                    compressed,
+                    used_space,
+                    created,
+                    last_used
+             FROM tape;",
         )?
-        .query_map([], |row| {
-            Ok(RecordManufacturer {
-                id: row.get(0)?,
-                name: row.get(1)?,
-            })
-        })?
-        .collect::<Result<Vec<RecordManufacturer>, rusqlite::Error>>()
+        .query_map([], |row| TableTape::fill(row, 0))?
+        .collect::<Result<Vec<RecordTape>, rusqlite::Error>>()
     }
-}*/
+}

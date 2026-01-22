@@ -1,10 +1,12 @@
-use dioxus::prelude::*;
+use dioxus::{fullstack::Loader, prelude::*};
 
-use crate::backend::api::api_manufacturer::list_manu;
+use crate::backend::{
+    api::api_manufacturer::list_manu, database::models::model_manufacturer::RecordManufacturer,
+};
 
 #[component]
 pub fn DBMan() -> Element {
-    let list_manu = use_loader(list_manu)?;
+    let list_manu: Loader<Vec<RecordManufacturer>> = use_loader(list_manu)?;
     rsx! {
         table {
             tr {
@@ -13,8 +15,8 @@ pub fn DBMan() -> Element {
             }
             for rec in list_manu.cloned() {
                 tr {
-                    th { "{rec.id}" }
-                    th { "{rec.name}" }
+                    td { "{rec.id}" }
+                    td { "{rec.name}" }
                 }
             }
         }

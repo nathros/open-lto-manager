@@ -26,7 +26,7 @@
         {
             "label": "Build::Clean",
             "type": "shell",
-            "command": "rm -rf target/dx",
+            "command": "rm -rf target/",
             "icon": {
                 "id": "trash",
                 "color": "terminal.ansiWhite"
@@ -71,6 +71,23 @@
             "label": "Serve::0.0.0.0",
             "type": "shell",
             "command": "dx serve --addr 0.0.0.0",
+            "icon": {
+                "id": "run",
+                "color": "terminal.ansiYellow"
+            },
+            "group": "test",
+            "problemMatcher": [],
+        },
+        {
+            "label": "Run Release::0.0.0.0",
+            "type": "shell",
+            "command": "./openltomanager",
+            "options": {
+                "cwd": "${workspaceRoot}/target/dx/openltomanager/release/web",
+                "env": {
+                    "IP": "0.0.0.0"
+                }
+            },
             "icon": {
                 "id": "run",
                 "color": "terminal.ansiYellow"

@@ -6,6 +6,7 @@ use crate::frontend::pages::show::Show;
 use crate::frontend::pages::test::Test;
 
 use crate::frontend::pages::dbg::db_man::DBMan;
+use crate::frontend::pages::dbg::db_tape::DBTape;
 use crate::frontend::pages::dbg::db_type::DBType;
 use crate::frontend::pages::tape::Tape;
 
@@ -29,4 +30,6 @@ pub enum Route {
     DBMan {},
     #[route("/db-type")]
     DBType {},
+    #[route("/db-tape")]
+    DBTape {},
 }

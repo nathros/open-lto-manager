@@ -7,5 +7,9 @@ use crate::backend::database::tables::table_tape_type::TableTapeType;
 #[get("/api/tape_type")]
 pub async fn list_type_type() -> Result<Vec<RecordTapeType>> {
     use crate::backend::database::db::DB;
-    DB.with(|db| Ok(TableTapeType::get_all(db).unwrap()))
+
+    DB.with(|db| match TableTapeType::get_all(db) {
+        Ok(records) => Ok(records),
+        Err(e) => Err(e)?,
+    })
 }

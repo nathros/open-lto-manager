@@ -243,17 +243,26 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
         return Ok(true);
     }
 
-    fn update_table(
-        _db: &Connection,
-        _current_version: isize,
-        _latest_version: isize,
-    ) -> Result<bool, Error> {
+    fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, Error> {
         Ok(false)
     }
 
     fn get(db: &Connection, record_id: i64) -> Result<RecordTapeType, Error> {
-        db.prepare("SELECT * FROM manufacturer WHERE id = ?1")?
-            .query_one([record_id], |row| TableTapeType::fill(row, 0))
+        db.prepare(
+            "SELECT
+                    id,
+                    generation,
+                    id_reg,
+                    id_worm,
+                    native_capacity,
+                    colour_reg,
+                    colour_hp,
+                    colour_worm_reg,
+                    colour_worm_hp
+                FROM tape_type
+                WHERE id = ?1",
+        )?
+        .query_one([record_id], |row| TableTapeType::fill(row, 0))
     }
 
     fn get_join(db: &Connection, record_id: i64) -> Result<RecordTapeType, Error> {
@@ -300,7 +309,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                     generation = ?1,
                     id_reg = ?2,
                     id_worm = ?3,
-                    native_capacity = ?,4
+                    native_capacity = ?4,
                     colour_reg = ?5,
                     colour_hp = ?6,
                     colour_worm_reg = ?7,
@@ -324,17 +333,17 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
         db.execute("DELETE FROM tape_type WHERE id = ?1;", params![record_id])
     }
 
-    fn fill(row: &rusqlite::Row<'_>, _offset: usize) -> Result<RecordTapeType, Error> {
+    fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordTapeType, Error> {
         Ok(RecordTapeType {
-            id: row.get(0)?,
-            generation: row.get(1)?,
-            id_reg: row.get(2)?,
-            id_worm: row.get(3)?,
-            native_capacity: row.get(4)?,
-            colour_reg: row.get(5)?,
-            colour_hp: row.get(6)?,
-            colour_worm_reg: row.get(7)?,
-            colour_worm_hp: row.get(8)?,
+            id: row.get(offset + 0)?,
+            generation: row.get(offset + 1)?,
+            id_reg: row.get(offset + 2)?,
+            id_worm: row.get(offset + 3)?,
+            native_capacity: row.get(offset + 4)?,
+            colour_reg: row.get(offset + 5)?,
+            colour_hp: row.get(offset + 6)?,
+            colour_worm_reg: row.get(offset + 7)?,
+            colour_worm_hp: row.get(offset + 8)?,
         })
     }
 }
@@ -355,19 +364,63 @@ impl TableTapeType {
                 FROM tape_type
                 ORDER BY id",
         )?
-        .query_map([], |row| {
-            Ok(RecordTapeType {
-                id: row.get(0)?,
-                generation: row.get(1)?,
-                id_reg: row.get(2)?,
-                id_worm: row.get(3)?,
-                native_capacity: row.get(4)?,
-                colour_reg: row.get(5)?,
-                colour_hp: row.get(6)?,
-                colour_worm_reg: row.get(7)?,
-                colour_worm_hp: row.get(8)?,
-            })
-        })?
+        .query_map([], |row| TableTapeType::fill(row, 0))?
         .collect::<Result<Vec<RecordTapeType>, rusqlite::Error>>()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::backend::database::{
+        models::model_tape_type::RecordTapeType,
+        tables::{table::Table, table_tape_type::TableTapeType},
+    };
+
+    fn create() -> rusqlite::Connection {
+        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        assert_eq!(
+            conn.table_exists(None, "tape_type").unwrap(),
+            false,
+            "New table should be empty"
+        );
+        assert!(
+            TableTapeType::create_table(&conn).is_ok(),
+            "Failed to create table"
+        );
+        assert_eq!(
+            conn.table_exists(None, "tape_type").unwrap(),
+            true,
+            "create_table() reported Ok but table does not exist"
+        );
+        return conn;
+    }
+
+    fn update(db: &rusqlite::Connection) {
+        let all_records_result = TableTapeType::get_all(&db);
+        assert!(
+            all_records_result.is_ok(),
+            "Failed to get all TapeType records"
+        );
+        let all_records = all_records_result.unwrap();
+        assert!(all_records.len() > 0, "Default not populated");
+        let test_index = all_records.len() / 2;
+        let original_record: RecordTapeType = all_records.get(test_index).unwrap().clone();
+
+        let new_name = "abc".to_string();
+        let mut update_record: RecordTapeType = original_record.clone();
+        update_record.generation = new_name;
+        assert!(
+            TableTapeType::update_record(&db, &update_record).is_ok(),
+            "Failed to update record"
+        );
+
+        let all_records_updated = TableTapeType::get_all(&db).unwrap();
+        assert_eq!(update_record, *all_records_updated.get(test_index).unwrap());
+    }
+
+    #[test]
+    fn suite() {
+        let db = create();
+        update(&db);
     }
 }

@@ -1,10 +1,12 @@
-use dioxus::prelude::*;
+use dioxus::{fullstack::Loader, prelude::*};
 
-use crate::backend::api::api_tape_type::list_type_type;
+use crate::backend::{
+    api::api_tape_type::list_type_type, database::models::model_tape_type::RecordTapeType,
+};
 
 #[component]
 pub fn DBType() -> Element {
-    let tapes_list = use_loader(list_type_type)?;
+    let tapes_list: Loader<Vec<RecordTapeType>> = use_loader(list_type_type)?;
 
     rsx! {
         table {
@@ -21,15 +23,15 @@ pub fn DBType() -> Element {
             }
             for rec in tapes_list.cloned() {
                 tr {
-                    th { "{rec.id}" }
-                    th { "{rec.generation}" }
-                    th { "{rec.id_reg}" }
-                    th { "{rec.id_worm}" }
-                    th { "{rec.native_capacity}" }
-                    th { "{rec.colour_reg}" }
-                    th { "{rec.colour_hp}" }
-                    th { "{rec.colour_worm_reg}" }
-                    th { "{rec.colour_worm_hp}" }
+                    td { "{rec.id}" }
+                    td { "{rec.generation}" }
+                    td { "{rec.id_reg}" }
+                    td { "{rec.id_worm}" }
+                    td { "{rec.native_capacity}" }
+                    td { "{rec.colour_reg}" }
+                    td { "{rec.colour_hp}" }
+                    td { "{rec.colour_worm_reg}" }
+                    td { "{rec.colour_worm_hp}" }
                 }
             }
         }

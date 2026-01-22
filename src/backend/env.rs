@@ -34,6 +34,12 @@ pub fn get_database_path() -> String {
     db_path
 }
 
+pub fn get_database_file() -> String {
+    let mut db_file = get_database_path();
+    db_file.push_str("/database.db");
+    return db_file;
+}
+
 pub fn get_logging_path() -> String {
     let log_path = match env::var(ENV_PATH_LOG) {
         Ok(val) => match val.parse::<String>() {
@@ -51,6 +57,13 @@ pub fn get_logging_path() -> String {
         }
     };
     log_path
+}
+
+pub fn get_logging_file() -> String {
+    let log_file_path = get_logging_path();
+    let mut log_file = log_file_path.clone();
+    log_file.push_str("/main.log");
+    return log_file;
 }
 
 #[cfg(test)]
