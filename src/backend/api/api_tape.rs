@@ -10,3 +10,20 @@ pub async fn list_tape() -> Result<Vec<RecordTape>> {
         Err(e) => Err(e)?,
     })
 }
+
+#[get("/api/tape/{id}")]
+pub async fn api_get_tape(id: i64) -> Result<RecordTape> {
+    use crate::backend::database::{
+        db::DB,
+        tables::{table::Table, table_tape::TableTape},
+    };
+
+    if id == 0 {
+        return Ok(RecordTape::blank());
+    }
+
+    DB.with(|db| match TableTape::get(db, id) {
+        Ok(record) => Ok(record),
+        Err(e) => Err(e)?,
+    })
+}

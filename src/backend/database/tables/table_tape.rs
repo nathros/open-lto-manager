@@ -45,8 +45,25 @@ impl Table<RecordTape, RecordTapeJoin> for TableTape {
         Ok(false)
     }
 
-    fn get(_db: &Connection, _record_id: i64) -> Result<RecordTape, Error> {
-        todo!()
+    fn get(db: &Connection, record_id: i64) -> Result<RecordTape, Error> {
+        db.prepare(
+            "SELECT
+                    id,
+                    manufacturer_id,
+                    tape_type,_id
+                    barcode,
+                    serial,
+                    format,
+                    worm,
+                    encrypted,
+                    compressed,
+                    used_space,
+                    created,
+                    last_used
+                FROM tape_type
+                WHERE id = ?1",
+        )?
+        .query_one([record_id], |row| TableTape::fill(row, 0))
     }
 
     fn get_join(_db: &Connection, _record_id: i64) -> Result<RecordTapeJoin, Error> {

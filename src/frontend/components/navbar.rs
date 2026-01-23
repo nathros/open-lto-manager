@@ -10,7 +10,7 @@ pub fn Navbar() -> Element {
             Link { to: Route::Home {}, "Home" }
             Link { to: Route::Show {}, "Show" }
             Link { to: Route::Test {}, "Test" }
-            Link { to: Route::Tape { id: (0) }, "Tape" }
+            Link { to: Route::Tape { id: (0) }, "[Add/Edit Tape]" }
             Link { style: "margin-left:auto", to: Route::DBMan {}, "database-man" }
             Link { to: Route::DBType {}, "database-type" }
             Link { to: Route::DBTape {}, "database-tape" }

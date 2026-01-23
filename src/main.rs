@@ -1,34 +1,39 @@
-use backend::init::AppState;
 use dioxus::prelude::*;
 
 mod backend;
 mod frontend;
 mod route;
 
-use crate::route::Route;
+use crate::{backend::api::api_init::app_state, route::Route};
 
 fn main() {
     #[cfg(feature = "server")]
     {
-        use backend::init::init_backend;
+        use crate::backend::init::APP_STATE;
 
-        dioxus::LaunchBuilder::new()
-            .with_context(init_backend())
-            .launch(App);
+        let init_state = APP_STATE.clone();
+        if init_state.critical_error {
+            error!("Failure in startup");
+            for error_message in init_state.error_list {
+                error!("Error: {}", error_message);
+            }
+        }
     }
+
+    dioxus::LaunchBuilder::new().launch(App);
 }
 
 #[component]
 fn App() -> Element {
-    let app_state = use_context::<AppState>();
+    let app_state = use_loader(app_state)?;
 
     rsx! {
         //document::Link { rel: "icon", href: FAVICON }
         document::Link { rel: "stylesheet", href: MAIN_CSS }
 
-        if app_state.critical_error {
+         if app_state().critical_error {
             p { "Failed to start app" }
-            for error_message in app_state.error_list.clone() {
+            for error_message in app_state().error_list.clone() {
                 p { style: "color:red", "{error_message}" }
             }
             p { " -- show logs -- // TODO " }

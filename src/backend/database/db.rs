@@ -18,7 +18,6 @@ use crate::backend::{
 };
 
 static DB_VERSION_LATEST: i64 = 0;
-static FIRST_RUN: Mutex<bool> = Mutex::new(true);
 
 fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, String> {
     let current_database_version: i64;
@@ -133,6 +132,7 @@ pub fn create_database() -> Result<rusqlite::Connection, String> {
         }
     }
     db_path = get_database_file();
+    static FIRST_RUN: Mutex<bool> = Mutex::new(true);
 
     match rusqlite::Connection::open(&db_path) {
         Ok(conn) => match FIRST_RUN.try_lock() {

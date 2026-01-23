@@ -42,6 +42,25 @@ pub struct RecordTapeJoin {
     pub last_used: DateTime<Local>,
 }
 
+impl RecordTape {
+    pub fn blank() -> RecordTape {
+        RecordTape {
+            id: 0,
+            manufacturer_id: 0,
+            tape_type_id: 0,
+            barcode: "".to_string(),
+            serial: "".to_string(),
+            format: TapeFormat::Tar,
+            worm: false,
+            encrypted: false,
+            compressed: false,
+            used_space: 0,
+            created: Local::now(),
+            last_used: Local::now(),
+        }
+    }
+}
+
 #[repr(i64)]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
 pub enum TapeFormat {
