@@ -32,7 +32,7 @@ pub struct RecordTapeJoin {
     pub manufacturer: RecordManufacturer,
     pub tape_type: RecordTapeType,
     pub barcode: String,
-    pub serial: String,
+    pub serial: String, // FIXME allow null serial
     pub format: TapeFormat,
     pub worm: bool,
     pub encrypted: bool,

@@ -137,6 +137,10 @@ pub fn create_database() -> Result<rusqlite::Connection, String> {
     match rusqlite::Connection::open(&db_path) {
         Ok(conn) => match FIRST_RUN.try_lock() {
             Ok(mut guard) => {
+                info!(
+                    "New database connection from thread: {:?}",
+                    std::thread::current().id()
+                );
                 if *guard == true {
                     *guard = false;
                     info!("Open database at path: {}", db_path);

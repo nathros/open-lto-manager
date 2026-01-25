@@ -1,4 +1,4 @@
-use crate::backend::init::AppState;
+use crate::shared::models::app_state::AppState;
 use dioxus::prelude::*;
 
 #[get("/api/app-state")]

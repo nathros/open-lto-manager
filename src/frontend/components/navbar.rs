@@ -15,6 +15,7 @@ pub fn Navbar() -> Element {
             Link { to: Route::DBType {}, "database-type" }
             Link { to: Route::DBTape {}, "database-tape" }
         }
+        hr {  }
 
         Outlet::<Route> {}
     }

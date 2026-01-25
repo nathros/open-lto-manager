@@ -3,14 +3,19 @@ use dioxus::prelude::*;
 mod backend;
 mod frontend;
 mod route;
+mod shared;
 
 use crate::{backend::api::api_init::app_state, route::Route};
 
 fn main() {
+    // FIXME add argument support
+    // let args: Vec<String> = std::env::args().collect();
+
     #[cfg(feature = "server")]
     {
         use crate::backend::init::APP_STATE;
 
+        // Initialise APP_STATE at startup
         let init_state = APP_STATE.clone();
         if init_state.critical_error {
             error!("Failure in startup");
