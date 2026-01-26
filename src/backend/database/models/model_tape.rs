@@ -42,9 +42,9 @@ pub struct RecordTapeJoin {
     pub last_used: DateTime<Local>,
 }
 
-impl RecordTape {
-    pub fn blank() -> RecordTape {
-        RecordTape {
+impl Default for RecordTape {
+    fn default() -> Self {
+        Self {
             id: 0,
             manufacturer_id: 0,
             tape_type_id: 0,

@@ -19,7 +19,7 @@ pub async fn api_get_tape(id: i64) -> Result<RecordTape> {
     };
 
     if id == 0 {
-        return Ok(RecordTape::blank());
+        return Ok(RecordTape::default());
     }
 
     DB.with(|db| match TableTape::get(db, id) {

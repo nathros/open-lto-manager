@@ -20,6 +20,9 @@ pub fn DBType() -> Element {
                 th { "colour_hp" }
                 th { "colour_worm_reg" }
                 th { "colour_worm_hp" }
+                th { "supports_worm" }
+                th { "supports_encryption" }
+                th { "supports_ltfs" }
             }
             for rec in tapes_list.cloned() {
                 tr {
@@ -32,6 +35,9 @@ pub fn DBType() -> Element {
                     td { "{rec.colour_hp}" }
                     td { "{rec.colour_worm_reg}" }
                     td { "{rec.colour_worm_hp}" }
+                    td { "{rec.supports_worm}" }
+                    td { "{rec.supports_encryption}" }
+                    td { "{rec.supports_ltfs}" }
                 }
             }
         }

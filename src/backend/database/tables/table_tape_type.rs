@@ -26,7 +26,10 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 colour_reg VARCHAR(16),
                 colour_hp VARCHAR(16),
                 colour_worm_reg VARCHAR(16),
-                colour_worm_hp VARCHAR(16)
+                colour_worm_hp VARCHAR(16),
+                supports_worm BOOLEAN NOT NULL,
+                supports_encryption BOOLEAN NOT NULL,
+                supports_ltfs BOOLEAN NOT NULL
             );",
             (),
         ) {
@@ -47,6 +50,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 colour_hp: "blue".to_string(),
                 colour_worm_reg: "".to_string(),
                 colour_worm_hp: "".to_string(),
+                supports_worm: false,
+                supports_encryption: false,
+                supports_ltfs: false,
             },
         ) {
             info!("{e}");
@@ -65,6 +71,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 colour_hp: "red-dark".to_string(),
                 colour_worm_reg: "".to_string(),
                 colour_worm_hp: "".to_string(),
+                supports_worm: false,
+                supports_encryption: false,
+                supports_ltfs: false,
             },
         ) {
             return Err(e);
@@ -82,6 +91,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 colour_hp: "yellow".to_string(),
                 colour_worm_reg: "blue-grey".to_string(),
                 colour_worm_hp: "yellow".to_string(),
+                supports_worm: true,
+                supports_encryption: false,
+                supports_ltfs: false,
             },
         ) {
             return Err(e);
@@ -99,6 +111,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 colour_hp: "green".to_string(),
                 colour_worm_reg: "green-dark".to_string(),
                 colour_worm_hp: "green".to_string(),
+                supports_worm: true,
+                supports_encryption: true,
+                supports_ltfs: false,
             },
         ) {
             return Err(e);
@@ -116,6 +131,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 colour_hp: "blue-light".to_string(),
                 colour_worm_reg: "red-dark".to_string(),
                 colour_worm_hp: "blue-light".to_string(),
+                supports_worm: true,
+                supports_encryption: true,
+                supports_ltfs: true,
             },
         ) {
             return Err(e);
@@ -133,6 +151,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 colour_hp: "purple".to_string(),
                 colour_worm_reg: "black".to_string(),
                 colour_worm_hp: "purple".to_string(),
+                supports_worm: true,
+                supports_encryption: true,
+                supports_ltfs: true,
             },
         ) {
             return Err(e);
@@ -150,6 +171,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 colour_hp: "blue-stale".to_string(),
                 colour_worm_reg: "purple".to_string(),
                 colour_worm_hp: "blue-stale".to_string(),
+                supports_worm: true,
+                supports_encryption: true,
+                supports_ltfs: true,
             },
         ) {
             return Err(e);
@@ -167,6 +191,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 colour_hp: "blue-stale".to_string(),
                 colour_worm_reg: "".to_string(),
                 colour_worm_hp: "".to_string(),
+                supports_worm: false,
+                supports_encryption: true,
+                supports_ltfs: true,
             },
         ) {
             return Err(e);
@@ -184,6 +211,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 colour_hp: "green".to_string(),
                 colour_worm_reg: "red-dark".to_string(),
                 colour_worm_hp: "green".to_string(),
+                supports_worm: true,
+                supports_encryption: true,
+                supports_ltfs: true,
             },
         ) {
             return Err(e);
@@ -201,6 +231,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 colour_hp: "blue-light".to_string(),
                 colour_worm_reg: "green-dark".to_string(),
                 colour_worm_hp: "blue-light".to_string(),
+                supports_worm: true,
+                supports_encryption: true,
+                supports_ltfs: true,
             },
         ) {
             return Err(e);
@@ -218,6 +251,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 colour_hp: "purple".to_string(),
                 colour_worm_reg: "black".to_string(),
                 colour_worm_hp: "purple".to_string(),
+                supports_worm: true,
+                supports_encryption: true,
+                supports_ltfs: true,
             },
         ) {
             return Err(e);
@@ -235,6 +271,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 colour_hp: "purple".to_string(),
                 colour_worm_reg: "".to_string(),
                 colour_worm_hp: "".to_string(),
+                supports_worm: true,
+                supports_encryption: true,
+                supports_ltfs: true,
             },
         ) {
             return Err(e);
@@ -259,6 +298,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                     colour_hp,
                     colour_worm_reg,
                     colour_worm_hp
+                    supports_worm,
+                    supports_encryption,
+                    supports_ltfs
                 FROM tape_type
                 WHERE id = ?1",
         )?
@@ -279,7 +321,10 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                     colour_reg,
                     colour_hp,
                     colour_worm_reg,
-                    colour_worm_hp)
+                    colour_worm_hp,
+                    supports_worm,
+                    supports_encryption,
+                    supports_ltfs)
                 VALUES (
                     ?1,
                     ?2,
@@ -288,7 +333,10 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                     ?5,
                     ?6,
                     ?7,
-                    ?8
+                    ?8,
+                    ?9,
+                    ?10,
+                    ?11
                 );",
             params![
                 record.generation,
@@ -298,7 +346,10 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 record.colour_reg,
                 record.colour_hp,
                 record.colour_worm_reg,
-                record.colour_worm_hp
+                record.colour_worm_hp,
+                record.supports_worm,
+                record.supports_encryption,
+                record.supports_ltfs,
             ],
         )
     }
@@ -313,8 +364,11 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                     colour_reg = ?5,
                     colour_hp = ?6,
                     colour_worm_reg = ?7,
-                    colour_worm_hp = ?8
-                WHERE id = ?9",
+                    colour_worm_hp = ?8,
+                    supports_worm = ?9,
+                    supports_encryption = ?10,
+                    supports_ltfs = ?11
+                WHERE id = ?12",
             params![
                 record.generation,
                 record.id_reg,
@@ -324,6 +378,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 record.colour_hp,
                 record.colour_worm_reg,
                 record.colour_worm_hp,
+                record.supports_worm,
+                record.supports_encryption,
+                record.supports_ltfs,
                 record.id
             ],
         )
@@ -344,6 +401,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             colour_hp: row.get(offset + 6)?,
             colour_worm_reg: row.get(offset + 7)?,
             colour_worm_hp: row.get(offset + 8)?,
+            supports_worm: row.get(offset + 9)?,
+            supports_encryption: row.get(offset + 10)?,
+            supports_ltfs: row.get(offset + 11)?,
         })
     }
 }
@@ -360,7 +420,10 @@ impl TableTapeType {
                     colour_reg,
                     colour_hp,
                     colour_worm_reg,
-                    colour_worm_hp
+                    colour_worm_hp,
+                    supports_worm,
+                    supports_encryption,
+                    supports_ltfs
                 FROM tape_type
                 ORDER BY id",
         )?
@@ -383,10 +446,12 @@ mod tests {
             false,
             "New table should be empty"
         );
-        assert!(
-            TableTapeType::create_table(&conn).is_ok(),
-            "Failed to create table"
-        );
+
+        let create_result = TableTapeType::create_table(&conn);
+        if create_result.is_err() {
+            println!("--Error create table: {:?}", create_result);
+        }
+        assert!(create_result.is_ok(), "Failed to create table");
         assert_eq!(
             conn.table_exists(None, "tape_type").unwrap(),
             true,

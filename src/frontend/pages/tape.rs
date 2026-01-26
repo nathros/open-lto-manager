@@ -24,14 +24,19 @@ pub fn Tape(id: i64) -> Element {
     let current_designation = types()
         .iter()
         .find(|p| p.id == tape().tape_type_id)
-        .unwrap_or(&RecordTapeType::blank())
+        .unwrap_or(&RecordTapeType::default())
         .clone();
 
     let barcode_designation = if tape().worm {
-        current_designation.id_reg.clone()
-    } else {
         current_designation.id_worm.clone()
+    } else {
+        current_designation.id_reg.clone()
     };
+    let selected_type = types()
+        .iter()
+        .find(|t| t.id == tape().tape_type_id)
+        .cloned()
+        .unwrap_or_default();
 
     let input_evt = move |evt: Event<FormData>| {
         tape.write().barcode = evt.value().to_uppercase();
@@ -61,6 +66,22 @@ pub fn Tape(id: i64) -> Element {
     let type_change = move |evt: Event<FormData>| {
         let selected_index = evt.value().parse::<i64>().unwrap_or(0);
         tape.write().tape_type_id = selected_index;
+
+        let selected_type = types()
+            .iter()
+            .find(|t| t.id == selected_index)
+            .cloned()
+            .unwrap_or_default();
+
+        if !selected_type.supports_encryption {
+            tape.write().encrypted = false;
+        }
+        if !selected_type.supports_worm {
+            tape.write().worm = false;
+        }
+        if !selected_type.supports_ltfs {
+            tape.write().format = TapeFormat::Tar;
+        }
     };
 
     let manu_change = move |evt: Event<FormData>| {
@@ -93,76 +114,56 @@ pub fn Tape(id: i64) -> Element {
         }
         div {
             label { "Type:" }
-            br {  }
-            select {
-                onchange: type_change,
+            br {}
+            select { onchange: type_change,
                 if tape().tape_type_id == 0 {
-                    option {
-                        disabled: true,
-                        selected: true,
-                        "Select"
-                    }
+                    option { disabled: true, selected: true, "Select" }
                 }
                 for ty in types.cloned() {
-                    option {
-                        value : "{ty.id}",
-                        "{ty.generation}"
-                    }
+                    option { value: "{ty.id}", "{ty.generation}" }
                 }
-             }
-            br {  }
-            br {  }
+            }
+            br {}
+            br {}
 
             label { "Manufacturer:" }
-            br {  }
-            select {
-                onchange: manu_change,
+            br {}
+            select { onchange: manu_change,
                 if tape().manufacturer_id == 0 {
-                    option {
-                        disabled: true,
-                        selected: true,
-                        "Select"
-                    }
+                    option { disabled: true, selected: true, "Select" }
                 }
                 for man in manufactures.cloned() {
-                    option {
-                        value : "{man.id}",
-                        "{man.name}"
-                    }
+                    option { value: "{man.id}", "{man.name}" }
                 }
-             }
-            br {  }
-            br {  }
+            }
+            br {}
+            br {}
 
             label { "Format:" }
-            br {  }
+            br {}
             input {
                 id: "format1",
                 name: "format",
                 r#type: "radio",
                 oninput: input_format,
                 checked: tape().format == TapeFormat::Tar,
-                value: "{<TapeFormat as Into<i64>>::into(TapeFormat::Tar)}"
+                value: "{<TapeFormat as Into<i64>>::into(TapeFormat::Tar)}",
             }
-            label {
-                r#for: "format1",
-                "{<TapeFormat as Into<&str>>::into(TapeFormat::Tar)}"
+            label { r#for: "format1", "{<TapeFormat as Into<&str>>::into(TapeFormat::Tar)}" }
+            if selected_type.supports_ltfs {
+                br {}
+                input {
+                    id: "format2",
+                    name: "format",
+                    r#type: "radio",
+                    oninput: input_format,
+                    checked: tape().format == TapeFormat::LTFS,
+                    value: "{<TapeFormat as Into<i64>>::into(TapeFormat::LTFS)}",
+                }
+                label { r#for: "format2", "{<TapeFormat as Into<&str>>::into(TapeFormat::LTFS)}" }
             }
-            br {  }
-            input {
-                id: "format2",
-                name: "format",
-                r#type: "radio",
-                oninput: input_format,
-                checked: tape().format == TapeFormat::LTFS,
-                value: "{<TapeFormat as Into<i64>>::into(TapeFormat::LTFS)}"
-            }
-            label {
-                r#for: "format2",
-                "{<TapeFormat as Into<&str>>::into(TapeFormat::LTFS)}"
-            }
-            br {  }
-            br {  }
+            br {}
+            br {}
 
             label { "Serial:" }
             br {}
@@ -171,10 +172,10 @@ pub fn Tape(id: i64) -> Element {
                 r#type: "search",
                 maxlength: 32,
                 oninput: input_serial,
-                value: "{tape().serial}"
+                value: "{tape().serial}",
             }
-            br {  }
-            br {  }
+            br {}
+            br {}
 
             label { "Barcode:" }
             br {}
@@ -183,47 +184,37 @@ pub fn Tape(id: i64) -> Element {
                 r#type: "search",
                 maxlength: 6,
                 oninput: input_evt,
-                value: "{tape().barcode}"
+                value: "{tape().barcode}",
             }
-            input {
-                disabled: true,
-                value: "{barcode_designation}"
-            }
-            br {  }
-            br {  }
+            input { disabled: true, value: "{barcode_designation}" }
+            br {}
+            br {}
 
-            label {
-                r#for: "worm",
-                "WORM:"
-            }
+            label { r#for: "worm", "WORM:" }
             br {}
             input {
                 id: "worm",
                 r#type: "checkbox",
                 oninput: input_worm,
                 checked: tape().worm,
+                disabled: !selected_type.supports_worm,
             }
-            br {  }
-            br {  }
+            br {}
+            br {}
 
-            label {
-                r#for: "enc",
-                "Encrypted:"
-            }
+            label { r#for: "enc", "Encrypted:" }
             br {}
             input {
                 id: "enc",
                 r#type: "checkbox",
                 oninput: input_enc,
                 checked: tape().encrypted,
+                disabled: !selected_type.supports_encryption,
             }
-            br {  }
-            br {  }
+            br {}
+            br {}
 
-            label {
-                r#for: "compressed",
-                "Compression Enabled:"
-            }
+            label { r#for: "compressed", "Compression Enabled:" }
             br {}
             input {
                 id: "compressed",
@@ -231,30 +222,19 @@ pub fn Tape(id: i64) -> Element {
                 oninput: input_compression,
                 checked: tape().compressed,
             }
-            br {  }
-            br {  }
+            br {}
+            br {}
 
             if !error_msg().is_empty() {
-                p {
-                    style: "background-color: red; font:weight:bold;",
-                    "{error_msg()}"
-                }
+                p { style: "background-color: red; font:weight:bold;", "{error_msg()}" }
             }
 
             if !ok_msg().is_empty() {
-                p {
-                    style: "background-color: green; font:weight:bold;",
-                    "{ok_msg()}"
-                }
+                p { style: "background-color: green; font:weight:bold;", "{ok_msg()}" }
             }
 
-            p { "Debug: {tape():?}]" }
-
+            p { "Debug: {tape():?}" }
         }
-        button {
-            r#type: "button",
-            onclick: submit,
-            "Submit"
-        }
+        button { r#type: "button", onclick: submit, "Submit" }
     }
 }

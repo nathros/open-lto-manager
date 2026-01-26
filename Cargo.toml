@@ -20,3 +20,13 @@ web = ["dioxus/web"]
 desktop = ["dioxus/desktop"]
 mobile = ["dioxus/mobile"]
 server = ["dioxus/server", "dep:rusqlite"]
+
+# https://dioxuslabs.com/learn/0.5/cookbook/optimizing/#build-configuration
+[profile.release]
+opt-level = "z"
+debug = false
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+incremental = false

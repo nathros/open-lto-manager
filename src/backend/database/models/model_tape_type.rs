@@ -11,11 +11,14 @@ pub struct RecordTapeType {
     pub colour_hp: String,
     pub colour_worm_reg: String,
     pub colour_worm_hp: String,
+    pub supports_worm: bool,
+    pub supports_encryption: bool,
+    pub supports_ltfs: bool,
 }
 
-impl RecordTapeType {
-    pub fn blank() -> RecordTapeType {
-        RecordTapeType {
+impl Default for RecordTapeType {
+    fn default() -> Self {
+        Self {
             id: 0,
             generation: "".to_string(),
             id_reg: "".to_string(),
@@ -25,6 +28,9 @@ impl RecordTapeType {
             colour_hp: "".to_string(),
             colour_worm_reg: "".to_string(),
             colour_worm_hp: "".to_string(),
+            supports_worm: true,
+            supports_encryption: true,
+            supports_ltfs: true,
         }
     }
 }
