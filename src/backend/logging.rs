@@ -1,4 +1,3 @@
-#[cfg(feature = "server")]
 pub fn setup_logging() -> Result<(), String> {
     use crate::backend::env::{get_logging_file, get_logging_path};
     use std::fs::OpenOptions;

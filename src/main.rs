@@ -36,7 +36,7 @@ fn App() -> Element {
         //document::Link { rel: "icon", href: FAVICON }
         document::Link { rel: "stylesheet", href: MAIN_CSS }
 
-         if app_state().critical_error {
+        if app_state().critical_error {
             p { "Failed to start app" }
             for error_message in app_state().error_list.clone() {
                 p { style: "color:red", "{error_message}" }

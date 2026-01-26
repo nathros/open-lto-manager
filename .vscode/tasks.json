@@ -108,7 +108,7 @@
         {
             "label": "Run::tests",
             "type": "shell",
-            "command": "cargo test",
+            "command": "cargo test -- --show-output",
             "icon": {
                 "id": "run-all",
                 "color": "terminal.ansiYellow"

@@ -1,7 +1,7 @@
 use chrono::{DateTime, Local};
 use dioxus::fullstack::serde::{Deserialize, Serialize};
 
-use crate::backend::database::models::model_tape::RecordTape;
+use super::model_tape::RecordTape;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct RecordFile {

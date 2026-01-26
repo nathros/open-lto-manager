@@ -6,9 +6,7 @@ use rusqlite::{
     ToSql,
 };
 
-use crate::backend::database::models::{
-    model_manufacturer::RecordManufacturer, model_tape_type::RecordTapeType,
-};
+use super::{model_manufacturer::RecordManufacturer, model_tape_type::RecordTapeType};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct RecordTape {
@@ -112,7 +110,7 @@ impl FromSql for TapeFormat {
 mod tests {
     use rusqlite::types::ValueRef;
 
-    use crate::backend::database::models::model_tape::TapeFormat;
+    use crate::shared::models::database::model_tape::TapeFormat;
 
     #[test]
     fn table_format_enum() {

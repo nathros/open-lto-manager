@@ -1,8 +1,8 @@
 use rusqlite::{params, Connection, Error};
 
-use crate::backend::database::{
-    models::model_user::{RecordUser, RecordUserWithRoles},
-    tables::table::Table,
+use crate::{
+    backend::database::tables::table::Table,
+    shared::models::database::model_user::{RecordUser, RecordUserWithRoles},
 };
 
 pub struct TableUser {}

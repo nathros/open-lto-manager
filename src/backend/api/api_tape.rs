@@ -1,5 +1,6 @@
-use crate::backend::database::models::model_tape::RecordTape;
 use dioxus::prelude::*;
+
+use crate::shared::models::database::model_tape::RecordTape;
 
 #[get("/api/tape")]
 pub async fn list_tape() -> Result<Vec<RecordTape>> {

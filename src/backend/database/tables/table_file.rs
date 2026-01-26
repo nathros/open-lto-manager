@@ -1,8 +1,8 @@
 use rusqlite::{params, Connection, Error};
 
-use crate::backend::database::{
-    models::model_file::{RecordFile, RecordFileJoin},
-    tables::table::Table,
+use crate::{
+    backend::database::tables::table::Table,
+    shared::models::database::model_file::{RecordFile, RecordFileJoin},
 };
 
 pub struct TableFile {}

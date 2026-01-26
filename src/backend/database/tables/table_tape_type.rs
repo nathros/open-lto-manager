@@ -1,7 +1,9 @@
 use dioxus::prelude::info;
 use rusqlite::{params, Connection, Error};
 
-use crate::backend::database::{models::model_tape_type::RecordTapeType, tables::table::Table};
+use crate::shared::models::database::model_tape_type::RecordTapeType;
+
+use super::table::Table;
 
 pub struct TableTapeType {}
 
@@ -434,9 +436,9 @@ impl TableTapeType {
 
 #[cfg(test)]
 mod tests {
-    use crate::backend::database::{
-        models::model_tape_type::RecordTapeType,
-        tables::{table::Table, table_tape_type::TableTapeType},
+    use crate::{
+        backend::database::tables::{table::Table, table_tape_type::TableTapeType},
+        shared::models::database::model_tape_type::RecordTapeType,
     };
 
     fn create() -> rusqlite::Connection {

@@ -1,8 +1,8 @@
 use dioxus::{fullstack::Loader, prelude::*};
 
-use crate::backend::{
-    api::api_tape::list_tape,
-    database::models::model_tape::{RecordTape, TapeFormat},
+use crate::{
+    backend::api::api_tape::list_tape,
+    shared::models::database::model_tape::{RecordTape, TapeFormat},
 };
 
 #[component]

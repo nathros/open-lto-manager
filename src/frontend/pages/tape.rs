@@ -1,12 +1,12 @@
 use dioxus::{fullstack::Loader, prelude::*};
 
-use crate::backend::{
-    api::{
+use crate::{
+    backend::api::{
         api_manufacturer::list_manu,
         api_tape::{api_add_tape, api_get_tape},
         api_tape_type::list_type_type,
     },
-    database::models::{
+    shared::models::database::{
         model_manufacturer::RecordManufacturer,
         model_tape::{RecordTape, TapeFormat},
         model_tape_type::RecordTapeType,

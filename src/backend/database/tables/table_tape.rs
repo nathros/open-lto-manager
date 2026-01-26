@@ -1,8 +1,8 @@
 use rusqlite::{params, Connection, Error};
 
-use crate::backend::database::{
-    models::model_tape::RecordTape, models::model_tape::RecordTapeJoin, tables::table::Table,
-};
+use crate::shared::models::database::model_tape::{RecordTape, RecordTapeJoin};
+
+use super::table::Table;
 
 pub struct TableTape {}
 

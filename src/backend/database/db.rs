@@ -7,15 +7,13 @@ use rusqlite::{Connection, Error};
 
 use crate::backend::{database::tables::table_tape::TableTape, env::get_database_path};
 use crate::backend::{
-    database::{
-        models::model_version::RecordVersion,
-        tables::{
-            table::Table, table_manufacturer::TableManufacturer, table_tape_type::TableTapeType,
-            table_user::TableUser, table_version::TableVersion,
-        },
+    database::tables::{
+        table::Table, table_manufacturer::TableManufacturer, table_tape_type::TableTapeType,
+        table_user::TableUser, table_version::TableVersion,
     },
     env::get_database_file,
 };
+use crate::shared::models::database::model_version::RecordVersion;
 
 static DB_VERSION_LATEST: i64 = 0;
 

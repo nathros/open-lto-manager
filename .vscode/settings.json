@@ -8,8 +8,10 @@
     "cSpell.words": [
         "chrono",
         "dioxus",
+        "Initialise",
         "LTFS",
         "repr",
+        "Routable",
         "rusqlite",
         "rustfmt",
         "stylesheet"

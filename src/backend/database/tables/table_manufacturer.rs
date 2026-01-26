@@ -1,8 +1,8 @@
 use rusqlite::{params, Connection, Error, Row};
 
-use crate::backend::database::{
-    models::model_manufacturer::RecordManufacturer, tables::table::Table,
-};
+use crate::shared::models::database::model_manufacturer::RecordManufacturer;
+
+use super::table::Table;
 
 pub struct TableManufacturer {}
 
@@ -120,9 +120,9 @@ impl TableManufacturer {
 
 #[cfg(test)]
 mod tests {
-    use crate::backend::database::{
-        models::model_manufacturer::RecordManufacturer,
-        tables::{table::Table, table_manufacturer::TableManufacturer},
+    use crate::{
+        backend::database::tables::{table::Table, table_manufacturer::TableManufacturer},
+        shared::models::database::model_manufacturer::RecordManufacturer,
     };
 
     fn create() -> rusqlite::Connection {

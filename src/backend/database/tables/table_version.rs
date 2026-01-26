@@ -1,6 +1,8 @@
 use rusqlite::{params, Connection, Error, Row};
 
-use crate::backend::database::{models::model_version::RecordVersion, tables::table::Table};
+use crate::shared::models::database::model_version::RecordVersion;
+
+use super::table::Table;
 
 pub struct TableVersion {}
 

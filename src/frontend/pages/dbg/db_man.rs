@@ -1,7 +1,8 @@
 use dioxus::{fullstack::Loader, prelude::*};
 
-use crate::backend::{
-    api::api_manufacturer::list_manu, database::models::model_manufacturer::RecordManufacturer,
+use crate::{
+    backend::api::api_manufacturer::list_manu,
+    shared::models::database::model_manufacturer::RecordManufacturer,
 };
 
 #[component]
