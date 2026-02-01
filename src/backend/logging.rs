@@ -1,10 +1,39 @@
-pub fn setup_logging() -> Result<(), String> {
-    use crate::backend::env::{get_logging_file, get_logging_path};
-    use std::fs::OpenOptions;
-    use std::io::ErrorKind;
-    use tracing::Level;
-    use tracing_subscriber::{filter, fmt, layer::Layer, prelude::*, Registry};
+use crate::backend::env::{get_console_log_enabled, get_logging_file, get_logging_path};
+use std::fs::OpenOptions;
+use std::io::ErrorKind;
+use std::sync::LazyLock;
+use tracing::{error, level_filters::LevelFilter, Level};
+use tracing_subscriber::{
+    filter::{self, Filtered},
+    fmt,
+    layer::Layer,
+    prelude::*,
+    reload::{self, Handle},
+    Registry,
+};
 
+pub type ReloadableLayer = Filtered<Box<dyn Layer<Registry> + Send + Sync>, LevelFilter, Registry>;
+
+pub static FILE_LOG: LazyLock<Result<Handle<ReloadableLayer, Registry>, String>> =
+    LazyLock::new(|| setup_logging());
+
+pub fn change_file_logger_level(level: LevelFilter) -> bool {
+    match FILE_LOG.as_ref() {
+        Ok(log_file_layer) => match log_file_layer.modify(|layer| *layer.filter_mut() = level) {
+            Ok(_) => true,
+            Err(e) => {
+                error!("Failed to update logger level: {}", e);
+                false
+            }
+        },
+        Err(e) => {
+            error!("Cannot update level of uninitialised logger: {}", e);
+            false
+        }
+    }
+}
+
+fn setup_logging() -> Result<Handle<ReloadableLayer, Registry>, String> {
     let log_file_path = get_logging_path();
     let log_file = get_logging_file();
 
@@ -37,24 +66,24 @@ pub fn setup_logging() -> Result<(), String> {
         ));
     }
 
-    let subscriber = Registry::default()
-        .with(
-            // stdout layer
-            fmt::layer()
-                .compact()
-                .with_ansi(true)
-                .with_filter(filter::LevelFilter::from_level(Level::INFO)),
-        )
-        .with(
-            // File layer, TODO log rotation
-            fmt::layer()
-                .with_ansi(false)
-                .with_writer(file_result.unwrap())
-                .with_filter(filter::LevelFilter::from_level(Level::INFO)),
-        );
+    let file = file_result.unwrap();
+    let file_inner: Box<dyn Layer<Registry> + Send + Sync> =
+        Box::new(fmt::layer().compact().with_ansi(false).with_writer(file));
+    let file_filtered = file_inner.with_filter(LevelFilter::INFO);
+    let (file_layer, file_layer_reload) = reload::Layer::new(file_filtered);
 
-    if let Some(e) = tracing::subscriber::set_global_default(subscriber).err() {
-        return Err(format!("Failed to set global logger: {}", e));
+    if get_console_log_enabled() {
+        let console_layer = fmt::layer()
+            .with_ansi(true)
+            .with_filter(filter::LevelFilter::from_level(Level::INFO));
+
+        Registry::default()
+            .with(file_layer)
+            .with(console_layer)
+            .init();
+    } else {
+        Registry::default().with(file_layer).init();
     }
-    Ok(())
+
+    Ok(file_layer_reload)
 }

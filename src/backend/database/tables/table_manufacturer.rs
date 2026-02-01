@@ -63,7 +63,9 @@ impl Table<RecordManufacturer, RecordManufacturer> for TableManufacturer {
 
     fn get(db: &Connection, record_id: i64) -> Result<RecordManufacturer, Error> {
         db.prepare(
-            "SELECT id, name,
+            "SELECT
+                    id,
+                    name
                     FROM manufacturer
                     WHERE id = ?1",
         )?

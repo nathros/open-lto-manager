@@ -66,7 +66,8 @@
             },
             "options": {
                 "env": {
-                    "DIOXUS_DEVSERVER_IP": "127.0.0.1"
+                    "DIOXUS_DEVSERVER_IP": "127.0.0.1",
+                    "CONSOLE_LOG": "ON"
                 }
             },
             "group": "test",
@@ -82,7 +83,8 @@
             },
             "options": {
                 "env": {
-                    "DIOXUS_DEVSERVER_IP": "0.0.0.0"
+                    "DIOXUS_DEVSERVER_IP": "0.0.0.0",
+                    "CONSOLE_LOG": "ON"
                 }
             },
             "group": "test",
@@ -95,7 +97,8 @@
             "options": {
                 "cwd": "${workspaceRoot}/target/dx/openltomanager/release/web",
                 "env": {
-                    "IP": "0.0.0.0"
+                    "IP": "0.0.0.0",
+                    "CONSOLE_LOG": "ON"
                 }
             },
             "icon": {

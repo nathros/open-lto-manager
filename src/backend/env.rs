@@ -3,6 +3,7 @@ use std::env;
 pub static ENV_PATH_DATA: &'static str = "PATH_DATA"; // TODO uses current working dir, could use /var/lib or ~/.local/share/app_nam
 pub static ENV_PATH_DB: &'static str = "PATH_DB";
 pub static ENV_PATH_LOG: &'static str = "PATH_LOG";
+pub static ENV_CONSOLE_LOG: &'static str = "CONSOLE_LOG";
 
 pub fn get_data_dir() -> String {
     let path = match env::var(ENV_PATH_DATA) {
@@ -66,12 +67,25 @@ pub fn get_logging_file() -> String {
     return log_file;
 }
 
+pub fn get_console_log_enabled() -> bool {
+    match env::var(ENV_CONSOLE_LOG) {
+        Ok(val) => match val.parse::<String>() {
+            Ok(val) => return val == "ON",
+            Err(_e) => return false,
+        },
+        Err(_e) => {
+            return false;
+        }
+    };
+}
+
 #[cfg(test)]
 mod tests {
     use std::env;
 
     use crate::backend::env::{
-        get_data_dir, get_database_path, get_logging_path, ENV_PATH_DATA, ENV_PATH_DB, ENV_PATH_LOG,
+        get_console_log_enabled, get_data_dir, get_database_path, get_logging_path,
+        ENV_CONSOLE_LOG, ENV_PATH_DATA, ENV_PATH_DB, ENV_PATH_LOG,
     };
 
     #[test]
@@ -104,5 +118,15 @@ mod tests {
         assert_eq!(get_logging_path(), "test_data_path".to_string());
         env::remove_var(ENV_PATH_DATA); // Reset
         env::remove_var(ENV_PATH_LOG); // Reset
+
+        // Console log enabled
+        assert_eq!(get_console_log_enabled(), false);
+        env::set_var(ENV_CONSOLE_LOG, "OFF");
+        assert_eq!(get_console_log_enabled(), false);
+        env::set_var(ENV_CONSOLE_LOG, "INVALID");
+        assert_eq!(get_console_log_enabled(), false);
+        env::set_var(ENV_CONSOLE_LOG, "ON");
+        assert_eq!(get_console_log_enabled(), true);
+        env::remove_var(ENV_CONSOLE_LOG); // Reset
     }
 }

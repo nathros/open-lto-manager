@@ -30,3 +30,10 @@ codegen-units = 1
 panic = "abort"
 strip = true
 incremental = false
+
+# https://book.leptos.dev/deployment/binary_size.html
+[profile.wasm-release]
+inherits = "release"
+opt-level = 'z'
+lto = true
+codegen-units = 1
