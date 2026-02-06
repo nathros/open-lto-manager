@@ -2,9 +2,9 @@ use crate::backend::env::{get_console_log_enabled, get_logging_file, get_logging
 use std::fs::OpenOptions;
 use std::io::ErrorKind;
 use std::sync::LazyLock;
-use tracing::{error, level_filters::LevelFilter, Level};
+use tracing::{error, level_filters::LevelFilter};
 use tracing_subscriber::{
-    filter::{self, Filtered},
+    filter::Filtered,
     fmt,
     layer::Layer,
     prelude::*,
@@ -12,17 +12,27 @@ use tracing_subscriber::{
     Registry,
 };
 
-pub type ReloadableLayer = Filtered<Box<dyn Layer<Registry> + Send + Sync>, LevelFilter, Registry>;
+pub type ReloadableLayer =
+    Handle<Filtered<Box<dyn Layer<Registry> + Send + Sync>, LevelFilter, Registry>, Registry>;
 
-pub static FILE_LOG: LazyLock<Result<Handle<ReloadableLayer, Registry>, String>> =
-    LazyLock::new(|| setup_logging());
+pub static LOG_LAYERS: LazyLock<
+    Result<
+        (
+            ReloadableLayer,         // File handle
+            Option<ReloadableLayer>, // Optional console handle
+        ),
+        String,
+    >,
+> = LazyLock::new(setup_logging);
 
+#[allow(dead_code)] // FIXME allow user/config to change at runtime
 pub fn change_file_logger_level(level: LevelFilter) -> bool {
-    match FILE_LOG.as_ref() {
-        Ok(log_file_layer) => match log_file_layer.modify(|layer| *layer.filter_mut() = level) {
+    match LOG_LAYERS.as_ref() {
+        Ok((log_file_layer, _)) => match log_file_layer.modify(|layer| *layer.filter_mut() = level)
+        {
             Ok(_) => true,
             Err(e) => {
-                error!("Failed to update logger level: {}", e);
+                error!("Failed to update file logger level: {}", e);
                 false
             }
         },
@@ -33,57 +43,76 @@ pub fn change_file_logger_level(level: LevelFilter) -> bool {
     }
 }
 
-fn setup_logging() -> Result<Handle<ReloadableLayer, Registry>, String> {
+#[allow(dead_code)] // FIXME allow user/config to change at runtime
+pub fn change_console_logger_level(level: LevelFilter) -> bool {
+    match LOG_LAYERS.as_ref() {
+        Ok((_, console)) => match console {
+            Some(console) => match console.modify(|layer| *layer.filter_mut() = level) {
+                Ok(_) => true,
+                Err(e) => {
+                    error!("Failed to update console logger level: {}", e);
+                    false
+                }
+            },
+            None => {
+                error!("Cannot update level of disabled console logger");
+                false
+            }
+        },
+        Err(e) => {
+            error!("Cannot update level of uninitialised logger: {}", e);
+            false
+        }
+    }
+}
+
+fn setup_logging() -> Result<(ReloadableLayer, Option<ReloadableLayer>), String> {
     let log_file_path = get_logging_path();
     let log_file = get_logging_file();
 
-    match std::fs::remove_file(&log_file) {
-        Ok(_) => {}
-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
-        Err(e) => {
+    if let Err(e) = std::fs::remove_file(&log_file) {
+        if e.kind() != std::io::ErrorKind::NotFound {
             return Err(format!(
                 "Unexpected error with log file: {}, with error: {}",
                 log_file, e
+            ));
+        }
+    }
+    if let Err(e) = std::fs::create_dir_all(&log_file_path) {
+        if e.kind() != ErrorKind::AlreadyExists {
+            return Err(format!(
+                "Failed to create logging dir: {} with error: {}",
+                log_file_path, e
+            ));
+        }
+    }
+
+    let file = match OpenOptions::new().create(true).append(true).open(&log_file) {
+        Ok(f) => f,
+        Err(e) => {
+            return Err(format!(
+                "Failed to create log file: {} with error: {}",
+                log_file, e
             ))
         }
-    }
-    match std::fs::create_dir_all(&log_file_path) {
-        Ok(_) => {}
-        Err(e) => {
-            if e.kind() != ErrorKind::AlreadyExists {
-                return Err(format!(
-                    "Failed to create logging dir: {} with error: {}",
-                    log_file_path, e
-                ));
-            }
-        }
-    }
-    let file_result = OpenOptions::new().create(true).append(true).open(&log_file);
-    if let Some(e) = file_result.as_ref().err() {
-        return Err(format!(
-            "Failed to create log file: {} with error: {}",
-            log_file, e
-        ));
-    }
+    };
 
-    let file = file_result.unwrap();
-    let file_inner: Box<dyn Layer<Registry> + Send + Sync> =
-        Box::new(fmt::layer().compact().with_ansi(false).with_writer(file));
+    let file_inner = fmt::layer().with_ansi(false).with_writer(file).boxed();
     let file_filtered = file_inner.with_filter(LevelFilter::INFO);
-    let (file_layer, file_layer_reload) = reload::Layer::new(file_filtered);
+    let (file_layer, file_handle) = reload::Layer::new(file_filtered);
 
     if get_console_log_enabled() {
-        let console_layer = fmt::layer()
-            .with_ansi(true)
-            .with_filter(filter::LevelFilter::from_level(Level::INFO));
+        let stdout_inner = fmt::layer().compact().with_ansi(true).boxed();
+        let stdout_filtered = stdout_inner.with_filter(LevelFilter::INFO);
+        let (stdout_layer, stdout_handle) = reload::Layer::new(stdout_filtered);
 
         Registry::default()
-            .with(file_layer)
-            .with(console_layer)
+            .with(vec![file_layer.boxed(), stdout_layer.boxed()])
             .init();
+
+        Ok((file_handle, Some(stdout_handle)))
     } else {
         Registry::default().with(file_layer).init();
+        Ok((file_handle, None))
     }
-
-    Ok(file_layer_reload)
 }

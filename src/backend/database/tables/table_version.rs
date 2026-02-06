@@ -10,24 +10,22 @@ impl Table<RecordVersion, RecordVersion> for TableVersion {
     fn create_table(db: &Connection) -> Result<bool, Error> {
         match db.table_exists(None, "version") {
             std::result::Result::Ok(exist) => {
-                if exist == true {
+                if exist {
                     return Ok(false);
                 }
             }
             Err(e) => return Err(e),
         }
 
-        if let Err(e) = db.execute(
+        db.execute(
             "CREATE TABLE IF NOT EXISTS version (
                 id INTEGER PRIMARY KEY,
                 version_number INTEGER NOT NULL
             );",
             (),
-        ) {
-            return Err(e); // Failed to create table
-        }
+        )?;
 
-        return Ok(true);
+        Ok(true)
     }
 
     fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, Error> {

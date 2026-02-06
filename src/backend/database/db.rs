@@ -1,4 +1,3 @@
-#[cfg(feature = "server")]
 use std::io::ErrorKind;
 use std::sync::Mutex;
 
@@ -46,11 +45,9 @@ fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, Str
         current_database_version, DB_VERSION_LATEST
     );
 
-    let tables: Vec<(
-        &str,
-        &dyn Fn(&Connection) -> Result<bool, Error>,
-        &dyn Fn(&Connection, i64) -> Result<bool, Error>,
-    )> = vec![
+    type CreateTableFn = dyn Fn(&Connection) -> Result<bool, Error>;
+    type UpdateTableFn = dyn Fn(&Connection, i64) -> Result<bool, Error>;
+    let tables: Vec<(&str, &CreateTableFn, &UpdateTableFn)> = vec![
         (
             "TableUser",
             &TableUser::create_table,
@@ -139,22 +136,22 @@ pub fn create_database() -> Result<rusqlite::Connection, String> {
                     "New database connection from thread: {:?}",
                     std::thread::current().id()
                 );
-                if *guard == true {
+                if *guard {
                     *guard = false;
                     info!("Open database at path: {}", db_path);
-                    return database_init(conn);
+                    database_init(conn)
                 } else {
-                    return Ok(conn);
+                    Ok(conn)
                 }
             }
-            Err(e) => return Err(format!("Failed to get database init lock: {}", e)),
+            Err(e) => Err(format!("Failed to get database init lock: {}", e)),
         },
-        Err(e) => return Err(format!("Failed to open database: {}", e)),
+        Err(e) => Err(format!("Failed to open database: {}", e)),
     }
 }
 
 thread_local! {
     pub static DB: std::sync::LazyLock<rusqlite::Connection> = std::sync::LazyLock::new(|| {
-        create_database().unwrap() // In separate function as rustfmt does not work inside this closure
+        create_database().expect("Attempt to open uninitialised database") // In separate function as rustfmt does not work inside this closure
     });
 }

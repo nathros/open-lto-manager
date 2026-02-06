@@ -63,6 +63,7 @@ impl Default for RecordTape {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
 pub enum TapeFormat {
     Tar = 0,
+    #[allow(clippy::upper_case_acronyms)]
     LTFS = 1,
     // STFS TODO add support
 }
@@ -102,7 +103,7 @@ impl ToSql for TapeFormat {
 #[cfg(feature = "server")]
 impl FromSql for TapeFormat {
     fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
-        FromSqlResult::Ok(TapeFormat::from(value.as_i64().unwrap()))
+        FromSqlResult::Ok(TapeFormat::from(value.as_i64().unwrap_or(0)))
     }
 }
 

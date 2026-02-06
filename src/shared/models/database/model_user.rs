@@ -58,9 +58,9 @@ impl From<i64> for ColourMode {
     }
 }
 
-impl Into<&str> for ColourMode {
-    fn into(self) -> &'static str {
-        match self {
+impl From<ColourMode> for &str {
+    fn from(value: ColourMode) -> Self {
+        match value {
             ColourMode::System => "System",
             ColourMode::Dark => "Dark",
             ColourMode::Light => "Light",
@@ -84,6 +84,6 @@ impl ToSql for ColourMode {
 #[cfg(feature = "server")]
 impl FromSql for ColourMode {
     fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
-        FromSqlResult::Ok(ColourMode::from(value.as_i64().unwrap()))
+        FromSqlResult::Ok(ColourMode::from(value.as_i64().unwrap_or(0)))
     }
 }

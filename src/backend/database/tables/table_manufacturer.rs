@@ -10,22 +10,20 @@ impl Table<RecordManufacturer, RecordManufacturer> for TableManufacturer {
     fn create_table(db: &Connection) -> Result<bool, Error> {
         match db.table_exists(None, "manufacturer") {
             std::result::Result::Ok(exist) => {
-                if exist == true {
+                if exist {
                     return Ok(false);
                 }
             }
             Err(e) => return Err(e),
         }
 
-        if let Err(e) = db.execute(
+        db.execute(
             "CREATE TABLE IF NOT EXISTS manufacturer (
                 id INTEGER PRIMARY KEY,
                 name TEXT NOT NULL
             );",
             (),
-        ) {
-            return Err(e); // Failed to create table
-        }
+        )?;
 
         let manufacturers = vec![
             "Other",
@@ -43,18 +41,16 @@ impl Table<RecordManufacturer, RecordManufacturer> for TableManufacturer {
         ];
 
         for m_name in manufacturers.iter() {
-            if let Err(e) = TableManufacturer::insert_record(
+            TableManufacturer::insert_record(
                 db,
                 &RecordManufacturer {
                     id: 0,
                     name: m_name.to_string(),
                 },
-            ) {
-                return Err(e);
-            }
+            )?;
         }
 
-        return Ok(true);
+        Ok(true)
     }
 
     fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, Error> {
@@ -122,6 +118,8 @@ impl TableManufacturer {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::unwrap_used)]
+
     use crate::{
         backend::database::tables::{table::Table, table_manufacturer::TableManufacturer},
         shared::models::database::model_manufacturer::RecordManufacturer,
@@ -129,31 +127,29 @@ mod tests {
 
     fn create() -> rusqlite::Connection {
         let conn = rusqlite::Connection::open_in_memory().unwrap();
-        assert_eq!(
-            conn.table_exists(None, "manufacturer").unwrap(),
-            false,
+        assert!(
+            !conn.table_exists(None, "manufacturer").unwrap(),
             "New table should be empty"
         );
         assert!(
             TableManufacturer::create_table(&conn).is_ok(),
             "Failed to create table"
         );
-        assert_eq!(
+        assert!(
             conn.table_exists(None, "manufacturer").unwrap(),
-            true,
             "create_table() reported Ok but table does not exist"
         );
-        return conn;
+        conn
     }
 
     fn update(db: &rusqlite::Connection) {
-        let all_records_result = TableManufacturer::get_all(&db);
+        let all_records_result = TableManufacturer::get_all(db);
         assert!(
             all_records_result.is_ok(),
             "Failed to get all Manufacturer records"
         );
         let all_records = all_records_result.unwrap();
-        assert!(all_records.len() > 0, "Default not populated");
+        assert!(!all_records.is_empty(), "Default not populated");
         assert_eq!(
             all_records.last().unwrap().name,
             "Other",
@@ -167,16 +163,16 @@ mod tests {
         let mut update_record: RecordManufacturer = original_record.clone();
         update_record.name = new_name;
         assert!(
-            TableManufacturer::update_record(&db, &update_record).is_ok(),
+            TableManufacturer::update_record(db, &update_record).is_ok(),
             "Failed to update record"
         );
 
-        let all_records_updated = TableManufacturer::get_all(&db).unwrap();
+        let all_records_updated = TableManufacturer::get_all(db).unwrap();
         assert_eq!(update_record, *all_records_updated.get(test_index).unwrap());
     }
 
     fn insert(db: &rusqlite::Connection) {
-        let all_records_current = TableManufacturer::get_all(&db).unwrap();
+        let all_records_current = TableManufacturer::get_all(db).unwrap();
         let new_manufacturer_name = "NewName".to_string();
         assert_eq!(
             all_records_current
@@ -185,7 +181,7 @@ mod tests {
             None
         );
         TableManufacturer::insert_record(
-            &db,
+            db,
             &RecordManufacturer {
                 id: 0,
                 name: new_manufacturer_name.clone(),
@@ -193,14 +189,10 @@ mod tests {
         )
         .unwrap();
 
-        let all_records_updated = TableManufacturer::get_all(&db).unwrap();
-        assert_eq!(
-            all_records_updated
-                .iter()
-                .find(|&m| m.name == new_manufacturer_name)
-                .is_some(),
-            true
-        );
+        let all_records_updated = TableManufacturer::get_all(db).unwrap();
+        assert!(all_records_updated
+            .iter()
+            .any(|m| m.name == new_manufacturer_name));
 
         assert!(
             all_records_updated.last().unwrap().name == "Other",

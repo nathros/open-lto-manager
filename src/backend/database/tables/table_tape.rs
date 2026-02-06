@@ -10,14 +10,14 @@ impl Table<RecordTape, RecordTapeJoin> for TableTape {
     fn create_table(db: &Connection) -> Result<bool, Error> {
         match db.table_exists(None, "tape") {
             std::result::Result::Ok(exist) => {
-                if exist == true {
+                if exist {
                     return Ok(false);
                 }
             }
             Err(e) => return Err(e),
         }
 
-        if let Err(e) = db.execute(
+        db.execute(
             "CREATE TABLE IF NOT EXISTS tape (
                 id INTEGER PRIMARY KEY,
                 manufacturer_id INTEGER NOT NULL,
@@ -35,10 +35,8 @@ impl Table<RecordTape, RecordTapeJoin> for TableTape {
                 FOREIGN KEY(tape_type_id) REFERENCES tape_type(id)
             );",
             (),
-        ) {
-            return Err(e); // Failed to create table
-        }
-        return Ok(true);
+        )?;
+        Ok(true)
     }
 
     fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, Error> {
@@ -150,7 +148,7 @@ impl Table<RecordTape, RecordTapeJoin> for TableTape {
 
     fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordTape, Error> {
         Ok(RecordTape {
-            id: row.get(offset + 0)?,
+            id: row.get(offset)?,
             manufacturer_id: row.get(offset + 1)?,
             tape_type_id: row.get(offset + 2)?,
             barcode: row.get(offset + 3)?,

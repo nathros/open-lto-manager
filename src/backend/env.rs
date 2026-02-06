@@ -1,82 +1,42 @@
-use std::env;
-
-pub static ENV_PATH_DATA: &'static str = "PATH_DATA"; // TODO uses current working dir, could use /var/lib or ~/.local/share/app_nam
-pub static ENV_PATH_DB: &'static str = "PATH_DB";
-pub static ENV_PATH_LOG: &'static str = "PATH_LOG";
-pub static ENV_CONSOLE_LOG: &'static str = "CONSOLE_LOG";
+pub static ENV_PATH_DATA: &str = "PATH_DATA"; // TODO uses current working dir, could use /var/lib or ~/.local/share/app_nam
+pub static ENV_PATH_DB: &str = "PATH_DB";
+pub static ENV_PATH_LOG: &str = "PATH_LOG";
+pub static ENV_CONSOLE_LOG: &str = "CONSOLE_LOG";
 
 pub fn get_data_dir() -> String {
-    let path = match env::var(ENV_PATH_DATA) {
-        Ok(val) => match val.parse::<String>() {
-            Ok(val) => val,
-            Err(_e) => "data".to_string(),
-        },
-        Err(_e) => "data".to_string(),
-    };
-    return path;
+    std::env::var(ENV_PATH_DATA)
+        .ok()
+        .and_then(|p| p.parse::<String>().ok())
+        .unwrap_or("data".to_string())
 }
 
 pub fn get_database_path() -> String {
-    let db_path = match env::var(ENV_PATH_DB) {
-        Ok(val) => match val.parse::<String>() {
-            Ok(val) => val,
-            Err(_e) => {
-                let mut default = get_data_dir();
-                default.push_str("/database");
-                return default;
-            }
-        },
-        Err(_e) => {
-            let mut default = get_data_dir();
-            default.push_str("/database");
-            return default;
-        }
-    };
-    db_path
+    std::env::var(ENV_PATH_DB)
+        .ok()
+        .and_then(|p| p.parse::<String>().ok())
+        .unwrap_or(format!("{}/database", get_data_dir()))
 }
 
 pub fn get_database_file() -> String {
-    let mut db_file = get_database_path();
-    db_file.push_str("/database.db");
-    return db_file;
+    format!("{}/database.db", get_database_path())
 }
 
 pub fn get_logging_path() -> String {
-    let log_path = match env::var(ENV_PATH_LOG) {
-        Ok(val) => match val.parse::<String>() {
-            Ok(val) => val,
-            Err(_e) => {
-                let mut default = get_data_dir();
-                default.push_str("/logs");
-                return default;
-            }
-        },
-        Err(_e) => {
-            let mut default = get_data_dir();
-            default.push_str("/logs");
-            return default;
-        }
-    };
-    log_path
+    std::env::var(ENV_PATH_LOG)
+        .ok()
+        .and_then(|p| p.parse::<String>().ok())
+        .unwrap_or(format!("{}/logs", get_data_dir()))
 }
 
 pub fn get_logging_file() -> String {
-    let log_file_path = get_logging_path();
-    let mut log_file = log_file_path.clone();
-    log_file.push_str("/main.log");
-    return log_file;
+    format!("{}/main.log", get_logging_path())
 }
 
 pub fn get_console_log_enabled() -> bool {
-    match env::var(ENV_CONSOLE_LOG) {
-        Ok(val) => match val.parse::<String>() {
-            Ok(val) => return val == "ON",
-            Err(_e) => return false,
-        },
-        Err(_e) => {
-            return false;
-        }
-    };
+    std::env::var(ENV_CONSOLE_LOG)
+        .ok()
+        .and_then(|p| p.parse::<String>().ok().map(|f| f == "ON"))
+        .unwrap_or(false)
 }
 
 #[cfg(test)]
@@ -120,13 +80,13 @@ mod tests {
         env::remove_var(ENV_PATH_LOG); // Reset
 
         // Console log enabled
-        assert_eq!(get_console_log_enabled(), false);
+        assert!(!get_console_log_enabled());
         env::set_var(ENV_CONSOLE_LOG, "OFF");
-        assert_eq!(get_console_log_enabled(), false);
+        assert!(!get_console_log_enabled());
         env::set_var(ENV_CONSOLE_LOG, "INVALID");
-        assert_eq!(get_console_log_enabled(), false);
+        assert!(!get_console_log_enabled());
         env::set_var(ENV_CONSOLE_LOG, "ON");
-        assert_eq!(get_console_log_enabled(), true);
+        assert!(get_console_log_enabled());
         env::remove_var(ENV_CONSOLE_LOG); // Reset
     }
 }

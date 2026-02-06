@@ -11,14 +11,14 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
     fn create_table(db: &Connection) -> Result<bool, Error> {
         match db.table_exists(None, "file") {
             std::result::Result::Ok(exist) => {
-                if exist == true {
+                if exist {
                     return Ok(false);
                 }
             }
             Err(e) => return Err(e),
         }
 
-        if let Err(e) = db.execute(
+        db.execute(
             "CREATE TABLE IF NOT EXISTS tape (
                 id INTEGER PRIMARY KEY,
                 tape_id INTEGER NOT NULL,
@@ -34,10 +34,9 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
                 FOREIGN KEY(tape_id) REFERENCES tape(id)
             );",
             (),
-        ) {
-            return Err(e); // Failed to create table
-        }
-        return Ok(true);
+        )?;
+
+        Ok(true)
     }
 
     fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, Error> {

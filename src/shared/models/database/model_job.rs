@@ -69,7 +69,7 @@ impl ToSql for JobType {
 #[cfg(feature = "server")]
 impl FromSql for JobType {
     fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
-        FromSqlResult::Ok(JobType::from(value.as_i64().unwrap()))
+        FromSqlResult::Ok(JobType::from(value.as_i64().unwrap_or(0)))
     }
 }
 
@@ -81,7 +81,8 @@ pub enum JobStatus {
     InProgress = 2,
     Stopped = 3,
     Interrupted = 4,
-    Error = 5,
+    Completed = 5,
+    Error = 6,
 }
 
 impl From<i64> for JobStatus {
@@ -92,7 +93,8 @@ impl From<i64> for JobStatus {
             2 => JobStatus::InProgress,
             3 => JobStatus::Stopped,
             4 => JobStatus::Interrupted,
-            5 => JobStatus::Error,
+            5 => JobStatus::Completed,
+            6 => JobStatus::Error,
             _ => JobStatus::Unknown,
         }
     }
@@ -114,7 +116,7 @@ impl ToSql for JobStatus {
 #[cfg(feature = "server")]
 impl FromSql for JobStatus {
     fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
-        FromSqlResult::Ok(JobStatus::from(value.as_i64().unwrap()))
+        FromSqlResult::Ok(JobStatus::from(value.as_i64().unwrap_or(0)))
     }
 }
 

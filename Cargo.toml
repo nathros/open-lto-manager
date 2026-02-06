@@ -21,6 +21,10 @@ desktop = ["dioxus/desktop"]
 mobile = ["dioxus/mobile"]
 server = ["dioxus/server", "dep:rusqlite"]
 
+[lints.clippy]
+unwrap_used = "deny"
+allow-unwrap-in-tests = "allow"
+
 # https://dioxuslabs.com/learn/0.5/cookbook/optimizing/#build-configuration
 [profile.release]
 opt-level = "z"

@@ -4,19 +4,27 @@
         "editor.defaultFormatter": "rust-lang.rust-analyzer",
         "editor.formatOnSave": true,
     },
+    "rust-analyzer.check.command": "clippy",
     "workbench.editor.wrapTabs": true,
     "cSpell.words": [
         "chrono",
+        "clippy",
         "dioxus",
         "Imation",
         "Initialise",
         "LTFS",
         "Maxell",
+        "onchange",
+        "onclick",
+        "Reloadable",
         "repr",
         "Routable",
         "rusqlite",
         "rustfmt",
+        "serde",
+        "STFS",
         "stylesheet",
-        "Tandberg"
+        "Tandberg",
+        "uninitialised"
     ]
 }

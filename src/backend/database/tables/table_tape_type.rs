@@ -1,4 +1,3 @@
-use dioxus::prelude::info;
 use rusqlite::{params, Connection, Error};
 
 use crate::shared::models::database::model_tape_type::RecordTapeType;
@@ -11,14 +10,14 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
     fn create_table(db: &Connection) -> Result<bool, Error> {
         match db.table_exists(None, "tape_type") {
             std::result::Result::Ok(exist) => {
-                if exist == true {
+                if exist {
                     return Ok(false);
                 }
             }
             Err(e) => return Err(e),
         }
 
-        if let Err(e) = db.execute(
+        db.execute(
             "CREATE TABLE IF NOT EXISTS tape_type (
                 id INTEGER PRIMARY KEY,
                 generation TEXT NOT NULL,
@@ -34,13 +33,11 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 supports_ltfs BOOLEAN NOT NULL
             );",
             (),
-        ) {
-            return Err(e); // Failed to create table
-        }
+        )?;
 
         let bytes_per_gib = 1000 * 1000 * 1000;
 
-        if let Err(e) = TableTapeType::insert_record(
+        TableTapeType::insert_record(
             db,
             &RecordTapeType {
                 id: 0,
@@ -56,12 +53,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 supports_encryption: false,
                 supports_ltfs: false,
             },
-        ) {
-            info!("{e}");
-            return Err(e);
-        }
+        )?;
 
-        if let Err(e) = TableTapeType::insert_record(
+        TableTapeType::insert_record(
             db,
             &RecordTapeType {
                 id: 0,
@@ -77,11 +71,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 supports_encryption: false,
                 supports_ltfs: false,
             },
-        ) {
-            return Err(e);
-        }
+        )?;
 
-        if let Err(e) = TableTapeType::insert_record(
+        TableTapeType::insert_record(
             db,
             &RecordTapeType {
                 id: 0,
@@ -97,11 +89,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 supports_encryption: false,
                 supports_ltfs: false,
             },
-        ) {
-            return Err(e);
-        }
+        )?;
 
-        if let Err(e) = TableTapeType::insert_record(
+        TableTapeType::insert_record(
             db,
             &RecordTapeType {
                 id: 0,
@@ -117,11 +107,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 supports_encryption: true,
                 supports_ltfs: false,
             },
-        ) {
-            return Err(e);
-        }
+        )?;
 
-        if let Err(e) = TableTapeType::insert_record(
+        TableTapeType::insert_record(
             db,
             &RecordTapeType {
                 id: 0,
@@ -137,11 +125,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 supports_encryption: true,
                 supports_ltfs: true,
             },
-        ) {
-            return Err(e);
-        }
+        )?;
 
-        if let Err(e) = TableTapeType::insert_record(
+        TableTapeType::insert_record(
             db,
             &RecordTapeType {
                 id: 0,
@@ -157,11 +143,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 supports_encryption: true,
                 supports_ltfs: true,
             },
-        ) {
-            return Err(e);
-        }
+        )?;
 
-        if let Err(e) = TableTapeType::insert_record(
+        TableTapeType::insert_record(
             db,
             &RecordTapeType {
                 id: 0,
@@ -177,11 +161,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 supports_encryption: true,
                 supports_ltfs: true,
             },
-        ) {
-            return Err(e);
-        }
+        )?;
 
-        if let Err(e) = TableTapeType::insert_record(
+        TableTapeType::insert_record(
             db,
             &RecordTapeType {
                 id: 0,
@@ -197,11 +179,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 supports_encryption: true,
                 supports_ltfs: true,
             },
-        ) {
-            return Err(e);
-        }
+        )?;
 
-        if let Err(e) = TableTapeType::insert_record(
+        TableTapeType::insert_record(
             db,
             &RecordTapeType {
                 id: 0,
@@ -217,11 +197,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 supports_encryption: true,
                 supports_ltfs: true,
             },
-        ) {
-            return Err(e);
-        }
+        )?;
 
-        if let Err(e) = TableTapeType::insert_record(
+        TableTapeType::insert_record(
             db,
             &RecordTapeType {
                 id: 0,
@@ -237,11 +215,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 supports_encryption: true,
                 supports_ltfs: true,
             },
-        ) {
-            return Err(e);
-        }
+        )?;
 
-        if let Err(e) = TableTapeType::insert_record(
+        TableTapeType::insert_record(
             db,
             &RecordTapeType {
                 id: 0,
@@ -257,11 +233,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 supports_encryption: true,
                 supports_ltfs: true,
             },
-        ) {
-            return Err(e);
-        }
+        )?;
 
-        if let Err(e) = TableTapeType::insert_record(
+        TableTapeType::insert_record(
             db,
             &RecordTapeType {
                 id: 0,
@@ -277,11 +251,9 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 supports_encryption: true,
                 supports_ltfs: true,
             },
-        ) {
-            return Err(e);
-        }
+        )?;
 
-        return Ok(true);
+        Ok(true)
     }
 
     fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, Error> {
@@ -394,7 +366,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
 
     fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordTapeType, Error> {
         Ok(RecordTapeType {
-            id: row.get(offset + 0)?,
+            id: row.get(offset)?,
             generation: row.get(offset + 1)?,
             id_reg: row.get(offset + 2)?,
             id_worm: row.get(offset + 3)?,
@@ -436,6 +408,8 @@ impl TableTapeType {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::unwrap_used)]
+
     use crate::{
         backend::database::tables::{table::Table, table_tape_type::TableTapeType},
         shared::models::database::model_tape_type::RecordTapeType,
@@ -443,9 +417,8 @@ mod tests {
 
     fn create() -> rusqlite::Connection {
         let conn = rusqlite::Connection::open_in_memory().unwrap();
-        assert_eq!(
-            conn.table_exists(None, "tape_type").unwrap(),
-            false,
+        assert!(
+            !conn.table_exists(None, "tape_type").unwrap(),
             "New table should be empty"
         );
 
@@ -454,22 +427,21 @@ mod tests {
             println!("--Error create table: {:?}", create_result);
         }
         assert!(create_result.is_ok(), "Failed to create table");
-        assert_eq!(
+        assert!(
             conn.table_exists(None, "tape_type").unwrap(),
-            true,
             "create_table() reported Ok but table does not exist"
         );
-        return conn;
+        conn
     }
 
     fn update(db: &rusqlite::Connection) {
-        let all_records_result = TableTapeType::get_all(&db);
+        let all_records_result = TableTapeType::get_all(db);
         assert!(
             all_records_result.is_ok(),
             "Failed to get all TapeType records"
         );
         let all_records = all_records_result.unwrap();
-        assert!(all_records.len() > 0, "Default not populated");
+        assert!(!all_records.is_empty(), "Default not populated");
         let test_index = all_records.len() / 2;
         let original_record: RecordTapeType = all_records.get(test_index).unwrap().clone();
 
@@ -477,11 +449,11 @@ mod tests {
         let mut update_record: RecordTapeType = original_record.clone();
         update_record.generation = new_name;
         assert!(
-            TableTapeType::update_record(&db, &update_record).is_ok(),
+            TableTapeType::update_record(db, &update_record).is_ok(),
             "Failed to update record"
         );
 
-        let all_records_updated = TableTapeType::get_all(&db).unwrap();
+        let all_records_updated = TableTapeType::get_all(db).unwrap();
         assert_eq!(update_record, *all_records_updated.get(test_index).unwrap());
     }
 

@@ -1,6 +1,8 @@
 use dioxus::prelude::*;
 
 mod backend;
+#[allow(clippy::redundant_closure, irrefutable_let_patterns)]
+// FIXME Dioxus use_signal falsely triggers redundant_closure
 mod frontend;
 mod route;
 mod shared;
@@ -8,9 +10,6 @@ mod shared;
 use crate::{backend::api::api_init::app_state, route::Route};
 
 fn main() {
-    // FIXME add argument support
-    // let args: Vec<String> = std::env::args().collect();
-
     #[cfg(feature = "server")]
     {
         use crate::backend::init::APP_STATE;
@@ -32,9 +31,19 @@ fn main() {
 fn App() -> Element {
     let app_state = use_loader(app_state)?;
 
+    #[cfg(debug_assertions)]
+    let assets = [MAIN_CSS];
+
+    #[cfg(not(debug_assertions))]
+    let assets = [MAIN_CSS]; // FIXME Release build will combine CSS assets in future
+
     rsx! {
         //document::Link { rel: "icon", href: FAVICON }
-        document::Link { rel: "stylesheet", href: MAIN_CSS }
+        for asset in assets.iter() {
+            document::Link { rel: "stylesheet", href: *asset }
+        }
+
+        Router::<Route> {}
 
         if app_state().critical_error {
             p { "Failed to start app" }
@@ -43,7 +52,7 @@ fn App() -> Element {
             }
             p { " -- show logs -- // TODO " }
         } else {
-            Router::<Route> {}
+
         }
     }
 }

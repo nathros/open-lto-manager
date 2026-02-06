@@ -11,14 +11,14 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
     fn create_table(db: &Connection) -> Result<bool, Error> {
         match db.table_exists(None, "user") {
             std::result::Result::Ok(exist) => {
-                if exist == true {
+                if exist {
                     return Ok(false);
                 }
             }
             Err(e) => return Err(e),
         }
 
-        if let Err(e) = db.execute(
+        db.execute(
             "CREATE TABLE IF NOT EXISTS user (
                 id INTEGER PRIMARY KEY,
                 username TEXT NOT NULL UNIQUE,
@@ -35,10 +35,8 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
                 accent_colour TEXT NOT NULL
             );",
             (),
-        ) {
-            return Err(e); // Failed to create table
-        }
-        return Ok(true);
+        )?;
+        Ok(true)
     }
 
     fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, Error> {
@@ -156,7 +154,7 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
 
     fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordUser, Error> {
         Ok(RecordUser {
-            id: row.get(offset + 0)?,
+            id: row.get(offset)?,
             username: row.get(offset + 1)?,
             description: row.get(offset + 2)?,
             hash: row.get(offset + 3)?,
@@ -175,6 +173,7 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::unwrap_used)]
     use chrono::Local;
 
     use crate::{
@@ -184,21 +183,19 @@ mod tests {
 
     fn create() -> rusqlite::Connection {
         let conn = rusqlite::Connection::open_in_memory().unwrap();
-        assert_eq!(
-            conn.table_exists(None, "user").unwrap(),
-            false,
+        assert!(
+            !conn.table_exists(None, "user").unwrap(),
             "New table should be empty"
         );
         assert!(
             TableUser::create_table(&conn).is_ok(),
             "Failed to create table"
         );
-        assert_eq!(
+        assert!(
             conn.table_exists(None, "user").unwrap(),
-            true,
             "create_table() reported Ok but table does not exist"
         );
-        return conn;
+        conn
     }
 
     fn insert(db: &rusqlite::Connection) {
