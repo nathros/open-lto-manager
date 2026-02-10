@@ -2,7 +2,7 @@ use crate::backend::database::db::create_database;
 use crate::{backend::logging::LOG_LAYERS, shared::models::app_state::AppState};
 use std::sync::LazyLock;
 use std::vec;
-use tracing::error;
+use tracing::{error, info};
 
 pub static APP_STATE: LazyLock<AppState> = LazyLock::new(init_backend);
 
@@ -17,6 +17,7 @@ pub fn init_backend() -> AppState {
             true
         }
     };
+    info!("App init");
 
     let database_result = create_database();
     if let Some(error) = database_result.as_ref().err() {

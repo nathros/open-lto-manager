@@ -4,8 +4,10 @@ use crate::shared::models::file_view::FileView;
 
 #[get("/api/fv/working_dir")]
 pub async fn fv_working_dir() -> Result<String> {
-    let working_dir = std::env::current_dir().unwrap_or([r""].iter().collect());
+    #[cfg(feature = "slow_server")]
     std::thread::sleep(std::time::Duration::from_millis(1000));
+
+    let working_dir = std::env::current_dir().unwrap_or([r""].iter().collect());
     Ok(working_dir
         .into_os_string()
         .into_string()
@@ -16,17 +18,23 @@ pub async fn fv_working_dir() -> Result<String> {
 pub async fn fv_files_in_dir(path: String) -> Result<Result<Vec<FileView>, String>> {
     use std::fs::read_dir;
     use std::os::unix::fs::MetadataExt;
-    use std::{thread, time::Duration};
+
+    #[cfg(feature = "slow_server")]
+    std::thread::sleep(std::time::Duration::from_millis(1000));
 
     let mut result = vec![];
 
-    thread::sleep(Duration::from_millis(1));
+    if path.is_empty() {
+        return Ok(Ok(result));
+    }
+
+    info!("dir = {}", path);
 
     let read_dir = match read_dir(&path) {
         Ok(dir) => dir,
         Err(e) => {
             // return Ok(Err(CapturedError::msg(format!("Cannot find dir {}", path))));
-            return Ok(Err(format!("Error: {}", e)));
+            return Ok(Err(format!("{}", e)));
         }
     };
 

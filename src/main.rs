@@ -43,8 +43,6 @@ fn App() -> Element {
             document::Link { rel: "stylesheet", href: *asset }
         }
 
-        Router::<Route> {}
-
         if app_state().critical_error {
             p { "Failed to start app" }
             for error_message in app_state().error_list.clone() {
@@ -52,7 +50,7 @@ fn App() -> Element {
             }
             p { " -- show logs -- // TODO " }
         } else {
-
+            Router::<Route> {}
         }
     }
 }

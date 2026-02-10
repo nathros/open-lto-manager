@@ -7,27 +7,50 @@ use crate::{
 
 #[component]
 pub fn DBTape() -> Element {
+    rsx! {
+        SuspenseBoundary {
+            fallback: |_suspense_context: SuspenseContext| {
+                rsx! {
+                    Table {}
+                }
+            },
+            Inner {}
+        }
+    }
+}
+
+#[component]
+fn Table(children: Element) -> Element {
+    rsx! {
+        table {
+            tr {
+                th { "id" }
+                th { "manufacturer_id" }
+                th { "tape_type_id" }
+                th { "barcode" }
+                th { "serial" }
+                th { "format" }
+                th { "worm" }
+                th { "encrypted" }
+                th { "compressed" }
+                th { "used_space" }
+                th { "created" }
+                th { "last_used" }
+            }
+            {children}
+        }
+    }
+}
+
+#[component]
+fn Inner() -> Element {
     let tapes_list: Loader<Vec<RecordTape>> = use_loader(list_tape)?;
 
     rsx! {
         if let Some(e) = tapes_list.error() {
             p { "Failed with error: {e}" }
         } else {
-            table {
-                tr {
-                    th { "id" }
-                    th { "manufacturer_id" }
-                    th { "tape_type_id" }
-                    th { "barcode" }
-                    th { "serial" }
-                    th { "format" }
-                    th { "worm" }
-                    th { "encrypted" }
-                    th { "compressed" }
-                    th { "used_space" }
-                    th { "created" }
-                    th { "last_used" }
-                }
+            Table {
                 for rec in tapes_list.cloned() {
                     tr {
                         td { "{rec.id}" }

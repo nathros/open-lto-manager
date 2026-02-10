@@ -5,7 +5,7 @@ use std::path::PathBuf;
 
 #[component]
 pub fn FileViewer(mut selected_files: Signal<Vec<PathBuf>>) -> Element {
-    let mut current_path: Loader<String> = use_loader(fv_working_dir)?;
+    let mut current_path: Signal<String> = use_signal(|| "".to_string());
 
     let mut current_path_input: Signal<String> = use_signal(|| current_path());
 
@@ -15,30 +15,52 @@ pub fn FileViewer(mut selected_files: Signal<Vec<PathBuf>>) -> Element {
     };
 
     let apply = move |_| {
-        info!("apply {}", current_path.is_error());
+        info!("apply {} {}", current_path, current_path_input);
         current_path.set(current_path_input());
     };
+
+    let res = use_resource(move || async move {
+        let from_server = use_loader(fv_working_dir);
+        match from_server {
+            Ok(o) => {
+                current_path.set(o());
+                true
+            }
+            Err(_) => {
+                current_path.set("".to_string());
+                false
+            }
+        }
+    });
+    let pending = res.peek().unwrap_or(false);
 
     rsx! {
         div {
             input {
                 style: "width:calc(100% - 4rem)",
                 onchange: current_path_update,
-                value: current_path(),
+                value: "{current_path}",
+                disabled: !pending,
             }
+            //p { "aaa {pending}" }
             button { onclick: apply, "apply" }
             br {}
             br {}
         }
 
-        FileViewerBody { current_path }
-
+        SuspenseBoundary {
+            fallback: |_| rsx! {
+                p { "fetching" }
+            },
+            FileViewerBody { current_path }
+        }
     }
 }
 
 #[component]
-pub fn FileViewerBody(mut current_path: Loader<String>) -> Element {
-    info!("Render FileViewerBody");
+fn FileViewerBody(mut current_path: Signal<String>) -> Element {
+    info!("FileViewerBody {}", current_path());
+
     let files_loader: Loader<Result<Vec<FileView>, String>> =
         use_loader(move || fv_files_in_dir(current_path()))?;
 
@@ -65,7 +87,7 @@ pub fn FileViewerBody(mut current_path: Loader<String>) -> Element {
                     }
                 }
             } else if let Err(f) = files_loader() {
-                p { style: "color:blue", "vvv {f}" }
+                p { style: "color:blue", "Error: {f}" }
             }
         }
     }

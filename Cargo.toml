@@ -20,6 +20,8 @@ web = ["dioxus/web"]
 desktop = ["dioxus/desktop"]
 mobile = ["dioxus/mobile"]
 server = ["dioxus/server", "dep:rusqlite"]
+# server = ["dioxus/server", "dep:rusqlite", "slow_server"] # Testing only
+slow_server = [] # Testing only, adds delay to all requests
 
 [lints.clippy]
 unwrap_used = "deny"

@@ -7,18 +7,39 @@ use crate::{
 
 #[component]
 pub fn DBMan() -> Element {
-    let list_manu: Loader<Vec<RecordManufacturer>> = use_loader(list_manu)?;
+    rsx! {
+        SuspenseBoundary {
+            fallback: |_suspense_context: SuspenseContext| {
+                rsx! {
+                    Table {}
+                }
+            },
+            Table { Inner {} }
+        }
+    }
+}
+
+#[component]
+fn Table(children: Element) -> Element {
     rsx! {
         table {
             tr {
                 th { "id" }
                 th { "name" }
             }
-            for rec in list_manu.cloned() {
-                tr {
-                    td { "{rec.id}" }
-                    td { "{rec.name}" }
-                }
+            {children}
+        }
+    }
+}
+
+#[component]
+fn Inner() -> Element {
+    let list_manu: Loader<Vec<RecordManufacturer>> = use_loader(list_manu)?;
+    rsx! {
+        for rec in list_manu.cloned() {
+            tr {
+                td { "{rec.id}" }
+                td { "{rec.name}" }
             }
         }
     }

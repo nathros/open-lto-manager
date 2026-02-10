@@ -7,8 +7,20 @@ use crate::{
 
 #[component]
 pub fn DBType() -> Element {
-    let tapes_list: Loader<Vec<RecordTapeType>> = use_loader(list_type_type)?;
+    rsx! {
+        SuspenseBoundary {
+            fallback: |_suspense_context: SuspenseContext| {
+                rsx! {
+                    Table {}
+                }
+            },
+            Table { Inner {} }
+        }
+    }
+}
 
+#[component]
+fn Table(children: Element) -> Element {
     rsx! {
         table {
             tr {
@@ -25,22 +37,32 @@ pub fn DBType() -> Element {
                 th { "supports_encryption" }
                 th { "supports_ltfs" }
             }
-            for rec in tapes_list.cloned() {
-                tr {
-                    td { "{rec.id}" }
-                    td { "{rec.generation}" }
-                    td { "{rec.id_reg}" }
-                    td { "{rec.id_worm}" }
-                    td { "{rec.native_capacity}" }
-                    td { "{rec.colour_reg}" }
-                    td { "{rec.colour_hp}" }
-                    td { "{rec.colour_worm_reg}" }
-                    td { "{rec.colour_worm_hp}" }
-                    td { "{rec.supports_worm}" }
-                    td { "{rec.supports_encryption}" }
-                    td { "{rec.supports_ltfs}" }
-                }
+            {children}
+        }
+    }
+}
+
+#[component]
+fn Inner() -> Element {
+    let tapes_list: Loader<Vec<RecordTapeType>> = use_loader(list_type_type)?;
+
+    rsx! {
+        for rec in tapes_list.cloned() {
+            tr {
+                td { "{rec.id}" }
+                td { "{rec.generation}" }
+                td { "{rec.id_reg}" }
+                td { "{rec.id_worm}" }
+                td { "{rec.native_capacity}" }
+                td { "{rec.colour_reg}" }
+                td { "{rec.colour_hp}" }
+                td { "{rec.colour_worm_reg}" }
+                td { "{rec.colour_worm_hp}" }
+                td { "{rec.supports_worm}" }
+                td { "{rec.supports_encryption}" }
+                td { "{rec.supports_ltfs}" }
             }
         }
+
     }
 }

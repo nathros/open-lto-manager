@@ -6,6 +6,9 @@ use crate::shared::models::database::model_tape::RecordTape;
 pub async fn list_tape() -> Result<Vec<RecordTape>> {
     use crate::backend::database::{db::DB, tables::table_tape::TableTape};
 
+    #[cfg(feature = "slow_server")]
+    std::thread::sleep(std::time::Duration::from_millis(1000));
+
     DB.with(|db| match TableTape::get_all(db) {
         Ok(records) => Ok(records),
         Err(e) => Err(e)?,
@@ -18,6 +21,9 @@ pub async fn api_get_tape(id: i64) -> Result<RecordTape> {
         db::DB,
         tables::{table::Table, table_tape::TableTape},
     };
+
+    #[cfg(feature = "slow_server")]
+    std::thread::sleep(std::time::Duration::from_millis(1000));
 
     if id == 0 {
         return Ok(RecordTape::default());
@@ -36,6 +42,9 @@ pub async fn api_add_tape(tape: RecordTape) -> Result<bool> {
         tables::{table::Table, table_tape::TableTape},
     };
 
+    #[cfg(feature = "slow_server")]
+    std::thread::sleep(std::time::Duration::from_millis(1000));
+
     DB.with(|db| match TableTape::insert_record(db, &tape) {
         Ok(record) => Ok(record > 1),
         Err(e) => Err(e)?,
@@ -48,6 +57,9 @@ pub async fn api_del_tape(id: i64) -> Result<bool> {
         db::DB,
         tables::{table::Table, table_tape::TableTape},
     };
+
+    #[cfg(feature = "slow_server")]
+    std::thread::sleep(std::time::Duration::from_millis(1000));
 
     DB.with(|db| match TableTape::delete_record(db, id) {
         Ok(record) => Ok(record > 1),
