@@ -44,49 +44,54 @@ mod tests {
     use std::env;
 
     use crate::backend::env::{
-        get_console_log_enabled, get_data_dir, get_database_path, get_logging_path,
-        ENV_CONSOLE_LOG, ENV_PATH_DATA, ENV_PATH_DB, ENV_PATH_LOG,
+        ENV_CONSOLE_LOG, ENV_PATH_DATA, ENV_PATH_DB, ENV_PATH_LOG, get_console_log_enabled,
+        get_data_dir, get_database_path, get_logging_path,
     };
 
     #[test]
     fn composite_env() {
-        // Data path
-        assert_eq!(get_data_dir(), "data".to_string());
-        // Note: this is program wide, so other tests that use env will be affected
-        env::set_var(ENV_PATH_DATA, "new_value");
-        assert_eq!(get_data_dir(), "new_value".to_string());
-        env::remove_var(ENV_PATH_DATA); // Reset
+        unsafe {
+            // Unsafe due to set_var and remove_var, tests are typically run in parallel threads
+            // So all env tests that use set_var and remove_var can only be in this test
 
-        // Database path
-        assert_eq!(get_database_path(), "data/database".to_string());
-        // If only data path is set
-        env::set_var(ENV_PATH_DATA, "new_data_path");
-        assert_eq!(get_database_path(), "new_data_path/database".to_string());
-        // If database path is set
-        env::set_var(ENV_PATH_DB, "test_data_path");
-        assert_eq!(get_database_path(), "test_data_path".to_string());
-        env::remove_var(ENV_PATH_DATA); // Reset
-        env::remove_var(ENV_PATH_DB); // Reset
+            // Data path
+            assert_eq!(get_data_dir(), "data".to_string());
+            // Note: this is program wide, so other tests that use env will be affected
+            env::set_var(ENV_PATH_DATA, "new_value");
+            assert_eq!(get_data_dir(), "new_value".to_string());
+            env::remove_var(ENV_PATH_DATA); // Reset
 
-        // Logging path
-        assert_eq!(get_logging_path(), "data/logs".to_string());
-        // If only data path is set
-        env::set_var(ENV_PATH_DATA, "new_data_path");
-        assert_eq!(get_logging_path(), "new_data_path/logs".to_string());
-        // If database path is set
-        env::set_var(ENV_PATH_LOG, "test_data_path");
-        assert_eq!(get_logging_path(), "test_data_path".to_string());
-        env::remove_var(ENV_PATH_DATA); // Reset
-        env::remove_var(ENV_PATH_LOG); // Reset
+            // Database path
+            assert_eq!(get_database_path(), "data/database".to_string());
+            // If only data path is set
+            env::set_var(ENV_PATH_DATA, "new_data_path");
+            assert_eq!(get_database_path(), "new_data_path/database".to_string());
+            // If database path is set
+            env::set_var(ENV_PATH_DB, "test_data_path");
+            assert_eq!(get_database_path(), "test_data_path".to_string());
+            env::remove_var(ENV_PATH_DATA); // Reset
+            env::remove_var(ENV_PATH_DB); // Reset
 
-        // Console log enabled
-        assert!(!get_console_log_enabled());
-        env::set_var(ENV_CONSOLE_LOG, "OFF");
-        assert!(!get_console_log_enabled());
-        env::set_var(ENV_CONSOLE_LOG, "INVALID");
-        assert!(!get_console_log_enabled());
-        env::set_var(ENV_CONSOLE_LOG, "ON");
-        assert!(get_console_log_enabled());
-        env::remove_var(ENV_CONSOLE_LOG); // Reset
+            // Logging path
+            assert_eq!(get_logging_path(), "data/logs".to_string());
+            // If only data path is set
+            env::set_var(ENV_PATH_DATA, "new_data_path");
+            assert_eq!(get_logging_path(), "new_data_path/logs".to_string());
+            // If database path is set
+            env::set_var(ENV_PATH_LOG, "test_data_path");
+            assert_eq!(get_logging_path(), "test_data_path".to_string());
+            env::remove_var(ENV_PATH_DATA); // Reset
+            env::remove_var(ENV_PATH_LOG); // Reset
+
+            // Console log enabled
+            assert!(!get_console_log_enabled());
+            env::set_var(ENV_CONSOLE_LOG, "OFF");
+            assert!(!get_console_log_enabled());
+            env::set_var(ENV_CONSOLE_LOG, "INVALID");
+            assert!(!get_console_log_enabled());
+            env::set_var(ENV_CONSOLE_LOG, "ON");
+            assert!(get_console_log_enabled());
+            env::remove_var(ENV_CONSOLE_LOG); // Reset
+        }
     }
 }

@@ -35,9 +35,10 @@ pub fn Navbar() -> Element {
                 to: Route::AddJob {},
                 "[Add Job]"
             }
-            Link { style: "margin-left:auto", to: Route::DBMan {}, "man" }
-            Link { to: Route::DBType {}, "type" }
-            Link { to: Route::DBTape {}, "tape" }
+            Link { style: "margin-left:auto", to: Route::DBMan {}, "Manufacturer" }
+            Link { to: Route::DBType {}, "Type" }
+            Link { to: Route::DBTape {}, "Tape" }
+            Link { to: Route::ShowAppState {}, "AppState" }
         }
         hr {}
 

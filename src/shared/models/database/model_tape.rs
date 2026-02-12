@@ -2,8 +2,8 @@ use chrono::{DateTime, Local};
 use dioxus::fullstack::serde::{Deserialize, Serialize};
 #[cfg(feature = "server")]
 use rusqlite::{
-    types::{FromSql, FromSqlResult, ToSqlOutput, ValueRef},
     ToSql,
+    types::{FromSql, FromSqlResult, ToSqlOutput, ValueRef},
 };
 
 use super::{model_manufacturer::RecordManufacturer, model_tape_type::RecordTapeType};
@@ -17,7 +17,9 @@ pub struct RecordTape {
     pub serial: String,
     pub format: TapeFormat,
     pub worm: bool,
-    pub encrypted: bool,
+    pub encryption_type: EncryptionType,
+    pub encryption_sw: SoftwareEncryptionType,
+    pub encryption_hw: HardwareEncryptionType,
     pub compressed: bool,
     pub used_space: i64,
     pub created: DateTime<Local>,
@@ -33,7 +35,9 @@ pub struct RecordTapeJoin {
     pub serial: String, // FIXME allow null serial
     pub format: TapeFormat,
     pub worm: bool,
-    pub encrypted: bool,
+    pub encryption_type: EncryptionType,
+    pub encryption_sw: SoftwareEncryptionType,
+    pub encryption_hw: HardwareEncryptionType,
     pub compressed: bool,
     pub used_space: i64,
     pub created: DateTime<Local>,
@@ -50,7 +54,9 @@ impl Default for RecordTape {
             serial: "".to_string(),
             format: TapeFormat::Tar,
             worm: false,
-            encrypted: false,
+            encryption_type: EncryptionType::None,
+            encryption_sw: SoftwareEncryptionType::None,
+            encryption_hw: HardwareEncryptionType::None,
             compressed: false,
             used_space: 0,
             created: Local::now(),
@@ -78,9 +84,9 @@ impl From<i64> for TapeFormat {
     }
 }
 
-impl Into<&str> for TapeFormat {
-    fn into(self) -> &'static str {
-        match self {
+impl From<TapeFormat> for &str {
+    fn from(value: TapeFormat) -> &'static str {
+        match value {
             TapeFormat::Tar => "Tar",
             TapeFormat::LTFS => "LTFS",
         }
@@ -104,6 +110,147 @@ impl ToSql for TapeFormat {
 impl FromSql for TapeFormat {
     fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
         FromSqlResult::Ok(TapeFormat::from(value.as_i64().unwrap_or(0)))
+    }
+}
+
+#[repr(i64)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+pub enum EncryptionType {
+    None = 0,
+    Software = 1,
+    Hardware = 2,
+}
+
+impl From<i64> for EncryptionType {
+    fn from(value: i64) -> Self {
+        match value {
+            0 => EncryptionType::None,
+            1 => EncryptionType::Software,
+            2 => EncryptionType::Hardware,
+            _ => EncryptionType::None,
+        }
+    }
+}
+
+impl From<EncryptionType> for &str {
+    fn from(value: EncryptionType) -> Self {
+        match value {
+            EncryptionType::None => "None",
+            EncryptionType::Software => "Software",
+            EncryptionType::Hardware => "Hardware",
+        }
+    }
+}
+
+impl From<EncryptionType> for i64 {
+    fn from(value: EncryptionType) -> Self {
+        value as i64 // Do not use value.into() will cause stack overflow
+    }
+}
+
+#[cfg(feature = "server")]
+impl ToSql for EncryptionType {
+    fn to_sql(&self) -> rusqlite::Result<ToSqlOutput<'_>> {
+        Ok(i64::from(*self).into())
+    }
+}
+
+#[cfg(feature = "server")]
+impl FromSql for EncryptionType {
+    fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
+        FromSqlResult::Ok(EncryptionType::from(value.as_i64().unwrap_or(0)))
+    }
+}
+
+#[repr(i64)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+pub enum SoftwareEncryptionType {
+    None = 0,
+    Test = 1,
+}
+
+impl From<i64> for SoftwareEncryptionType {
+    fn from(value: i64) -> Self {
+        match value {
+            0 => SoftwareEncryptionType::None,
+            1 => SoftwareEncryptionType::Test,
+            _ => SoftwareEncryptionType::None, // Fallback
+        }
+    }
+}
+
+impl From<SoftwareEncryptionType> for &str {
+    fn from(value: SoftwareEncryptionType) -> &'static str {
+        match value {
+            SoftwareEncryptionType::None => "None",
+            SoftwareEncryptionType::Test => "Test",
+        }
+    }
+}
+
+impl From<SoftwareEncryptionType> for i64 {
+    fn from(value: SoftwareEncryptionType) -> Self {
+        value as i64 // Do not use value.into() will cause stack overflow
+    }
+}
+
+#[cfg(feature = "server")]
+impl ToSql for SoftwareEncryptionType {
+    fn to_sql(&self) -> rusqlite::Result<ToSqlOutput<'_>> {
+        Ok(i64::from(*self).into())
+    }
+}
+
+#[cfg(feature = "server")]
+impl FromSql for SoftwareEncryptionType {
+    fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
+        FromSqlResult::Ok(SoftwareEncryptionType::from(value.as_i64().unwrap_or(0)))
+    }
+}
+
+#[repr(i64)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+pub enum HardwareEncryptionType {
+    None = 0,
+    Test = 1,
+}
+
+impl From<i64> for HardwareEncryptionType {
+    fn from(value: i64) -> Self {
+        match value {
+            0 => HardwareEncryptionType::None,
+            1 => HardwareEncryptionType::Test,
+            _ => HardwareEncryptionType::None, // Fallback
+        }
+    }
+}
+
+impl From<HardwareEncryptionType> for &str {
+    fn from(value: HardwareEncryptionType) -> &'static str {
+        match value {
+            HardwareEncryptionType::None => "None",
+            HardwareEncryptionType::Test => "Test",
+        }
+    }
+}
+
+impl From<HardwareEncryptionType> for i64 {
+    fn from(value: HardwareEncryptionType) -> Self {
+        value as i64 // Do not use value.into() will cause stack overflow
+    }
+}
+
+#[cfg(feature = "server")]
+impl ToSql for HardwareEncryptionType {
+    fn to_sql(&self) -> rusqlite::Result<ToSqlOutput<'_>> {
+        Ok(i64::from(*self).into())
+    }
+}
+
+#[cfg(feature = "server")]
+impl FromSql for HardwareEncryptionType {
+    fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
+        FromSqlResult::Ok(HardwareEncryptionType::from(value.as_i64().unwrap_or(0)))
     }
 }
 

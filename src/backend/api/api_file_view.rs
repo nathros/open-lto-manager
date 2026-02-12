@@ -28,12 +28,9 @@ pub async fn fv_files_in_dir(path: String) -> Result<Result<Vec<FileView>, Strin
         return Ok(Ok(result));
     }
 
-    info!("dir = {}", path);
-
     let read_dir = match read_dir(&path) {
         Ok(dir) => dir,
         Err(e) => {
-            // return Ok(Err(CapturedError::msg(format!("Cannot find dir {}", path))));
             return Ok(Err(format!("{}", e)));
         }
     };

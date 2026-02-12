@@ -26,7 +26,7 @@ pub fn FileViewer(mut selected_files: Signal<Vec<PathBuf>>) -> Element {
                 current_path.set(o());
                 true
             }
-            Err(_) => {
+            Err(_loading) => {
                 current_path.set("".to_string());
                 false
             }
@@ -42,7 +42,6 @@ pub fn FileViewer(mut selected_files: Signal<Vec<PathBuf>>) -> Element {
                 value: "{current_path}",
                 disabled: !pending,
             }
-            //p { "aaa {pending}" }
             button { onclick: apply, "apply" }
             br {}
             br {}
@@ -67,6 +66,23 @@ fn FileViewerBody(mut current_path: Signal<String>) -> Element {
     rsx! {
         div { style: "width: 100%",
             if let Ok(files) = files_loader() {
+                if !files.is_empty() {
+                    div {
+                        style: "cursor: pointer;",
+                        onclick: move |_| {
+                            let path = current_path();
+                            if let Some(index) = path.rfind('/') {
+                                let (parent, _) = path.split_at(index);
+                                if parent.is_empty() {
+                                    current_path.set("/".to_string());
+                                } else {
+                                    current_path.set(parent.to_string()); // TODO handle none Unix
+                                }
+                            }
+                        },
+                        span { dangerous_inner_html: "&#8624;" }
+                    }
+                }
                 for file in files {
                     if file.is_dir {
                         if let file_name_clone = file.file_name.clone() {

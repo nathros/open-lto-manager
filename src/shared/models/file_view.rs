@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use dioxus::fullstack::serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct FileView {

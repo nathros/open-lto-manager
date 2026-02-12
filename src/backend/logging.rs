@@ -4,12 +4,12 @@ use std::io::ErrorKind;
 use std::sync::LazyLock;
 use tracing::{error, level_filters::LevelFilter};
 use tracing_subscriber::{
+    Registry,
     filter::Filtered,
     fmt,
     layer::Layer,
     prelude::*,
     reload::{self, Handle},
-    Registry,
 };
 
 pub type ReloadableLayer =
@@ -70,21 +70,22 @@ fn setup_logging() -> Result<(ReloadableLayer, Option<ReloadableLayer>), String>
     let log_file_path = get_logging_path();
     let log_file = get_logging_file();
 
-    if let Err(e) = std::fs::remove_file(&log_file) {
-        if e.kind() != std::io::ErrorKind::NotFound {
-            return Err(format!(
-                "Unexpected error with log file: {}, with error: {}",
-                log_file, e
-            ));
-        }
+    if let Err(e) = std::fs::remove_file(&log_file)
+        && e.kind() != std::io::ErrorKind::NotFound
+    {
+        return Err(format!(
+            "Unexpected error with log file: {}, with error: {}",
+            log_file, e
+        ));
     }
-    if let Err(e) = std::fs::create_dir_all(&log_file_path) {
-        if e.kind() != ErrorKind::AlreadyExists {
-            return Err(format!(
-                "Failed to create logging dir: {} with error: {}",
-                log_file_path, e
-            ));
-        }
+
+    if let Err(e) = std::fs::create_dir_all(&log_file_path)
+        && e.kind() != ErrorKind::AlreadyExists
+    {
+        return Err(format!(
+            "Failed to create logging dir: {} with error: {}",
+            log_file_path, e
+        ));
     }
 
     let file = match OpenOptions::new().create(true).append(true).open(&log_file) {
@@ -93,7 +94,7 @@ fn setup_logging() -> Result<(ReloadableLayer, Option<ReloadableLayer>), String>
             return Err(format!(
                 "Failed to create log file: {} with error: {}",
                 log_file, e
-            ))
+            ));
         }
     };
 

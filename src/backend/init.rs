@@ -26,6 +26,9 @@ pub fn init_backend() -> AppState {
     }
 
     AppState {
+        user_name: whoami::username().unwrap_or_else(|_| "unknown".to_string()),
+        platform: whoami::platform().to_string(),
+        cpu_arch: whoami::cpu_arch().to_string(),
         critical_error: log_error || database_result.is_err(),
         error_list,
     }

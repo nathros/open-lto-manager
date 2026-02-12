@@ -50,10 +50,6 @@ pub fn Tape(id: i64) -> Element {
         tape.write().worm = evt.value() == "true";
     };
 
-    let input_enc = move |evt: Event<FormData>| {
-        tape.write().encrypted = evt.value() == "true";
-    };
-
     let input_compression = move |evt: Event<FormData>| {
         tape.write().compressed = evt.value() == "true";
     };
@@ -73,9 +69,6 @@ pub fn Tape(id: i64) -> Element {
             .cloned()
             .unwrap_or_default();
 
-        if !selected_type.supports_encryption {
-            tape.write().encrypted = false;
-        }
         if !selected_type.supports_worm {
             tape.write().worm = false;
         }
@@ -198,18 +191,6 @@ pub fn Tape(id: i64) -> Element {
                 oninput: input_worm,
                 checked: tape().worm,
                 disabled: !selected_type.supports_worm,
-            }
-            br {}
-            br {}
-
-            label { r#for: "enc", "Encrypted:" }
-            br {}
-            input {
-                id: "enc",
-                r#type: "checkbox",
-                oninput: input_enc,
-                checked: tape().encrypted,
-                disabled: !selected_type.supports_encryption,
             }
             br {}
             br {}

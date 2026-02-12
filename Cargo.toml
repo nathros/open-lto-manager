@@ -2,7 +2,7 @@
 name = "openltomanager"
 version = "0.1.0"
 authors = ["nathros"]
-edition = "2021"
+edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -12,15 +12,16 @@ dioxus = { version = "0.7.3", features = ["router", "fullstack"] }
 rusqlite = { version = "0.38.0", features = ["bundled", "chrono"], optional = true }
 serde = { version = "1.0.228", features = ["derive"] }
 tracing = "0.1.44"
-tracing-subscriber = "0.3.22"
+tracing-subscriber = { version = "0.3.22", optional = true }
+whoami = { version = "2.1.1", optional = true }
 
 [features]
 default = ["web", "server"]
 web = ["dioxus/web"]
 desktop = ["dioxus/desktop"]
 mobile = ["dioxus/mobile"]
-server = ["dioxus/server", "dep:rusqlite"]
-# server = ["dioxus/server", "dep:rusqlite", "slow_server"] # Testing only
+server = ["dioxus/server", "dep:rusqlite", "dep:tracing-subscriber", "dep:whoami"]
+# server = ["dioxus/server", "dep:rusqlite", "dep:tracing-subscriber", "dep:whoami", "slow_server"] # Testing only
 slow_server = [] # Testing only, adds delay to all requests
 
 [lints.clippy]
@@ -40,6 +41,6 @@ incremental = false
 # https://book.leptos.dev/deployment/binary_size.html
 [profile.wasm-release]
 inherits = "release"
-opt-level = 'z'
+opt-level = "z"
 lto = true
 codegen-units = 1

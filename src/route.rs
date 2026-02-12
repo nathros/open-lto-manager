@@ -2,6 +2,7 @@ use dioxus::prelude::*;
 
 use crate::frontend::components::navbar::Navbar;
 use crate::frontend::pages::add_job::AddJob;
+use crate::frontend::pages::dbg::db_app_state::ShowAppState;
 use crate::frontend::pages::dbg::db_man::DBMan;
 use crate::frontend::pages::dbg::db_tape::DBTape;
 use crate::frontend::pages::dbg::db_type::DBType;
@@ -35,4 +36,6 @@ pub enum Route {
     DBType {},
     #[route("/db-tape")]
     DBTape {},
+    #[route("/db-state")]
+    ShowAppState {},
 }
