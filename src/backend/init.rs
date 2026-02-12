@@ -12,7 +12,7 @@ pub fn init_backend() -> AppState {
     let log_error = match LOG_LAYERS.as_ref() {
         Ok(_log_file_layer) => false,
         Err(error) => {
-            error!("Logging init error: {}", error);
+            error!("Init [logging] error: {}", error);
             error_list.push(error.clone());
             true
         }
@@ -21,12 +21,62 @@ pub fn init_backend() -> AppState {
 
     let database_result = create_database();
     if let Some(error) = database_result.as_ref().err() {
-        error!("Database init error: {}", error);
+        error!("Init [database] error: {}", error);
         error_list.push(error.clone());
+    } else {
+        info!("Init [database] success");
     }
 
+    let (user_name, user_name_error) = match whoami::username() {
+        Ok(name) => (name, None),
+        Err(e) => ("unknown".to_string(), Some(format!("{}", e))),
+    };
+
+    let part_tape_group = match uzers::get_user_by_name(&user_name) {
+        Some(current_user) => {
+            if let Some(groups) = current_user.groups() {
+                groups.iter().any(|g| g.name() == "tape")
+            } else {
+                false
+            }
+        }
+        None => false,
+    };
+    if part_tape_group {
+        info!("Init [groups] user '{}' found in 'tape' group", user_name);
+    } else {
+        error!(
+            "Init [groups] user '{}', not found in 'tape' group",
+            user_name
+        );
+    }
+
+    let (ltfs_installed, ltfs_error) = match std::process::Command::new("ltfs")
+        .stdout(std::process::Stdio::null()) // Hide output from console
+        .stderr(std::process::Stdio::null())
+        .spawn()
+    {
+        Ok(_) => {
+            info!("Init [ltfs driver] found");
+            (true, None)
+        }
+        Err(e) => {
+            if std::io::ErrorKind::NotFound != e.kind() {
+                error!("Init [ltfs driver] error: {}", e);
+                (false, Some(format!("{}", e)))
+            } else {
+                error!("Init [ltfs driver] not found");
+                (false, None)
+            }
+        }
+    };
+
     AppState {
-        user_name: whoami::username().unwrap_or_else(|_| "unknown".to_string()),
+        user_name,
+        user_name_error,
+        part_tape_group,
+        ltfs_installed,
+        ltfs_error,
         platform: whoami::platform().to_string(),
         cpu_arch: whoami::cpu_arch().to_string(),
         critical_error: log_error || database_result.is_err(),

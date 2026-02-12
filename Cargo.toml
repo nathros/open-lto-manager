@@ -13,6 +13,7 @@ rusqlite = { version = "0.38.0", features = ["bundled", "chrono"], optional = tr
 serde = { version = "1.0.228", features = ["derive"] }
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.22", optional = true }
+uzers = { version = "0.12.2", optional = true }
 whoami = { version = "2.1.1", optional = true }
 
 [features]
@@ -20,8 +21,8 @@ default = ["web", "server"]
 web = ["dioxus/web"]
 desktop = ["dioxus/desktop"]
 mobile = ["dioxus/mobile"]
-server = ["dioxus/server", "dep:rusqlite", "dep:tracing-subscriber", "dep:whoami"]
-# server = ["dioxus/server", "dep:rusqlite", "dep:tracing-subscriber", "dep:whoami", "slow_server"] # Testing only
+server = ["dioxus/server", "dep:rusqlite", "dep:tracing-subscriber", "dep:uzers", "dep:whoami"]
+# server = ["dioxus/server", "dep:rusqlite", "dep:tracing-subscriber", "dep:uzers", "dep:whoami", "slow_server"] # Testing only
 slow_server = [] # Testing only, adds delay to all requests
 
 [lints.clippy]

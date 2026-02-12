@@ -23,6 +23,22 @@ fn Inner() -> Element {
         span { "{app_state().user_name}" }
         br {}
 
+        b { "Username error: " }
+        span { "{app_state().user_name_error.unwrap_or(\"\".to_string())}" }
+        br {}
+
+        b { "Tape Group: " }
+        span { "{app_state().part_tape_group}" }
+        br {}
+
+        b { "LTFS Installed: " }
+        span { "{app_state().ltfs_installed}" }
+        br {}
+
+        b { "LTFS Error: " }
+        span { "{app_state().ltfs_error.unwrap_or(\"\".to_string())}" }
+        br {}
+
         b { "Platform: " }
         span { "{app_state().platform}" }
         br {}
