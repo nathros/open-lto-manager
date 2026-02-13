@@ -1,8 +1,9 @@
-use rusqlite::{params, Connection, Error};
+use chrono::Local;
+use rusqlite::{Connection, Error, params};
 
 use crate::{
     backend::database::tables::table::Table,
-    shared::models::database::model_user::{RecordUser, RecordUserWithRoles},
+    shared::models::database::model_user::{ColourMode, RecordUser, RecordUserWithRoles},
 };
 
 pub struct TableUser {}
@@ -36,6 +37,26 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
             );",
             (),
         )?;
+
+        Self::insert_record(
+            db,
+            &RecordUser {
+                id: 0,
+                username: "admin".to_string(),
+                description: "Admin".to_string(),
+                hash: "".to_string(),
+                salt: "".to_string(),
+                enabled: true,
+                created: Local::now(),
+                language: 0,
+                avatar: "".to_string(),
+                system_theme: ColourMode::System,
+                icon_theme: "".to_string(),
+                fm_theme: "".to_string(),
+                accent_colour: "".to_string(),
+            },
+        )?;
+
         Ok(true)
     }
 
@@ -220,7 +241,7 @@ mod tests {
             println!("--insert_result: {:?}", insert_result);
         }
         assert!(insert_result.is_ok(), "Failed to insert new user");
-        let get_inserted_user_result = TableUser::get(db, 1);
+        let get_inserted_user_result = TableUser::get(db, 2); // 1 is Admin
         if insert_result.is_err() {
             println!("--get_inserted_user_result: {:?}", get_inserted_user_result);
         }

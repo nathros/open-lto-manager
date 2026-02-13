@@ -1,5 +1,8 @@
 [application]
 
+[web]
+pre_compress = true
+
 [web.app]
 
 # HTML title tag content

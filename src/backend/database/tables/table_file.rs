@@ -1,4 +1,4 @@
-use rusqlite::{params, Connection, Error};
+use rusqlite::{Connection, Error, params};
 
 use crate::{
     backend::database::tables::table::Table,
@@ -19,9 +19,9 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
         }
 
         db.execute(
-            "CREATE TABLE IF NOT EXISTS tape (
+            "CREATE TABLE IF NOT EXISTS file (
                 id INTEGER PRIMARY KEY,
-                tape_id INTEGER NOT NULL,
+                tape_id INTEGER,
                 file_name_virt TEXT NOT NULL,
                 file_path_virt TEXT NOT NULL,
                 file_name_phy TEXT NOT NULL,
@@ -31,10 +31,16 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
                 modified BIGINT NOT NULL,
                 crc32 TEXT NOT NULL,
                 icon TEXT,
-                FOREIGN KEY(tape_id) REFERENCES tape(id)
+                FOREIGN KEY(tape_id) REFERENCES tape(id),
+                CONSTRAINT path_name_pair UNIQUE(file_name_virt, file_path_virt)
             );",
             (),
         )?;
+
+        db.execute("CREATE INDEX v_path ON file(file_path_virt);", ())?;
+        db.execute("CREATE INDEX p_path ON file(file_path_phy);", ())?;
+
+        Self::insert_record(db, &RecordFile::root_dir())?;
 
         Ok(true)
     }
@@ -53,7 +59,7 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
 
     fn insert_record(db: &Connection, record: &RecordFile) -> Result<usize, Error> {
         db.execute(
-            "INSERT INTO tape (
+            "INSERT INTO file (
                     tape_id,
                     file_name_virt,
                     file_path_virt,
@@ -92,20 +98,18 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
 
     fn update_record(db: &Connection, record: &RecordFile) -> Result<usize, Error> {
         db.execute(
-            "UPDATE tape SET
-                    tape_id = ?1,
-                    file_name_virt = ?2,
-                    file_path_virt = ?3,
-                    file_name_phy = ?4,
-                    file_path_phy = ?5,
-                    file_size = ?6,
-                    created = ?7,
-                    modified = ?8,
-                    crc32 = ?9,
-                    icon = ?10,
-                WHERE id = ?11",
+            "UPDATE file SET
+                    file_name_virt = ?1,
+                    file_path_virt = ?2,
+                    file_name_phy = ?3,
+                    file_path_phy = ?4,
+                    file_size = ?5,
+                    created = ?6,
+                    modified = ?7,
+                    crc32 = ?8,
+                    icon = ?9,
+                WHERE id = ?10",
             params![
-                record.tape_id,
                 record.file_name_virt,
                 record.file_path_virt,
                 record.file_name_phy,
@@ -129,21 +133,76 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
     }
 }
 
-/*impl TableTape {
-    pub fn get_all(db: &Connection) -> Result<Vec<RecordManufacturer>, rusqlite::Error> {
-        db.prepare(
-            "SELECT id, name FROM manufacturer ORDER BY
-                    CASE id
-                        WHEN 1 THEN 2
-                    END,
-                    name", // Order by name then "Other" [id=1] to be last
-        )?
-        .query_map([], |row| {
-            Ok(RecordManufacturer {
-                id: row.get(0)?,
-                name: row.get(1)?,
-            })
-        })?
-        .collect::<Result<Vec<RecordManufacturer>, rusqlite::Error>>()
+impl TableFile {}
+
+#[cfg(test)]
+mod tests {
+    #![allow(clippy::unwrap_used)]
+
+    use crate::backend::database::tables::{
+        table::Table, table_file::TableFile, table_manufacturer::TableManufacturer,
+        table_tape::TableTape, table_tape_type::TableTapeType,
+    };
+
+    fn create() -> rusqlite::Connection {
+        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        // TableFile depends on TableManufacturer, TableTapeType and TableTape, so these must be created first
+        assert!(
+            !conn.table_exists(None, "manufacturer").unwrap(),
+            "New table manufacturer should be empty"
+        );
+        assert!(
+            TableManufacturer::create_table(&conn).is_ok(),
+            "Failed to create manufacturer table"
+        );
+        assert!(
+            conn.table_exists(None, "manufacturer").unwrap(),
+            "create_table() manufacturer reported Ok but table does not exist"
+        );
+
+        assert!(
+            !conn.table_exists(None, "tape_type").unwrap(),
+            "New table tape_type should be empty"
+        );
+        assert!(
+            TableTapeType::create_table(&conn).is_ok(),
+            "Failed to create tape_type table"
+        );
+        assert!(
+            conn.table_exists(None, "tape_type").unwrap(),
+            "create_table() tape_type reported Ok but table does not exist"
+        );
+
+        assert!(
+            !conn.table_exists(None, "tape").unwrap(),
+            "New table tape_type should be empty"
+        );
+        assert!(
+            TableTape::create_table(&conn).is_ok(),
+            "Failed to create tape table"
+        );
+        assert!(
+            conn.table_exists(None, "tape").unwrap(),
+            "create_table() tape reported Ok but table does not exist"
+        );
+
+        assert!(
+            !conn.table_exists(None, "file").unwrap(),
+            "New table should be empty"
+        );
+        assert!(
+            TableFile::create_table(&conn).is_ok(),
+            "Failed to create file table"
+        );
+        assert!(
+            conn.table_exists(None, "file").unwrap(),
+            "create_table() file reported Ok but table does not exist"
+        );
+        conn
     }
-}*/
+
+    #[test]
+    fn suite() {
+        let _db = create();
+    }
+}

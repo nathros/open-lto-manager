@@ -2,6 +2,7 @@
 // As they are shared between client and server
 pub mod model_file;
 pub mod model_job;
+pub mod model_job_metadata;
 pub mod model_manufacturer;
 pub mod model_role;
 pub mod model_tape;

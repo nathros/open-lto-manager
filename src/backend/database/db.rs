@@ -4,6 +4,9 @@ use std::sync::Mutex;
 use dioxus::prelude::info;
 use rusqlite::{Connection, Error};
 
+use crate::backend::database::tables::table_file::TableFile;
+use crate::backend::database::tables::table_job::TableJob;
+use crate::backend::database::tables::table_job_metadata::TableJobMetadata;
 use crate::backend::{database::tables::table_tape::TableTape, env::get_database_path};
 use crate::backend::{
     database::tables::{
@@ -68,6 +71,17 @@ fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, Str
             &TableTape::create_table,
             &TableTape::update_table,
         ),
+        (
+            "TableFile",
+            &TableFile::create_table,
+            &TableFile::update_table,
+        ),
+        ("TableJob", &TableJob::create_table, &TableJob::update_table),
+        (
+            "TableJobMetadata",
+            &TableJobMetadata::create_table,
+            &TableJobMetadata::update_table,
+        ),
     ];
 
     // Create tables and update them if needed
@@ -107,7 +121,7 @@ fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, Str
                 return Err(format!(
                     "Failed table upgrade from {} to {}, {}",
                     current_database_version, DB_VERSION_LATEST, e
-                ))
+                ));
             }
         }
     }
