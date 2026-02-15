@@ -135,6 +135,26 @@ impl Table<RecordJob, RecordJobJoin> for TableJob {
     }
 }
 
+impl TableJob {
+    pub fn get_all(db: &Connection) -> Result<Vec<RecordJob>, rusqlite::Error> {
+        db.prepare(
+            "SELECT
+                    id,
+                    user_id,
+                    name,
+                    job_type,
+                    job_status,
+                    start_time,
+                    end_time,
+                    comment
+                FROM job
+                ORDER BY id",
+        )?
+        .query_map([], |row| TableJob::fill(row, 0))?
+        .collect::<Result<Vec<RecordJob>, rusqlite::Error>>()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     #![allow(clippy::unwrap_used)]

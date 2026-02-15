@@ -192,6 +192,31 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
     }
 }
 
+impl TableUser {
+    pub fn get_all(db: &Connection) -> Result<Vec<RecordUser>, rusqlite::Error> {
+        db.prepare(
+            "SELECT
+                    id,
+                    username,
+                    description,
+                    hash,
+                    salt,
+                    enabled,
+                    created,
+                    language,
+                    avatar,
+                    system_theme,
+                    icon_theme,
+                    fm_theme,
+                    accent_colour
+                FROM user
+                ORDER BY id",
+        )?
+        .query_map([], |row| TableUser::fill(row, 0))?
+        .collect::<Result<Vec<RecordUser>, rusqlite::Error>>()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     #![allow(clippy::unwrap_used)]

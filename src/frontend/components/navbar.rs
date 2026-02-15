@@ -37,6 +37,9 @@ pub fn Navbar() -> Element {
             }
             Link { style: "margin-left:auto", to: Route::DBMan {}, "Manufacturer" }
             Link { to: Route::DBType {}, "Type" }
+            Link { to: Route::DBUser {}, "User" }
+            Link { to: Route::DBJob {}, "Job" }
+            Link { to: Route::DBFile {}, "File" }
             Link { to: Route::DBTape {}, "Tape" }
             Link { to: Route::ShowAppState {}, "AppState" }
         }

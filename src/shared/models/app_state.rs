@@ -7,8 +7,10 @@ pub struct AppState {
     pub part_tape_group: bool, // Most OSs need user added to 'tape' group to access drives, is the user part of this group
     pub ltfs_installed: bool,  // Is ltfs command available
     pub ltfs_error: Option<String>, // Error message when running: ltfs
+    pub mt_installed: bool,    // Is mt command available
     pub platform: String,
+    pub distro: String,
     pub cpu_arch: String,
-    pub critical_error: bool,
-    pub error_list: Vec<String>,
+    pub critical_error: bool, // If any critical errors are found then the app cannot start
+    pub error_list: Vec<String>, // List of critical errors
 }

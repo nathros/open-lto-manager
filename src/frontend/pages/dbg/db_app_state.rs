@@ -23,7 +23,7 @@ fn Inner() -> Element {
         span { "{app_state().user_name}" }
         br {}
 
-        b { "Username error: " }
+        b { "Username Error: " }
         span { "{app_state().user_name_error.unwrap_or(\"\".to_string())}" }
         br {}
 
@@ -39,8 +39,16 @@ fn Inner() -> Element {
         span { "{app_state().ltfs_error.unwrap_or(\"\".to_string())}" }
         br {}
 
+         b { "MT Installed: " }
+        span { "{app_state().mt_installed}" }
+        br {}
+
         b { "Platform: " }
         span { "{app_state().platform}" }
+        br {}
+
+        b { "Distro: " }
+        span { "{app_state().distro}" }
         br {}
 
         b { "CPU Arch: " }

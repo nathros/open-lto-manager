@@ -6,7 +6,7 @@ use tracing::{error, info};
 
 pub static APP_STATE: LazyLock<AppState> = LazyLock::new(init_backend);
 
-pub fn init_backend() -> AppState {
+fn init_backend() -> AppState {
     let mut error_list = vec![];
 
     let log_error = match LOG_LAYERS.as_ref() {
@@ -57,17 +57,36 @@ pub fn init_backend() -> AppState {
         .spawn()
     {
         Ok(_) => {
-            info!("Init [ltfs driver] found");
+            info!("Init [ltfs] found");
             (true, None)
         }
         Err(e) => {
             if std::io::ErrorKind::NotFound != e.kind() {
-                error!("Init [ltfs driver] error: {}", e);
+                error!("Init [ltfs] error: {}", e);
                 (false, Some(format!("{}", e)))
             } else {
-                error!("Init [ltfs driver] not found");
+                error!("Init [ltfs] not found");
                 (false, None)
             }
+        }
+    };
+
+    let mt_installed = match std::process::Command::new("mt")
+        .stdout(std::process::Stdio::null()) // Hide output from console
+        .stderr(std::process::Stdio::null())
+        .spawn()
+    {
+        Ok(_) => {
+            info!("Init [mt] found");
+            true
+        }
+        Err(e) => {
+            if std::io::ErrorKind::NotFound != e.kind() {
+                error!("Init [mt] error: {}", e);
+            } else {
+                error!("Init [mt] not found");
+            }
+            false
         }
     };
 
@@ -77,8 +96,10 @@ pub fn init_backend() -> AppState {
         part_tape_group,
         ltfs_installed,
         ltfs_error,
+        mt_installed,
         platform: whoami::platform().to_string(),
         cpu_arch: whoami::cpu_arch().to_string(),
+        distro: whoami::distro().unwrap_or("unknown".to_string()),
         critical_error: log_error || database_result.is_err(),
         error_list,
     }

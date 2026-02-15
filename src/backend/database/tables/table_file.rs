@@ -49,8 +49,24 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
         Ok(false)
     }
 
-    fn get(_db: &Connection, _record_id: i64) -> Result<RecordFile, Error> {
-        todo!()
+    fn get(db: &Connection, record_id: i64) -> Result<RecordFile, Error> {
+        db.prepare(
+            "SELECT
+                    id,
+                    tape_id,
+                    file_name_virt,
+                    file_path_virt,
+                    file_name_phy,
+                    file_path_phy,
+                    file_size,
+                    created,
+                    modified,
+                    crc32,
+                    icon
+                FROM file
+                WHERE id = ?1",
+        )?
+        .query_one([record_id], |row| TableFile::fill(row, 0))
     }
 
     fn get_join(_db: &Connection, _record_id: i64) -> Result<RecordFileJoin, Error> {
@@ -128,12 +144,45 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
         db.execute("DELETE FROM file WHERE id = ?1;", params![record_id])
     }
 
-    fn fill(_row: &rusqlite::Row<'_>, _offset: usize) -> Result<RecordFile, Error> {
-        todo!()
+    fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordFile, Error> {
+        Ok(RecordFile {
+            id: row.get(offset)?,
+            tape_id: row.get(offset + 1)?,
+            file_name_virt: row.get(offset + 2)?,
+            file_path_virt: row.get(offset + 3)?,
+            file_name_phy: row.get(offset + 4)?,
+            file_path_phy: row.get(offset + 5)?,
+            file_size: row.get(offset + 6)?,
+            created: row.get(offset + 7)?,
+            modified: row.get(offset + 8)?,
+            crc32: row.get(offset + 9)?,
+            icon: row.get(offset + 10)?,
+        })
     }
 }
 
-impl TableFile {}
+impl TableFile {
+    pub fn get_all(db: &Connection) -> Result<Vec<RecordFile>, rusqlite::Error> {
+        db.prepare(
+            "SELECT
+                    id,
+                    tape_id,
+                    file_name_virt,
+                    file_path_virt,
+                    file_name_phy,
+                    file_path_phy,
+                    file_size,
+                    created,
+                    modified,
+                    crc32,
+                    icon
+                FROM file
+                ORDER BY id",
+        )?
+        .query_map([], |row| TableFile::fill(row, 0))?
+        .collect::<Result<Vec<RecordFile>, rusqlite::Error>>()
+    }
+}
 
 #[cfg(test)]
 mod tests {
