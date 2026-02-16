@@ -10,6 +10,7 @@
         "chrono",
         "clippy",
         "dioxus",
+        "distro",
         "Imation",
         "Initialise",
         "LTFS",

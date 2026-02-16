@@ -6,6 +6,34 @@ use tracing::{error, info};
 
 pub static APP_STATE: LazyLock<AppState> = LazyLock::new(init_backend);
 
+fn check_command(command: &str) -> (bool, Option<String>) {
+    match std::process::Command::new(command)
+        .stdout(std::process::Stdio::null()) // Hide output from console
+        .stderr(std::process::Stdio::null())
+        .spawn()
+    {
+        Ok(mut child) => {
+            // Need to wait otherwise child will be marked as defunct
+            if let Some(e) = child.wait().err() {
+                error!("Init [{}] found but has error: {}", command, e);
+                (true, Some(format!("{}", e)))
+            } else {
+                info!("Init [{}] found", command);
+                (true, None)
+            }
+        }
+        Err(e) => {
+            if std::io::ErrorKind::NotFound != e.kind() {
+                error!("Init [{}] error: {}", command, e);
+                (false, Some(format!("{}", e)))
+            } else {
+                error!("Init [{}] not found", command);
+                (false, None)
+            }
+        }
+    }
+}
+
 fn init_backend() -> AppState {
     let mut error_list = vec![];
 
@@ -51,44 +79,8 @@ fn init_backend() -> AppState {
         );
     }
 
-    let (ltfs_installed, ltfs_error) = match std::process::Command::new("ltfs")
-        .stdout(std::process::Stdio::null()) // Hide output from console
-        .stderr(std::process::Stdio::null())
-        .spawn()
-    {
-        Ok(_) => {
-            info!("Init [ltfs] found");
-            (true, None)
-        }
-        Err(e) => {
-            if std::io::ErrorKind::NotFound != e.kind() {
-                error!("Init [ltfs] error: {}", e);
-                (false, Some(format!("{}", e)))
-            } else {
-                error!("Init [ltfs] not found");
-                (false, None)
-            }
-        }
-    };
-
-    let mt_installed = match std::process::Command::new("mt")
-        .stdout(std::process::Stdio::null()) // Hide output from console
-        .stderr(std::process::Stdio::null())
-        .spawn()
-    {
-        Ok(_) => {
-            info!("Init [mt] found");
-            true
-        }
-        Err(e) => {
-            if std::io::ErrorKind::NotFound != e.kind() {
-                error!("Init [mt] error: {}", e);
-            } else {
-                error!("Init [mt] not found");
-            }
-            false
-        }
-    };
+    let (ltfs_installed, ltfs_error) = check_command("ltfs");
+    let (mt_installed, mt_error) = check_command("mt");
 
     AppState {
         user_name,
@@ -97,6 +89,7 @@ fn init_backend() -> AppState {
         ltfs_installed,
         ltfs_error,
         mt_installed,
+        mt_error,
         platform: whoami::platform().to_string(),
         cpu_arch: whoami::cpu_arch().to_string(),
         distro: whoami::distro().unwrap_or("unknown".to_string()),

@@ -8,6 +8,7 @@ pub struct AppState {
     pub ltfs_installed: bool,  // Is ltfs command available
     pub ltfs_error: Option<String>, // Error message when running: ltfs
     pub mt_installed: bool,    // Is mt command available
+    pub mt_error: Option<String>, // Error message when running: mt
     pub platform: String,
     pub distro: String,
     pub cpu_arch: String,
