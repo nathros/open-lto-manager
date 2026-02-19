@@ -1,12 +1,18 @@
+use std::collections::HashSet;
+
 use crate::frontend::collections::file_view::FileViewer;
 use dioxus::prelude::*;
-use std::path::PathBuf;
 
 #[component]
 pub fn AddJob() -> Element {
-    let selected_files: Signal<Vec<PathBuf>> = use_signal(|| vec![]);
+    let selected_files: Signal<HashSet<String>> = use_signal(|| HashSet::new());
 
     rsx! {
         FileViewer { selected_files }
+        hr {}
+        for f in selected_files() {
+            span { "{f}" }
+            br {}
+        }
     }
 }

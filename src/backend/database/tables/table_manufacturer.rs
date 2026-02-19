@@ -1,4 +1,4 @@
-use rusqlite::{params, Connection, Error, Row};
+use rusqlite::{Connection, Error, Row, params};
 
 use crate::shared::models::database::model_manufacturer::RecordManufacturer;
 
@@ -125,7 +125,7 @@ mod tests {
         shared::models::database::model_manufacturer::RecordManufacturer,
     };
 
-    fn create() -> rusqlite::Connection {
+    fn create_table() -> rusqlite::Connection {
         let conn = rusqlite::Connection::open_in_memory().unwrap();
         assert!(
             !conn.table_exists(None, "manufacturer").unwrap(),
@@ -142,8 +142,48 @@ mod tests {
         conn
     }
 
-    fn update(db: &rusqlite::Connection) {
-        let all_records_result = TableManufacturer::get_all(db);
+    #[test]
+    fn create() {
+        let _db = create_table();
+    }
+
+    #[test]
+    fn insert() {
+        let db = create_table();
+        let all_records_current = TableManufacturer::get_all(&db).unwrap();
+        let new_manufacturer_name = "NewName".to_string();
+        assert_eq!(
+            all_records_current
+                .iter()
+                .find(|&m| m.name == new_manufacturer_name),
+            None
+        );
+        TableManufacturer::insert_record(
+            &db,
+            &RecordManufacturer {
+                id: 0,
+                name: new_manufacturer_name.clone(),
+            },
+        )
+        .unwrap();
+
+        let all_records_updated = TableManufacturer::get_all(&db).unwrap();
+        assert!(
+            all_records_updated
+                .iter()
+                .any(|m| m.name == new_manufacturer_name)
+        );
+
+        assert!(
+            all_records_updated.last().unwrap().name == "Other",
+            "Other not at end of list after insert"
+        );
+    }
+
+    #[test]
+    fn update() {
+        let db = create_table();
+        let all_records_result = TableManufacturer::get_all(&db);
         assert!(
             all_records_result.is_ok(),
             "Failed to get all Manufacturer records"
@@ -163,47 +203,34 @@ mod tests {
         let mut update_record: RecordManufacturer = original_record.clone();
         update_record.name = new_name;
         assert!(
-            TableManufacturer::update_record(db, &update_record).is_ok(),
+            TableManufacturer::update_record(&db, &update_record).is_ok(),
             "Failed to update record"
         );
 
-        let all_records_updated = TableManufacturer::get_all(db).unwrap();
+        let all_records_updated = TableManufacturer::get_all(&db).unwrap();
         assert_eq!(update_record, *all_records_updated.get(test_index).unwrap());
     }
 
-    fn insert(db: &rusqlite::Connection) {
-        let all_records_current = TableManufacturer::get_all(db).unwrap();
-        let new_manufacturer_name = "NewName".to_string();
-        assert_eq!(
-            all_records_current
-                .iter()
-                .find(|&m| m.name == new_manufacturer_name),
-            None
-        );
-        TableManufacturer::insert_record(
-            db,
-            &RecordManufacturer {
-                id: 0,
-                name: new_manufacturer_name.clone(),
-            },
-        )
-        .unwrap();
-
-        let all_records_updated = TableManufacturer::get_all(db).unwrap();
-        assert!(all_records_updated
-            .iter()
-            .any(|m| m.name == new_manufacturer_name));
-
-        assert!(
-            all_records_updated.last().unwrap().name == "Other",
-            "Other not at end of list after insert"
-        );
-    }
-
     #[test]
-    fn suite() {
-        let db = create();
-        update(&db);
-        insert(&db);
+    fn delete() {
+        let db = create_table();
+        let all_records_result = TableManufacturer::get_all(&db);
+        assert!(
+            all_records_result.is_ok(),
+            "Failed to get all Manufacturer records"
+        );
+        let all_records = all_records_result.unwrap();
+
+        let record_to_delete = all_records.get(all_records.len() / 2).unwrap().clone();
+        assert!(
+            TableManufacturer::delete_record(&db, record_to_delete.id).is_ok(),
+            "Failed to delete record"
+        );
+
+        let all_records_refetch = TableManufacturer::get_all(&db).unwrap();
+        let find = all_records_refetch
+            .iter()
+            .find(|r| r.name == record_to_delete.name);
+        assert!(find.is_none());
     }
 }

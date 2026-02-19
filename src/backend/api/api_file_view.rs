@@ -15,17 +15,22 @@ pub async fn fv_working_dir() -> Result<String> {
 }
 
 #[post("/api/fv/explore")]
-pub async fn fv_files_in_dir(path: String) -> Result<Result<Vec<FileView>, String>> {
+pub async fn fv_files_in_dir(
+    path: String,
+    expanded: bool,
+    nest_index: usize,
+) -> Result<Result<Vec<FileView>, String>> {
     use std::fs::read_dir;
     use std::os::unix::fs::MetadataExt;
+    use std::path::MAIN_SEPARATOR;
 
     #[cfg(feature = "slow_server")]
     std::thread::sleep(std::time::Duration::from_millis(1000));
 
-    let mut result = vec![];
+    info!("fetch2 {}", path);
 
     if path.is_empty() {
-        return Ok(Ok(result));
+        return Ok(Ok(vec![]));
     }
 
     let read_dir = match read_dir(&path) {
@@ -35,17 +40,31 @@ pub async fn fv_files_in_dir(path: String) -> Result<Result<Vec<FileView>, Strin
         }
     };
 
-    for path in read_dir.flatten() {
-        if let Ok(metadata) = path.metadata() {
-            result.push(FileView {
+    let mut results = vec![];
+
+    for current_path in read_dir.flatten() {
+        let name = current_path
+            .file_name()
+            .into_string()
+            .unwrap_or("Failed to read filename".to_string());
+
+        if let Ok(metadata) = current_path.metadata() {
+            results.push(FileView {
                 is_dir: metadata.is_dir(),
-                file_name: path
-                    .file_name()
-                    .into_string()
-                    .unwrap_or("Failed to read filename".to_string()),
-                size: metadata.size(),
+                path: format!("{}{}{}", path.clone(), MAIN_SEPARATOR, name),
+                name,
+                size: if metadata.is_dir() {
+                    0
+                } else {
+                    metadata.size()
+                },
+                expanded,
+                nest: nest_index,
+                hidden: false,
+                selected: false,
             });
         }
     }
-    Ok(Ok(result))
+
+    Ok(Ok(results))
 }

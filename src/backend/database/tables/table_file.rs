@@ -193,7 +193,7 @@ mod tests {
         table_tape::TableTape, table_tape_type::TableTapeType,
     };
 
-    fn create() -> rusqlite::Connection {
+    fn create_table() -> rusqlite::Connection {
         let conn = rusqlite::Connection::open_in_memory().unwrap();
         // TableFile depends on TableManufacturer, TableTapeType and TableTape, so these must be created first
         assert!(
@@ -251,7 +251,12 @@ mod tests {
     }
 
     #[test]
-    fn suite() {
-        let _db = create();
+    fn create() {
+        let _db = create_table();
+    }
+
+    #[test]
+    fn insert() {
+        let _db = create_table();
     }
 }

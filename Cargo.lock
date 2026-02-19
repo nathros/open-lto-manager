@@ -3319,6 +3319,7 @@ dependencies = [
  "dioxus",
  "rusqlite",
  "serde",
+ "tokio",
  "tracing",
  "tracing-subscriber",
  "uzers",

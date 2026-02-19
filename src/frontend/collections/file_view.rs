@@ -1,10 +1,12 @@
+use std::collections::HashSet;
+
 use crate::backend::api::api_file_view::{fv_files_in_dir, fv_working_dir};
 use crate::shared::models::file_view::FileView;
-use dioxus::{fullstack::Loader, prelude::*};
-use std::path::PathBuf;
+use dioxus::fullstack::Loader;
+use dioxus::prelude::*;
 
 #[component]
-pub fn FileViewer(mut selected_files: Signal<Vec<PathBuf>>) -> Element {
+pub fn FileViewer(mut selected_files: WriteSignal<HashSet<String>>) -> Element {
     let mut current_path: Signal<String> = use_signal(|| "".to_string());
 
     let mut current_path_input: Signal<String> = use_signal(|| current_path());
@@ -15,7 +17,7 @@ pub fn FileViewer(mut selected_files: Signal<Vec<PathBuf>>) -> Element {
     };
 
     let apply = move |_| {
-        info!("apply {} {}", current_path, current_path_input);
+        info!("apply {} = {}", current_path, current_path_input);
         current_path.set(current_path_input());
     };
 
@@ -51,58 +53,108 @@ pub fn FileViewer(mut selected_files: Signal<Vec<PathBuf>>) -> Element {
             fallback: |_| rsx! {
                 p { "fetching" }
             },
-            FileViewerBody { current_path }
+            FileViewerBody2 { current_path, selected_files }
         }
     }
 }
 
 #[component]
-fn FileViewerBody(mut current_path: Signal<String>) -> Element {
-    info!("FileViewerBody {}", current_path());
-
-    let files_loader: Loader<Result<Vec<FileView>, String>> =
-        use_loader(move || fv_files_in_dir(current_path()))?;
+fn FileViewerBody2(
+    mut current_path: Signal<String>,
+    mut selected_files: WriteSignal<HashSet<String>>,
+) -> Element {
+    info!("render");
+    let mut loader: Loader<Result<Vec<FileView>, String>> =
+        use_loader(move || fv_files_in_dir(current_path(), false, 0))?;
 
     rsx! {
         div { style: "width: 100%",
-            if let Ok(files) = files_loader() {
-                if !files.is_empty() {
-                    div {
-                        style: "cursor: pointer;",
-                        onclick: move |_| {
-                            let path = current_path();
-                            if let Some(index) = path.rfind('/') {
-                                let (parent, _) = path.split_at(index);
-                                if parent.is_empty() {
-                                    current_path.set("/".to_string());
-                                } else {
-                                    current_path.set(parent.to_string()); // TODO handle none Unix
+            if let Ok(dir) = loader() {
+                for (index , file) in dir.into_iter().enumerate() {
+                    if !file.hidden && let file_path = file.path.clone() {
+                        if file.is_dir {
+                            div { style: "cursor: pointer;padding-left:{file.nest * 20}px",
+                                button {
+                                    r#type: "button",
+                                    onclick: move |_| {
+                                        info!("click: {}", file_path);
+                                        spawn(async move {
+                                            if let Ok(mut dir) = loader() {
+                                                FileView::toggle_dir(&mut dir, index).await;
+                                                loader.set(Ok(dir));
+                                            }
+                                        });
+                                    },
+                                    if file.expanded {
+                                        "–"
+                                    } else {
+                                        "+"
+                                    }
                                 }
+                                input {
+                                    r#type: "checkbox",
+                                    oninput: move |event: Event<FormData>| {
+                                        if let Ok(mut dir) = loader() {
+                                            for f in dir.iter_mut().skip(index + 1) {
+                                                if f.nest > file.nest {
+                                                    if !f.is_dir {
+                                                        f.selected = event.checked();
+                                                    }
+                                                } else {
+                                                    break;
+                                                }
+                                            }
+                                            if let Some(m) = dir.get_mut(index) {
+                                                m.selected = event.checked();
+                                            }
+                                            selected_files
+                                                .set(
+                                                    HashSet::from_iter(
+                                                        dir.iter().filter(|d| d.selected).map(|f| f.path.clone()),
+                                                    ),
+                                                );
+                                            loader.set(Ok(dir));
+                                        }
+                                        info!("Selected {}", event.checked());
+                                    },
+                                }
+                                span {
+                                    dangerous_inner_html: "&#128193; {index} {file.nest} {file.name}",
+                                    onclick: move |_| {
+                                        current_path.set(file.path.clone());
+                                    },
+                                }
+                                span { style: "float:right", "count: {file.size}" }
+
                             }
-                        },
-                        span { dangerous_inner_html: "&#8624;" }
-                    }
-                }
-                for file in files {
-                    if file.is_dir {
-                        if let file_name_clone = file.file_name.clone() {
-                            div {
-                                style: "cursor: pointer;",
-                                onclick: move |_| {
-                                    current_path.set(format!("{}/{}", current_path(), file_name_clone));
-                                },
-                                span { dangerous_inner_html: "&#128193; {file.file_name}" }
-                                span { style: "", "" }
+                        } else {
+                            div { style: "padding-left:{file.nest * 20}px",
+                                button { style: "opacity:0;", r#type: "button", "+" }
+
+                                input {
+                                    r#type: "checkbox",
+                                    oninput: move |event: Event<FormData>| {
+                                        if let Ok(mut dir) = loader() && let Some(f) = dir.get_mut(index) {
+                                            f.selected = event.checked();
+                                            selected_files
+                                                .set(
+                                                    HashSet::from_iter(
+                                                        dir.iter().filter(|d| d.selected).map(|f| f.path.clone()),
+                                                    ),
+                                                );
+                                            loader.set(Ok(dir));
+                                        }
+                                    },
+                                    checked: file.selected,
+                                }
+
+                                span { dangerous_inner_html: " &#128240; {index} {file.nest} {file.name}" }
+                                span { style: "float:right", "size: {file.size}" }
                             }
                         }
-                    } else {
-                        div {
-                            span { dangerous_inner_html: " &#128240; {file.file_name}" }
-                            span { style: "float:right", "size: {file.size}" }
-                        }
                     }
                 }
-            } else if let Err(f) = files_loader() {
+            } else if let Err(f) = loader() {
                 p { style: "color:blue", "Error: {f}" }
             }
         }
