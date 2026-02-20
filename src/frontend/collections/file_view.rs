@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::path::MAIN_SEPARATOR;
 
 use crate::backend::api::api_file_view::{fv_files_in_dir, fv_working_dir};
 use crate::shared::models::file_view::FileView;
@@ -7,8 +8,7 @@ use dioxus::prelude::*;
 
 #[component]
 pub fn FileViewer(mut selected_files: WriteSignal<HashSet<String>>) -> Element {
-    let mut current_path: Signal<String> = use_signal(|| "".to_string());
-
+    let mut current_path: Signal<String> = use_signal(|| "".to_string()); // TODO merge these into single signal
     let mut current_path_input: Signal<String> = use_signal(|| current_path());
 
     let current_path_update = move |evt: Event<FormData>| {
@@ -26,6 +26,7 @@ pub fn FileViewer(mut selected_files: WriteSignal<HashSet<String>>) -> Element {
         match from_server {
             Ok(o) => {
                 current_path.set(o());
+                current_path_input.set(o());
                 true
             }
             Err(_loading) => {
@@ -41,7 +42,7 @@ pub fn FileViewer(mut selected_files: WriteSignal<HashSet<String>>) -> Element {
             input {
                 style: "width:calc(100% - 4rem)",
                 onchange: current_path_update,
-                value: "{current_path}",
+                value: "{current_path_input}",
                 disabled: !pending,
             }
             button { onclick: apply, "apply" }
@@ -53,14 +54,19 @@ pub fn FileViewer(mut selected_files: WriteSignal<HashSet<String>>) -> Element {
             fallback: |_| rsx! {
                 p { "fetching" }
             },
-            FileViewerBody2 { current_path, selected_files }
+            FileViewerBody {
+                current_path,
+                current_path_input,
+                selected_files,
+            }
         }
     }
 }
 
 #[component]
-fn FileViewerBody2(
+fn FileViewerBody(
     mut current_path: Signal<String>,
+    mut current_path_input: WriteSignal<String>,
     mut selected_files: WriteSignal<HashSet<String>>,
 ) -> Element {
     info!("render");
@@ -70,12 +76,30 @@ fn FileViewerBody2(
     rsx! {
         div { style: "width: 100%",
             if let Ok(dir) = loader() {
+                button {
+                    r#type: "button",
+                    onclick: move |_| {
+                        let path = current_path();
+                        if let Some(index) = path.rfind(MAIN_SEPARATOR) {
+                            let (parent, _) = path.split_at(index);
+                            if parent.is_empty() {
+                                current_path.set(MAIN_SEPARATOR.to_string());
+                                current_path_input.set(MAIN_SEPARATOR.to_string());
+                            } else {
+                                current_path.set(parent.to_string());
+                                current_path_input.set(parent.to_string())
+                            }
+                        }
+                    },
+                    dangerous_inner_html: "&#8624;",
+                }
                 for (index , file) in dir.into_iter().enumerate() {
                     if !file.hidden && let file_path = file.path.clone() {
                         if file.is_dir {
                             div { style: "cursor: pointer;padding-left:{file.nest * 20}px",
                                 button {
                                     r#type: "button",
+                                    style: "width:1.5rem",
                                     onclick: move |_| {
                                         info!("click: {}", file_path);
                                         spawn(async move {
@@ -119,13 +143,13 @@ fn FileViewerBody2(
                                     },
                                 }
                                 span {
-                                    dangerous_inner_html: "&#128193; {index} {file.nest} {file.name}",
+                                    dangerous_inner_html: "&#128193; {file.name}",
                                     onclick: move |_| {
                                         current_path.set(file.path.clone());
+                                        current_path_input.set(file.path.clone());
                                     },
                                 }
                                 span { style: "float:right", "count: {file.size}" }
-
                             }
                         } else {
                             div { style: "padding-left:{file.nest * 20}px",
@@ -148,7 +172,7 @@ fn FileViewerBody2(
                                     checked: file.selected,
                                 }
 
-                                span { dangerous_inner_html: " &#128240; {index} {file.nest} {file.name}" }
+                                span { dangerous_inner_html: " &#128240; {file.name}" }
                                 span { style: "float:right", "size: {file.size}" }
                             }
                         }
