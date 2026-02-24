@@ -30,7 +30,7 @@ fn Table(children: Element) -> Element {
                 th { "file_size" }
                 th { "created" }
                 th { "modified" }
-                th { "crc32" }
+                th { "hash" }
                 th { "icon" }
             }
             {children}
@@ -54,7 +54,7 @@ fn Inner() -> Element {
                 td { "{rec.file_size}" }
                 td { "{rec.created}" }
                 td { "{rec.modified}" }
-                td { "{rec.crc32}" }
+                td { "{rec.hash}" }
                 td { "{rec.icon}" }
             }
         }

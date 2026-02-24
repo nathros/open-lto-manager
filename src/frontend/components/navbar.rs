@@ -11,6 +11,7 @@ fn route_eq<T>(a: &T, b: &T) -> bool {
 #[component]
 pub fn Navbar() -> Element {
     let route: Route = use_route();
+    let mut multiplier = use_signal(|| String::new());
 
     rsx! {
         div { id: "navbar",
@@ -40,16 +41,32 @@ pub fn Navbar() -> Element {
             Link { to: Route::DBUser {}, "User" }
             Link { to: Route::DBJob {}, "Job" }
             Link { to: Route::DBFile {}, "File" }
+            Link { to: Route::DBJobMetaData {},
+                {}
+                "File-Meta"
+            }
             Link { to: Route::DBTape {}, "Tape" }
             Link { to: Route::ShowAppState {}, "AppState" }
         }
         hr {}
 
         ErrorBoundary {
-            handle_error: |errors: ErrorContext| {
+            handle_error: move |errors: ErrorContext| {
+                //let cloned_errors = errors.clone(); // Can
+                //use_effect(move || {
+                //    cloned_errors.clear_errors();
+                //
+                //});
                 rsx! {
                     p { style: "color: purple", "Unrecoverable error: {errors:?}" }
                     p { "-- Refresh needed --" }
+                    button {
+                        onclick: move |_| {
+                            errors.clear_errors();
+                            multiplier.set("mutate".to_string());
+                        },
+                        "Retry"
+                    }
                 }
             },
             Outlet::<Route> {}

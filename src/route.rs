@@ -5,6 +5,7 @@ use crate::frontend::pages::add_job::AddJob;
 use crate::frontend::pages::dbg::db_app_state::ShowAppState;
 use crate::frontend::pages::dbg::db_file::DBFile;
 use crate::frontend::pages::dbg::db_job::DBJob;
+use crate::frontend::pages::dbg::db_job_metadata::DBJobMetaData;
 use crate::frontend::pages::dbg::db_man::DBMan;
 use crate::frontend::pages::dbg::db_tape::DBTape;
 use crate::frontend::pages::dbg::db_type::DBType;
@@ -41,6 +42,8 @@ pub enum Route {
     DBUser {},
     #[route("/db-job")]
     DBJob {},
+    #[route("/db-job-meta")]
+    DBJobMetaData {},
     #[route("/db-file")]
     DBFile {},
     #[route("/db-tape")]

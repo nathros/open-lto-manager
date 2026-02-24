@@ -29,7 +29,7 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
                 file_size INTEGER NOT NULL,
                 created BIGINT NOT NULL,
                 modified BIGINT NOT NULL,
-                crc32 TEXT NOT NULL,
+                hash TEXT,
                 icon TEXT,
                 FOREIGN KEY(tape_id) REFERENCES tape(id),
                 CONSTRAINT path_name_pair UNIQUE(file_name_virt, file_path_virt)
@@ -61,7 +61,7 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
                     file_size,
                     created,
                     modified,
-                    crc32,
+                    hash,
                     icon
                 FROM file
                 WHERE id = ?1",
@@ -84,7 +84,7 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
                     file_size,
                     created,
                     modified,
-                    crc32,
+                    hash,
                     icon)
                 VALUES (
                     ?1,
@@ -106,7 +106,7 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
                 record.file_size,
                 record.created,
                 record.modified,
-                record.crc32,
+                record.hash,
                 record.icon,
             ],
         )
@@ -122,7 +122,7 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
                     file_size = ?5,
                     created = ?6,
                     modified = ?7,
-                    crc32 = ?8,
+                    hash = ?8,
                     icon = ?9,
                 WHERE id = ?10",
             params![
@@ -133,7 +133,7 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
                 record.file_size,
                 record.created,
                 record.modified,
-                record.crc32,
+                record.hash,
                 record.icon,
                 record.id
             ],
@@ -155,7 +155,7 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
             file_size: row.get(offset + 6)?,
             created: row.get(offset + 7)?,
             modified: row.get(offset + 8)?,
-            crc32: row.get(offset + 9)?,
+            hash: row.get(offset + 9)?,
             icon: row.get(offset + 10)?,
         })
     }
@@ -174,7 +174,7 @@ impl TableFile {
                     file_size,
                     created,
                     modified,
-                    crc32,
+                    hash,
                     icon
                 FROM file
                 ORDER BY id",

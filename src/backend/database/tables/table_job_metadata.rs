@@ -106,6 +106,23 @@ impl Table<RecordJobMetadata, RecordJobMetadataJoin> for TableJobMetadata {
     }
 }
 
+impl TableJobMetadata {
+    pub fn get_all(db: &Connection) -> Result<Vec<RecordJobMetadata>, rusqlite::Error> {
+        db.prepare(
+            "SELECT
+                    id,
+                    job_id,
+                    key,
+                    [index],
+                    value
+                FROM job_metadata
+                ORDER BY id",
+        )?
+        .query_map([], |row| TableJobMetadata::fill(row, 0))?
+        .collect::<Result<Vec<RecordJobMetadata>, rusqlite::Error>>()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     #![allow(clippy::unwrap_used)]

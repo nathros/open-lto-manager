@@ -14,7 +14,7 @@ pub struct RecordFile {
     pub file_size: i64,
     pub created: DateTime<Local>,
     pub modified: DateTime<Local>,
-    pub crc32: String,
+    pub hash: String,
     pub icon: String,
 }
 
@@ -29,7 +29,7 @@ pub struct RecordFileJoin {
     pub file_size: i64,
     pub created: DateTime<Local>,
     pub modified: DateTime<Local>,
-    pub crc32: String,
+    pub hash: String,
     pub icon: String,
 }
 
@@ -45,7 +45,7 @@ impl RecordFile {
             file_size: 0,
             created: Local::now(),
             modified: Local::now(),
-            crc32: "".to_string(),
+            hash: "".to_string(),
             icon: "folder~a-root".to_string(),
         }
     }

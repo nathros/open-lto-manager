@@ -20,8 +20,8 @@ whoami = { version = "2.1.1", optional = true }
 [features]
 default = ["web", "server"]
 web = ["dioxus/web"]
-desktop = ["dioxus/desktop"]
-mobile = ["dioxus/mobile"]
+# desktop = ["dioxus/desktop"]
+# mobile = ["dioxus/mobile"]
 server = ["dioxus/server", "dep:rusqlite", "dep:tokio", "dep:tracing-subscriber", "dep:uzers", "dep:whoami"]
 # server = ["dioxus/server", "dep:rusqlite", "dep:tokio" "dep:tracing-subscriber", "dep:uzers", "dep:whoami", "slow_server"] # Testing only
 slow_server = [] # Testing only, adds delay to all requests

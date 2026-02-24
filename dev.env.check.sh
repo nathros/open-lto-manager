@@ -6,7 +6,7 @@ RED="\e[0;31m"
 RESET="\e[0m"
 
 MIN_RUST_VER="1.81.0"
-MIN_DIOXUS_VER="0.7.0"
+MIN_DIOXUS_VER="0.7.3"
 
 FAILURE=false
 
