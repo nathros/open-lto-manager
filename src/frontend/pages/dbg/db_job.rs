@@ -24,14 +24,14 @@ fn Table(children: Element) -> Element {
     rsx! {
         table {
             tr {
-            th {"id"}
-            th {"user_id"}
-            th {"name"}
-            th {"job_type"}
-            th {"job_status"}
-            th {"start_time"}
-            th {"end_time"}
-            th {"comment"}
+                th { "id" }
+                th { "user_id" }
+                th { "name" }
+                th { "job_type" }
+                th { "job_status" }
+                th { "start_time" }
+                th { "end_time" }
+                th { "comment" }
             }
             {children}
         }
@@ -45,14 +45,14 @@ fn Inner() -> Element {
     rsx! {
         for rec in jobs_list.cloned() {
             tr {
-                td {"{rec.id}"}
-                td {"{rec.user_id}"}
-                td {"{rec.name}"}
-                td {"{<JobType as Into<i64>>::into(rec.job_type)}"}
-                td {"{<JobStatus as Into<i64>>::into(rec.job_status)}"}
-                td {"{rec.start_time}"}
-                td {"{rec.end_time}"}
-                td {"{rec.comment}"}
+                td { "{rec.id}" }
+                td { "{rec.user_id}" }
+                td { "{rec.name}" }
+                td { "{<JobType as Into<i64>>::into(rec.job_type)}" }
+                td { "{<JobStatus as Into<i64>>::into(rec.job_status)}" }
+                td { "{rec.start_time}" }
+                td { "{rec.end_time}" }
+                td { "{rec.comment}" }
             }
         }
 

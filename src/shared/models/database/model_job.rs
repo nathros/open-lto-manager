@@ -2,8 +2,8 @@ use chrono::{DateTime, Local};
 use dioxus::fullstack::serde::{Deserialize, Serialize};
 #[cfg(feature = "server")]
 use rusqlite::{
-    types::{FromSql, FromSqlResult, ToSqlOutput, ValueRef},
     ToSql,
+    types::{FromSql, FromSqlResult, ToSqlOutput, ValueRef},
 };
 
 use super::model_user::RecordUser;
@@ -30,6 +30,21 @@ pub struct RecordJobJoin {
     pub start_time: DateTime<Local>,
     pub end_time: DateTime<Local>,
     pub comment: String,
+}
+
+impl RecordJob {
+    pub fn blank(job_type: JobType) -> Self {
+        Self {
+            id: 0,
+            user_id: 1,
+            name: "".to_string(),
+            job_type,
+            job_status: JobStatus::Unknown,
+            start_time: Local::now(),
+            end_time: Local::now(),
+            comment: "".to_string(),
+        }
+    }
 }
 
 #[repr(i64)]

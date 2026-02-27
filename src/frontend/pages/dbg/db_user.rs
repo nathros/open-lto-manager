@@ -24,19 +24,19 @@ fn Table(children: Element) -> Element {
     rsx! {
         table {
             tr {
-            th { "id" }
-            th { "username" }
-            th { "description" }
-            th { "hash" }
-            th { "salt" }
-            th { "enabled" }
-            th { "created" }
-            th { "language" }
-            th { "avatar" }
-            th { "system_theme" }
-            th { "icon_theme" }
-            th { "fm_theme" }
-            th { "accent_colour" }
+                th { "id" }
+                th { "username" }
+                th { "description" }
+                th { "hash" }
+                th { "salt" }
+                th { "enabled" }
+                th { "created" }
+                th { "language" }
+                th { "avatar" }
+                th { "system_theme" }
+                th { "icon_theme" }
+                th { "fm_theme" }
+                th { "accent_colour" }
             }
             {children}
         }

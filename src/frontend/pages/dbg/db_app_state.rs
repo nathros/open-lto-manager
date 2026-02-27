@@ -39,7 +39,7 @@ fn Inner() -> Element {
         span { "{app_state().ltfs_error.unwrap_or(\"\".to_string())}" }
         br {}
 
-         b { "MT Installed: " }
+        b { "MT Installed: " }
         span { "{app_state().mt_installed}" }
         br {}
 
