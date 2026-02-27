@@ -38,7 +38,7 @@ fn App() -> Element {
     let assets = [MAIN_CSS]; // FIXME Release build will combine CSS assets in future
 
     rsx! {
-        //document::Link { rel: "icon", href: FAVICON }
+        document::Link { rel: "icon", r#type: "image/svg+xml", href: FAVICON }
         for asset in assets.iter() {
             document::Link { rel: "stylesheet", href: *asset }
         }
@@ -55,6 +55,6 @@ fn App() -> Element {
     }
 }
 
-//const FAVICON: Asset = asset!("/assets/favicon.ico");
+const FAVICON: Asset = asset!("/assets/logo.svg");
 const MAIN_CSS: Asset = asset!("/assets/main.css");
 //const HEADER_SVG: Asset = asset!("/assets/header.svg");
