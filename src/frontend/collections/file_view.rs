@@ -19,10 +19,11 @@ pub fn FileViewer(mut selected_files: WriteSignal<HashSet<String>>) -> Element {
     let apply = move |_| {
         info!("apply {} = {}", current_path, current_path_input);
         current_path.set(current_path_input());
+        selected_files.write().clear(); // If changing dir current files will be lost, TODO add warning message
     };
 
     let res = use_resource(move || async move {
-        let from_server = use_loader(fv_working_dir);
+        let from_server = use_loader(fv_working_dir); // FIXME dx check error
         match from_server {
             Ok(o) => {
                 current_path.set(o());

@@ -109,12 +109,23 @@
             "problemMatcher": [],
         },
         {
-            "label": "Run::tests",
+            "label": "Test::rust",
             "type": "shell",
             "command": "cargo test -- --show-output",
             "icon": {
-                "id": "run-all",
-                "color": "terminal.ansiYellow"
+                "id": "bug",
+                "color": "terminal.ansiBlue"
+            },
+            "group": "test",
+            "problemMatcher": [],
+        },
+        {
+            "label": "Test::dx",
+            "type": "shell",
+            "command": "dx check",
+            "icon": {
+                "id": "bug",
+                "color": "terminal.ansiBlue"
             },
             "group": "test",
             "problemMatcher": [],

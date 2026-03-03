@@ -1,5 +1,6 @@
 use dioxus::prelude::*;
 
+use crate::frontend::elements::button::Button;
 use crate::shared::level::Level;
 
 #[component]
@@ -26,14 +27,14 @@ pub fn Modal(id: String, level: Level, message: Signal<String>) -> Element {
             p { "{message}" }
             br {}
             br {}
-            button {
+            Button {
                 r#type: "button",
-                "commandfor": id,
+                "commandfor": id.clone(),
                 "command": "close",
                 onclick: move |_| {
                     message.set("".to_string());
                 },
-                "OK"
+                text: "OK",
             }
         }
     }
