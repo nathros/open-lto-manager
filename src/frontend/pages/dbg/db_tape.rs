@@ -1,9 +1,13 @@
 use dioxus::{fullstack::Loader, prelude::*};
 
 use crate::{
-    backend::api::api_tape::list_tape,
-    shared::models::database::model_tape::{
-        EncryptionType, HardwareEncryptionType, RecordTape, SoftwareEncryptionType, TapeFormat,
+    backend::api::api_tape::{api_del_tape, list_tape},
+    frontend::{collections::message::Message, elements::button::Button},
+    shared::{
+        level::Level,
+        models::database::model_tape::{
+            EncryptionType, HardwareEncryptionType, RecordTape, SoftwareEncryptionType, TapeFormat,
+        },
     },
 };
 
@@ -40,6 +44,7 @@ fn Table(children: Element) -> Element {
                 th { "used_space" }
                 th { "created" }
                 th { "last_used" }
+                th { "Action" }
             }
             {children}
         }
@@ -48,12 +53,14 @@ fn Table(children: Element) -> Element {
 
 #[component]
 fn Inner() -> Element {
-    let tapes_list: Loader<Vec<RecordTape>> = use_loader(list_tape)?;
+    let mut tapes_list: Loader<Vec<RecordTape>> = use_loader(list_tape)?;
+    let mut message: Signal<String> = use_signal(|| String::default());
 
     rsx! {
         if let Some(e) = tapes_list.error() {
             p { "Failed with error: {e}" }
         } else {
+            Message { level: Level::Error, text: message() }
             Table {
                 for rec in tapes_list.cloned() {
                     tr {
@@ -71,6 +78,20 @@ fn Inner() -> Element {
                         td { "{rec.used_space}" }
                         td { "{rec.created}" }
                         td { "{rec.last_used}" }
+                        td {
+                            Button {
+                                onclick: move |_| async move {
+                                    match api_del_tape(rec.id).await {
+                                        Ok(_) => {
+                                            message.write().clear();
+                                            tapes_list.restart();
+                                        }
+                                        Err(e) => message.set(format!("{}", e)),
+                                    }
+                                },
+                                text: "Delete",
+                            }
+                        }
                     }
                 }
             }
