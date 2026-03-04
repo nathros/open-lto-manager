@@ -1,8 +1,12 @@
 use dioxus::{fullstack::Loader, prelude::*};
 
 use crate::{
-    backend::api::api_job::list_jobs,
-    shared::models::database::model_job::{JobStatus, JobType, RecordJob},
+    backend::api::api_job::{delete_job, list_jobs},
+    frontend::{collections::message::Message, elements::button::Button},
+    shared::{
+        level::Level,
+        models::database::model_job::{JobStatus, JobType, RecordJob},
+    },
 };
 
 #[component]
@@ -32,6 +36,7 @@ fn Table(children: Element) -> Element {
                 th { "start_time" }
                 th { "end_time" }
                 th { "comment" }
+                th { "Action" }
             }
             {children}
         }
@@ -40,9 +45,11 @@ fn Table(children: Element) -> Element {
 
 #[component]
 fn Inner() -> Element {
-    let jobs_list: Loader<Vec<RecordJob>> = use_loader(list_jobs)?;
+    let mut jobs_list: Loader<Vec<RecordJob>> = use_loader(list_jobs)?;
+    let mut message: Signal<String> = use_signal(|| String::default());
 
     rsx! {
+        Message { level: Level::Error, text: message() }
         for rec in jobs_list.cloned() {
             tr {
                 td { "{rec.id}" }
@@ -57,6 +64,20 @@ fn Inner() -> Element {
                 td { "{rec.start_time}" }
                 td { "{rec.end_time}" }
                 td { "{rec.comment}" }
+                td {
+                    Button {
+                        onclick: move |_| async move {
+                            match delete_job(rec.id).await {
+                                Ok(_) => {
+                                    message.write().clear();
+                                    jobs_list.restart();
+                                }
+                                Err(e) => message.set(format!("{}", e)),
+                            }
+                        },
+                        text: "Delete",
+                    }
+                }
             }
         }
     }

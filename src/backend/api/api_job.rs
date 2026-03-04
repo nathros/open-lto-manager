@@ -62,3 +62,17 @@ pub async fn new_backup(new_job: RecordJob, files: HashSet<String>) -> Result<bo
         }
     })
 }
+
+#[delete("/api/job")]
+pub async fn delete_job(job_id: i64) -> Result<usize> {
+    use crate::backend::database::tables::table::Table;
+    use crate::backend::database::{db::DB, tables::table_job::TableJob};
+
+    #[cfg(feature = "slow_server")]
+    std::thread::sleep(std::time::Duration::from_millis(1000));
+
+    DB.with(|db| match TableJob::delete_record(db, job_id) {
+        Ok(records) => Ok(records),
+        Err(e) => Err(e)?,
+    })
+}

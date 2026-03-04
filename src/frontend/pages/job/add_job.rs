@@ -61,12 +61,8 @@ pub fn AddJob() -> Element {
             ],
         }
         hr {}
-        if !error_message.is_empty() {
-            Message { level: Level::Error, text: error_message() }
-        }
-        if !success_message.is_empty() {
-            Message { level: Level::Success, text: success_message() }
-        }
+        Message { level: Level::Error, text: error_message() }
+        Message { level: Level::Success, text: success_message() }
         button { r#type: "button", onclick: submit, "Add" }
     }
 }
