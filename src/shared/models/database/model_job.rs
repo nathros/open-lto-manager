@@ -74,6 +74,17 @@ impl From<JobType> for i64 {
     }
 }
 
+impl From<JobType> for &str {
+    fn from(value: JobType) -> &'static str {
+        match value {
+            JobType::Backup => "Backup",
+            JobType::Restore => "Restore",
+            JobType::Delete => "Delete",
+            JobType::Duplicate => "Duplicate",
+        }
+    }
+}
+
 #[cfg(feature = "server")]
 impl ToSql for JobType {
     fn to_sql(&self) -> rusqlite::Result<ToSqlOutput<'_>> {
@@ -118,6 +129,20 @@ impl From<i64> for JobStatus {
 impl From<JobStatus> for i64 {
     fn from(value: JobStatus) -> Self {
         value as i64
+    }
+}
+
+impl From<JobStatus> for &str {
+    fn from(value: JobStatus) -> &'static str {
+        match value {
+            JobStatus::Unknown => "Unknown",
+            JobStatus::Pending => "Pending",
+            JobStatus::InProgress => "InProgress",
+            JobStatus::Stopped => "Stopped",
+            JobStatus::Interrupted => "Interrupted",
+            JobStatus::Completed => "Completed",
+            JobStatus::Error => "Error",
+        }
     }
 }
 

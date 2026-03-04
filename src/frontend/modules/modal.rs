@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
 use crate::frontend::elements::button::Button;
-use crate::shared::level::Level;
+use crate::shared::level::{Level, level_style};
 
 #[component]
 pub fn Modal(id: String, level: Level, message: Signal<String>) -> Element {
@@ -17,13 +17,7 @@ pub fn Modal(id: String, level: Level, message: Signal<String>) -> Element {
     });
 
     rsx! {
-        dialog {
-            id: id.clone(),
-            style: match level {
-                Level::Error => "background-color:red".to_string(),
-                Level::Warning => "background-color:orange".to_string(),
-                Level::Info => "background-color:blue".to_string(),
-            },
+        dialog { id: id.clone(), style: level_style(level),
             p { "{message}" }
             br {}
             br {}

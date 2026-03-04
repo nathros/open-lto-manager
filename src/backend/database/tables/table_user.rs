@@ -90,7 +90,7 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
         todo!()
     }
 
-    fn insert_record(db: &Connection, record: &RecordUser) -> Result<usize, Error> {
+    fn insert_record(db: &Connection, record: &RecordUser) -> Result<i64, Error> {
         db.execute(
             "INSERT INTO user (
                     username,
@@ -132,7 +132,57 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
                 record.fm_theme,
                 record.accent_colour,
             ],
-        )
+        )?;
+        Ok(db.last_insert_rowid())
+    }
+
+    fn insert_batch(db: &Connection, records: &[RecordUser]) -> Result<usize, Error> {
+        let mut count = 0;
+        let mut prepared = db.prepare(
+            "INSERT INTO user (
+                    username,
+                    description,
+                    hash,
+                    salt,
+                    enabled,
+                    created,
+                    language,
+                    avatar,
+                    system_theme,
+                    icon_theme,
+                    fm_theme,
+                    accent_colour)
+                VALUES (
+                    ?1,
+                    ?2,
+                    ?3,
+                    ?4,
+                    ?5,
+                    ?6,
+                    ?7,
+                    ?8,
+                    ?9,
+                    ?10,
+                    ?11,
+                    ?12);",
+        )?;
+        for record in records {
+            count += prepared.execute(params![
+                record.username,
+                record.description,
+                record.hash,
+                record.salt,
+                record.enabled,
+                record.created,
+                record.language,
+                record.avatar,
+                record.system_theme,
+                record.icon_theme,
+                record.fm_theme,
+                record.accent_colour,
+            ])?;
+        }
+        Ok(count)
     }
 
     fn update_record(db: &Connection, record: &RecordUser) -> Result<usize, Error> {

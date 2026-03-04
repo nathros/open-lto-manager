@@ -54,9 +54,9 @@ impl Table<RecordJobMetadata, RecordJobMetadataJoin> for TableJobMetadata {
         todo!()
     }
 
-    fn insert_record(db: &Connection, record: &RecordJobMetadata) -> Result<usize, Error> {
+    fn insert_record(db: &Connection, record: &RecordJobMetadata) -> Result<i64, Error> {
         db.execute(
-            "INSERT INTO job (
+            "INSERT INTO job_metadata (
                     job_id,
                     key,
                     [index],
@@ -66,13 +66,39 @@ impl Table<RecordJobMetadata, RecordJobMetadataJoin> for TableJobMetadata {
                     ?2,
                     ?3,
                     ?4);",
-            params![record.job_id, record.key, record.index, record.value,],
-        )
+            params![record.job_id, record.key, record.index, record.value],
+        )?;
+        Ok(db.last_insert_rowid())
+    }
+
+    fn insert_batch(db: &Connection, records: &[RecordJobMetadata]) -> Result<usize, Error> {
+        let mut count = 0;
+        let mut prepared = db.prepare(
+            "INSERT INTO job_metadata (
+                    job_id,
+                    key,
+                    [index],
+                    value)
+                VALUES (
+                    ?1,
+                    ?2,
+                    ?3,
+                    ?4);",
+        )?;
+        for record in records {
+            count += prepared.execute(params![
+                record.job_id,
+                record.key,
+                record.index,
+                record.value
+            ])?;
+        }
+        Ok(count)
     }
 
     fn update_record(db: &Connection, record: &RecordJobMetadata) -> Result<usize, Error> {
         db.execute(
-            "UPDATE job SET
+            "UPDATE job_metadata SET
                     job_id = ?1,
                     key = ?2,
                     [index] = ?3,
@@ -101,7 +127,7 @@ impl Table<RecordJobMetadata, RecordJobMetadataJoin> for TableJobMetadata {
             job_id: row.get(offset + 1)?,
             key: row.get(offset + 2)?,
             index: row.get(offset + 3)?,
-            value: row.get(offset + 5)?,
+            value: row.get(offset + 4)?,
         })
     }
 }
@@ -120,6 +146,13 @@ impl TableJobMetadata {
         )?
         .query_map([], |row| TableJobMetadata::fill(row, 0))?
         .collect::<Result<Vec<RecordJobMetadata>, rusqlite::Error>>()
+    }
+
+    pub fn delete_by_job(db: &Connection, job_id: i64) -> Result<usize, Error> {
+        db.execute(
+            "DELETE FROM job_metadata WHERE job_id = ?1;",
+            params![job_id],
+        )
     }
 }
 

@@ -1,4 +1,4 @@
-use rusqlite::{params, Connection, Error, Row};
+use rusqlite::{Connection, Error, Row, params};
 
 use crate::shared::models::database::model_version::RecordVersion;
 
@@ -41,11 +41,21 @@ impl Table<RecordVersion, RecordVersion> for TableVersion {
         TableVersion::get(db, record_id)
     }
 
-    fn insert_record(db: &Connection, record: &RecordVersion) -> Result<usize, Error> {
+    fn insert_record(db: &Connection, record: &RecordVersion) -> Result<i64, Error> {
         db.execute(
             "INSERT INTO version (version_number) VALUES (?1)",
             params![record.version_number],
-        )
+        )?;
+        Ok(db.last_insert_rowid())
+    }
+
+    fn insert_batch(db: &Connection, records: &[RecordVersion]) -> Result<usize, Error> {
+        let mut count = 0;
+        let mut prepared = db.prepare("INSERT INTO version (version_number) VALUES (?1)")?;
+        for record in records {
+            count += prepared.execute(params![record.version_number])?;
+        }
+        Ok(count)
     }
 
     fn update_record(db: &Connection, _record: &RecordVersion) -> Result<usize, Error> {

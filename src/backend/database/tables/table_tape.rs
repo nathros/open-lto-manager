@@ -72,7 +72,7 @@ impl Table<RecordTape, RecordTapeJoin> for TableTape {
         todo!()
     }
 
-    fn insert_record(db: &Connection, record: &RecordTape) -> Result<usize, Error> {
+    fn insert_record(db: &Connection, record: &RecordTape) -> Result<i64, Error> {
         db.execute(
             "INSERT INTO tape (
                     manufacturer_id,
@@ -117,7 +117,60 @@ impl Table<RecordTape, RecordTapeJoin> for TableTape {
                 record.created,
                 record.last_used
             ],
-        )
+        )?;
+        Ok(db.last_insert_rowid())
+    }
+
+    fn insert_batch(db: &Connection, records: &[RecordTape]) -> Result<usize, Error> {
+        let mut count = 0;
+        let mut prepared = db.prepare(
+            "INSERT INTO tape (
+                    manufacturer_id,
+                    tape_type_id,
+                    barcode,
+                    serial,
+                    format,
+                    worm,
+                    encryption_type,
+                    encryption_sw,
+                    encryption_hw,
+                    compressed,
+                    used_space,
+                    created,
+                    last_used)
+                VALUES (
+                    ?1,
+                    ?2,
+                    ?3,
+                    ?4,
+                    ?5,
+                    ?6,
+                    ?7,
+                    ?8,
+                    ?9,
+                    ?10,
+                    ?11,
+                    ?12,
+                    ?13);",
+        )?;
+        for record in records {
+            count += prepared.execute(params![
+                record.manufacturer_id,
+                record.tape_type_id,
+                record.barcode,
+                record.serial,
+                record.format,
+                record.worm,
+                record.encryption_type,
+                record.encryption_sw,
+                record.encryption_hw,
+                record.compressed,
+                record.used_space,
+                record.created,
+                record.last_used
+            ])?;
+        }
+        Ok(count)
     }
 
     fn update_record(db: &Connection, record: &RecordTape) -> Result<usize, Error> {

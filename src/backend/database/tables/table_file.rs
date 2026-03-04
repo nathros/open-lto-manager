@@ -73,7 +73,7 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
         todo!()
     }
 
-    fn insert_record(db: &Connection, record: &RecordFile) -> Result<usize, Error> {
+    fn insert_record(db: &Connection, record: &RecordFile) -> Result<i64, Error> {
         db.execute(
             "INSERT INTO file (
                     tape_id,
@@ -109,7 +109,51 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
                 record.hash,
                 record.icon,
             ],
-        )
+        )?;
+        Ok(db.last_insert_rowid())
+    }
+
+    fn insert_batch(db: &Connection, records: &[RecordFile]) -> Result<usize, Error> {
+        let mut count = 0;
+        let mut prepared = db.prepare(
+            "INSERT INTO file (
+                    tape_id,
+                    file_name_virt,
+                    file_path_virt,
+                    file_name_phy,
+                    file_path_phy,
+                    file_size,
+                    created,
+                    modified,
+                    hash,
+                    icon)
+                VALUES (
+                    ?1,
+                    ?2,
+                    ?3,
+                    ?4,
+                    ?5,
+                    ?6,
+                    ?7,
+                    ?8,
+                    ?9,
+                    ?10);",
+        )?;
+        for record in records {
+            count += prepared.execute(params![
+                record.tape_id,
+                record.file_name_virt,
+                record.file_path_virt,
+                record.file_name_phy,
+                record.file_path_phy,
+                record.file_size,
+                record.created,
+                record.modified,
+                record.hash,
+                record.icon,
+            ])?;
+        }
+        Ok(count)
     }
 
     fn update_record(db: &Connection, record: &RecordFile) -> Result<usize, Error> {

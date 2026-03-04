@@ -43,7 +43,9 @@ fn Inner() -> Element {
             tr {
                 td { "{rec.id}" }
                 td { "{rec.job_id}" }
-                td { "{<JobMetadataKey as Into<i64>>::into(rec.key)}" }
+                td {
+                    "{<JobMetadataKey as Into<&str>>::into(rec.key)}[{<JobMetadataKey as Into<i64>>::into(rec.key)}]"
+                }
                 td { "{rec.index}" }
                 td { "{rec.value}" }
             }

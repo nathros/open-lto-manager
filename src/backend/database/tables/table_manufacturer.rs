@@ -72,11 +72,21 @@ impl Table<RecordManufacturer, RecordManufacturer> for TableManufacturer {
         TableManufacturer::get(db, record_id)
     }
 
-    fn insert_record(db: &Connection, record: &RecordManufacturer) -> Result<usize, Error> {
+    fn insert_record(db: &Connection, record: &RecordManufacturer) -> Result<i64, Error> {
         db.execute(
             "INSERT INTO manufacturer (name) VALUES (?1)",
             params![record.name],
-        )
+        )?;
+        Ok(db.last_insert_rowid())
+    }
+
+    fn insert_batch(db: &Connection, records: &[RecordManufacturer]) -> Result<usize, Error> {
+        let mut count = 0;
+        let mut prepared = db.prepare("INSERT INTO manufacturer (name) VALUES (?1)")?;
+        for record in records {
+            count += prepared.execute(params![record.name])?;
+        }
+        Ok(count)
     }
 
     fn update_record(db: &Connection, record: &RecordManufacturer) -> Result<usize, Error> {
@@ -158,14 +168,14 @@ mod tests {
                 .find(|&m| m.name == new_manufacturer_name),
             None
         );
-        TableManufacturer::insert_record(
+        let insert_result = TableManufacturer::insert_record(
             &db,
             &RecordManufacturer {
                 id: 0,
                 name: new_manufacturer_name.clone(),
             },
-        )
-        .unwrap();
+        );
+        assert_eq!(insert_result.unwrap(), 13); // There are 12 predefined entries in create_table()
 
         let all_records_updated = TableManufacturer::get_all(&db).unwrap();
         assert!(

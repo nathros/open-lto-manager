@@ -50,6 +50,16 @@ impl From<JobMetadataKey> for i64 {
     }
 }
 
+impl From<JobMetadataKey> for &str {
+    fn from(value: JobMetadataKey) -> &'static str {
+        match value {
+            JobMetadataKey::Undefined => "Undefined",
+            JobMetadataKey::FileVirtual => "FileVirtual",
+            JobMetadataKey::FilePhysical => "FilePhysical",
+        }
+    }
+}
+
 #[cfg(feature = "server")]
 impl ToSql for JobMetadataKey {
     fn to_sql(&self) -> rusqlite::Result<ToSqlOutput<'_>> {

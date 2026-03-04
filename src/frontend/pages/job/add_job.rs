@@ -1,6 +1,8 @@
 use std::collections::HashSet;
 
+use crate::backend::api::api_job::new_backup;
 use crate::frontend::collections::file_view::FileViewer;
+use crate::frontend::collections::message::Message;
 use crate::frontend::modules::modal::Modal;
 use crate::frontend::modules::tab::Tab;
 use crate::frontend::pages::job::backup_job_form::BackupJobForm;
@@ -11,6 +13,8 @@ use dioxus::prelude::*;
 #[component]
 pub fn AddJob() -> Element {
     let mut modal_message: Signal<String> = use_signal(|| String::default());
+    let mut error_message: Signal<String> = use_signal(|| String::default());
+    let mut success_message: Signal<String> = use_signal(|| String::default());
     let selected_files: Signal<HashSet<String>> = use_signal(|| HashSet::new());
     let new_job: Signal<RecordJob> = use_signal(|| RecordJob::blank(JobType::Backup));
 
@@ -28,10 +32,15 @@ pub fn AddJob() -> Element {
     };
 
     let submit = move |_| async move {
-        info!("Call");
-        if selected_files().is_empty() {
+        if new_job().name.is_empty() {
+            modal_message.set("Name cannot be empty".to_string());
+        } else if selected_files().is_empty() {
             modal_message.set("No files selected".to_string());
-            info!("Call1 empty");
+        } else {
+            match new_backup(new_job(), selected_files()).await {
+                Ok(_) => success_message.set("Added".to_string()),
+                Err(e) => error_message.set(format!("{}", e)),
+            }
         }
     };
 
@@ -52,6 +61,12 @@ pub fn AddJob() -> Element {
             ],
         }
         hr {}
+        if !error_message.is_empty() {
+            Message { level: Level::Error, text: error_message() }
+        }
+        if !success_message.is_empty() {
+            Message { level: Level::Success, text: success_message() }
+        }
         button { r#type: "button", onclick: submit, "Add" }
     }
 }

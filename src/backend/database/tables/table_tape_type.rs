@@ -1,4 +1,4 @@
-use rusqlite::{params, Connection, Error};
+use rusqlite::{Connection, Error, params};
 
 use crate::shared::models::database::model_tape_type::RecordTapeType;
 
@@ -285,7 +285,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
         TableTapeType::get(db, record_id)
     }
 
-    fn insert_record(db: &Connection, record: &RecordTapeType) -> Result<usize, Error> {
+    fn insert_record(db: &Connection, record: &RecordTapeType) -> Result<i64, Error> {
         db.execute(
             "INSERT INTO tape_type (
                     generation,
@@ -325,7 +325,55 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 record.supports_encryption,
                 record.supports_ltfs,
             ],
-        )
+        )?;
+        Ok(db.last_insert_rowid())
+    }
+
+    fn insert_batch(db: &Connection, records: &[RecordTapeType]) -> Result<usize, Error> {
+        let mut count = 0;
+        let mut prepared = db.prepare(
+            "INSERT INTO tape_type (
+                    generation,
+                    id_reg,
+                    id_worm,
+                    native_capacity,
+                    colour_reg,
+                    colour_hp,
+                    colour_worm_reg,
+                    colour_worm_hp,
+                    supports_worm,
+                    supports_encryption,
+                    supports_ltfs)
+                VALUES (
+                    ?1,
+                    ?2,
+                    ?3,
+                    ?4,
+                    ?5,
+                    ?6,
+                    ?7,
+                    ?8,
+                    ?9,
+                    ?10,
+                    ?11
+                );",
+        )?;
+        for record in records {
+            count += prepared.execute(params![
+                record.generation,
+                record.id_reg,
+                record.id_worm,
+                record.native_capacity,
+                record.colour_reg,
+                record.colour_hp,
+                record.colour_worm_reg,
+                record.colour_worm_hp,
+                record.supports_worm,
+                record.supports_encryption,
+                record.supports_ltfs,
+            ])?;
+        }
+        Ok(count)
     }
 
     fn update_record(db: &Connection, record: &RecordTapeType) -> Result<usize, Error> {

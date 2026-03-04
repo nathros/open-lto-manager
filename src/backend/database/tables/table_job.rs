@@ -1,14 +1,14 @@
-use rusqlite::{Connection, Error, params};
+use rusqlite::{Connection, params};
 
 use crate::{
-    backend::database::tables::table::Table,
+    backend::database::tables::{table::Table, table_job_metadata::TableJobMetadata},
     shared::models::database::model_job::{RecordJob, RecordJobJoin},
 };
 
 pub struct TableJob {}
 
 impl Table<RecordJob, RecordJobJoin> for TableJob {
-    fn create_table(db: &Connection) -> Result<bool, Error> {
+    fn create_table(db: &Connection) -> Result<bool, rusqlite::Error> {
         match db.table_exists(None, "job") {
             std::result::Result::Ok(exist) => {
                 if exist {
@@ -35,11 +35,11 @@ impl Table<RecordJob, RecordJobJoin> for TableJob {
         Ok(true)
     }
 
-    fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, Error> {
+    fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, rusqlite::Error> {
         Ok(false)
     }
 
-    fn get(db: &Connection, record_id: i64) -> Result<RecordJob, Error> {
+    fn get(db: &Connection, record_id: i64) -> Result<RecordJob, rusqlite::Error> {
         db.prepare(
             "SELECT
                 id,
@@ -56,14 +56,13 @@ impl Table<RecordJob, RecordJobJoin> for TableJob {
         .query_one([record_id], |row| TableJob::fill(row, 0))
     }
 
-    fn get_join(_db: &Connection, _record_id: i64) -> Result<RecordJobJoin, Error> {
+    fn get_join(_db: &Connection, _record_id: i64) -> Result<RecordJobJoin, rusqlite::Error> {
         todo!()
     }
 
-    fn insert_record(db: &Connection, record: &RecordJob) -> Result<usize, Error> {
+    fn insert_record(db: &Connection, record: &RecordJob) -> Result<i64, rusqlite::Error> {
         db.execute(
             "INSERT INTO job (
-                    id,
                     user_id,
                     name,
                     job_type,
@@ -78,10 +77,8 @@ impl Table<RecordJob, RecordJobJoin> for TableJob {
                     ?4,
                     ?5,
                     ?6,
-                    ?7,
-                    ?8);",
+                    ?7);",
             params![
-                record.id,
                 record.user_id,
                 record.name,
                 record.job_type,
@@ -90,10 +87,45 @@ impl Table<RecordJob, RecordJobJoin> for TableJob {
                 record.end_time,
                 record.comment,
             ],
-        )
+        )?;
+        Ok(db.last_insert_rowid())
     }
 
-    fn update_record(db: &Connection, record: &RecordJob) -> Result<usize, Error> {
+    fn insert_batch(db: &Connection, records: &[RecordJob]) -> Result<usize, rusqlite::Error> {
+        let mut count = 0;
+        let mut prepared = db.prepare(
+            "INSERT INTO job (
+                    user_id,
+                    name,
+                    job_type,
+                    job_status,
+                    start_time,
+                    end_time,
+                    comment)
+                VALUES (
+                    ?1,
+                    ?2,
+                    ?3,
+                    ?4,
+                    ?5,
+                    ?6,
+                    ?7);",
+        )?;
+        for record in records {
+            count += prepared.execute(params![
+                record.user_id,
+                record.name,
+                record.job_type,
+                record.job_status,
+                record.start_time,
+                record.end_time,
+                record.comment,
+            ])?;
+        }
+        Ok(count)
+    }
+
+    fn update_record(db: &Connection, record: &RecordJob) -> Result<usize, rusqlite::Error> {
         db.execute(
             "UPDATE job SET
                     user_id = ?1,
@@ -117,11 +149,12 @@ impl Table<RecordJob, RecordJobJoin> for TableJob {
         )
     }
 
-    fn delete_record(db: &Connection, record_id: i64) -> Result<usize, Error> {
+    fn delete_record(db: &Connection, record_id: i64) -> Result<usize, rusqlite::Error> {
+        TableJobMetadata::delete_by_job(db, record_id)?;
         db.execute("DELETE FROM job WHERE id = ?1;", params![record_id])
     }
 
-    fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordJob, Error> {
+    fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordJob, rusqlite::Error> {
         Ok(RecordJob {
             id: row.get(offset)?,
             user_id: row.get(offset + 1)?,

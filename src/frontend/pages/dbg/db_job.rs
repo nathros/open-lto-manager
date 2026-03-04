@@ -48,13 +48,16 @@ fn Inner() -> Element {
                 td { "{rec.id}" }
                 td { "{rec.user_id}" }
                 td { "{rec.name}" }
-                td { "{<JobType as Into<i64>>::into(rec.job_type)}" }
-                td { "{<JobStatus as Into<i64>>::into(rec.job_status)}" }
+                td {
+                    "{<JobType as Into<&str>>::into(rec.job_type)}[{<JobType as Into<i64>>::into(rec.job_type)}]"
+                }
+                td {
+                    "{<JobStatus as Into<&str>>::into(rec.job_status)}[{<JobStatus as Into<i64>>::into(rec.job_status)}]"
+                }
                 td { "{rec.start_time}" }
                 td { "{rec.end_time}" }
                 td { "{rec.comment}" }
             }
         }
-
     }
 }
