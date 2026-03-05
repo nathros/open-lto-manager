@@ -18,14 +18,6 @@ err_msg () {
 	echo "* Try manual install see: https://github.com/LinearTapeFileSystem/ltfs"
 }
 
-get_root () {
-	if sudo su ; then
-		echo ""
-	else
-		exit 0
-	fi
-}
-
 ask_buggy_ifs () {
 	echo "*****************************************************************************************"
 	echo "* Are you using any of the following controllers:                                       *"
@@ -55,51 +47,49 @@ ask_buggy_ifs () {
 check_groups () {
 	CURRENT_GROUPS=$(groups $USR)
 	if [[ $CURRENT_GROUPS != *"$GROUP"* ]]; then
-		usermod -a -G $GROUP $USR
+		sudo usermod -a -G $GROUP $USR
 		GROUP_CHANGED=true
 	fi
 }
 
 install_as_debian () {
-	# Taken from: https://github.com/LinearTapeFileSystem/Debian12-Build
+	# Adapted from: https://github.com/LinearTapeFileSystem/Debian12-Build
 
 	ask_buggy_ifs
 
 	LTFS="build-essential git pkg-config automake autoconf libtool libfuse-dev fuse uuid-dev libxml2-dev libsnmp-dev libicu-dev icu-devtools"
-	MT="cpio"
+	MT="mt-st"
 	PACKAGES="$LTFS $MT"
 	ICU_PATH="/usr/bin/icu-config"
 
 	echo "********************************************************************************************"
 	echo "* The following actions will be performed:                                                 *"
 	echo "* 1) Packages to be installed: ${PACKAGES:0:56}    *"
-	echo "*    ${PACKAGES:57}        *"
+	echo "*    ${PACKAGES:57}       *"
 	echo "* 2) Add user '$USR' to group '$GROUP'                                                     *"
-	echo "* 3) Compile and install LTFS to $LTFS_DIR                                                 *"
-	echo "     LTFS source: $LTFS_SOURCE                             *"
-	echo "* 4) Install icu-config to $ICU_PATH                                             *"
+	echo "* 3) Install icu-config to $ICU_PATH                                             *"
 	echo "*    This is deprecated in Debian: https://github.com/LinearTapeFileSystem/ltfs/issues/153 *"
+	echo "* 4) Compile and install LTFS to $LTFS_DIR                                                 *"
+	echo "*    LTFS source: $LTFS_SOURCE                             *"
 	echo "********************************************************************************************"
 
-	get_root
 	check_groups
 
 	# LTFS
-	apt update && apt install -y $PACKAGES
+	sudo apt update && apt install -y $PACKAGES
 
 	cd $BASE_DIR
-	rm -rf $LTFS_DIR
-	git clone $LTFS_SOURCE
+	sudo rm -rf $LTFS_DIR
+	sudo git clone $LTFS_SOURCE
 	cd $LTFS_DIR
-	git checkout $LTFS_VERSION
-	
+	sudo git checkout $LTFS_VERSION
 
-	cat >$ICU_PATH <<EOL
+	sudo tee $ICU_PATH >/dev/null <<EOL
 #!/bin/sh
 
-opts=$1
+opts=\$1
 
-case $opts in
+case \$opts in
 	'--cppflags')
 		echo '' ;;
 	'--ldflags')
@@ -109,17 +99,17 @@ case $opts in
 esac
 EOL
 
-	chmod +x $ICU_PATH
+	sudo chmod +x $ICU_PATH
 
-	./autogen.sh
+	sudo ./autogen.sh
 	if [ "$BUGGY_IFS" = true ] ; then
-		./configure --enable-buggy-ifs
+		sudo ./configure --enable-buggy-ifs
 	else
-		./configure
+		sudo ./configure
 	fi
-	make
-	make install
-	ldconfig -v
+	sudo make
+	sudo make install
+	sudo ldconfig -v
 }
 
 # Main
@@ -152,9 +142,11 @@ else
 	exit 1
 fi
 
+echo
+echo "== INSTALL COMPLETE== "
 if [ "$GROUP_CHANGED" = true ] ; then
 	echo "Group has been changed, you need to logout and login for this to take effect"
-else
+fi
 echo "Installed LTFS at: $LTFS_DIR"
 echo
 echo "Check installed mt version:"

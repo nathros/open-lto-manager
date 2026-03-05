@@ -36,7 +36,9 @@ pub fn Navbar() -> Element {
                 to: Route::AddJob {},
                 "[Add Job]"
             }
-            Link { style: "margin-left:auto", to: Route::DBMan {}, "Manufacturer" }
+            Link { style: "margin-left:auto", to: Route::ShowDevices {}, "Devices" }
+            hr {}
+            Link { to: Route::DBMan {}, "Manufacturer" }
             Link { to: Route::DBType {}, "Type" }
             Link { to: Route::DBUser {}, "User" }
             Link { to: Route::DBFile {}, "File" }

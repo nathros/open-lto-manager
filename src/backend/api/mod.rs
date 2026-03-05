@@ -1,3 +1,4 @@
+pub mod api_devices;
 pub mod api_file;
 pub mod api_file_view;
 pub mod api_init;

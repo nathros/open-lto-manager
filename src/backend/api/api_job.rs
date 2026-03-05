@@ -2,9 +2,7 @@ use std::collections::HashSet;
 
 use dioxus::prelude::*;
 
-use crate::shared::models::database::{
-    model_job::RecordJob, model_job_metadata::RecordJobMetadata,
-};
+use crate::shared::models::database::model_job::RecordJob;
 
 #[get("/api/job/all")]
 pub async fn list_jobs() -> Result<Vec<RecordJob>> {
@@ -21,11 +19,13 @@ pub async fn list_jobs() -> Result<Vec<RecordJob>> {
 
 #[post("/api/job/new_backup")]
 pub async fn new_backup(new_job: RecordJob, files: HashSet<String>) -> Result<bool> {
-    use crate::backend::database::{
-        db::DB,
-        tables::{table::Table, table_job::TableJob, table_job_metadata::TableJobMetadata},
+    use crate::{
+        backend::database::{
+            db::DB,
+            tables::{table::Table, table_job::TableJob, table_job_metadata::TableJobMetadata},
+        },
+        shared::models::database::model_job_metadata::{JobMetadataKey, RecordJobMetadata},
     };
-    use crate::shared::models::database::model_job_metadata::JobMetadataKey;
 
     #[cfg(feature = "slow_server")]
     std::thread::sleep(std::time::Duration::from_millis(1000));

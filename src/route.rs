@@ -9,6 +9,7 @@ use crate::frontend::pages::dbg::db_man::DBMan;
 use crate::frontend::pages::dbg::db_tape::DBTape;
 use crate::frontend::pages::dbg::db_type::DBType;
 use crate::frontend::pages::dbg::db_user::DBUser;
+use crate::frontend::pages::dbg::show_devices::ShowDevices;
 use crate::frontend::pages::home::Home;
 use crate::frontend::pages::job::add_job::AddJob;
 use crate::frontend::pages::show::Show;
@@ -34,6 +35,9 @@ pub enum Route {
     AddJob {},
 
     // Debug only
+    #[route("/show-dev")]
+    ShowDevices {},
+
     #[route("/db-man")]
     DBMan {},
     #[route("/db-type")]

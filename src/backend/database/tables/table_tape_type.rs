@@ -247,7 +247,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                 colour_hp: "purple".to_string(),
                 colour_worm_reg: "".to_string(),
                 colour_worm_hp: "".to_string(),
-                supports_worm: true,
+                supports_worm: false,
                 supports_encryption: true,
                 supports_ltfs: true,
             },
