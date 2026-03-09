@@ -12,6 +12,10 @@ fn route_eq<T>(a: &T, b: &T) -> bool {
 pub fn Navbar() -> Element {
     let route: Route = use_route();
     let mut multiplier = use_signal(|| String::new());
+    #[cfg(debug_assertions)]
+    let debug_build = true;
+    #[cfg(not(debug_assertions))]
+    let debug_build = false;
 
     rsx! {
         div { id: "navbar",
@@ -49,6 +53,9 @@ pub fn Navbar() -> Element {
             }
             Link { to: Route::DBTape {}, "Tape" }
             Link { to: Route::ShowAppState {}, "AppState" }
+            if debug_build {
+                Link { to: Route::Sandpit {}, "Sandpit" }
+            }
         }
         hr {}
 

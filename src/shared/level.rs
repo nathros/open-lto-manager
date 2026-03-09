@@ -6,11 +6,13 @@ pub enum Level {
     Success,
 }
 
-pub fn level_style(level: Level) -> String {
-    match level {
-        Level::Error => "background-color:red".to_string(),
-        Level::Warning => "background-color:orange".to_string(),
-        Level::Info => "background-color:blue".to_string(),
-        Level::Success => "background-color:green".to_string(),
+impl Level {
+    pub fn to_style(&self) -> &str {
+        match self {
+            Level::Error => "background-color:red",
+            Level::Warning => "background-color:orange",
+            Level::Info => "background-color:blue",
+            Level::Success => "background-color:green",
+        }
     }
 }

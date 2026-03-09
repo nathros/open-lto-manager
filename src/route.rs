@@ -15,6 +15,10 @@ use crate::frontend::pages::job::add_job::AddJob;
 use crate::frontend::pages::show::Show;
 use crate::frontend::pages::tape::Tape;
 use crate::frontend::pages::test::Test;
+use crate::frontend::sandpit::index::Sandpit;
+use crate::frontend::sandpit::sandpit_button::SandpitButton;
+use crate::frontend::sandpit::sandpit_modal::SandpitModal;
+use crate::frontend::sandpit::sandpit_showcase::SandpitShowcase;
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 pub enum Route {
@@ -37,6 +41,15 @@ pub enum Route {
     // Debug only
     #[route("/show-dev")]
     ShowDevices {},
+
+    #[route("/sandpit")]
+    Sandpit {},
+    #[route("/sandpit/showcase")]
+    SandpitShowcase {},
+    #[route("/sandpit/button")]
+    SandpitButton {},
+    #[route("/sandpit/modal")]
+    SandpitModal {},
 
     #[route("/db-man")]
     DBMan {},

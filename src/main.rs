@@ -1,3 +1,5 @@
+#![cfg_attr(not(test), forbid(unsafe_code))] // Disable unsafe{} but allow in tests
+
 use dioxus::prelude::*;
 
 mod backend;

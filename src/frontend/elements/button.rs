@@ -15,6 +15,22 @@ pub struct ButtonProps {
     attributes: Vec<Attribute>,
 }
 
+/*pub enum ButtonType {
+    button, // HTML default
+    submit,
+    reset,
+}
+
+impl ButtonType {
+    pub fn to_string(&self) -> &str {
+        match self {
+            ButtonType::button => "button",
+            ButtonType::submit => "submit",
+            ButtonType::reset => "reset",
+        }
+    }
+}*/
+
 #[component]
 pub fn Button(props: ButtonProps) -> Element {
     rsx! {

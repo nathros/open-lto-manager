@@ -1,10 +1,9 @@
-use std::collections::HashSet;
-use std::path::MAIN_SEPARATOR;
+use dioxus::{fullstack::Loader, prelude::*};
+use std::{collections::HashSet, path::MAIN_SEPARATOR};
 
 use crate::backend::api::api_file_view::{fv_files_in_dir, fv_working_dir};
+use crate::frontend::elements::button::Button;
 use crate::shared::models::file_view::FileView;
-use dioxus::fullstack::Loader;
-use dioxus::prelude::*;
 
 #[component]
 pub fn FileViewer(mut selected_files: WriteSignal<HashSet<String>>) -> Element {
@@ -46,7 +45,7 @@ pub fn FileViewer(mut selected_files: WriteSignal<HashSet<String>>) -> Element {
                 value: "{current_path_input}",
                 disabled: !pending,
             }
-            button { onclick: apply, "apply" }
+            Button { onclick: apply, text: "apply" }
             br {}
             br {}
         }
@@ -70,7 +69,6 @@ fn FileViewerBody(
     mut current_path_input: WriteSignal<String>,
     mut selected_files: WriteSignal<HashSet<String>>,
 ) -> Element {
-    info!("render");
     let mut loader: Loader<Result<Vec<FileView>, String>> =
         use_loader(move || fv_files_in_dir(current_path(), false, 0))?;
 

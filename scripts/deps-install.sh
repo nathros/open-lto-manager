@@ -2,7 +2,7 @@
 
 set -e # Stop on error
 
-LTFS_VERSION=v2.4.8.1-10519
+LTFS_VERSION=v2.4.8.2-10520
 BASE_DIR=/opt
 LTFS_DIR=/opt/ltfs
 LTFS_SOURCE=https://github.com/LinearTapeFileSystem/ltfs
@@ -15,7 +15,7 @@ err_msg () {
 	echo "This script only supports: Debian(+varients)"
 	echo "Options:"
 	echo "* Pass OS name as first parameter"
-	echo "* Try manual install see: https://github.com/LinearTapeFileSystem/ltfs"
+	echo "* Try manual install see: $LTFS_SOURCE"
 }
 
 ask_buggy_ifs () {
@@ -26,7 +26,7 @@ ask_buggy_ifs () {
 	echo "* Any USB SAS converter                                                                 *"
 	echo "*                                                                                       *"
 	echo "* These have a firmware issue which need ltfs configure flag to work around             *"
-	echo "* See: https://github.com/LinearTapeFileSystem/ltfs/wiki/HBA-info                       *"
+	echo "* See: $LTFS_SOURCE/wiki/HBA-info                       *"
 	echo "*****************************************************************************************"
 	while true ; do
 		read -p 'y/n: ' answer
@@ -52,38 +52,7 @@ check_groups () {
 	fi
 }
 
-install_as_debian () {
-	# Adapted from: https://github.com/LinearTapeFileSystem/Debian12-Build
-
-	ask_buggy_ifs
-
-	LTFS="build-essential git pkg-config automake autoconf libtool libfuse-dev fuse uuid-dev libxml2-dev libsnmp-dev libicu-dev icu-devtools"
-	MT="mt-st"
-	PACKAGES="$LTFS $MT"
-	ICU_PATH="/usr/bin/icu-config"
-
-	echo "********************************************************************************************"
-	echo "* The following actions will be performed:                                                 *"
-	echo "* 1) Packages to be installed: ${PACKAGES:0:56}    *"
-	echo "*    ${PACKAGES:57}       *"
-	echo "* 2) Add user '$USR' to group '$GROUP'                                                     *"
-	echo "* 3) Install icu-config to $ICU_PATH                                             *"
-	echo "*    This is deprecated in Debian: https://github.com/LinearTapeFileSystem/ltfs/issues/153 *"
-	echo "* 4) Compile and install LTFS to $LTFS_DIR                                                 *"
-	echo "*    LTFS source: $LTFS_SOURCE                             *"
-	echo "********************************************************************************************"
-
-	check_groups
-
-	# LTFS
-	sudo apt update && apt install -y $PACKAGES
-
-	cd $BASE_DIR
-	sudo rm -rf $LTFS_DIR
-	sudo git clone $LTFS_SOURCE
-	cd $LTFS_DIR
-	sudo git checkout $LTFS_VERSION
-
+install_icu () {
 	sudo tee $ICU_PATH >/dev/null <<EOL
 #!/bin/sh
 
@@ -100,6 +69,41 @@ esac
 EOL
 
 	sudo chmod +x $ICU_PATH
+}
+
+install_as_debian () {
+	# Adapted from: https://github.com/LinearTapeFileSystem/Debian12-Build
+
+	ask_buggy_ifs
+
+	LTFS="build-essential git pkg-config automake autoconf libtool libfuse-dev fuse uuid-dev libxml2-dev libsnmp-dev libicu-dev icu-devtools"
+	MT="mt-st"
+	PACKAGES="$LTFS $MT"
+	ICU_PATH="/usr/bin/icu-config"
+
+	echo "********************************************************************************************"
+	echo "* The following actions will be performed:                                                 *"
+	echo "* 1) Packages to be installed: ${PACKAGES:0:56}    *"
+	echo "*    ${PACKAGES:57}       *"
+	echo "* 2) Add user '$USR' to group '$GROUP'                                                     *"
+	echo "* 3) Install icu-config to $ICU_PATH                                             *"
+	echo "*    This is deprecated in Debian: $LTFS_SOURCE/issues/153 *"
+	echo "* 4) Compile and install LTFS to $LTFS_DIR                                                 *"
+	echo "*    LTFS source: $LTFS_SOURCE                             *"
+	echo "********************************************************************************************"
+
+	check_groups
+
+	# LTFS
+	sudo apt update && apt install -y $PACKAGES
+
+	cd $BASE_DIR
+	sudo rm -rf $LTFS_DIR
+	sudo git clone $LTFS_SOURCE
+	cd $LTFS_DIR
+	sudo git checkout $LTFS_VERSION
+
+	install_icu
 
 	sudo ./autogen.sh
 	if [ "$BUGGY_IFS" = true ] ; then

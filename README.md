@@ -43,7 +43,7 @@ IP=0.0.0.0 CONSOLE_LOG=ON ./openltomanager
 ```
 
 ## Build
-### VsCode Setup
+### Vs Code Setup
 #### Install Toolchains
 - Rust 1.92
 - Dioxus 0.7.3
@@ -57,18 +57,18 @@ Paste @recommended in Search Extensions (Ctrl+Shift+X)
 - Code spell check
 
 ### Final Checks
-Run: `dev.env.check.sh` or VsCode task: `Check::Env`
+Run: `dev.env.check.sh` or Vs Code task: `Check::Env`
 
 This should pass with no errors.
 
 ### Local run with hotreloading
-VsCode task: `Serve::localhost`
+Vs Code task: `Serve::localhost`
 ```shell
 dx serve
 ```
 
 ### Release Build
-VsCode task: `Build::Release`
+Vs Code task: `Build::Release`
 ```shell
 dx build --web --release
 ```

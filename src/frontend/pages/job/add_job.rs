@@ -1,14 +1,20 @@
+use dioxus::prelude::*;
 use std::collections::HashSet;
 
 use crate::backend::api::api_job::new_backup;
-use crate::frontend::collections::file_view::FileViewer;
-use crate::frontend::collections::message::Message;
-use crate::frontend::modules::modal::Modal;
-use crate::frontend::modules::tab::Tab;
-use crate::frontend::pages::job::backup_job_form::BackupJobForm;
-use crate::shared::level::Level;
-use crate::shared::models::database::model_job::{JobType, RecordJob};
-use dioxus::prelude::*;
+use crate::frontend::{
+    collections::{file_view::FileViewer, message::Message},
+    elements::button::Button,
+    modules::{
+        modal::{MODAL_JOB_ID, Modal},
+        tab::Tab,
+    },
+    pages::job::backup_job_form::BackupJobForm,
+};
+use crate::shared::{
+    level::Level,
+    models::database::model_job::{JobType, RecordJob},
+};
 
 #[component]
 pub fn AddJob() -> Element {
@@ -45,11 +51,7 @@ pub fn AddJob() -> Element {
     };
 
     rsx! {
-        Modal {
-            id: "modal-b_job".to_string(),
-            level: Level::Error,
-            message: modal_message,
-        }
+        Modal { id: MODAL_JOB_ID, level: Level::Error, message: modal_message }
         Tab {
             tab_names: vec!["Options".to_string(), "Files".to_string(), "Destination".to_string()],
             tab_contents: vec![
@@ -63,6 +65,6 @@ pub fn AddJob() -> Element {
         hr {}
         Message { level: Level::Error, text: error_message() }
         Message { level: Level::Success, text: success_message() }
-        button { r#type: "button", onclick: submit, "Add" }
+        Button { r#type: "button", onclick: submit, text: "Add" }
     }
 }
