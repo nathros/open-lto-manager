@@ -1,21 +1,22 @@
-use std::io::ErrorKind;
-use std::sync::Mutex;
-
 use dioxus::prelude::info;
 use rusqlite::{Connection, Error};
-
-use crate::backend::database::tables::table_file::TableFile;
-use crate::backend::database::tables::table_job::TableJob;
-use crate::backend::database::tables::table_job_metadata::TableJobMetadata;
-use crate::backend::{database::tables::table_tape::TableTape, env::get_database_path};
-use crate::backend::{
-    database::tables::{
-        table::Table, table_manufacturer::TableManufacturer, table_tape_type::TableTapeType,
-        table_user::TableUser, table_version::TableVersion,
-    },
-    env::get_database_file,
+use std::{
+    io::ErrorKind,
+    sync::{LazyLock, Mutex},
 };
-use crate::shared::models::database::model_version::RecordVersion;
+
+use crate::{
+    backend::{
+        database::tables::{
+            table::Table, table_file::TableFile, table_job::TableJob,
+            table_job_metadata::TableJobMetadata, table_manufacturer::TableManufacturer,
+            table_tape::TableTape, table_tape_type::TableTapeType, table_user::TableUser,
+            table_version::TableVersion,
+        },
+        env::{get_database_file, get_database_path},
+    },
+    shared::models::database::model_version::RecordVersion,
+};
 
 static DB_VERSION_LATEST: i64 = 0;
 
@@ -165,7 +166,7 @@ pub fn create_database() -> Result<rusqlite::Connection, String> {
 }
 
 thread_local! {
-    pub static DB: std::sync::LazyLock<rusqlite::Connection> = std::sync::LazyLock::new(|| {
+    pub static DB: LazyLock<rusqlite::Connection> = LazyLock::new(|| {
         create_database().expect("Attempt to open uninitialised database") // In separate function as rustfmt does not work inside this closure
     });
 }

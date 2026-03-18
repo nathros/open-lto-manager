@@ -1,7 +1,4 @@
-use crate::backend::env::{get_console_log_enabled, get_logging_file, get_logging_path};
-use std::fs::OpenOptions;
-use std::io::ErrorKind;
-use std::sync::LazyLock;
+use std::{fs::OpenOptions, io::ErrorKind, sync::LazyLock};
 use tracing::{error, level_filters::LevelFilter};
 use tracing_subscriber::{
     Registry,
@@ -12,7 +9,9 @@ use tracing_subscriber::{
     reload::{self, Handle},
 };
 
-pub type ReloadableLayer =
+use crate::backend::env::{get_console_log_enabled, get_logging_file, get_logging_path};
+
+type ReloadableLayer =
     Handle<Filtered<Box<dyn Layer<Registry> + Send + Sync>, LevelFilter, Registry>, Registry>;
 
 pub static LOG_LAYERS: LazyLock<

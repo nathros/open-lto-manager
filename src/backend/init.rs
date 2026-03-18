@@ -1,8 +1,10 @@
-use crate::backend::database::db::create_database;
-use crate::{backend::logging::LOG_LAYERS, shared::models::app_state::AppState};
-use std::sync::LazyLock;
-use std::vec;
+use std::{sync::LazyLock, vec};
 use tracing::{error, info};
+
+use crate::{
+    backend::{database::db::create_database, logging::LOG_LAYERS},
+    shared::models::app_state::AppState,
+};
 
 pub static APP_STATE: LazyLock<AppState> = LazyLock::new(init_backend);
 
