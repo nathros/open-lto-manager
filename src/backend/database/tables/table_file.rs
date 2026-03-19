@@ -188,6 +188,10 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
         db.execute("DELETE FROM file WHERE id = ?1;", params![record_id])
     }
 
+    fn clear_table(db: &Connection) -> Result<usize, rusqlite::Error> {
+        db.execute("DELETE FROM file;", ())
+    }
+
     fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordFile, Error> {
         Ok(RecordFile {
             id: row.get(offset)?,

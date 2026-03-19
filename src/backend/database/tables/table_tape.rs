@@ -75,6 +75,7 @@ impl Table<RecordTape, RecordTapeJoin> for TableTape {
     fn insert_record(db: &Connection, record: &RecordTape) -> Result<i64, Error> {
         db.execute(
             "INSERT INTO tape (
+                    id,
                     manufacturer_id,
                     tape_type_id,
                     barcode,
@@ -101,8 +102,10 @@ impl Table<RecordTape, RecordTapeJoin> for TableTape {
                     ?10,
                     ?11,
                     ?12,
-                    ?13);",
+                    ?13,
+                    ?14);",
             params![
+                record.id,
                 record.manufacturer_id,
                 record.tape_type_id,
                 record.barcode,
@@ -211,6 +214,10 @@ impl Table<RecordTape, RecordTapeJoin> for TableTape {
 
     fn delete_record(db: &Connection, record_id: i64) -> Result<usize, Error> {
         db.execute("DELETE FROM tape WHERE id = ?1;", params![record_id])
+    }
+
+    fn clear_table(db: &Connection) -> Result<usize, rusqlite::Error> {
+        db.execute("DELETE FROM tape;", ())
     }
 
     fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordTape, Error> {

@@ -2278,6 +2278,7 @@ dependencies = [
  "dioxus",
  "rusqlite",
  "serde",
+ "serde_json",
  "tempdir",
  "tokio",
  "tracing",

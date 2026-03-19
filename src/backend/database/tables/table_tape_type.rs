@@ -412,6 +412,10 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
         db.execute("DELETE FROM tape_type WHERE id = ?1;", params![record_id])
     }
 
+    fn clear_table(db: &Connection) -> Result<usize, rusqlite::Error> {
+        db.execute("DELETE FROM tape_type;", ())
+    }
+
     fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordTapeType, Error> {
         Ok(RecordTapeType {
             id: row.get(offset)?,

@@ -59,7 +59,7 @@ fn check_devices_shell(sender: Sender<String>, on_complete: TaskCompleteFn) {
     let args = &["./scripts/test.sh"];
     let cmd = "bash";
 
-    info!("Run background shell command:{:?} {:?}", cmd, args);
+    info!("Run background shell command: {:?} {:?}", cmd, args);
 
     match Command::new(cmd)
         .args(args)
@@ -77,7 +77,7 @@ fn check_devices_shell(sender: Sender<String>, on_complete: TaskCompleteFn) {
                 }); // Guard dropped here
             } else {
                 error!(
-                    "Failed to get stdout/err, stopping command:{:?} {:?}",
+                    "Failed to get stdout/err, stopping command: {:?} {:?}",
                     cmd, args
                 );
                 let _ = cmd.start_kill();

@@ -14,5 +14,7 @@ pub trait Table<T, J> {
     fn update_record(db: &Connection, record: &T) -> Result<usize, rusqlite::Error>;
     fn delete_record(db: &Connection, record_id: i64) -> Result<usize, rusqlite::Error>;
 
+    fn clear_table(db: &Connection) -> Result<usize, rusqlite::Error>;
+
     fn fill(row: &Row<'_>, offset: usize) -> Result<T, rusqlite::Error>;
 }

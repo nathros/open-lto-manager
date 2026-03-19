@@ -121,6 +121,10 @@ impl Table<RecordJobMetadata, RecordJobMetadataJoin> for TableJobMetadata {
         )
     }
 
+    fn clear_table(db: &Connection) -> Result<usize, rusqlite::Error> {
+        db.execute("DELETE FROM job_metadata;", ())
+    }
+
     fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordJobMetadata, Error> {
         Ok(RecordJobMetadata {
             id: row.get(offset)?,

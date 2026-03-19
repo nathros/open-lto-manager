@@ -104,6 +104,10 @@ impl Table<RecordManufacturer, RecordManufacturer> for TableManufacturer {
         )
     }
 
+    fn clear_table(db: &Connection) -> Result<usize, rusqlite::Error> {
+        db.execute("DELETE FROM manufacturer;", ())
+    }
+
     fn fill(row: &Row<'_>, _offset: usize) -> Result<RecordManufacturer, Error> {
         Ok(RecordManufacturer {
             id: row.get(0)?,

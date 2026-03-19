@@ -223,6 +223,10 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
         db.execute("DELETE FROM user WHERE id = ?1;", params![record_id])
     }
 
+    fn clear_table(db: &Connection) -> Result<usize, rusqlite::Error> {
+        db.execute("DELETE FROM user;", ())
+    }
+
     fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordUser, Error> {
         Ok(RecordUser {
             id: row.get(offset)?,

@@ -1,5 +1,5 @@
 use dioxus::prelude::info;
-use rusqlite::{Connection, Error};
+use rusqlite::{Connection, Error, params};
 use std::{
     io::ErrorKind,
     sync::{LazyLock, Mutex},
@@ -163,6 +163,10 @@ pub fn create_database() -> Result<rusqlite::Connection, String> {
         },
         Err(e) => Err(format!("Failed to open database: {}", e)),
     }
+}
+
+pub fn backup_database(db: &Connection, path: String) -> Result<usize, rusqlite::Error> {
+    db.execute("VACUUM main INTO ?1", params![path])
 }
 
 thread_local! {

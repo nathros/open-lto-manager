@@ -72,6 +72,12 @@ impl Table<RecordVersion, RecordVersion> for TableVersion {
         ))
     }
 
+    fn clear_table(_db: &Connection) -> Result<usize, rusqlite::Error> {
+        Err(Error::InvalidParameterName(
+            "Do not clear Version table".to_string(),
+        ))
+    }
+
     fn fill(row: &Row<'_>, _offset: usize) -> Result<RecordVersion, Error> {
         Ok(RecordVersion {
             version_number: row.get(1)?,

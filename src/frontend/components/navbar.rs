@@ -55,6 +55,7 @@ pub fn Navbar() -> Element {
             Link { to: Route::ShowAppState {}, "AppState" }
             if debug_build {
                 Link { to: Route::Sandpit {}, "Sandpit" }
+                Link { to: Route::ShowDev {}, "Dev" }
             }
         }
         hr {}

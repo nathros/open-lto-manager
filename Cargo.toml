@@ -11,6 +11,7 @@ chrono = { version = "0.4.43", features = ["serde"] }
 dioxus = { version = "0.7.3", features = ["router", "fullstack"] }
 rusqlite = { version = "0.38.0", features = ["bundled", "chrono"], optional = true }
 serde = { version = "1.0.228", features = [] }
+serde_json = { version = "1.0.149", features = [], optional = true } # /dev only
 tokio = { version = "1.49.0", features = ["process"], optional = true }
 tracing = { version = "0.1.44" }
 tracing-subscriber = { version = "0.3.22", optional = true }
@@ -27,6 +28,7 @@ web = ["dioxus/web"]
 # mobile = ["dioxus/mobile"]
 server = ["dioxus/server",
           "dep:rusqlite",
+          "dep:serde_json", # /dev only
           "dep:tokio",
           "dep:tracing-subscriber",
           "dep:uzers",

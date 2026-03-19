@@ -96,7 +96,6 @@ pub fn Tape(id: i64) -> Element {
                 ok_msg.set("".to_string());
             }
         }
-        tracing::info!("Hello");
     };
 
     rsx! {

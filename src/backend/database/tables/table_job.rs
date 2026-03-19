@@ -154,6 +154,10 @@ impl Table<RecordJob, RecordJobJoin> for TableJob {
         db.execute("DELETE FROM job WHERE id = ?1;", params![record_id])
     }
 
+    fn clear_table(db: &Connection) -> Result<usize, rusqlite::Error> {
+        db.execute("DELETE FROM job;", ())
+    }
+
     fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordJob, rusqlite::Error> {
         Ok(RecordJob {
             id: row.get(offset)?,
