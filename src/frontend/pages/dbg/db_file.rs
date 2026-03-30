@@ -46,7 +46,11 @@ fn Inner() -> Element {
         for rec in files_list.cloned() {
             tr {
                 td { "{rec.id}" }
-                td { "{rec.tape_id.unwrap_or(0)}" }
+                if let Some(tape_id) = rec.tape_id {
+                    td { "{tape_id}" }
+                } else {
+                    td { "null" }
+                }
                 td { "{rec.file_name_virt}" }
                 td { "{rec.file_path_virt}" }
                 td { "{rec.file_name_phy}" }

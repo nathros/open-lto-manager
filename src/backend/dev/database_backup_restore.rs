@@ -10,12 +10,15 @@ use crate::{
     backend::{
         database::{
             db::{DB, backup_database},
-            tables::{table::Table, table_tape::TableTape},
+            tables::{table::Table, table_file::TableFile, table_tape::TableTape},
         },
         env::get_database_path,
     },
-    shared::models::database::model_tape::{
-        EncryptionType, HardwareEncryptionType, RecordTape, SoftwareEncryptionType, TapeFormat,
+    shared::models::database::{
+        model_file::RecordFile,
+        model_tape::{
+            EncryptionType, HardwareEncryptionType, RecordTape, SoftwareEncryptionType, TapeFormat,
+        },
     },
 };
 
@@ -26,7 +29,8 @@ pub fn dev_database_backup(dir: String) -> bool {
         let path_file_backup = format!("{}/{}/database.db", get_database_path(), dir);
 
         let base_data_str = r#"{
-            "tapes": []
+            "tapes": [],
+            "files": []
         }"#;
 
         let mut json: Value = serde_json::from_str(base_data_str).unwrap_or(Value::Null);
@@ -38,7 +42,6 @@ pub fn dev_database_backup(dir: String) -> bool {
                 return false;
             }
         };
-
         if let Some(array) = json["tapes"].as_array_mut() {
             for t in tapes {
                 let mut tmp = Value::Object(serde_json::Map::new());
@@ -56,6 +59,33 @@ pub fn dev_database_backup(dir: String) -> bool {
                 tmp["used_space"] = Value::Number(t.used_space.into());
                 tmp["created"] = Value::String(t.created.to_rfc3339());
                 tmp["last_used"] = Value::String(t.created.to_rfc3339());
+                array.push(tmp);
+            }
+        } else {
+            return false;
+        }
+
+        let files = match TableFile::get_all(db) {
+            Ok(records) => records,
+            Err(e) => {
+                error!("{}", e);
+                return false;
+            }
+        };
+        if let Some(array) = json["files"].as_array_mut() {
+            for t in files {
+                let mut tmp = Value::Object(serde_json::Map::new());
+                tmp["id"] = Value::Number(t.id.into());
+                tmp["tape_id"] = Value::Number(t.tape_id.unwrap_or(0).into());
+                tmp["file_name_virt"] = Value::String(t.file_name_virt);
+                tmp["file_path_virt"] = Value::String(t.file_path_virt);
+                tmp["file_name_phy"] = Value::String(t.file_name_phy);
+                tmp["file_path_phy"] = Value::String(t.file_path_phy);
+                tmp["file_size"] = Value::Number(t.file_size.into());
+                tmp["created"] = Value::String(t.created.to_rfc3339());
+                tmp["modified"] = Value::String(t.modified.to_rfc3339());
+                tmp["hash"] = Value::String(t.hash);
+                tmp["icon"] = Value::String(t.icon);
                 array.push(tmp);
             }
         } else {
@@ -100,6 +130,7 @@ pub fn dev_database_restore(dir: String) -> Option<bool> {
         let path_file = format!("{}/{}/result.json", get_database_path(), dir);
 
         let mut tapes = vec![];
+        let mut files = vec![];
         match std::fs::read_to_string(path_file) {
             Ok(json_str) => {
                 let json: Value = serde_json::from_str(json_str.as_str()).unwrap_or(Value::Null);
@@ -225,7 +256,103 @@ pub fn dev_database_restore(dir: String) -> Option<bool> {
                     }
                 }
 
-                // Got all records
+                if let Some(array) = json["files"].as_array() {
+                    for value in array {
+                        files.push(RecordFile {
+                            id: match value["id"].as_number() {
+                                Some(i) => i.as_i64()?,
+                                None => {
+                                    error!("File failure id");
+                                    return None;
+                                }
+                            },
+                            tape_id: match value["tape_id"].as_number() {
+                                Some(i) => {
+                                    let result = i.as_i64()?;
+                                    if result == 0 { None } else { Some(result) }
+                                }
+                                None => {
+                                    error!("File failure tape_id");
+                                    return None;
+                                }
+                            },
+                            file_name_virt: match value["file_name_virt"].as_str() {
+                                Some(i) => i.to_string(),
+                                None => {
+                                    error!("File failure file_name_virt");
+                                    return None;
+                                }
+                            },
+                            file_path_virt: match value["file_path_virt"].as_str() {
+                                Some(i) => i.to_string(),
+                                None => {
+                                    error!("File failure file_path_virt");
+                                    return None;
+                                }
+                            },
+                            file_name_phy: match value["file_name_phy"].as_str() {
+                                Some(i) => i.to_string(),
+                                None => {
+                                    error!("File failure file_name_phy");
+                                    return None;
+                                }
+                            },
+                            file_path_phy: match value["file_path_phy"].as_str() {
+                                Some(i) => i.to_string(),
+                                None => {
+                                    error!("File failure file_path_phy");
+                                    return None;
+                                }
+                            },
+                            file_size: match value["file_size"].as_number() {
+                                Some(i) => i.as_i64()?,
+                                None => {
+                                    error!("File failure file_size");
+                                    return None;
+                                }
+                            },
+                            created: match value["created"].as_str() {
+                                Some(i) => DateTime::parse_from_rfc3339(i)
+                                    .unwrap_or(Local::now().into())
+                                    .into(),
+                                None => {
+                                    error!("File failure created");
+                                    return None;
+                                }
+                            },
+                            modified: match value["modified"].as_str() {
+                                Some(i) => DateTime::parse_from_rfc3339(i)
+                                    .unwrap_or(Local::now().into())
+                                    .into(),
+                                None => {
+                                    error!("File failure modified");
+                                    return None;
+                                }
+                            },
+                            hash: match value["hash"].as_str() {
+                                Some(i) => i.to_string(),
+                                None => {
+                                    error!("File failure hash");
+                                    return None;
+                                }
+                            },
+                            icon: match value["icon"].as_str() {
+                                Some(i) => i.to_string(),
+                                None => {
+                                    error!("File failure icon");
+                                    return None;
+                                }
+                            },
+                        });
+                    }
+                }
+
+                let clear_files = TableFile::clear_table(db);
+                if let Err(e) = clear_files {
+                    error!("File clear error {}", e);
+                    return None;
+                }
+                // Got all records, now insert. Order matters
                 match TableTape::clear_table(db) {
                     Ok(_) => {
                         for t in tapes {
@@ -237,6 +364,12 @@ pub fn dev_database_restore(dir: String) -> Option<bool> {
                     }
                     Err(e) => {
                         error!("Tape clear error {}", e);
+                        return None;
+                    }
+                }
+                for t in files {
+                    if let Err(e) = TableFile::insert_record(db, &t) {
+                        error!("File insert error {}", e);
                         return None;
                     }
                 }
