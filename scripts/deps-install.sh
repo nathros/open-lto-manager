@@ -2,7 +2,6 @@
 
 set -e # Stop on error
 
-LTFS_VERSION=v2.4.8.2-10520
 BASE_DIR=/opt
 LTFS_DIR=/opt/ltfs
 LTFS_SOURCE=https://github.com/LinearTapeFileSystem/ltfs
@@ -101,7 +100,7 @@ install_as_debian () {
 	sudo rm -rf $LTFS_DIR
 	sudo git clone $LTFS_SOURCE
 	cd $LTFS_DIR
-	sudo git checkout $LTFS_VERSION
+	sudo git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
 
 	install_icu
 

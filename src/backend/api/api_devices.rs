@@ -19,7 +19,7 @@ pub async fn text_stream3(id: i64) -> Result<TextStream> {
 
         match check_devices(id) {
             Ok(sender) => {
-                let mut rx = sender.subscribe();
+                let mut rx = sender.subscribe(); // Subscribe to new events
                 loop {
                     match rx.recv().await {
                         Ok(msg) => {

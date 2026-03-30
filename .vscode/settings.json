@@ -20,6 +20,7 @@
         "oninput",
         "Reloadable",
         "repr",
+        "reqwest",
         "rfind",
         "Routable",
         "rusqlite",

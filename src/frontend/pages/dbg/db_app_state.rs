@@ -35,6 +35,18 @@ fn Inner() -> Element {
         span { "{app_state().ltfs_installed}" }
         br {}
 
+        b { "LTFS Current Version: " }
+        span { "{app_state().ltfs_version.unwrap_or_default()}" }
+        br {}
+
+        b { "LTFS Latest Version: " }
+        span { "{app_state().ltfs_version_latest.unwrap_or_default()}" }
+        br {}
+
+        b { "LTFS is there newer: " }
+        span { "{app_state().latest_is_newer}" }
+        br {}
+
         b { "LTFS Error: " }
         span { "{app_state().ltfs_error.unwrap_or(\"\".to_string())}" }
         br {}

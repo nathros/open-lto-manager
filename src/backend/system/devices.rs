@@ -5,7 +5,7 @@ use tracing::{error, info};
 use crate::{
     backend::system::shell::{
         common::shell_output_default,
-        shell_command::{
+        shell_command_service::{
             SHELL_SERVICES, TaskCompleteFn, TaskGuard, close_shell_service, create_shell_service,
         },
     },
