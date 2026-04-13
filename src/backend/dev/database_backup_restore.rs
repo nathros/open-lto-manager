@@ -1,7 +1,7 @@
 use chrono::{DateTime, Local};
 use serde_json::Value;
 use std::{
-    fs::{self},
+    fs::{self, read_dir},
     path::Path,
 };
 use tracing::{error, info};
@@ -21,6 +21,28 @@ use crate::{
         },
     },
 };
+
+pub fn dev_database_list() -> Vec<String> {
+    let path = get_database_path();
+    let mut results = vec![];
+
+    let read_dir = match read_dir(&path) {
+        Ok(dir) => dir,
+        Err(_e) => {
+            return results;
+        }
+    };
+
+    for current_path in read_dir.flatten() {
+        if let Ok(metadata) = current_path.metadata()
+            && metadata.is_dir()
+        {
+            results.push(current_path.file_name().into_string().unwrap_or_default());
+        }
+    }
+
+    results
+}
 
 pub fn dev_database_backup(dir: String) -> bool {
     DB.with(|db| {
