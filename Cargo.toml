@@ -8,7 +8,7 @@ edition = "2024"
 
 [dependencies]
 chrono = { version = "0.4.43", features = ["serde"] }
-dioxus = { version = "0.7.4", features = ["router", "fullstack"] }
+dioxus = { version = "0.7.5", features = ["router", "fullstack"] }
 reqwest = { version = "0.12.28", features = [], optional = true }
 rusqlite = { version = "0.38.0", features = ["bundled", "chrono"], optional = true }
 serde = { version = "1.0.228", features = [] }
