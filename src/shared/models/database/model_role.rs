@@ -15,6 +15,7 @@ pub struct RecordRole {
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[allow(dead_code)] // FIXME
 pub struct RecordRoleJoin {
     pub id: i64,
     pub user: RecordUser,

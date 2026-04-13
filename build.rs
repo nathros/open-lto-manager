@@ -1,10 +1,56 @@
+use std::{
+    fs::{self, File, OpenOptions},
+    io::{self, BufRead, BufReader, Error},
+};
+
 fn main() {
-    #[cfg(not(debug_assertions))]
+    //#[cfg(not(debug_assertions))]
     {
         // Release build
         // TODO combine SVGs into layered sprite
-        // TODO combine CSS into single file
         // TODO combine JS into single file
         // copy /scripts to: target/dx/openltomanager/release/web/
+
+        // Combine CSS files into single bundle
+        if let Err(e) = bundle_css() {
+            println!("cargo::error=Bundle CSS: {}", e);
+            panic!("{}", e); // Build failure
+        }
     }
+}
+
+#[allow(dead_code)]
+fn bundle_css() -> Result<(), Error> {
+    let file = File::open("src/main.rs")?;
+    let reader = BufReader::new(file);
+
+    let bundle_path = "assets/bundle.css";
+    let mut bundle_file = OpenOptions::new()
+        .write(true) // Open to write
+        .create(true) // Create if it doesn't exist
+        .truncate(true) // Overwrite existing content
+        .open(bundle_path)?;
+    println!("cargo::info=Create CSS bundle: {}", bundle_path);
+
+    let mut found_css_array = false;
+
+    for line in reader.lines() {
+        let line = line?;
+
+        if found_css_array {
+            if line.contains("];") {
+                break;
+            } else if let Some(start_index) = line.find('"')
+                && let Some(end_index) = line.rfind('"')
+            {
+                let asset_path = &line[start_index + 2..end_index];
+                println!("cargo::info=Append CSS bundle: {}", asset_path);
+                let mut asset_file = fs::OpenOptions::new().read(true).open(asset_path)?;
+                io::copy(&mut asset_file, &mut bundle_file)?;
+            }
+        } else if line.contains("#[cfg(debug_assertions)] // Debug build") {
+            found_css_array = true;
+        }
+    }
+    Ok(())
 }

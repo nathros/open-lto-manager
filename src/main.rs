@@ -33,15 +33,9 @@ fn main() {
 fn App() -> Element {
     let app_state = use_loader(app_state)?;
 
-    #[cfg(debug_assertions)]
-    let assets = [MAIN_CSS];
-
-    #[cfg(not(debug_assertions))]
-    let assets = [MAIN_CSS]; // FIXME Release build will combine CSS assets in future
-
     rsx! {
         document::Link { rel: "icon", r#type: "image/svg+xml", href: FAVICON }
-        for asset in assets.iter() {
+        for asset in CSS_ASSETS.iter() {
             document::Link { rel: "stylesheet", href: *asset }
         }
 
@@ -58,5 +52,14 @@ fn App() -> Element {
 }
 
 const FAVICON: Asset = asset!("/assets/logo.svg");
-const MAIN_CSS: Asset = asset!("/assets/main.css");
-//const HEADER_SVG: Asset = asset!("/assets/header.svg");
+
+#[cfg(not(debug_assertions))] // Release build combined CSS files
+const CSS_ASSETS: [Asset; 1] = [asset!("/assets/bundle.css")];
+
+// Release (build.rs) will combine all these files into single bundle.css
+#[cfg(debug_assertions)] // Debug build individual CSS files
+const CSS_ASSETS: [Asset; 3] = [
+    asset!("/assets/main.css"),
+    asset!("/assets/common.css"),
+    asset!("/assets/button.css"),
+];

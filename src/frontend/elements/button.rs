@@ -35,7 +35,8 @@ impl ButtonType {
 pub fn Button(props: ButtonProps) -> Element {
     rsx! {
         button {
-            style: format!("padding:0.5rem;{}", props.style),
+            class: "btn",
+            style: props.style,
             onclick: props.onclick,
             ..props.attributes,
             "{props.text}"

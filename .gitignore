@@ -8,3 +8,6 @@
 
 # Working dir from local run
 /data
+
+# Release bundle CSS
+assets/bundle.css
