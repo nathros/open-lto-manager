@@ -1,0 +1,24 @@
+{
+	"themes": {
+		"tabler": {
+			"path": "external/tabler-icons",
+			"repo": "https://github.com/tabler/tabler-icons",
+			"viewbox": "24"
+		},
+		"remix": {
+			"path": "external/remixicon",
+			"repo": "https://github.com/Remix-Design/remixicon",
+			"viewbox": "24"
+		}
+	},
+	"icons": {
+		"user": {
+			"tabler": "/icons/filled/user.svg",
+			"remix": "/icons/User & Faces/user-fill.svg"
+		},
+		"exclamation-triangle": {
+			"tabler": "/icons/filled/alert-triangle.svg",
+			"remix": "/icons/System/alert-fill.svg"
+		}
+	}
+}

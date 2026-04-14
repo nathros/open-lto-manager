@@ -59,7 +59,7 @@ const CSS_ASSETS: [Asset; 1] = [asset!("/assets/bundle.css")];
 // Release (build.rs) will combine all these files into single bundle.css
 #[cfg(debug_assertions)] // Debug build individual CSS files
 const CSS_ASSETS: [Asset; 3] = [
-    asset!("/assets/main.css"),
     asset!("/assets/common.css"),
+    asset!("/assets/main.css"),
     asset!("/assets/button.css"),
 ];

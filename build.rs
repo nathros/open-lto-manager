@@ -4,12 +4,14 @@ use std::{
 };
 
 fn main() {
-    //#[cfg(not(debug_assertions))]
+    #[cfg(not(debug_assertions))]
     {
-        // Release build
-        // TODO combine SVGs into layered sprite
+        // Release build only
+
         // TODO combine JS into single file
-        // copy /scripts to: target/dx/openltomanager/release/web/
+        // TODO copy /scripts to: target/dx/openltomanager/release/web/
+
+        // To generate SVG sprites run: assets/icons/generate.sh
 
         // Combine CSS files into single bundle
         if let Err(e) = bundle_css() {
