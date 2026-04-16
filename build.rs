@@ -11,7 +11,7 @@ fn main() {
         // TODO combine JS into single file
         // TODO copy /scripts to: target/dx/openltomanager/release/web/
 
-        // To generate SVG sprites run: assets/icons/generate.sh
+        // To generate SVG sprites run: external/generate-svg-sprites.sh
 
         // Combine CSS files into single bundle
         if let Err(e) = bundle_css() {

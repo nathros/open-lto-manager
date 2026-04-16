@@ -1,0 +1,50 @@
+{
+	"themes": {
+		"company": {
+			"path": "external/company-logo",
+			"repo": ".",
+			"action": "none"
+		}
+	},
+	"icons": {
+		"dell": {
+			"company": "/dell.svg"
+		},
+		"fujifilm": {
+			"company": "/fujifilm.svg"
+		},
+		"github": {
+			"company": "/github.svg"
+		},
+		"hp": {
+			"company": "/hp.svg"
+		},
+		"ibm": {
+			"company": "/ibm.svg"
+		},
+		"imation": {
+			"company": "/imation.svg"
+		},
+		"maxell": {
+			"company": "/maxell.svg"
+		},
+		"other": {
+			"company": "/other.svg"
+		},
+		"overland tandberg": {
+			"company": "/overland tandberg.svg"
+		},
+		"quantum": {
+			"company": "/quantum.svg"
+		},
+		"sony": {
+			"company": "/sony.svg"
+		},
+		"spectra": {
+			"company": "/spectra.svg"
+		},
+		"tdk": {
+			"company": "/tdk.svg"
+		}
+	}
+}

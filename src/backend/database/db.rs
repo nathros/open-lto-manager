@@ -89,11 +89,9 @@ fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, Str
     for (table_name, create_fn, update_fn) in tables.iter() {
         match create_fn(&conn) {
             Ok(created) => {
-                info!(
-                    "{} {}",
-                    table_name,
-                    if created { "created" } else { "already exists" }
-                );
+                if created {
+                    info!("{} created", table_name);
+                }
                 match update_fn(&conn, current_database_version) {
                     Ok(updated) => {
                         if updated {

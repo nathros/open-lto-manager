@@ -9,7 +9,7 @@ function preview_start() {
 	echo "	<head>" >> $OUTPUT
 	echo "		<title>$2 preview</title>" >> $OUTPUT
 	echo "		<style>td, th { border: 1px solid; } td { padding: 4px;} table { border-collapse: separate; } tr th { position: sticky; top: 0; background-color: white; }</style>" >> $OUTPUT
-	echo "		<style>img { width: 6rem; } .sm { width: 2rem; } .fill { background-color: lightgrey } a { text-decoration: none; }</style>" >> $OUTPUT
+	echo "		<style>img { width: 6rem; height: 6rem } .sm { width: 2rem; } .fill { background-color: lightgrey } a { text-decoration: none; }</style>" >> $OUTPUT
 	echo "	</head>" >> $OUTPUT
 	echo "<body>" >> $OUTPUT
 	echo "<p>This is a preview of SVG sprites which are accessed via: #anchor</p>" >> $OUTPUT
@@ -28,8 +28,7 @@ function preview_end() {
 
 function icon_start() {
 	OUTPUT=$1
-	VIEW=$2
-	echo "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 ${VIEW} ${VIEW}\">" > $OUTPUT
+	echo "<svg xmlns=\"http://www.w3.org/2000/svg\">" > $OUTPUT
 	echo "<defs><style>svg .icon { display: none } svg .icon:target { display: inline }</style></defs>" >> $OUTPUT
 }
 
@@ -40,6 +39,7 @@ function icon_end() {
 
 function process_theme() {
 	OUTPUT_NAME=$2
+	OUTPUT_DIR=$3
 
 	INDEX=0
 	declare -A THEME_NAME_INDEX
@@ -47,13 +47,13 @@ function process_theme() {
 	THEME_NAME=()
 	THEME_PATH=()
 	THEME_REPO=()
-	THEME_VIEWBOX=()
+	THEME_ACTION=()
 	THEME_VERSION=()
 
 	SCAN_THEMES=false
 	SCAN_ICONS=false
 
-	PREVIEW=${OUTPUT_NAME}.preview.html
+	PREVIEW=${OUTPUT_DIR}${OUTPUT_NAME}.preview.html
 	preview_start ${PREVIEW} ${OUTPUT_NAME}
 
 	while read -r LINE; do
@@ -67,7 +67,7 @@ function process_theme() {
 
 				for N in ${THEME_NAME[*]} ; do # Start of .svg
 					I=${THEME_NAME_INDEX[$N]}
-					icon_start "${N}.svg" "${THEME_VIEWBOX[$I]}"
+					icon_start "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"
 					echo "	<th>${THEME_NAME[$I]}.svg (${THEME_VERSION[$I]})<a href='${THEME_REPO[$I]}' target='_blank'> &#128279;</a></th>" >> ${PREVIEW}
 				done
 				
@@ -80,15 +80,15 @@ function process_theme() {
 
 			elif [[ $LINE == "\"path\": "* ]]; then
 				THEME_PATH+=(${LINE:9:-2}) # Found theme path
-				cd ../../${LINE:9:-2}
-				THEME_VERSION+=($(git describe --exact-match --tags))
+				cd ../${LINE:9:-2}
+				THEME_VERSION+=($(git describe --exact-match --tags 2>/dev/null || true))
 				cd - > /dev/null
 
 			elif [[ $LINE == "\"repo\": "* ]]; then
 				THEME_REPO+=(${LINE:9:-2}) # Found theme repository
 
-			elif [[ $LINE == "\"viewbox\": "* ]]; then
-				THEME_VIEWBOX+=(${LINE:12:-1}) # Found theme viewBox
+			elif [[ $LINE == "\"action\": "* ]]; then
+				THEME_ACTION+=(${LINE:11:-1}) # Found theme viewBox
 			fi
 
 		elif $SCAN_ICONS ; then
@@ -97,7 +97,7 @@ function process_theme() {
 
 				for N in ${THEME_NAME[*]} ; do # End of .svg
 					I=${THEME_NAME_INDEX[$N]}
-					icon_end "${N}.svg" "${THEME_VIEWBOX[$I]}"
+					icon_end "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"
 				done
 
 			elif [[ $LINE == *": {" ]]; then
@@ -116,18 +116,26 @@ function process_theme() {
 				ICON_PATH=`echo "$LINE" | cut -d'"' -f 4`
 				I=${THEME_NAME_INDEX[$THEME]} # Get icon them index from name
 				N=${THEME_NAME[${I}]}
-				SVG=$(cat "../../${THEME_PATH[$I]}$ICON_PATH")
+				SVG=$(cat "../${THEME_PATH[$I]}$ICON_PATH")
 				FIND="viewBox"
 				REPLACE="id=\"$ICON_NAME\" class=\"icon\" $FIND"
 				# After: id="achor" class="icon" viewBox
 				# First occurrence only
-				echo "${SVG/$FIND/$REPLACE}" >> "${N}.svg"
+
+				if [[ "${THEME_ACTION[${I}]}" == "tab" ]]; then
+					echo "${SVG/$FIND/$REPLACE}"                                           `#Add icon class` \
+						| sed -e '1,4d'                                                    `#Delete lines 1-4` \
+						| sed -e 's/  \(width\|height\)="[0-9]*"//g'                       `#Find replace` \
+						| sed -r '/^\s*$/d' >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"      `#Remove empty lines` 
+				else
+					echo "${SVG/$FIND/$REPLACE}" >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"  `#Add icon class`
+				fi
 
 				echo "	<td>" >> ${PREVIEW}
-				echo "		<img src='./${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
-				echo "		<img class='sm' src='./${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
-				echo "		<img class='fill' src='./${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
-				echo "		<img class='fill sm' src='./${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
+				echo "		<img src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
+				echo "		<img class='sm' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
+				echo "		<img class='fill' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
+				echo "		<img class='fill sm' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
 				echo "	</td>" >> ${PREVIEW}
 			fi
 
@@ -147,6 +155,7 @@ function process_theme() {
 
 cd "$(dirname "$0")" # cd to this script dir
 
-#git submodule update --progress --init --recursive
+git submodule update --progress --init --recursive
 
-process_theme "icons.json" "icons"
+process_theme "icons.json" "icons" "../assets/"
+process_theme "company-logo.json" "logo" "../assets/"
