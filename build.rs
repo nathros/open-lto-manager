@@ -15,7 +15,7 @@ fn main() {
 
         // Combine CSS files into single bundle
         if let Err(e) = bundle_css() {
-            println!("cargo::error=Bundle CSS: {}", e);
+            println!("cargo:error=Bundle CSS: {}", e);
             panic!("{}", e); // Build failure
         }
     }
@@ -32,7 +32,7 @@ fn bundle_css() -> Result<(), Error> {
         .create(true) // Create if it doesn't exist
         .truncate(true) // Overwrite existing content
         .open(bundle_path)?;
-    println!("cargo::info=Create CSS bundle: {}", bundle_path);
+    println!("cargo:info=Create CSS bundle: {}", bundle_path);
 
     let mut found_css_array = false;
 
@@ -46,7 +46,7 @@ fn bundle_css() -> Result<(), Error> {
                 && let Some(end_index) = line.rfind('"')
             {
                 let asset_path = &line[start_index + 2..end_index];
-                println!("cargo::info=Append CSS bundle: {}", asset_path);
+                println!("cargo:info=Append CSS bundle: {}", asset_path);
                 let mut asset_file = fs::OpenOptions::new().read(true).open(asset_path)?;
                 io::copy(&mut asset_file, &mut bundle_file)?;
             }

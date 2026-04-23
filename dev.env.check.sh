@@ -6,7 +6,7 @@ RED="\e[0;31m"
 RESET="\e[0m"
 
 MIN_RUST_VER="1.85.0" # For 2024 edition
-MIN_DIOXUS_VER="0.7.4"
+MIN_DIOXUS_VER="0.7.6"
 
 FAILURE=false
 
