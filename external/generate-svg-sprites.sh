@@ -9,7 +9,7 @@ function preview_start() {
 	echo "	<head>" >> $OUTPUT
 	echo "		<title>$2 preview</title>" >> $OUTPUT
 	echo "		<style>td, th { border: 1px solid; } td { padding: 4px;} table { border-collapse: separate; } tr th { position: sticky; top: 0; background-color: white; }</style>" >> $OUTPUT
-	echo "		<style>img { width: 6rem; height: 6rem } .sm { width: 2rem; } .fill { background-color: lightgrey } a { text-decoration: none; }</style>" >> $OUTPUT
+	echo "		<style>img { width: 6rem; height: 6rem; margin: 2px; } .sm { width: 2rem; } .fill { background-color: lightgrey; } a { text-decoration: none; }</style>" >> $OUTPUT
 	echo "	</head>" >> $OUTPUT
 	echo "<body>" >> $OUTPUT
 	echo "<p>This is a preview of SVG sprites which are accessed via: #anchor</p>" >> $OUTPUT
@@ -29,11 +29,12 @@ function preview_end() {
 function icon_start() {
 	OUTPUT=$1
 	echo "<svg xmlns=\"http://www.w3.org/2000/svg\">" > $OUTPUT
-	echo "<defs><style>svg .icon { display: none } svg .icon:target { display: inline }</style></defs>" >> $OUTPUT
+	echo -n "<defs><style>svg .icon { display: none } svg .icon:target { display: inline }</style></defs>" >> $OUTPUT
 }
 
 function icon_end() {
 	OUTPUT=$1
+	echo >> $OUTPUT
 	echo '</svg>' >> $OUTPUT
 }
 
@@ -122,13 +123,19 @@ function process_theme() {
 				# After: id="achor" class="icon" viewBox
 				# First occurrence only
 
+				echo >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg" # Add new line
+
 				if [[ "${THEME_ACTION[${I}]}" == "tab" ]]; then
-					echo "${SVG/$FIND/$REPLACE}"                                           `#Add icon class` \
-						| sed -e '1,4d'                                                    `#Delete lines 1-4` \
-						| sed -e 's/  \(width\|height\)="[0-9]*"//g'                       `#Find replace` \
-						| sed -r '/^\s*$/d' >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"      `#Remove empty lines` 
+					echo "${SVG/$FIND/$REPLACE}"                                        `#Add icon class` \
+						| sed -e '1,4d'                                                 `#Delete lines 1-4` \
+						| sed -e 's/  \(width\|height\)="[0-9]*"//g'                    `#Find replace width and height` \
+						| sed -r '/^\s*$/d'                                             `#Remove empty lines` \
+						| tr '\n' ' '                                                   `#Remove new lines` \
+						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `#Remove whitespace`
 				else
-					echo "${SVG/$FIND/$REPLACE}" >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"  `#Add icon class`
+					echo "${SVG/$FIND/$REPLACE}"                                        `#Add icon class` \
+						| tr '\n' ' '                                                   `#Remove new lines` \
+						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `#Remove whitespace`
 				fi
 
 				echo "	<td>" >> ${PREVIEW}
@@ -158,4 +165,4 @@ cd "$(dirname "$0")" # cd to this script dir
 git submodule update --progress --init --recursive
 
 process_theme "icons.json" "icons" "../assets/"
-process_theme "company-logo.json" "logo" "../assets/"
+process_theme "logos.json" "logos" "../assets/"

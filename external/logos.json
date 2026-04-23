@@ -1,0 +1,56 @@
+{
+	"themes": {
+		"all": {
+			"path": "external/logos",
+			"repo": ".",
+			"action": "none"
+		}
+	},
+	"icons": {
+		"dell": {
+			"all": "/dell.svg"
+		},
+		"fujifilm": {
+			"all": "/fujifilm.svg"
+		},
+		"github": {
+			"all": "/github.svg"
+		},
+		"hp": {
+			"all": "/hp.svg"
+		},
+		"ibm": {
+			"all": "/ibm.svg"
+		},
+		"imation": {
+			"all": "/imation.svg"
+		},
+		"lto": {
+			"all": "/lto.svg"
+		},
+		"maxell": {
+			"all": "/maxell.svg"
+		},
+		"other": {
+			"all": "/other.svg"
+		},
+		"overland tandberg": {
+			"all": "/overland tandberg.svg"
+		},
+		"quantum": {
+			"all": "/quantum.svg"
+		},
+		"sony": {
+			"all": "/sony.svg"
+		},
+		"spectra": {
+			"all": "/spectra.svg"
+		},
+		"tdk": {
+			"all": "/tdk.svg"
+		},
+		"ultrium": {
+			"all": "/ultrium.svg"
+		}
+	}
+}
