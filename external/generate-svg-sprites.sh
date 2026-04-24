@@ -113,8 +113,8 @@ function process_theme() {
 
 			else
 				# Add id and class to inner svg
-				THEME=`echo "$LINE" | cut -d'"' -f 2`
-				ICON_PATH=`echo "$LINE" | cut -d'"' -f 4`
+				THEME=`echo "$LINE" | cut -d '"' -f 2`
+				ICON_PATH=`echo "$LINE" | cut -d '"' -f 4`
 				I=${THEME_NAME_INDEX[$THEME]} # Get icon them index from name
 				N=${THEME_NAME[${I}]}
 				SVG=$(cat "../${THEME_PATH[$I]}$ICON_PATH")

@@ -1,6 +1,7 @@
 #![cfg_attr(not(test), forbid(unsafe_code))] // Disable unsafe{} but allow in tests
 
 use dioxus::prelude::*;
+use frontend::assets::{CSS_ASSETS, FAVICON};
 
 mod backend;
 #[allow(clippy::redundant_closure, irrefutable_let_patterns)]
@@ -50,16 +51,3 @@ fn App() -> Element {
         }
     }
 }
-
-const FAVICON: Asset = asset!("/assets/logo.svg");
-
-#[cfg(not(debug_assertions))] // Release build combined CSS files
-const CSS_ASSETS: [Asset; 1] = [asset!("/assets/bundle.css")];
-
-// Release (build.rs) will combine all these files into single bundle.css
-#[cfg(debug_assertions)] // Debug build individual CSS files
-const CSS_ASSETS: [Asset; 3] = [
-    asset!("/assets/common.css"),
-    asset!("/assets/main.css"),
-    asset!("/assets/button.css"),
-];

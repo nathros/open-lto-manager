@@ -1,3 +1,4 @@
+pub mod assets;
 pub mod collections;
 pub mod components;
 pub mod elements;

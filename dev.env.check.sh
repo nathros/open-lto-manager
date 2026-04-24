@@ -5,8 +5,8 @@ YELLOW="\e[0;33m"
 RED="\e[0;31m"
 RESET="\e[0m"
 
-MIN_RUST_VER="1.85.0" # For 2024 edition
-MIN_DIOXUS_VER="0.7.6"
+MIN_RUST_VER="1.85.0"                                                  # For Rust 2024 edition
+MIN_DIOXUS_VER=$(cat Cargo.toml | grep "dioxus = {" | cut -d '"' -f 2) # Get Dixous version from Cargo.toml
 
 FAILURE=false
 

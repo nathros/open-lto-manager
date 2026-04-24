@@ -23,7 +23,7 @@ fn main() {
 
 #[allow(dead_code)]
 fn bundle_css() -> Result<(), Error> {
-    let file = File::open("src/main.rs")?;
+    let file = File::open("src/frontend/assets.rs")?;
     let reader = BufReader::new(file);
 
     let bundle_path = "assets/bundle.css";

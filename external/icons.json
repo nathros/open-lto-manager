@@ -12,13 +12,29 @@
 		}
 	},
 	"icons": {
+		"alert-error": {
+			"tabler": "/icons/filled/alert-octagon.svg",
+			"remix": "/icons/System/spam-2-fill.svg"
+		},
+		"alert-info": {
+			"tabler": "/icons/filled/info-circle.svg",
+			"remix": "/icons/System/information-fill.svg"
+		},
+		"alert-warning": {
+			"tabler": "/icons/filled/alert-triangle.svg",
+			"remix": "/icons/System/alert-fill.svg"
+		},
+		"home": {
+			"tabler": "/icons/filled/home.svg",
+			"remix": "/icons/Buildings/home-4-fill.svg"
+		},
+		"notification": {
+			"tabler": "/icons/filled/bell.svg",
+			"remix": "/icons/Media/notification-2-fill.svg"
+		},
 		"user": {
 			"tabler": "/icons/filled/user.svg",
 			"remix": "/icons/User & Faces/user-fill.svg"
-		},
-		"alert-triangle": {
-			"tabler": "/icons/filled/alert-triangle.svg",
-			"remix": "/icons/System/alert-fill.svg"
 		}
 	}
 }
