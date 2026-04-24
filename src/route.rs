@@ -1,25 +1,24 @@
 use dioxus::prelude::*;
 
-use crate::frontend::components::navbar::Navbar;
-use crate::frontend::pages::dbg::db_app_state::ShowAppState;
-use crate::frontend::pages::dbg::db_dev::ShowDev;
-use crate::frontend::pages::dbg::db_file::DBFile;
-use crate::frontend::pages::dbg::db_job::DBJob;
-use crate::frontend::pages::dbg::db_job_metadata::DBJobMetaData;
-use crate::frontend::pages::dbg::db_man::DBMan;
-use crate::frontend::pages::dbg::db_tape::DBTape;
-use crate::frontend::pages::dbg::db_type::DBType;
-use crate::frontend::pages::dbg::db_user::DBUser;
-use crate::frontend::pages::dbg::show_devices::ShowDevices;
-use crate::frontend::pages::home::Home;
-use crate::frontend::pages::job::add_job::AddJob;
-use crate::frontend::pages::show::Show;
-use crate::frontend::pages::tape::Tape;
-use crate::frontend::pages::test::Test;
-use crate::frontend::sandpit::index::Sandpit;
-use crate::frontend::sandpit::sandpit_button::SandpitButton;
-use crate::frontend::sandpit::sandpit_modal::SandpitModal;
-use crate::frontend::sandpit::sandpit_showcase::SandpitShowcase;
+use crate::frontend::{
+    components::navbar::Navbar,
+    pages::{
+        dbg::{
+            db_app_state::ShowAppState, db_dev::ShowDev, db_file::DBFile, db_job::DBJob,
+            db_job_metadata::DBJobMetaData, db_man::DBMan, db_tape::DBTape, db_type::DBType,
+            db_user::DBUser, show_devices::ShowDevices,
+        },
+        home::Home,
+        job::add_job::AddJob,
+        show::Show,
+        tape::Tape,
+        test::Test,
+    },
+    sandpit::{
+        index::Sandpit, sandpit_button::SandpitButton, sandpit_modal::SandpitModal,
+        sandpit_showcase::SandpitShowcase,
+    },
+};
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 pub enum Route {

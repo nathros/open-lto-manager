@@ -93,7 +93,7 @@
         {
             "label": "Run Release::0.0.0.0",
             "type": "shell",
-            "command": "./openltomanager",
+            "command": "./server",
             "options": {
                 "cwd": "${workspaceRoot}/target/dx/openltomanager/release/web",
                 "env": {

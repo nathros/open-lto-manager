@@ -41,7 +41,7 @@ fn bundle_css() -> Result<(), Error> {
 
         if found_css_array {
             if line.contains("];") {
-                break;
+                return Ok(());
             } else if let Some(start_index) = line.find('"')
                 && let Some(end_index) = line.rfind('"')
             {
@@ -54,5 +54,5 @@ fn bundle_css() -> Result<(), Error> {
             found_css_array = true;
         }
     }
-    Ok(())
+    Err(Error::other("Failed to find CSS assets array"))
 }
