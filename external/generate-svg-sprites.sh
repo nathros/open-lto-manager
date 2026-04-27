@@ -127,13 +127,17 @@ function process_theme() {
 
 				if [[ "${THEME_ACTION[${I}]}" == "tab" ]]; then
 					echo "${SVG/$FIND/$REPLACE}"                                        `#Add icon class` \
-						| sed -e '1,4d'                                                 `#Delete lines 1-4` \
+						| sed -e '1,4d'                                                 `#Delete lines 1-4 (comments)` \
 						| sed -e 's/  \(width\|height\)="[0-9]*"//g'                    `#Find replace width and height` \
 						| sed -r '/^\s*$/d'                                             `#Remove empty lines` \
+						| sed -e 's/<style>/<style>@scope{/g'                           `#Wrap styles inside @scope open` \
+						| sed -e 's/<\/style>/}<\/style>/g'                             `#Wrap styles inside @scope close` \
 						| tr '\n' ' '                                                   `#Remove new lines` \
 						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `#Remove whitespace`
 				else
 					echo "${SVG/$FIND/$REPLACE}"                                        `#Add icon class` \
+						| sed -e 's/<style>/<style>@scope{/g'                           `#Wrap styles inside @scope open` \
+						| sed -e 's/<\/style>/}<\/style>/g'                             `#Wrap styles inside @scope close` \
 						| tr '\n' ' '                                                   `#Remove new lines` \
 						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `#Remove whitespace`
 				fi

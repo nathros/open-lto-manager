@@ -40,6 +40,9 @@
 		"quantum": {
 			"all": "/quantum.svg"
 		},
+		"sna": {
+			"all": "/sna.svg"
+		},
 		"sony": {
 			"all": "/sony.svg"
 		},
