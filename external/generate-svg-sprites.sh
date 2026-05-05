@@ -8,7 +8,7 @@ function preview_start() {
 	echo "<html>" >> $OUTPUT
 	echo "	<head>" >> $OUTPUT
 	echo "		<title>$2 preview</title>" >> $OUTPUT
-	echo "		<style>td, th { border: 1px solid; } td { padding: 4px;} table { border-collapse: separate; } tr th { position: sticky; top: 0; background-color: white; }</style>" >> $OUTPUT
+	echo "		<style>td, th { border: 1px solid; } td { padding: 4px;} tr th { position: sticky; top: 0; background-color: white; }</style>" >> $OUTPUT
 	echo "		<style>img { width: 6rem; height: 6rem; margin: 2px; } .sm { width: 2rem; } .fill { background-color: lightgrey; } a { text-decoration: none; }</style>" >> $OUTPUT
 	echo "	</head>" >> $OUTPUT
 	echo "<body>" >> $OUTPUT
@@ -29,7 +29,7 @@ function preview_end() {
 function icon_start() {
 	OUTPUT=$1
 	echo "<svg xmlns=\"http://www.w3.org/2000/svg\">" > $OUTPUT
-	echo -n "<defs><style>svg .icon { display: none } svg .icon:target { display: inline }</style></defs>" >> $OUTPUT
+	echo -n "<defs><style>.icon { display: none } .icon:target { display: inline }</style></defs>" >> $OUTPUT
 }
 
 function icon_end() {
@@ -132,12 +132,14 @@ function process_theme() {
 						| sed -r '/^\s*$/d'                                             `#Remove empty lines` \
 						| sed -e 's/<style>/<style>@scope{/g'                           `#Wrap styles inside @scope open` \
 						| sed -e 's/<\/style>/}<\/style>/g'                             `#Wrap styles inside @scope close` \
+						| sed -e 's/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"//g'        `#Remove xmlns` \
 						| tr '\n' ' '                                                   `#Remove new lines` \
 						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `#Remove whitespace`
 				else
 					echo "${SVG/$FIND/$REPLACE}"                                        `#Add icon class` \
 						| sed -e 's/<style>/<style>@scope{/g'                           `#Wrap styles inside @scope open` \
 						| sed -e 's/<\/style>/}<\/style>/g'                             `#Wrap styles inside @scope close` \
+						| sed -e 's/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"//g'        `#Remove xmlns` \
 						| tr '\n' ' '                                                   `#Remove new lines` \
 						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `#Remove whitespace`
 				fi
