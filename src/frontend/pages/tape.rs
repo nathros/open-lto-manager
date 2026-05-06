@@ -6,6 +6,7 @@ use crate::{
         api_tape::{api_add_tape, api_get_tape},
         api_tape_type::list_type_type,
     },
+    frontend::assets::LOGO_ASSET,
     shared::models::database::{
         model_manufacturer::RecordManufacturer,
         model_tape::{RecordTape, TapeFormat},
@@ -118,6 +119,21 @@ pub fn Tape(id: i64) -> Element {
             br {}
             br {}
 
+            img {
+                src: format!(
+                    "{}#{}",
+                    LOGO_ASSET,
+                    manufactures
+                        .cloned()
+                        .iter()
+                        .find(|p| p.id == tape().manufacturer_id)
+                        .cloned() // TODO avoid clone
+                        .unwrap_or_default()
+                        .name
+                        .to_lowercase(),
+                ),
+            }
+            br {}
             label { "Manufacturer:" }
             br {}
             select { onchange: manu_change,

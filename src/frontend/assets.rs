@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 
 pub const FAVICON: Asset = asset!("/assets/logo.svg");
+pub const LOGO_ASSET: Asset = asset!("/assets/logos-all.svg");
 
 // CSS
 #[cfg(not(debug_assertions))] // Release build combined CSS files
