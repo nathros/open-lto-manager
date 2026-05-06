@@ -126,22 +126,28 @@ function process_theme() {
 				echo >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg" # Add new line
 
 				if [[ "${THEME_ACTION[${I}]}" == "tab" ]]; then
-					echo "${SVG/$FIND/$REPLACE}"                                        `#Add icon class` \
-						| sed -e '1,4d'                                                 `#Delete lines 1-4 (comments)` \
-						| sed -e 's/  \(width\|height\)="[0-9]*"//g'                    `#Find replace width and height` \
-						| sed -r '/^\s*$/d'                                             `#Remove empty lines` \
-						| sed -e 's/<style>/<style>@scope{/g'                           `#Wrap styles inside @scope open` \
-						| sed -e 's/<\/style>/}<\/style>/g'                             `#Wrap styles inside @scope close` \
-						| sed -e 's/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"//g'        `#Remove xmlns` \
-						| tr '\n' ' '                                                   `#Remove new lines` \
-						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `#Remove whitespace`
+					echo "$SVG" | sed -e "s/id\=\"/id\=\"${ICON_NAME}-/g"               `# Append icon name to inner ids to make them unique` \
+						| sed -e "s/href=\"#/href=\"#${ICON_NAME}-/g"                   `# Update url(#) with new ids` \
+						| sed -e "s/=\"url(#/=\"url(#${ICON_NAME}-/g"                   `# Update href(#) with new ids` \
+						| sed -e "s/$FIND/$REPLACE/g"                                   `# Add icon class` \
+						| sed -e '1,4d'                                                 `# # tab # Delete lines 1-4 (comments)` \
+						| sed -e 's/  \(width\|height\)="[0-9]*"//g'                    `# # tab # Find replace width and height` \
+						| sed -r '/^\s*$/d'                                             `# # tab # Remove empty lines` \
+						| sed -e 's/<style>/<style>@scope{/g'                           `# Wrap styles inside @scope open` \
+						| sed -e 's/<\/style>/}<\/style>/g'                             `# Wrap styles inside @scope close` \
+						| sed -e 's/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"//g'        `# Remove xmlns` \
+						| tr '\n' ' '                                                   `# Remove new lines` \
+						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `# Remove whitespace`
 				else
-					echo "${SVG/$FIND/$REPLACE}"                                        `#Add icon class` \
-						| sed -e 's/<style>/<style>@scope{/g'                           `#Wrap styles inside @scope open` \
-						| sed -e 's/<\/style>/}<\/style>/g'                             `#Wrap styles inside @scope close` \
-						| sed -e 's/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"//g'        `#Remove xmlns` \
-						| tr '\n' ' '                                                   `#Remove new lines` \
-						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `#Remove whitespace`
+					echo "$SVG" | sed -e "s/id\=\"/id\=\"${ICON_NAME}-/g"               `# Append icon name to inner ids to make them unique` \
+						| sed -e "s/href=\"#/href=\"#${ICON_NAME}-/g"                   `# Update url(#) with new ids` \
+						| sed -e "s/=\"url(#/=\"url(#${ICON_NAME}-/g"                   `# Update href(#) with new ids` \
+						| sed -e "s/$FIND/$REPLACE/g"                                   `# Add icon class` \
+						| sed -e 's/<style>/<style>@scope{/g'                           `# Wrap styles inside @scope open` \
+						| sed -e 's/<\/style>/}<\/style>/g'                             `# Wrap styles inside @scope close` \
+						| sed -e 's/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"//g'        `# Remove xmlns` \
+						| tr '\n' ' '                                                   `# Remove new lines` \
+						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `# Remove whitespace`
 				fi
 
 				echo "	<td>" >> ${PREVIEW}
@@ -170,5 +176,5 @@ cd "$(dirname "$0")" # cd to this script dir
 
 git submodule update --progress --init --recursive
 
-process_theme "icons.json" "icons" "../assets/"
+#process_theme "icons.json" "icons" "../assets/"
 process_theme "logos.json" "logos" "../assets/"

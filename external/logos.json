@@ -49,6 +49,12 @@
 		"spectra": {
 			"all": "/spectra.svg"
 		},
+		"tape-back": {
+			"all": "/tape-back.svg"
+		},
+		"tape-front": {
+			"all": "/tape-front.svg"
+		},
 		"tdk": {
 			"all": "/tdk.svg"
 		},
