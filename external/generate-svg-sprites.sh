@@ -35,7 +35,7 @@ function icon_start() {
 function icon_end() {
 	OUTPUT=$1
 	echo >> $OUTPUT
-	echo '</svg>' >> $OUTPUT
+	echo -n '</svg>' >> $OUTPUT
 }
 
 function process_theme() {
@@ -136,7 +136,7 @@ function process_theme() {
 						| sed -e 's/<style>/<style>@scope{/g'                           `# Wrap styles inside @scope open` \
 						| sed -e 's/<\/style>/}<\/style>/g'                             `# Wrap styles inside @scope close` \
 						| sed -e 's/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"//g'        `# Remove xmlns` \
-						| tr '\n' ' '                                                   `# Remove new lines` \
+						| tr -d '\n'                                                    `# Remove new lines` \
 						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `# Remove whitespace`
 				else
 					echo "$SVG" | sed -e "s/id\=\"/id\=\"${ICON_NAME}-/g"               `# Append icon name to inner ids to make them unique` \
@@ -146,7 +146,7 @@ function process_theme() {
 						| sed -e 's/<style>/<style>@scope{/g'                           `# Wrap styles inside @scope open` \
 						| sed -e 's/<\/style>/}<\/style>/g'                             `# Wrap styles inside @scope close` \
 						| sed -e 's/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"//g'        `# Remove xmlns` \
-						| tr '\n' ' '                                                   `# Remove new lines` \
+						| tr -d '\n'                                                    `# Remove new lines` \
 						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `# Remove whitespace`
 				fi
 

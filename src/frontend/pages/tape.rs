@@ -123,12 +123,10 @@ pub fn Tape(id: i64) -> Element {
                 src: format!(
                     "{}#{}",
                     LOGO_ASSET,
-                    manufactures
-                        .cloned()
+                    manufactures()
                         .iter()
                         .find(|p| p.id == tape().manufacturer_id)
-                        .cloned() // TODO avoid clone
-                        .unwrap_or_default()
+                        .unwrap_or(&RecordManufacturer::blank())
                         .name
                         .to_lowercase(),
                 ),

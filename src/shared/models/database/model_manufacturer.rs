@@ -6,11 +6,11 @@ pub struct RecordManufacturer {
     pub name: String,
 }
 
-impl Default for RecordManufacturer {
-    fn default() -> Self {
-        Self {
+impl RecordManufacturer {
+    pub fn blank() -> RecordManufacturer {
+        RecordManufacturer {
             id: 0,
-            name: "other".to_string(),
+            name: "".to_string(),
         }
     }
 }
