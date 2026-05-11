@@ -5,7 +5,6 @@
 	font-display: swap;
 	src: url(lato-v25-normal-400.woff2) format('woff2');
 }
-
 @font-face {
 	font-family: 'Lato';
 	font-style: italic;
@@ -13,7 +12,6 @@
 	font-display: swap;
 	src: url(lato-v25-italic-400.woff2) format('woff2');
 }
-
 @font-face {
 	font-family: 'Lato';
 	font-style: normal;
@@ -21,7 +19,6 @@
 	font-display: swap;
 	src: url(lato-v25-normal-700.woff2) format('woff2');
 }
-
 @font-face {
 	font-family: 'Lato';
 	font-style: italic;
@@ -29,7 +26,6 @@
 	font-display: swap;
 	src: url(lato-v25-italic-700.woff2) format('woff2');
 }
-
 @font-face {
 	font-family: 'JetBrains Mono';
 	font-style: normal;
@@ -37,7 +33,6 @@
 	font-display: swap;
 	src: url(jetbrains-mono-v24-normal-100-800.woff2) format('woff2');
 }
-
 @font-face {
 	font-family: 'JetBrains Mono';
 	font-style: italic;

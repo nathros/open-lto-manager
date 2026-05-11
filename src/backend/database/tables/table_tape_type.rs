@@ -20,7 +20,8 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
         db.execute(
             "CREATE TABLE IF NOT EXISTS tape_type (
                 id INTEGER PRIMARY KEY,
-                generation TEXT NOT NULL,
+                generation INTEGER NOT NULL,
+                description TEXT NOT NULL,
                 id_reg VARCHAR(2),
                 id_worm VARCHAR(2),
                 native_capacity BIGINT NOT NULL,
@@ -41,7 +42,8 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             db,
             &RecordTapeType {
                 id: 0,
-                generation: "LTO-1".to_string(),
+                generation: 1,
+                description: "LTO-1".to_string(),
                 id_reg: "L1".to_string(),
                 id_worm: "".to_string(),
                 native_capacity: bytes_per_gib * 100,
@@ -59,7 +61,8 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             db,
             &RecordTapeType {
                 id: 0,
-                generation: "LTO-2".to_string(),
+                generation: 2,
+                description: "LTO-2".to_string(),
                 id_reg: "L2".to_string(),
                 id_worm: "".to_string(),
                 native_capacity: bytes_per_gib * 200,
@@ -77,7 +80,8 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             db,
             &RecordTapeType {
                 id: 0,
-                generation: "LTO-3".to_string(),
+                generation: 3,
+                description: "LTO-3".to_string(),
                 id_reg: "L3".to_string(),
                 id_worm: "LT".to_string(),
                 native_capacity: bytes_per_gib * 400,
@@ -95,7 +99,8 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             db,
             &RecordTapeType {
                 id: 0,
-                generation: "LTO-4".to_string(),
+                generation: 4,
+                description: "LTO-4".to_string(),
                 id_reg: "L4".to_string(),
                 id_worm: "LU".to_string(),
                 native_capacity: bytes_per_gib * 800,
@@ -113,7 +118,8 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             db,
             &RecordTapeType {
                 id: 0,
-                generation: "LTO-5".to_string(),
+                generation: 5,
+                description: "LTO-5".to_string(),
                 id_reg: "L5".to_string(),
                 id_worm: "LV".to_string(),
                 native_capacity: bytes_per_gib * 1500,
@@ -131,7 +137,8 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             db,
             &RecordTapeType {
                 id: 0,
-                generation: "LTO-6".to_string(),
+                generation: 6,
+                description: "LTO-6".to_string(),
                 id_reg: "L6".to_string(),
                 id_worm: "LW".to_string(),
                 native_capacity: bytes_per_gib * 2500,
@@ -149,7 +156,8 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             db,
             &RecordTapeType {
                 id: 0,
-                generation: "LTO-7".to_string(),
+                generation: 7,
+                description: "LTO-7".to_string(),
                 id_reg: "L7".to_string(),
                 id_worm: "LX".to_string(),
                 native_capacity: bytes_per_gib * 6000,
@@ -167,7 +175,8 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             db,
             &RecordTapeType {
                 id: 0,
-                generation: "LTO-7 Type M8".to_string(),
+                generation: 7,
+                description: "LTO-7 Type M8".to_string(),
                 id_reg: "M8".to_string(),
                 id_worm: "".to_string(),
                 native_capacity: bytes_per_gib * 9000,
@@ -185,7 +194,8 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             db,
             &RecordTapeType {
                 id: 0,
-                generation: "LTO-8".to_string(),
+                generation: 8,
+                description: "LTO-8".to_string(),
                 id_reg: "L8".to_string(),
                 id_worm: "LY".to_string(),
                 native_capacity: bytes_per_gib * 12000,
@@ -203,7 +213,8 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             db,
             &RecordTapeType {
                 id: 0,
-                generation: "LTO-9".to_string(),
+                generation: 9,
+                description: "LTO-9".to_string(),
                 id_reg: "L9".to_string(),
                 id_worm: "LZ".to_string(),
                 native_capacity: bytes_per_gib * 18000,
@@ -221,7 +232,8 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             db,
             &RecordTapeType {
                 id: 0,
-                generation: "LTO-10 30TB".to_string(),
+                generation: 10,
+                description: "LTO-10 30TB".to_string(),
                 id_reg: "LA".to_string(),
                 id_worm: "LH".to_string(),
                 native_capacity: bytes_per_gib * 30000,
@@ -239,7 +251,8 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             db,
             &RecordTapeType {
                 id: 0,
-                generation: "LTO-10 40TB".to_string(),
+                generation: 10,
+                description: "LTO-10 40TB".to_string(),
                 id_reg: "PA".to_string(),
                 id_worm: "PH".to_string(),
                 native_capacity: bytes_per_gib * 40000,
@@ -265,6 +278,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             "SELECT
                     id,
                     generation,
+                    description,
                     id_reg,
                     id_worm,
                     native_capacity,
@@ -289,6 +303,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
         db.execute(
             "INSERT INTO tape_type (
                     generation,
+                    description,
                     id_reg,
                     id_worm,
                     native_capacity,
@@ -310,10 +325,12 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                     ?8,
                     ?9,
                     ?10,
-                    ?11
+                    ?11,
+                    ?12
                 );",
             params![
                 record.generation,
+                record.description,
                 record.id_reg,
                 record.id_worm,
                 record.native_capacity,
@@ -334,6 +351,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
         let mut prepared = db.prepare(
             "INSERT INTO tape_type (
                     generation,
+                    description,
                     id_reg,
                     id_worm,
                     native_capacity,
@@ -355,12 +373,14 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
                     ?8,
                     ?9,
                     ?10,
-                    ?11
+                    ?11,
+                    ?12
                 );",
         )?;
         for record in records {
             count += prepared.execute(params![
                 record.generation,
+                record.description,
                 record.id_reg,
                 record.id_worm,
                 record.native_capacity,
@@ -380,19 +400,21 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
         db.execute(
             "UPDATE tape_type SET 
                     generation = ?1,
-                    id_reg = ?2,
-                    id_worm = ?3,
-                    native_capacity = ?4,
-                    colour_reg = ?5,
-                    colour_hp = ?6,
-                    colour_worm_reg = ?7,
-                    colour_worm_hp = ?8,
-                    supports_worm = ?9,
-                    supports_encryption = ?10,
-                    supports_ltfs = ?11
-                WHERE id = ?12",
+                    description = ?2,
+                    id_reg = ?3,
+                    id_worm = ?4,
+                    native_capacity = ?5,
+                    colour_reg = ?6,
+                    colour_hp = ?7,
+                    colour_worm_reg = ?8,
+                    colour_worm_hp = ?9,
+                    supports_worm = ?10,
+                    supports_encryption = ?11,
+                    supports_ltfs = ?12
+                WHERE id = ?13",
             params![
                 record.generation,
+                record.description,
                 record.id_reg,
                 record.id_worm,
                 record.native_capacity,
@@ -420,16 +442,17 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
         Ok(RecordTapeType {
             id: row.get(offset)?,
             generation: row.get(offset + 1)?,
-            id_reg: row.get(offset + 2)?,
-            id_worm: row.get(offset + 3)?,
-            native_capacity: row.get(offset + 4)?,
-            colour_reg: row.get(offset + 5)?,
-            colour_hp: row.get(offset + 6)?,
-            colour_worm_reg: row.get(offset + 7)?,
-            colour_worm_hp: row.get(offset + 8)?,
-            supports_worm: row.get(offset + 9)?,
-            supports_encryption: row.get(offset + 10)?,
-            supports_ltfs: row.get(offset + 11)?,
+            description: row.get(offset + 2)?,
+            id_reg: row.get(offset + 3)?,
+            id_worm: row.get(offset + 4)?,
+            native_capacity: row.get(offset + 5)?,
+            colour_reg: row.get(offset + 6)?,
+            colour_hp: row.get(offset + 7)?,
+            colour_worm_reg: row.get(offset + 8)?,
+            colour_worm_hp: row.get(offset + 9)?,
+            supports_worm: row.get(offset + 10)?,
+            supports_encryption: row.get(offset + 11)?,
+            supports_ltfs: row.get(offset + 12)?,
         })
     }
 }
@@ -440,6 +463,7 @@ impl TableTapeType {
             "SELECT 
                     id,
                     generation,
+                    description,
                     id_reg,
                     id_worm,
                     native_capacity,
@@ -499,7 +523,7 @@ mod tests {
 
         let new_name = "abc".to_string();
         let mut update_record: RecordTapeType = original_record.clone();
-        update_record.generation = new_name;
+        update_record.description = new_name;
         assert!(
             TableTapeType::update_record(db, &update_record).is_ok(),
             "Failed to update record"

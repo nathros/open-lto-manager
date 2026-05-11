@@ -344,9 +344,9 @@ mod tests {
             created: Local::now(),
             last_used: Local::now(),
         };
-        TableTape::insert_record(db, &new_tape).unwrap();
+        let new_id = TableTape::insert_record(db, &new_tape).unwrap();
 
-        let inserted_tape = TableTape::get(db, 1).unwrap();
+        let inserted_tape = TableTape::get(db, new_id).unwrap();
         new_tape.id = inserted_tape.id;
         assert_eq!(new_tape, inserted_tape, "Inserted tape does not match");
         new_tape.id

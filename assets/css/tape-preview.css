@@ -1,0 +1,130 @@
+.tape-preview {
+	--tape-prev-size: attr(data-preview-size rem);
+	perspective: 200px;
+	width: var(--tape-prev-size);
+	/*background-color: #FF0000; /* Red */
+	/*background-color: #000000; /* Black */
+	/*background-color: #AA55AA; /* Purple */
+	/*background-color: #992233; /* Red dark */
+	/*background-color: #00AD66; /* Green */
+	/*background-color: #556666; /* Green dark */
+	/*background-color: #114488; /* Blue */
+	/*background-color: #444455; /* Blue-stale */
+	/*background-color: #667799; /* Blue-grey */
+	/*background-color: #FFDD22; /* Yellow */
+}
+.tape-worm {
+	display: none; /* FIXME: mask will not be fetched until .show applied */
+	mask: url(tape-preview-mask.jxl);
+    mask-size: var(--tape-prev-size);
+    filter: saturate(0);
+}
+.tape-worm.show {
+	display: block;
+}
+.tape-main, .tape-worm, .tape-tab {
+	width: var(--tape-prev-size);
+}
+.tape-preview > img:not(:first-child),
+.tape-overlay,
+.tape-size {
+	position: absolute;
+}
+.tape-worm, .tape-tab {
+	left: 0;
+	top: 0;
+}
+.tape-barcode {
+	width: calc(var(--tape-prev-size) * 0.76);
+	height: calc(var(--tape-prev-size) * 0.135);
+	left: calc(var(--tape-prev-size) * 0.17);
+	top: calc(var(--tape-prev-size) * 0.677);
+	transform-style: preserve-3d;
+	transform: rotateX(-1deg);
+}
+.tape-overlay {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	min-height: calc(var(--tape-prev-size) * 0.15);
+	bottom: calc(var(--tape-prev-size) * 0.35);
+	transform-style: preserve-3d;
+	transform: rotateX(4deg);
+}
+.tape-overlay img {
+	height: calc(var(--tape-prev-size) * 0.2);
+}
+.tape-company {
+	width: calc(var(--tape-prev-size) * 0.3);
+	margin-left: calc(var(--tape-prev-size) * 0.07);
+}
+.tape-ulto {
+	display: flex;
+	align-items: center;
+	gap: calc(var(--tape-prev-size) * 0.01);
+	height: calc(var(--tape-prev-size) * 0.07);
+	margin-left: auto;
+	margin-right: calc(var(--tape-prev-size) * 0.07);
+}
+.tape-ulto > img {
+	height: 100%;
+	width: calc(var(--tape-prev-size) * 0.25);
+}
+.tape-ulto > span {
+	font-size: calc(var(--tape-prev-size) * 0.07);
+	font-family: "Arial Black";
+	font-style: italic;
+}
+.tape-size {
+	display: flex;
+	align-items: baseline;
+	top: calc(var(--tape-prev-size) * 0.48);
+	left: calc(var(--tape-prev-size) * 0.06);
+	transform-style: preserve-3d;
+	transform: rotateX(4deg);
+	font-size: calc(var(--tape-prev-size) * 0.07);
+	font-family: "Arial";
+}
+.tape-size > div {
+	font-size: calc(var(--tape-prev-size) * 0.02);
+}
+.tape-company,
+.tape-ulto,
+.tape-size {
+	filter: brightness(0);
+}
+.tape-preview.black .tape-company,
+.tape-preview.black .tape-ulto,
+.tape-preview.black .tape-size {
+	filter: brightness(0) invert(1);
+}
+.tape-preview.black > .tape-barcode {
+	filter: brightness(0.9);
+}
+.tape-preview.purple > .tape-main {
+	filter: hue-rotate(45deg); /* Target: #AA55AA */
+}
+.tape-preview.red-dark > .tape-main {
+	filter: hue-rotate(125deg) saturate(1.3) brightness(0.9); /* Target: #992233 */
+}
+.tape-preview.green > .tape-main {
+	filter: hue-rotate(255deg); /* Target: #00AD66 */
+}
+.tape-preview.green-dark > .tape-main {
+	filter: hue-rotate(255deg) saturate(0.5) brightness(0.9); /* Target: #556666 */
+}
+.tape-preview.blue > .tape-main {
+	filter: brightness(0.75); /* Target: #114488 */
+}
+.tape-preview.blue-stale > .tape-main {
+	filter: brightness(0.75) saturate(0.5); /* Target: #444455 */
+}
+.tape-preview.blue-grey > .tape-main {
+	filter: brightness(0.9) saturate(0.3); /* Target: #667799 */
+}
+.tape-preview.yellow > .tape-main {
+	filter: hue-rotate(185deg) brightness(1.2) contrast(1) saturate(1); /* Target: #FFDD22 */
+}
+.tape-preview.black > .tape-main {
+	filter: grayscale(1) brightness(0.35);
+}

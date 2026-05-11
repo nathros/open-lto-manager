@@ -3,7 +3,8 @@ use dioxus::fullstack::serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct RecordTapeType {
     pub id: i64,
-    pub generation: String,
+    pub generation: i64,
+    pub description: String,
     pub id_reg: String,
     pub id_worm: String,
     pub native_capacity: i64,
@@ -20,7 +21,8 @@ impl Default for RecordTapeType {
     fn default() -> Self {
         Self {
             id: 0,
-            generation: "".to_string(),
+            generation: 0,
+            description: "".to_string(),
             id_reg: "".to_string(),
             id_worm: "".to_string(),
             native_capacity: 0,

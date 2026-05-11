@@ -1,65 +1,65 @@
 {
 	"themes": {
 		"all": {
-			"path": "external/logos",
+			"path": "external/logos/",
 			"repo": ".",
 			"action": "none"
 		}
 	},
 	"icons": {
 		"dell": {
-			"all": "/dell.svg"
+			"all": "dell.svg"
 		},
 		"fujifilm": {
-			"all": "/fujifilm.svg"
+			"all": "fujifilm.svg"
 		},
 		"github": {
-			"all": "/github.svg"
+			"all": "github.svg"
 		},
 		"hp": {
-			"all": "/hp.svg"
+			"all": "hp.svg"
 		},
 		"ibm": {
-			"all": "/ibm.svg"
+			"all": "ibm.svg"
 		},
 		"imation": {
-			"all": "/imation.svg"
+			"all": "imation.svg"
 		},
 		"lto": {
-			"all": "/lto.svg"
+			"all": "lto.svg"
 		},
 		"maxell": {
-			"all": "/maxell.svg"
+			"all": "maxell.svg"
 		},
 		"other": {
-			"all": "/other.svg"
+			"all": "other.svg"
 		},
 		"overland tandberg": {
-			"all": "/overland tandberg.svg"
+			"all": "overland tandberg.svg"
 		},
 		"quantum": {
-			"all": "/quantum.svg"
+			"all": "quantum.svg"
 		},
 		"sna": {
-			"all": "/sna.svg"
+			"all": "sna.svg"
 		},
 		"sony": {
-			"all": "/sony.svg"
+			"all": "sony.svg"
 		},
 		"spectra": {
-			"all": "/spectra.svg"
+			"all": "spectra.svg"
 		},
 		"tape-back": {
-			"all": "/tape-back.svg"
+			"all": "tape-back.svg"
 		},
 		"tape-front": {
-			"all": "/tape-front.svg"
+			"all": "tape-front.svg"
 		},
 		"tdk": {
-			"all": "/tdk.svg"
+			"all": "tdk.svg"
 		},
 		"ultrium": {
-			"all": "/ultrium.svg"
+			"all": "ultrium.svg"
 		}
 	}
 }

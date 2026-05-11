@@ -1,4 +1,4 @@
-use dioxus::{fullstack::Loader, prelude::*};
+use dioxus::{dioxus_core, fullstack::Loader, prelude::*};
 
 use crate::{
     backend::api::{
@@ -6,7 +6,7 @@ use crate::{
         api_tape::{api_add_tape, api_get_tape},
         api_tape_type::list_type_type,
     },
-    frontend::assets::LOGO_ASSET,
+    frontend::collections::tape_preview::TapePreview,
     shared::models::database::{
         model_manufacturer::RecordManufacturer,
         model_tape::{RecordTape, TapeFormat},
@@ -113,25 +113,12 @@ pub fn Tape(id: i64) -> Element {
                     option { disabled: true, selected: true, "Select" }
                 }
                 for ty in types.cloned() {
-                    option { value: "{ty.id}", "{ty.generation}" }
+                    option { value: "{ty.id}", "{ty.description}" }
                 }
             }
             br {}
             br {}
 
-            img {
-                src: format!(
-                    "{}#{}",
-                    LOGO_ASSET,
-                    manufactures()
-                        .iter()
-                        .find(|p| p.id == tape().manufacturer_id)
-                        .unwrap_or(&RecordManufacturer::blank())
-                        .name
-                        .to_lowercase(),
-                ),
-            }
-            br {}
             label { "Manufacturer:" }
             br {}
             select { onchange: manu_change,
@@ -230,5 +217,11 @@ pub fn Tape(id: i64) -> Element {
             p { "Debug: {tape():?}" }
         }
         button { r#type: "button", onclick: submit, "Submit" }
+        TapePreview {
+            preview: tape,
+            manufacturers: manufactures(),
+            tapes_list: types(),
+            size: "30",
+        }
     }
 }
