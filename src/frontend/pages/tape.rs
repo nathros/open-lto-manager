@@ -221,6 +221,7 @@ pub fn Tape(id: i64) -> Element {
             preview: tape,
             manufacturers: manufactures(),
             tapes_list: types(),
+            designation: barcode_designation.clone(),
             size: "30",
         }
     }

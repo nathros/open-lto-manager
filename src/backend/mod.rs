@@ -7,6 +7,8 @@ pub mod dev;
 #[cfg(feature = "server")]
 pub mod env;
 #[cfg(feature = "server")]
+pub mod generate;
+#[cfg(feature = "server")]
 pub mod init;
 #[cfg(feature = "server")]
 pub mod logging;

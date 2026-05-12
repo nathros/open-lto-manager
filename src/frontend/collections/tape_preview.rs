@@ -1,6 +1,7 @@
-use dioxus::{dioxus_core, prelude::*};
+use dioxus::{dioxus_core, fullstack::Loader, prelude::*};
 
 use crate::{
+    backend::api::api_generate_lto_label::generate_svg_label,
     frontend::assets::{IMG_TAPE_PREVIEW, IMG_TAPE_PREVIEW_TAB, LOGO_ASSET},
     shared::models::database::{
         model_manufacturer::RecordManufacturer, model_tape::RecordTape,
@@ -13,6 +14,7 @@ pub fn TapePreview(
     preview: ReadSignal<RecordTape>,
     manufacturers: Vec<RecordManufacturer>,
     tapes_list: Vec<RecordTapeType>,
+    designation: String,
     size: &'static str, // In rem
 ) -> Element {
     let manufacturer_name: String = manufacturers
@@ -27,6 +29,9 @@ pub fn TapePreview(
         .find(|p| p.id == preview().tape_type_id)
         .unwrap_or(&RecordTapeType::default())
         .clone();
+
+    let svg_barcode: Loader<String> =
+        use_loader(move || generate_svg_label(preview().barcode, designation.clone()))?;
 
     let hp = "hp"; // HP have their own colour scheme
     let main_class: String = match preview().worm {
@@ -92,10 +97,8 @@ pub fn TapePreview(
                 "{tape_size_str}"
                 div { "{range_str}" }
             }
-            img {
-                class: "tape-barcode",
-                style: "background-color:white;border-radius:0.5rem;",
-            }
+
+            img { class: "tape-barcode", src: svg_barcode }
         }
     }
 }

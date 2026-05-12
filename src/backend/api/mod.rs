@@ -2,6 +2,7 @@ pub mod api_dev;
 pub mod api_devices;
 pub mod api_file;
 pub mod api_file_view;
+pub mod api_generate_lto_label;
 pub mod api_init;
 pub mod api_job;
 pub mod api_job_metadata;

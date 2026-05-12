@@ -7,6 +7,7 @@ edition = "2024"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+base64 = { version = "0.22.1", optional = true }
 chrono = { version = "0.4.44", features = ["serde"] }
 dioxus = { version = "0.7.9", features = ["router", "fullstack"] }
 reqwest = { version = "0.13.3", features = [], optional = true }
@@ -28,6 +29,7 @@ web = ["dioxus/web"]
 # desktop = ["dioxus/desktop"]
 # mobile = ["dioxus/mobile"]
 server = ["dioxus/server",
+          "dep:base64",
           "dep:reqwest",
           "dep:rusqlite",
           "dep:serde_json", # /dev only
