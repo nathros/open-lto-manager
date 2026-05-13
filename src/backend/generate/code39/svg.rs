@@ -1,16 +1,22 @@
-pub struct Svg {
+use super::options::LabelOptions;
+
+pub struct SvgLabel {
     buffer: String,
 }
 
-type GroupFn = Box<dyn FnMut(i32, &mut Svg)>;
+type GroupFn = Box<dyn FnMut(i32, &mut SvgLabel)>;
 
-impl Svg {
-    pub fn new() -> Self {
+impl SvgLabel {
+    pub fn new(options: &LabelOptions) -> Self {
         let mut svg = Self {
-            buffer: "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"80.5mm\" height=\"18.5mm\" viewBox=\"0 0 80.5 18.5\" preserveAspectRatio=\"none\">\n".to_string(),
+            buffer: format!(
+                "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{}mm\" height=\"{}mm\" viewBox=\"0 0 {} {}\" preserveAspectRatio=\"none\">\n",
+                options.width, options.height, options.width, options.height
+            ),
         };
         svg.buffer.push_str("	<g transform=\"translate(1 1)\">\n");
-        svg.buffer.push_str("		<rect width=\"78.5\" height=\"16.5\" x=\"0\" y=\"0\" rx=\"1\" ry=\"1\" fill=\"#fff\" stroke=\"#000\" stroke-width=\"0.035\" />\n");
+        svg.buffer.push_str(format!("		<rect width=\"{}\" height=\"{}\" rx=\"{}\" ry=\"{}\" fill=\"#fff\" stroke=\"#000\" stroke-width=\"{}\" />\n",
+                                options.width - 2_f64, options.height - 2_f64, options.radius_outer, options.radius_outer, options.stroke_outer).as_str());
         svg.buffer.push_str("	</g>\n");
         svg
     }

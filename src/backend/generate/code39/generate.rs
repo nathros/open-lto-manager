@@ -5,27 +5,25 @@ use crate::shared::error::ErrorStr;
 use super::{
     options::LabelOptions,
     segment::{BARCODE_VALID_CHARS, CODE_39_BARCODE_SEGMENTS},
-    svg::Svg,
+    svg::SvgLabel,
 };
 
 pub fn generate_lto_label_svg(
     mut barcode: String,
     options: LabelOptions,
 ) -> Result<String, ErrorStr> {
-    barcode.push_str(
-        (0..(8 - barcode.len()))
-            .map(|_| " ")
-            .collect::<String>()
-            .as_str(),
+    barcode = format!(
+        "*{}{}*",
+        barcode,
+        (0..(8 - barcode.len())).map(|_| " ").collect::<String>() // Pad empty with space
     );
-    barcode.push('*');
-    barcode.insert(0, '*');
 
-    if barcode.len() > 10 {
-        return Err("Barcode too long".to_string());
+    const BARCODE_LEN: usize = 10;
+    if barcode.len() != BARCODE_LEN {
+        return Err("Barcode not correct length".to_string());
     }
 
-    let mut svg = Svg::new();
+    let mut svg = SvgLabel::new(&options);
     //svg.append_line(0, format!("<!--{}-->", barcode).as_str());
 
     let mut unique_characters: HashSet<char> = HashSet::new();
@@ -36,43 +34,63 @@ pub fn generate_lto_label_svg(
         unique_characters.insert(char);
     }
 
+    let segment_height_str = format!("{}", 11.7_f64 / options.barcode_scale);
     svg.append_group(
         1,
         "defs",
-        Box::new(move |tab_index: i32, svg: &mut Svg| {
+        Box::new(move |tab_index: i32, svg: &mut SvgLabel| {
             for index in unique_characters.iter() {
                 if let Some(segment_gen) = CODE_39_BARCODE_SEGMENTS.get(index) {
                     svg.append_line(
                         tab_index,
-                        format!("<svg id=\"{}\" width=\"6.588mm\" height=\"11.7mm\">", *index as u8)
-                            .as_str(),
+                        format!(
+                            "<svg id=\"{}\" width=\"6.588mm\" height=\"{}mm\">",
+                            *index as u8, segment_height_str
+                        )
+                        .as_str(),
                     );
-                    for segment in segment_gen.create_segment("11.7") {
+                    for segment in segment_gen.create_segment(segment_height_str.as_str()) {
                         svg.append_line(tab_index + 1, segment.as_str());
                     }
                     svg.append_line(tab_index, "</svg>");
                 }
             }
-            svg.append_line(tab_index, "<rect id=\"t\" width=\"10\" height=\"5.8\" x=\"0\" y=\"0\" rx=\"0\" ry=\"0\" stroke=\"#000\" stroke-width=\"0.035\" />");
+            svg.append_line(
+                tab_index,
+                format!("<rect id=\"t\" width=\"{}\" height=\"{}\" x=\"0\" y=\"0\" rx=\"{}\" ry=\"{}\" stroke=\"#000\" stroke-width=\"{}\" />",
+                options.text_box_width, options.text_box_height, options.radius_inner, options.radius_inner, options.stroke_inner).as_str(),
+            );
         }),
     );
 
-    let mut translate_x = 7.31;
+    let shift_x = 6.588 * options.barcode_scale;
+    let total_barcode_width = shift_x * BARCODE_LEN as f64; // Extra space needed per segment
+
+    let mut translate_x = options.width - 2_f64; // Total usable space
+    translate_x -= total_barcode_width; // Calculate free space
+    translate_x = (translate_x / 2_f64) + 1_f64; // Divide by 2 to centre + 1
+
     // Add barcode vertical lines
     for char in barcode.chars() {
         svg.append_line(
             1,
             format!(
-                "<use href=\"#{}\" transform=\"translate({} 5.8)\"/>",
-                char as i32, translate_x
+                "<use href=\"#{}\" transform=\"translate({:.3} 5.8) scale({})\"/>",
+                char as i32, translate_x, options.barcode_scale
             )
             .as_str(),
         );
-        translate_x += 6.588;
+        translate_x += shift_x;
     }
 
-    translate_x = 5.25;
-    // Add barcode text, skip first and last '*'
+    translate_x = options.width - 2_f64; // Total usable space
+    translate_x -= options.text_box_width * 7_f64; // Calculate free space, for 7 text boxes
+    translate_x = (translate_x / 2_f64) + 1_f64; // Divide by 2 to centre + 1
+
+    let text_box_middle_x = format!("{:.3}", options.text_box_width / 2_f64);
+    let text_box_middle_y = format!("{:.3}", (options.text_box_height / 2_f64) + 2_f64);
+
+    // Add barcode text box, skip first and last '*'
     for (i, char) in barcode.chars().skip(1).take(barcode.len() - 4).enumerate() {
         barcode_text(
             &mut svg,
@@ -80,8 +98,10 @@ pub fn generate_lto_label_svg(
             &barcode[(i + 1)..(i + 2)],
             "5",
             options.get_character_colour(char),
+            text_box_middle_x.as_str(),
+            text_box_middle_y.as_str(),
         );
-        translate_x += 10_f64;
+        translate_x += options.text_box_width;
     }
     barcode_text(
         &mut svg,
@@ -89,6 +109,8 @@ pub fn generate_lto_label_svg(
         &barcode[7..9],
         "4",
         options.get_character_colour('*'),
+        text_box_middle_x.as_str(),
+        text_box_middle_y.as_str(),
     ); // Last block as 2 characters and smaller
 
     let result = svg.result();
@@ -97,11 +119,19 @@ pub fn generate_lto_label_svg(
     Ok(result)
 }
 
-fn barcode_text(svg: &mut Svg, translate_x: f64, text: &str, font_size: &str, colour: &str) {
+fn barcode_text(
+    svg: &mut SvgLabel,
+    translate_x: f64,
+    text: &str,
+    font_size: &str,
+    colour: &str,
+    tx: &str,
+    ty: &str,
+) {
     // svg.append_line(0, format!("<!--{}-->", text).as_str());
     svg.append_line(
         1,
-        format!("<g transform=\"translate({} 1)\">", translate_x).as_str(),
+        format!("<g transform=\"translate({:.3} 1)\">", translate_x).as_str(),
     );
     svg.append_line(
         2,
@@ -109,7 +139,8 @@ fn barcode_text(svg: &mut Svg, translate_x: f64, text: &str, font_size: &str, co
     );
     svg.append_line(
         2,
-        format!("<text x=\"5\" y=\"5\" text-anchor=\"middle\" font-size=\"{}\" font-family=\"sans-serif\">{}</text>", font_size, text).as_str(),
+        format!("<text x=\"{}\" y=\"{}\" text-anchor=\"middle\" font-size=\"{}\" font-family=\"sans-serif\">{}</text>",
+        tx, ty, font_size, text).as_str(),
     );
     svg.append_line(1, "</g>");
 }
