@@ -17,7 +17,7 @@ static XA: &str = "5.076";
 static XB: &str = "5.184";
 static XC: &str = "5.940";
 
-pub static BARCODE_VALID_CHARS: &str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ* -$%./+";
+pub static BARCODE_VALID_CHARS: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -$%./+*";
 
 pub struct SegmentPair {
     pub width: &'static str, // Width of barcode segment
@@ -28,496 +28,10 @@ pub struct Code39Segment {
     pub v_lines: [SegmentPair; 5], // Vertical barcode lines
 }
 
-pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = LazyLock::new(|| {
+pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<char, Code39Segment>> = LazyLock::new(|| {
     HashMap::from([
         (
-            32, // Space character
-            Code39Segment {
-                v_lines: [
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X0,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X2,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X5,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X9,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: XC,
-                    },
-                ],
-            },
-        ),
-        (
-            36, // $ character
-            Code39Segment {
-                v_lines: [
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X0,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X2,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X5,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: XA,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: XC,
-                    },
-                ],
-            },
-        ),
-        (
-            37, // % character
-            Code39Segment {
-                v_lines: [
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X0,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X1,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X5,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X9,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: XC,
-                    },
-                ],
-            },
-        ),
-        (
-            42, // * character
-            Code39Segment {
-                v_lines: [
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X0,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X2,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X5,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X9,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: XC,
-                    },
-                ],
-            },
-        ),
-        (
-            43, // + character
-            Code39Segment {
-                v_lines: [
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X0,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X2,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X5,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X9,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: XC,
-                    },
-                ],
-            },
-        ),
-        (
-            45, // - character
-            Code39Segment {
-                v_lines: [
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X0,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X2,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X5,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X7,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: XB,
-                    },
-                ],
-            },
-        ),
-        (
-            46, // . character
-            Code39Segment {
-                v_lines: [
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X0,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X4,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X6,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X9,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: XC,
-                    },
-                ],
-            },
-        ),
-        (
-            47, // / character
-            Code39Segment {
-                v_lines: [
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X0,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X2,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X6,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X9,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: XC,
-                    },
-                ],
-            },
-        ),
-        (
-            48, // 0 character
-            Code39Segment {
-                v_lines: [
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X0,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X1,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X5,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X9,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: XC,
-                    },
-                ],
-            },
-        ),
-        (
-            49, // 1 character
-            Code39Segment {
-                v_lines: [
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X0,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X2,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X6,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X9,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: XB,
-                    },
-                ],
-            },
-        ),
-        (
-            50, // 2 character
-            Code39Segment {
-                v_lines: [
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X0,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X1,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X6,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X9,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: XB,
-                    },
-                ],
-            },
-        ),
-        (
-            51, // 3 character
-            Code39Segment {
-                v_lines: [
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X0,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X2,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X8,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: XA,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: XC,
-                    },
-                ],
-            },
-        ),
-        (
-            52, // 4 character
-            Code39Segment {
-                v_lines: [
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X0,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X1,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X5,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X9,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: XB,
-                    },
-                ],
-            },
-        ),
-        (
-            53, // 5 character
-            Code39Segment {
-                v_lines: [
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X0,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X2,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X6,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: XA,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: XC,
-                    },
-                ],
-            },
-        ),
-        (
-            54, // 6 character
-            Code39Segment {
-                v_lines: [
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X0,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X1,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X6,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: XA,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: XC,
-                    },
-                ],
-            },
-        ),
-        (
-            55, // 7 character
-            Code39Segment {
-                v_lines: [
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X0,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X1,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X5,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X6,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: XB,
-                    },
-                ],
-            },
-        ),
-        (
-            56, // 8 character
-            Code39Segment {
-                v_lines: [
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X0,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X2,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X6,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X9,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: XC,
-                    },
-                ],
-            },
-        ),
-        (
-            57, // 9 character
-            Code39Segment {
-                v_lines: [
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X0,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X1,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: X6,
-                    },
-                    SegmentPair {
-                        width: WIDTH_LARGE,
-                        x: X9,
-                    },
-                    SegmentPair {
-                        width: WIDTH_SMALL,
-                        x: XC,
-                    },
-                ],
-            },
-        ),
-        (
-            65, // A character
+            'A',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -544,7 +58,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            66, // B character
+            'B',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -571,7 +85,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            67, // C character
+            'C',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -598,7 +112,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            68, // D character
+            'D',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -625,7 +139,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            69, // E character
+            'E',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -652,7 +166,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            70, // F character
+            'F',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -679,7 +193,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            71, // G character
+            'G',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -706,7 +220,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            72, // H character
+            'H',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -733,7 +247,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            73, // I character
+            'I',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -760,7 +274,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            74, // J character
+            'J',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -787,7 +301,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            75, // K character
+            'K',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -814,7 +328,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            76, // L character
+            'L',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -841,7 +355,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            77, // M character
+            'M',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -868,7 +382,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            78, // N character
+            'N',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -895,7 +409,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            79, // O character
+            'O',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -922,7 +436,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            80, // P character
+            'P',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -949,7 +463,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            81, // Q character
+            'Q',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -976,7 +490,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            82, // R character
+            'R',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -1003,7 +517,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            83, // S character
+            'S',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -1030,7 +544,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            84, // T character
+            'T',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -1057,7 +571,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            85, // U character
+            'U',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -1084,7 +598,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            86, // V character
+            'V',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -1111,7 +625,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            87, // W character
+            'W',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -1138,7 +652,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            88, // X character
+            'X',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -1165,7 +679,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            89, // Y character
+            'Y',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -1192,7 +706,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
             },
         ),
         (
-            90, // Z character
+            'Z',
             Code39Segment {
                 v_lines: [
                     SegmentPair {
@@ -1210,6 +724,492 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<i64, Code39Segment>> = Laz
                     SegmentPair {
                         width: WIDTH_SMALL,
                         x: XA,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: XC,
+                    },
+                ],
+            },
+        ),
+        (
+            '0',
+            Code39Segment {
+                v_lines: [
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X0,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X1,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X5,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X9,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: XC,
+                    },
+                ],
+            },
+        ),
+        (
+            '1',
+            Code39Segment {
+                v_lines: [
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X0,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X2,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X6,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X9,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: XB,
+                    },
+                ],
+            },
+        ),
+        (
+            '2',
+            Code39Segment {
+                v_lines: [
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X0,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X1,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X6,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X9,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: XB,
+                    },
+                ],
+            },
+        ),
+        (
+            '3',
+            Code39Segment {
+                v_lines: [
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X0,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X2,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X8,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: XA,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: XC,
+                    },
+                ],
+            },
+        ),
+        (
+            '4',
+            Code39Segment {
+                v_lines: [
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X0,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X1,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X5,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X9,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: XB,
+                    },
+                ],
+            },
+        ),
+        (
+            '5',
+            Code39Segment {
+                v_lines: [
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X0,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X2,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X6,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: XA,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: XC,
+                    },
+                ],
+            },
+        ),
+        (
+            '6',
+            Code39Segment {
+                v_lines: [
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X0,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X1,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X6,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: XA,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: XC,
+                    },
+                ],
+            },
+        ),
+        (
+            '7',
+            Code39Segment {
+                v_lines: [
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X0,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X1,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X5,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X6,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: XB,
+                    },
+                ],
+            },
+        ),
+        (
+            '8',
+            Code39Segment {
+                v_lines: [
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X0,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X2,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X6,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X9,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: XC,
+                    },
+                ],
+            },
+        ),
+        (
+            '9',
+            Code39Segment {
+                v_lines: [
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X0,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X1,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X6,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X9,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: XC,
+                    },
+                ],
+            },
+        ),
+        (
+            ' ',
+            Code39Segment {
+                v_lines: [
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X0,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X2,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X5,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X9,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: XC,
+                    },
+                ],
+            },
+        ),
+        (
+            '-',
+            Code39Segment {
+                v_lines: [
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X0,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X2,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X5,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X7,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: XB,
+                    },
+                ],
+            },
+        ),
+        (
+            '$',
+            Code39Segment {
+                v_lines: [
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X0,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X2,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X5,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: XA,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: XC,
+                    },
+                ],
+            },
+        ),
+        (
+            '%',
+            Code39Segment {
+                v_lines: [
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X0,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X1,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X5,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X9,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: XC,
+                    },
+                ],
+            },
+        ),
+        (
+            '.',
+            Code39Segment {
+                v_lines: [
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X0,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X4,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X6,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X9,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: XC,
+                    },
+                ],
+            },
+        ),
+        (
+            '/',
+            Code39Segment {
+                v_lines: [
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X0,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X2,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X6,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X9,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: XC,
+                    },
+                ],
+            },
+        ),
+        (
+            '+',
+            Code39Segment {
+                v_lines: [
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X0,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X2,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X5,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X9,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: XC,
+                    },
+                ],
+            },
+        ),
+        (
+            '*',
+            Code39Segment {
+                v_lines: [
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X0,
+                    },
+                    SegmentPair {
+                        width: WIDTH_SMALL,
+                        x: X2,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X5,
+                    },
+                    SegmentPair {
+                        width: WIDTH_LARGE,
+                        x: X9,
                     },
                     SegmentPair {
                         width: WIDTH_SMALL,
@@ -1243,7 +1243,7 @@ mod tests {
     fn check() {
         for char in BARCODE_VALID_CHARS.chars() {
             assert!(
-                CODE_39_BARCODE_SEGMENTS.get(&(char as i64)).is_some(),
+                CODE_39_BARCODE_SEGMENTS.get(&char).is_some(),
                 "Missing character"
             );
         }

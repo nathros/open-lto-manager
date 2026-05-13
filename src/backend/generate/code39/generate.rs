@@ -3,11 +3,15 @@ use std::collections::HashSet;
 use crate::shared::error::ErrorStr;
 
 use super::{
+    options::LabelOptions,
     segment::{BARCODE_VALID_CHARS, CODE_39_BARCODE_SEGMENTS},
     svg::Svg,
 };
 
-pub fn generate_lto_label_svg(mut barcode: String) -> Result<String, ErrorStr> {
+pub fn generate_lto_label_svg(
+    mut barcode: String,
+    options: LabelOptions,
+) -> Result<String, ErrorStr> {
     barcode.push_str(
         (0..(8 - barcode.len()))
             .map(|_| " ")
@@ -24,13 +28,12 @@ pub fn generate_lto_label_svg(mut barcode: String) -> Result<String, ErrorStr> {
     let mut svg = Svg::new();
     //svg.append_line(0, format!("<!--{}-->", barcode).as_str());
 
-    let mut unique_characters: HashSet<i64> = HashSet::new();
+    let mut unique_characters: HashSet<char> = HashSet::new();
     for char in barcode.chars() {
         if !BARCODE_VALID_CHARS.contains(char) {
             return Err(format!("Invalid character: {}", char));
         }
-        let index = char as i64;
-        unique_characters.insert(index);
+        unique_characters.insert(char);
     }
 
     svg.append_group(
@@ -41,7 +44,7 @@ pub fn generate_lto_label_svg(mut barcode: String) -> Result<String, ErrorStr> {
                 if let Some(segment_gen) = CODE_39_BARCODE_SEGMENTS.get(index) {
                     svg.append_line(
                         tab_index,
-                        format!("<svg id=\"{}\" width=\"6.588mm\" height=\"11.7mm\">", index)
+                        format!("<svg id=\"{}\" width=\"6.588mm\" height=\"11.7mm\">", *index as u8)
                             .as_str(),
                     );
                     for segment in segment_gen.create_segment("11.7") {
@@ -70,16 +73,23 @@ pub fn generate_lto_label_svg(mut barcode: String) -> Result<String, ErrorStr> {
 
     translate_x = 5.25;
     // Add barcode text, skip first and last '*'
-    for itr in barcode.chars().skip(2).take(barcode.len() - 4).enumerate() {
+    for (i, char) in barcode.chars().skip(1).take(barcode.len() - 4).enumerate() {
         barcode_text(
             &mut svg,
             translate_x,
-            &barcode[(itr.0 + 1)..(itr.0 + 2)],
+            &barcode[(i + 1)..(i + 2)],
             "5",
+            options.get_character_colour(char),
         );
         translate_x += 10_f64;
     }
-    barcode_text(&mut svg, translate_x, &barcode[7..9], "4"); // Last block as 2 characters and smaller
+    barcode_text(
+        &mut svg,
+        translate_x,
+        &barcode[7..9],
+        "4",
+        options.get_character_colour('*'),
+    ); // Last block as 2 characters and smaller
 
     let result = svg.result();
     //let _ = std::fs::write("test.svg", &result);
@@ -87,13 +97,16 @@ pub fn generate_lto_label_svg(mut barcode: String) -> Result<String, ErrorStr> {
     Ok(result)
 }
 
-fn barcode_text(svg: &mut Svg, translate_x: f64, text: &str, font_size: &str) {
-    // svg.append_line(0, format!("<!--{}-->", text).as_str());s
+fn barcode_text(svg: &mut Svg, translate_x: f64, text: &str, font_size: &str, colour: &str) {
+    // svg.append_line(0, format!("<!--{}-->", text).as_str());
     svg.append_line(
         1,
         format!("<g transform=\"translate({} 1)\">", translate_x).as_str(),
     );
-    svg.append_line(2, "<use href=\"#t\" fill=\"orange\" />");
+    svg.append_line(
+        2,
+        format!("<use href=\"#t\" fill=\"{}\" />", colour).as_str(),
+    );
     svg.append_line(
         2,
         format!("<text x=\"5\" y=\"5\" text-anchor=\"middle\" font-size=\"{}\" font-family=\"sans-serif\">{}</text>", font_size, text).as_str(),

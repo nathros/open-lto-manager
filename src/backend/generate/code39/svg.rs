@@ -10,7 +10,7 @@ impl Svg {
             buffer: "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"80.5mm\" height=\"18.5mm\" viewBox=\"0 0 80.5 18.5\" preserveAspectRatio=\"none\">\n".to_string(),
         };
         svg.buffer.push_str("	<g transform=\"translate(1 1)\">\n");
-        svg.buffer.push_str("		<rect width=\"78.5\" height=\"16.5\" x=\"0\" y=\"0\" rx=\"1\" ry=\"1\" fill=\"white\" stroke=\"#000\" stroke-width=\"0.035\" />\n");
+        svg.buffer.push_str("		<rect width=\"78.5\" height=\"16.5\" x=\"0\" y=\"0\" rx=\"1\" ry=\"1\" fill=\"#fff\" stroke=\"#000\" stroke-width=\"0.035\" />\n");
         svg.buffer.push_str("	</g>\n");
         svg
     }
