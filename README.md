@@ -46,7 +46,7 @@ IP=0.0.0.0 CONSOLE_LOG=ON ./openltomanager
 ### Vs Code Setup
 #### Install Toolchains
 - Rust 1.92
-- Dioxus 0.7.3
+- Dioxus 0.7.9
 
 https://dioxuslabs.com/learn/0.7/getting_started/
 

@@ -19,11 +19,13 @@ static XC: &str = "5.940";
 
 pub static BARCODE_VALID_CHARS: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -$%./+*";
 
+#[derive(Debug, PartialEq)]
 pub struct SegmentPair {
     pub width: &'static str, // Width of barcode segment
     pub x: &'static str,     // X position of segment
 }
 
+#[derive(Debug, PartialEq)]
 pub struct Code39Segment {
     pub v_lines: [SegmentPair; 5], // Vertical barcode lines
 }
@@ -480,7 +482,7 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<char, Code39Segment>> = La
                     },
                     SegmentPair {
                         width: WIDTH_LARGE,
-                        x: X7,
+                        x: X5,
                     },
                     SegmentPair {
                         width: WIDTH_LARGE,
@@ -1246,6 +1248,16 @@ mod tests {
                 CODE_39_BARCODE_SEGMENTS.get(&char).is_some(),
                 "Missing character"
             );
+        }
+
+        // Check for duplicate values
+        for (index, char) in BARCODE_VALID_CHARS.chars().enumerate() {
+            let segment = CODE_39_BARCODE_SEGMENTS.get(&char).unwrap();
+            for check_char in BARCODE_VALID_CHARS.chars().skip(index + 1) {
+                let check_segment = CODE_39_BARCODE_SEGMENTS.get(&check_char).unwrap();
+                // println!("Check {} {}", char, check_char);
+                assert_ne!(segment, check_segment, "Duplicate found");
+            }
         }
 
         assert_eq!(
