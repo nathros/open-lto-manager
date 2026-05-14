@@ -8,6 +8,9 @@ use super::{
     svg::SvgLabel,
 };
 
+const TEXT_BOX_ID: &str = "t";
+const BACKGROUND_ID: &str = "b";
+
 pub fn generate_lto_label_svg(
     mut barcode: String,
     options: LabelOptions,
@@ -57,11 +60,20 @@ pub fn generate_lto_label_svg(
             }
             svg.append_line(
                 tab_index,
-                format!("<rect id=\"t\" width=\"{}\" height=\"{}\" x=\"0\" y=\"0\" rx=\"{}\" ry=\"{}\" stroke=\"#000\" stroke-width=\"{}\" />",
-                options.text_box_width, options.text_box_height, options.radius_inner, options.radius_inner, options.stroke_inner).as_str(),
+                format!("<rect id=\"{}\" width=\"{}\" height=\"{}\" x=\"0\" y=\"0\" rx=\"{}\" ry=\"{}\" stroke=\"#000\" stroke-width=\"{}\" />",
+                TEXT_BOX_ID, options.text_box_width, options.text_box_height, options.radius_inner, options.radius_inner, options.stroke_inner).as_str()
             );
+            svg.append_line(tab_index, format!("<rect id=\"{}\" width=\"{}\" height=\"{}\" x=\"1\" y=\"1\" rx=\"{}\" ry=\"{}\" />\n",
+            BACKGROUND_ID, options.width - 2_f64, options.height - 2_f64, options.radius_outer, options.radius_outer).as_str());
         }),
     );
+
+    if let Some(col) = options.background_colour.as_ref() {
+        svg.append_line(
+            1, // Background colour
+            format!("<use href=\"#{}\" fill=\"{}\"/>", BACKGROUND_ID, col).as_str(),
+        );
+    }
 
     let shift_x = 6.588 * options.barcode_scale;
     let total_barcode_width = shift_x * BARCODE_LEN as f64; // Extra space needed per segment
@@ -113,8 +125,17 @@ pub fn generate_lto_label_svg(
         text_box_middle_y.as_str(),
     ); // Last block as 2 characters and smaller
 
+    svg.append_line(
+        1, // Background outline
+        format!(
+            "<use href=\"#{}\" fill=\"none\" stroke=\"#000\" stroke-width=\"{}\"/>",
+            BACKGROUND_ID, options.stroke_outer
+        )
+        .as_str(),
+    );
+
     let result = svg.result();
-    //let _ = std::fs::write("test.svg", &result);
+    let _ = std::fs::write("test.svg", &result);
 
     Ok(result)
 }
@@ -135,12 +156,15 @@ fn barcode_text(
     );
     svg.append_line(
         2,
-        format!("<use href=\"#t\" fill=\"{}\" />", colour).as_str(),
+        format!("<use href=\"#{}\" fill=\"{}\" />", TEXT_BOX_ID, colour).as_str(),
     );
     svg.append_line(
         2,
-        format!("<text x=\"{}\" y=\"{}\" text-anchor=\"middle\" font-size=\"{}\" font-family=\"sans-serif\">{}</text>",
-        tx, ty, font_size, text).as_str(),
+        format!(
+            "<text x=\"{}\" y=\"{}\" text-anchor=\"middle\" font-size=\"{}\">{}</text>",
+            tx, ty, font_size, text
+        )
+        .as_str(),
     );
     svg.append_line(1, "</g>");
 }

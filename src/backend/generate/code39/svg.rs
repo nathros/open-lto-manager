@@ -8,17 +8,12 @@ type GroupFn = Box<dyn FnMut(i32, &mut SvgLabel)>;
 
 impl SvgLabel {
     pub fn new(options: &LabelOptions) -> Self {
-        let mut svg = Self {
+        Self {
             buffer: format!(
-                "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{}mm\" height=\"{}mm\" viewBox=\"0 0 {} {}\" preserveAspectRatio=\"none\">\n",
-                options.width, options.height, options.width, options.height
+                "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{}mm\" height=\"{}mm\" viewBox=\"0 0 {} {}\" preserveAspectRatio=\"none\" font-family=\"{}\">\n",
+                options.width, options.height, options.width, options.height, options.font_family
             ),
-        };
-        svg.buffer.push_str("	<g transform=\"translate(1 1)\">\n");
-        svg.buffer.push_str(format!("		<rect width=\"{}\" height=\"{}\" rx=\"{}\" ry=\"{}\" fill=\"#fff\" stroke=\"#000\" stroke-width=\"{}\" />\n",
-                                options.width - 2_f64, options.height - 2_f64, options.radius_outer, options.radius_outer, options.stroke_outer).as_str());
-        svg.buffer.push_str("	</g>\n");
-        svg
+        }
     }
 
     pub fn result(&mut self) -> String {

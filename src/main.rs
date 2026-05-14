@@ -1,4 +1,5 @@
 #![cfg_attr(not(test), forbid(unsafe_code))] // Disable unsafe{} but allow in tests
+//#![deny(warnings)] // Do not allow warnings
 
 use dioxus::prelude::*;
 use frontend::assets::{CSS_ASSETS, FAVICON};

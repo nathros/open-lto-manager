@@ -1,7 +1,11 @@
-use super::theme::{CODE_39_BARCODE_THEMES, LabelTheme};
+use super::{
+    font::LabelFont,
+    theme::{CODE_39_BARCODE_THEMES, LabelTheme},
+};
 
 pub struct LabelOptions {
     theme_colour: LabelTheme,
+    pub font_family: LabelFont,
     pub stroke_outer: f64,
     pub stroke_inner: f64,
     pub radius_outer: f64,
@@ -11,12 +15,14 @@ pub struct LabelOptions {
     pub barcode_scale: f64,
     pub text_box_width: f64,
     pub text_box_height: f64,
+    pub background_colour: Option<String>,
 }
 
 impl Default for LabelOptions {
     fn default() -> Self {
         Self {
             theme_colour: LabelTheme::Standard,
+            font_family: LabelFont::SansSerif,
             stroke_outer: 0.035,
             stroke_inner: 0.035,
             radius_outer: 1.0,
@@ -26,6 +32,7 @@ impl Default for LabelOptions {
             barcode_scale: 1.0,
             text_box_width: 10.0_f64,
             text_box_height: 5.8_f64,
+            background_colour: Some("#FFF".to_string()),
         }
     }
 }
