@@ -1,6 +1,9 @@
 use std::collections::HashSet;
 
-use crate::shared::error::ErrorStr;
+use crate::{
+    backend::generate::code39::text::{LabelTextDirection, LabelTextOrientation},
+    shared::error::ErrorStr,
+};
 
 use super::{
     options::LabelOptions,
@@ -63,7 +66,7 @@ pub fn generate_lto_label_svg(
                 format!("<rect id=\"{}\" width=\"{}\" height=\"{}\" x=\"0\" y=\"0\" rx=\"{}\" ry=\"{}\" stroke=\"#000\" stroke-width=\"{}\" />",
                 TEXT_BOX_ID, options.text_box_width, options.text_box_height, options.radius_inner, options.radius_inner, options.stroke_inner).as_str()
             );
-            svg.append_line(tab_index, format!("<rect id=\"{}\" width=\"{}\" height=\"{}\" x=\"1\" y=\"1\" rx=\"{}\" ry=\"{}\" />\n",
+            svg.append_line(tab_index, format!("<rect id=\"{}\" width=\"{}\" height=\"{}\" x=\"1\" y=\"1\" rx=\"{}\" ry=\"{}\" />",
             BACKGROUND_ID, options.width - 2_f64, options.height - 2_f64, options.radius_outer, options.radius_outer).as_str());
         }),
     );
@@ -99,31 +102,47 @@ pub fn generate_lto_label_svg(
     translate_x -= options.text_box_width * 7_f64; // Calculate free space, for 7 text boxes
     translate_x = (translate_x / 2_f64) + 1_f64; // Divide by 2 to centre + 1
 
-    let text_box_middle_x = format!("{:.3}", options.text_box_width / 2_f64);
-    let text_box_middle_y = format!("{:.3}", (options.text_box_height / 2_f64) + 2_f64);
+    let text_rotation = format!("{}", options.text_orientation);
+    let text_x = format!("{}", options.text_box_width / 2_f64);
+    let y_offset = match options.text_orientation {
+        LabelTextOrientation::Normal => 0.5_f64,
+        _ => 0.0_f64,
+    };
+    let text_y = format!("{}", (options.text_box_height / 2_f64) + y_offset);
 
     // Add barcode text box, skip first and last '*'
-    for (i, char) in barcode.chars().skip(1).take(barcode.len() - 4).enumerate() {
+    let barcode_text_actions: [&str; 7] = match options.text_direction {
+        LabelTextDirection::Normal => [
+            &barcode[1..2],
+            &barcode[2..3],
+            &barcode[3..4],
+            &barcode[4..5],
+            &barcode[5..6],
+            &barcode[6..7],
+            &barcode[7..9],
+        ],
+        LabelTextDirection::Reversed => [
+            &barcode[7..9],
+            &barcode[6..7],
+            &barcode[5..6],
+            &barcode[4..5],
+            &barcode[3..4],
+            &barcode[2..3],
+            &barcode[1..2],
+        ],
+    };
+    for str in barcode_text_actions {
         barcode_text(
             &mut svg,
+            &options,
             translate_x,
-            &barcode[(i + 1)..(i + 2)],
-            "5",
-            options.get_character_colour(char),
-            text_box_middle_x.as_str(),
-            text_box_middle_y.as_str(),
+            str,
+            text_rotation.as_str(),
+            text_x.as_str(),
+            text_y.as_str(),
         );
         translate_x += options.text_box_width;
     }
-    barcode_text(
-        &mut svg,
-        translate_x,
-        &barcode[7..9],
-        "4",
-        options.get_character_colour('*'),
-        text_box_middle_x.as_str(),
-        text_box_middle_y.as_str(),
-    ); // Last block as 2 characters and smaller
 
     svg.append_line(
         1, // Background outline
@@ -142,13 +161,23 @@ pub fn generate_lto_label_svg(
 
 fn barcode_text(
     svg: &mut SvgLabel,
+    options: &LabelOptions,
     translate_x: f64,
     text: &str,
-    font_size: &str,
-    colour: &str,
-    tx: &str,
-    ty: &str,
+    rotate: &str,
+    text_x: &str,
+    text_y: &str,
 ) {
+    let (font_size, colour) = if text.len() > 1 {
+        ("4", options.get_character_colour('*')) // Is tape designation
+    } else {
+        (
+            // Is single character
+            "5",
+            options.get_character_colour(text.chars().next().unwrap_or('*')),
+        )
+    };
+
     // svg.append_line(0, format!("<!--{}-->", text).as_str());
     svg.append_line(
         1,
@@ -161,8 +190,8 @@ fn barcode_text(
     svg.append_line(
         2,
         format!(
-            "<text x=\"{}\" y=\"{}\" text-anchor=\"middle\" font-size=\"{}\">{}</text>",
-            tx, ty, font_size, text
+            "<text x=\"{}\" y=\"{}\" dominant-baseline=\"middle\" text-anchor=\"middle\" transform=\"rotate({} {} {})\" font-size=\"{}\">{}</text>",
+            text_x, text_y, rotate, text_x, text_y, font_size, text
         )
         .as_str(),
     );

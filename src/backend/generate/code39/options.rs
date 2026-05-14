@@ -1,11 +1,14 @@
 use super::{
     font::LabelFont,
+    text::{LabelTextDirection, LabelTextOrientation},
     theme::{CODE_39_BARCODE_THEMES, LabelTheme},
 };
 
 pub struct LabelOptions {
     theme_colour: LabelTheme,
     pub font_family: LabelFont,
+    pub text_direction: LabelTextDirection,
+    pub text_orientation: LabelTextOrientation,
     pub stroke_outer: f64,
     pub stroke_inner: f64,
     pub radius_outer: f64,
@@ -23,6 +26,8 @@ impl Default for LabelOptions {
         Self {
             theme_colour: LabelTheme::Standard,
             font_family: LabelFont::SansSerif,
+            text_direction: LabelTextDirection::Normal,
+            text_orientation: LabelTextOrientation::Normal,
             stroke_outer: 0.035,
             stroke_inner: 0.035,
             radius_outer: 1.0,

@@ -1229,7 +1229,7 @@ impl Code39Segment {
 
         for (result_element, sp) in result_array.iter_mut().zip(&self.v_lines) {
             *result_element = format!(
-                "<rect width=\"{}\" height=\"{}\" x=\"{}\" y=\"0\" />",
+                "<rect width=\"{}\" height=\"{}\" x=\"{}\" />",
                 sp.width, height, sp.x
             )
         }
