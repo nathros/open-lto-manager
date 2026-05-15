@@ -1,0 +1,143 @@
+use dioxus::fullstack::serde::{Deserialize, Serialize};
+#[cfg(feature = "server")]
+use rusqlite::{
+    ToSql, ffi,
+    types::{FromSql, FromSqlError, FromSqlResult, ToSqlOutput, ValueRef},
+};
+#[cfg(feature = "server")]
+use std::fmt::{Display, Formatter, Result};
+
+use super::model_user::RecordUser;
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+pub struct RecordLabelPreset {
+    pub id: i64,
+    pub user_id: i64,
+    pub name: String,
+    pub options: LabelOptions,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+pub struct RecordLabelPresetJoin {
+    pub id: i64,
+    pub user: RecordUser,
+    pub name: String,
+    pub options: LabelOptions,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+pub struct LabelOptions {
+    pub theme: LabelTheme,
+    pub font: LabelFont,
+    pub text_direction: LabelTextDirection,
+    pub text_orientation: LabelTextOrientation,
+    pub stroke_outer: f64,
+    pub stroke_inner: f64,
+    pub radius_outer: f64,
+    pub radius_inner: f64,
+    pub width: f64,
+    pub height: f64,
+    pub barcode_scale: f64,
+    pub text_box_width: f64,
+    pub text_box_height: f64,
+    pub background_colour: Option<String>,
+}
+
+impl Default for LabelOptions {
+    fn default() -> Self {
+        Self {
+            theme: LabelTheme::Standard,
+            font: LabelFont::SansSerif,
+            text_direction: LabelTextDirection::Normal,
+            text_orientation: LabelTextOrientation::Normal,
+            stroke_outer: 0.035,
+            stroke_inner: 0.035,
+            radius_outer: 1.0,
+            radius_inner: 0.0,
+            width: 80.5,
+            height: 18.5,
+            barcode_scale: 1.0,
+            text_box_width: 10.0_f64,
+            text_box_height: 5.8_f64,
+            background_colour: Some("#FFF".to_string()),
+        }
+    }
+}
+
+#[cfg(feature = "server")]
+impl ToSql for LabelOptions {
+    fn to_sql(&self) -> rusqlite::Result<ToSqlOutput<'_>> {
+        match serde_json::to_string(self) {
+            Ok(o) => Ok(o.into()),
+            Err(e) => Err(rusqlite::Error::SqliteFailure(
+                ffi::Error::new(e.column() as i32),
+                Some(format!("{}", e)),
+            )),
+        }
+    }
+}
+
+#[cfg(feature = "server")]
+impl FromSql for LabelOptions {
+    fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
+        match value.as_str() {
+            Ok(str) => match serde_json::from_str::<LabelOptions>(str) {
+                Ok(result) => FromSqlResult::Ok(result),
+                Err(e) => FromSqlResult::Err(FromSqlError::OutOfRange(e.column() as i64)),
+            },
+            Err(e) => FromSqlResult::Err(e),
+        }
+    }
+}
+
+#[repr(i64)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy, Eq, Hash)]
+pub enum LabelTheme {
+    Standard = 0,
+    Warm = 1,
+    Greyscale = 2,
+}
+
+#[repr(i64)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+pub enum LabelFont {
+    SansSerif = 0,
+    Serif = 1,
+    Monospace = 2,
+}
+
+#[cfg(feature = "server")]
+impl Display for LabelFont {
+    fn fmt(&self, formatter: &mut Formatter) -> Result {
+        match *self {
+            LabelFont::SansSerif => write!(formatter, "sans-serif"),
+            LabelFont::Serif => write!(formatter, "serif"),
+            LabelFont::Monospace => write!(formatter, "monospace"),
+        }
+    }
+}
+
+#[repr(i64)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+pub enum LabelTextDirection {
+    Normal = 0,
+    Reversed = 1,
+}
+
+#[repr(i64)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+pub enum LabelTextOrientation {
+    Normal = 0,
+    Rotate90 = 1,
+    Rotate180 = 2,
+    Rotate270 = 3,
+}
+
+#[cfg(test)]
+mod tests {
+
+    #[test]
+    fn table_format_enum() {
+        //
+    }
+}

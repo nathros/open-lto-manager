@@ -1,9 +1,6 @@
 use dioxus::{fullstack::Loader, prelude::*};
 
-use crate::{
-    backend::api::api_user::list_users,
-    shared::models::database::model_user::{ColourMode, RecordUser},
-};
+use crate::{backend::api::api_user::list_users, shared::models::database::model_user::RecordUser};
 
 #[component]
 pub fn DBUser() -> Element {
@@ -59,7 +56,7 @@ fn Inner() -> Element {
                 td { "{rec.created}" }
                 td { "{rec.language}" }
                 td { "{rec.avatar}" }
-                td { "{<ColourMode as Into<&str>>::into(rec.system_theme)}" }
+                td { "{rec.system_theme:?}" }
                 td { "{rec.icon_theme}" }
                 td { "{rec.fm_theme}" }
                 td { "{rec.accent_colour}" }

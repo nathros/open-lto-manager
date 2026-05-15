@@ -1,12 +1,13 @@
 use std::collections::HashSet;
 
-use crate::{
-    backend::generate::code39::text::{LabelTextDirection, LabelTextOrientation},
-    shared::error::ErrorStr,
+use crate::shared::{
+    error::ErrorStr,
+    models::database::model_label_preset::{
+        LabelOptions, LabelTextDirection, LabelTextOrientation,
+    },
 };
 
 use super::{
-    options::LabelOptions,
     segment::{BARCODE_VALID_CHARS, CODE_39_BARCODE_SEGMENTS},
     svg::SvgLabel,
 };
@@ -119,10 +120,10 @@ pub fn generate_lto_label_svg(
             &barcode[4..5],
             &barcode[5..6],
             &barcode[6..7],
-            &barcode[7..9],
+            &barcode[7..9], // Designation at end
         ],
         LabelTextDirection::Reversed => [
-            &barcode[7..9],
+            &barcode[7..9], // Designation at start
             &barcode[6..7],
             &barcode[5..6],
             &barcode[4..5],
@@ -154,7 +155,7 @@ pub fn generate_lto_label_svg(
     );
 
     let result = svg.result();
-    let _ = std::fs::write("test.svg", &result);
+    //let _ = std::fs::write("test.svg", &result);
 
     Ok(result)
 }

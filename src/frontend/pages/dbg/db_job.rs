@@ -3,10 +3,7 @@ use dioxus::{fullstack::Loader, prelude::*};
 use crate::{
     backend::api::api_job::{delete_job, list_jobs},
     frontend::{collections::message::Message, elements::button::Button},
-    shared::{
-        level::Level,
-        models::database::model_job::{JobStatus, JobType, RecordJob},
-    },
+    shared::{level::Level, models::database::model_job::RecordJob},
 };
 
 #[component]
@@ -51,16 +48,13 @@ fn Inner() -> Element {
     rsx! {
         Message { level: Level::Error, text: message() }
         for rec in jobs_list.cloned() {
+
             tr {
                 td { "{rec.id}" }
                 td { "{rec.user_id}" }
                 td { "{rec.name}" }
-                td {
-                    "{<JobType as Into<&str>>::into(rec.job_type)}[{<JobType as Into<i64>>::into(rec.job_type)}]"
-                }
-                td {
-                    "{<JobStatus as Into<&str>>::into(rec.job_status)}[{<JobStatus as Into<i64>>::into(rec.job_status)}]"
-                }
+                td { "{rec.job_type:?}" }
+                td { "{rec.job_status:?}" }
                 td { "{rec.start_time}" }
                 td { "{rec.end_time}" }
                 td { "{rec.comment}" }

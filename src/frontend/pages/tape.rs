@@ -140,9 +140,9 @@ pub fn Tape(id: i64) -> Element {
                 r#type: "radio",
                 oninput: input_format,
                 checked: tape().format == TapeFormat::Tar,
-                value: "{<TapeFormat as Into<i64>>::into(TapeFormat::Tar)}",
+                value: "{TapeFormat::Tar:?}",
             }
-            label { r#for: "format1", "{<TapeFormat as Into<&str>>::into(TapeFormat::Tar)}" }
+            label { r#for: "format1", "{TapeFormat::Tar:?}" }
             if selected_type.supports_ltfs {
                 br {}
                 input {
@@ -151,9 +151,9 @@ pub fn Tape(id: i64) -> Element {
                     r#type: "radio",
                     oninput: input_format,
                     checked: tape().format == TapeFormat::LTFS,
-                    value: "{<TapeFormat as Into<i64>>::into(TapeFormat::LTFS)}",
+                    value: "{TapeFormat::LTFS:?}",
                 }
-                label { r#for: "format2", "{<TapeFormat as Into<&str>>::into(TapeFormat::LTFS)}" }
+                label { r#for: "format2", "{TapeFormat::LTFS:?}" }
             }
             br {}
             br {}

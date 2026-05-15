@@ -132,8 +132,6 @@ impl TableManufacturer {
 
 #[cfg(test)]
 mod tests {
-    #![allow(clippy::unwrap_used)]
-
     use crate::{
         backend::database::tables::{table::Table, table_manufacturer::TableManufacturer},
         shared::models::database::model_manufacturer::RecordManufacturer,

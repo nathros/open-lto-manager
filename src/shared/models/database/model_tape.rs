@@ -84,15 +84,6 @@ impl From<i64> for TapeFormat {
     }
 }
 
-impl From<TapeFormat> for &str {
-    fn from(value: TapeFormat) -> &'static str {
-        match value {
-            TapeFormat::Tar => "Tar",
-            TapeFormat::LTFS => "LTFS",
-        }
-    }
-}
-
 impl From<TapeFormat> for i64 {
     fn from(value: TapeFormat) -> Self {
         value as i64 // Do not use value.into() will cause stack overflow
@@ -124,34 +115,18 @@ pub enum EncryptionType {
 impl From<i64> for EncryptionType {
     fn from(value: i64) -> Self {
         match value {
-            0 => EncryptionType::None,
-            1 => EncryptionType::Software,
-            2 => EncryptionType::Hardware,
+            _ if value == EncryptionType::None as i64 => EncryptionType::None,
+            _ if value == EncryptionType::Software as i64 => EncryptionType::Software,
+            _ if value == EncryptionType::Hardware as i64 => EncryptionType::Hardware,
             _ => EncryptionType::None,
         }
-    }
-}
-
-impl From<EncryptionType> for &str {
-    fn from(value: EncryptionType) -> Self {
-        match value {
-            EncryptionType::None => "None",
-            EncryptionType::Software => "Software",
-            EncryptionType::Hardware => "Hardware",
-        }
-    }
-}
-
-impl From<EncryptionType> for i64 {
-    fn from(value: EncryptionType) -> Self {
-        value as i64 // Do not use value.into() will cause stack overflow
     }
 }
 
 #[cfg(feature = "server")]
 impl ToSql for EncryptionType {
     fn to_sql(&self) -> rusqlite::Result<ToSqlOutput<'_>> {
-        Ok(i64::from(*self).into())
+        Ok((*self as i64).into())
     }
 }
 
@@ -172,32 +147,17 @@ pub enum SoftwareEncryptionType {
 impl From<i64> for SoftwareEncryptionType {
     fn from(value: i64) -> Self {
         match value {
-            0 => SoftwareEncryptionType::None,
-            1 => SoftwareEncryptionType::Test,
+            _ if value == SoftwareEncryptionType::None as i64 => SoftwareEncryptionType::None,
+            _ if value == SoftwareEncryptionType::Test as i64 => SoftwareEncryptionType::Test,
             _ => SoftwareEncryptionType::None, // Fallback
         }
-    }
-}
-
-impl From<SoftwareEncryptionType> for &str {
-    fn from(value: SoftwareEncryptionType) -> &'static str {
-        match value {
-            SoftwareEncryptionType::None => "None",
-            SoftwareEncryptionType::Test => "Test",
-        }
-    }
-}
-
-impl From<SoftwareEncryptionType> for i64 {
-    fn from(value: SoftwareEncryptionType) -> Self {
-        value as i64 // Do not use value.into() will cause stack overflow
     }
 }
 
 #[cfg(feature = "server")]
 impl ToSql for SoftwareEncryptionType {
     fn to_sql(&self) -> rusqlite::Result<ToSqlOutput<'_>> {
-        Ok(i64::from(*self).into())
+        Ok((*self as i64).into())
     }
 }
 
@@ -218,32 +178,17 @@ pub enum HardwareEncryptionType {
 impl From<i64> for HardwareEncryptionType {
     fn from(value: i64) -> Self {
         match value {
-            0 => HardwareEncryptionType::None,
-            1 => HardwareEncryptionType::Test,
+            _ if value == HardwareEncryptionType::None as i64 => HardwareEncryptionType::None,
+            _ if value == HardwareEncryptionType::Test as i64 => HardwareEncryptionType::Test,
             _ => HardwareEncryptionType::None, // Fallback
         }
-    }
-}
-
-impl From<HardwareEncryptionType> for &str {
-    fn from(value: HardwareEncryptionType) -> &'static str {
-        match value {
-            HardwareEncryptionType::None => "None",
-            HardwareEncryptionType::Test => "Test",
-        }
-    }
-}
-
-impl From<HardwareEncryptionType> for i64 {
-    fn from(value: HardwareEncryptionType) -> Self {
-        value as i64 // Do not use value.into() will cause stack overflow
     }
 }
 
 #[cfg(feature = "server")]
 impl ToSql for HardwareEncryptionType {
     fn to_sql(&self) -> rusqlite::Result<ToSqlOutput<'_>> {
-        Ok(i64::from(*self).into())
+        Ok((*self as i64).into())
     }
 }
 
@@ -274,7 +219,7 @@ mod tests {
         let to_int_ltfs: i64 = TapeFormat::LTFS.into();
         assert_eq!(to_int_ltfs, 1i64);
 
-        let ltfs_str = <TapeFormat as Into<&str>>::into(TapeFormat::LTFS);
+        let ltfs_str = format!("{:?}", TapeFormat::LTFS);
         assert_eq!(ltfs_str, "LTFS");
 
         let sql_tar = ValueRef::Integer(to_int_tar);

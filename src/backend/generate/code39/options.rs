@@ -1,55 +1,28 @@
-use super::{
-    font::LabelFont,
-    text::{LabelTextDirection, LabelTextOrientation},
-    theme::{CODE_39_BARCODE_THEMES, LabelTheme},
-};
+use std::fmt::{Display, Formatter, Result};
 
-pub struct LabelOptions {
-    theme_colour: LabelTheme,
-    pub font_family: LabelFont,
-    pub text_direction: LabelTextDirection,
-    pub text_orientation: LabelTextOrientation,
-    pub stroke_outer: f64,
-    pub stroke_inner: f64,
-    pub radius_outer: f64,
-    pub radius_inner: f64,
-    pub width: f64,
-    pub height: f64,
-    pub barcode_scale: f64,
-    pub text_box_width: f64,
-    pub text_box_height: f64,
-    pub background_colour: Option<String>,
-}
+use crate::shared::models::database::model_label_preset::{LabelOptions, LabelTextOrientation};
 
-impl Default for LabelOptions {
-    fn default() -> Self {
-        Self {
-            theme_colour: LabelTheme::Standard,
-            font_family: LabelFont::SansSerif,
-            text_direction: LabelTextDirection::Normal,
-            text_orientation: LabelTextOrientation::Normal,
-            stroke_outer: 0.035,
-            stroke_inner: 0.035,
-            radius_outer: 1.0,
-            radius_inner: 0.0,
-            width: 80.5,
-            height: 18.5,
-            barcode_scale: 1.0,
-            text_box_width: 10.0_f64,
-            text_box_height: 5.8_f64,
-            background_colour: Some("#FFF".to_string()),
-        }
-    }
-}
+use super::theme::CODE_39_BARCODE_THEMES;
 
 impl LabelOptions {
     pub fn get_character_colour(&self, char: char) -> &'static str {
-        if let Some(theme) = CODE_39_BARCODE_THEMES.get(&self.theme_colour)
+        if let Some(theme) = CODE_39_BARCODE_THEMES.get(&self.theme)
             && let Some(colour) = theme.get(&char)
         {
             return colour;
         }
 
         "transparent"
+    }
+}
+
+impl Display for LabelTextOrientation {
+    fn fmt(&self, formatter: &mut Formatter) -> Result {
+        match *self {
+            LabelTextOrientation::Normal => write!(formatter, "0"),
+            LabelTextOrientation::Rotate90 => write!(formatter, "90"),
+            LabelTextOrientation::Rotate180 => write!(formatter, "180"),
+            LabelTextOrientation::Rotate270 => write!(formatter, "270"),
+        }
     }
 }

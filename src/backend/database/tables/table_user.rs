@@ -272,7 +272,7 @@ impl TableUser {
 }
 
 #[cfg(test)]
-mod tests {
+pub mod tests {
     #![allow(clippy::unwrap_used)]
     use chrono::Local;
 
@@ -281,21 +281,19 @@ mod tests {
         shared::models::database::model_user::{ColourMode, RecordUser},
     };
 
-    fn create() -> rusqlite::Connection {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
+    pub fn create(conn: &rusqlite::Connection) {
         assert!(
             !conn.table_exists(None, "user").unwrap(),
             "New table should be empty"
         );
         assert!(
-            TableUser::create_table(&conn).is_ok(),
+            TableUser::create_table(conn).is_ok(),
             "Failed to create table"
         );
         assert!(
             conn.table_exists(None, "user").unwrap(),
             "create_table() reported Ok but table does not exist"
         );
-        conn
     }
 
     fn insert(db: &rusqlite::Connection) {
@@ -335,7 +333,8 @@ mod tests {
 
     #[test]
     fn suite() {
-        let db = create();
-        insert(&db);
+        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        create(&conn);
+        insert(&conn);
     }
 }

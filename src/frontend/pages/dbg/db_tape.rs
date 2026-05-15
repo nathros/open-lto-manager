@@ -3,12 +3,7 @@ use dioxus::{fullstack::Loader, prelude::*};
 use crate::{
     backend::api::api_tape::{api_del_tape, list_tape},
     frontend::{collections::message::Message, elements::button::Button},
-    shared::{
-        level::Level,
-        models::database::model_tape::{
-            EncryptionType, HardwareEncryptionType, RecordTape, SoftwareEncryptionType, TapeFormat,
-        },
-    },
+    shared::{level::Level, models::database::model_tape::RecordTape},
 };
 
 #[component]
@@ -69,11 +64,11 @@ fn Inner() -> Element {
                         td { "{rec.tape_type_id}" }
                         td { "{rec.barcode}" }
                         td { "{rec.serial}" }
-                        td { "{<TapeFormat as Into<&str>>::into(rec.format)}" }
+                        td { "{rec.format:?}" }
                         td { "{rec.worm}" }
-                        td { "{<EncryptionType as Into<&str>>::into(rec.encryption_type)}" }
-                        td { "{<SoftwareEncryptionType as Into<&str>>::into(rec.encryption_sw)}" }
-                        td { "{<HardwareEncryptionType as Into<&str>>::into(rec.encryption_hw)}" }
+                        td { "{rec.encryption_type:?}" }
+                        td { "{rec.encryption_sw:?}" }
+                        td { "{rec.encryption_hw:?}" }
                         td { "{rec.compressed}" }
                         td { "{rec.used_space}" }
                         td { "{rec.created}" }

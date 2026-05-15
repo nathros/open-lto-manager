@@ -1,11 +1,6 @@
 use std::{collections::HashMap, sync::LazyLock};
 
-#[derive(Debug, PartialEq, Eq, Hash)]
-pub enum LabelTheme {
-    Standard,
-    Warm,
-    Greyscale,
-}
+use crate::shared::models::database::model_label_preset::LabelTheme;
 
 pub static CODE_39_BARCODE_THEMES: LazyLock<HashMap<LabelTheme, HashMap<char, &str>>> =
     LazyLock::new(|| {

@@ -36,26 +36,10 @@ pub enum JobMetadataKey {
 impl From<i64> for JobMetadataKey {
     fn from(value: i64) -> Self {
         match value {
-            0 => JobMetadataKey::Undefined,
-            1 => JobMetadataKey::FileVirtual,
-            2 => JobMetadataKey::FilePhysical,
+            _ if value == JobMetadataKey::Undefined as i64 => JobMetadataKey::Undefined,
+            _ if value == JobMetadataKey::FileVirtual as i64 => JobMetadataKey::FileVirtual,
+            _ if value == JobMetadataKey::FilePhysical as i64 => JobMetadataKey::FilePhysical,
             _ => JobMetadataKey::Undefined,
-        }
-    }
-}
-
-impl From<JobMetadataKey> for i64 {
-    fn from(value: JobMetadataKey) -> Self {
-        value as i64
-    }
-}
-
-impl From<JobMetadataKey> for &str {
-    fn from(value: JobMetadataKey) -> &'static str {
-        match value {
-            JobMetadataKey::Undefined => "Undefined",
-            JobMetadataKey::FileVirtual => "FileVirtual",
-            JobMetadataKey::FilePhysical => "FilePhysical",
         }
     }
 }
@@ -63,7 +47,7 @@ impl From<JobMetadataKey> for &str {
 #[cfg(feature = "server")]
 impl ToSql for JobMetadataKey {
     fn to_sql(&self) -> rusqlite::Result<ToSqlOutput<'_>> {
-        Ok(i64::from(*self).into())
+        Ok((*self as i64).into())
     }
 }
 

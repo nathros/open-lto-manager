@@ -4,8 +4,9 @@ use dioxus::prelude::*;
 pub async fn generate_svg_label(mut barcode: String, mut designation: String) -> Result<String> {
     use base64::prelude::*;
 
-    use crate::backend::generate::code39::{
-        generate::generate_lto_label_svg, options::LabelOptions,
+    use crate::{
+        backend::generate::code39::generate::generate_lto_label_svg,
+        shared::models::database::model_label_preset::LabelOptions,
     };
 
     if designation.len() != 2 {

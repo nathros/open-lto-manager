@@ -1,4 +1,4 @@
-use super::options::LabelOptions;
+use crate::shared::models::database::model_label_preset::LabelOptions;
 
 pub struct SvgLabel {
     buffer: String,
@@ -11,7 +11,7 @@ impl SvgLabel {
         Self {
             buffer: format!(
                 "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{}mm\" height=\"{}mm\" viewBox=\"0 0 {} {}\" preserveAspectRatio=\"none\" font-family=\"{}\">\n",
-                options.width, options.height, options.width, options.height, options.font_family
+                options.width, options.height, options.width, options.height, options.font
             ),
         }
     }

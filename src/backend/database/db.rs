@@ -9,9 +9,9 @@ use crate::{
     backend::{
         database::tables::{
             table::Table, table_file::TableFile, table_job::TableJob,
-            table_job_metadata::TableJobMetadata, table_manufacturer::TableManufacturer,
-            table_tape::TableTape, table_tape_type::TableTapeType, table_user::TableUser,
-            table_version::TableVersion,
+            table_job_metadata::TableJobMetadata, table_label_preset::TableLabelPreset,
+            table_manufacturer::TableManufacturer, table_tape::TableTape,
+            table_tape_type::TableTapeType, table_user::TableUser, table_version::TableVersion,
         },
         env::{get_database_file, get_database_path},
     },
@@ -82,6 +82,11 @@ fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, Str
             "TableJobMetadata",
             &TableJobMetadata::create_table,
             &TableJobMetadata::update_table,
+        ),
+        (
+            "TableLabelPreset",
+            &TableLabelPreset::create_table,
+            &TableLabelPreset::update_table,
         ),
     ];
 

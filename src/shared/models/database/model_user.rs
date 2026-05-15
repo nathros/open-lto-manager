@@ -2,8 +2,8 @@ use chrono::{DateTime, Local};
 use dioxus::fullstack::serde::{Deserialize, Serialize};
 #[cfg(feature = "server")]
 use rusqlite::{
-    types::{FromSql, FromSqlResult, ToSqlOutput, ValueRef},
     ToSql,
+    types::{FromSql, FromSqlResult, ToSqlOutput, ValueRef},
 };
 
 use super::model_role::RecordRole;
@@ -50,34 +50,18 @@ pub enum ColourMode {
 impl From<i64> for ColourMode {
     fn from(value: i64) -> Self {
         match value {
-            0 => ColourMode::System,
-            1 => ColourMode::Dark,
-            2 => ColourMode::Light,
+            _ if value == ColourMode::System as i64 => ColourMode::System,
+            _ if value == ColourMode::Dark as i64 => ColourMode::Dark,
+            _ if value == ColourMode::Light as i64 => ColourMode::Light,
             _ => ColourMode::Dark, // Fallback
         }
-    }
-}
-
-impl From<ColourMode> for &str {
-    fn from(value: ColourMode) -> Self {
-        match value {
-            ColourMode::System => "System",
-            ColourMode::Dark => "Dark",
-            ColourMode::Light => "Light",
-        }
-    }
-}
-
-impl From<ColourMode> for i64 {
-    fn from(value: ColourMode) -> Self {
-        value as i64 // Do not use value.into() will cause stack overflow
     }
 }
 
 #[cfg(feature = "server")]
 impl ToSql for ColourMode {
     fn to_sql(&self) -> rusqlite::Result<ToSqlOutput<'_>> {
-        Ok(i64::from(*self).into())
+        Ok((*self as i64).into())
     }
 }
 

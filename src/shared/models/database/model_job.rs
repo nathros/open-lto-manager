@@ -59,28 +59,12 @@ pub enum JobType {
 impl From<i64> for JobType {
     fn from(value: i64) -> Self {
         match value {
-            0 => JobType::Backup,
-            1 => JobType::Restore,
-            2 => JobType::Delete,
-            3 => JobType::Duplicate,
+            _ if value == JobType::Backup as i64 => JobType::Backup,
+            _ if value == JobType::Restore as i64 => JobType::Restore,
+            _ if value == JobType::Delete as i64 => JobType::Delete,
+            _ if value == JobType::Duplicate as i64 => JobType::Duplicate,
+            _ if value == JobType::Backup as i64 => JobType::Backup,
             _ => JobType::Backup,
-        }
-    }
-}
-
-impl From<JobType> for i64 {
-    fn from(value: JobType) -> Self {
-        value as i64
-    }
-}
-
-impl From<JobType> for &str {
-    fn from(value: JobType) -> &'static str {
-        match value {
-            JobType::Backup => "Backup",
-            JobType::Restore => "Restore",
-            JobType::Delete => "Delete",
-            JobType::Duplicate => "Duplicate",
         }
     }
 }
@@ -88,7 +72,7 @@ impl From<JobType> for &str {
 #[cfg(feature = "server")]
 impl ToSql for JobType {
     fn to_sql(&self) -> rusqlite::Result<ToSqlOutput<'_>> {
-        Ok(i64::from(*self).into())
+        Ok((*self as i64).into())
     }
 }
 
@@ -114,34 +98,15 @@ pub enum JobStatus {
 impl From<i64> for JobStatus {
     fn from(value: i64) -> Self {
         match value {
-            0 => JobStatus::Unknown,
-            1 => JobStatus::Pending,
-            2 => JobStatus::InProgress,
-            3 => JobStatus::Stopped,
-            4 => JobStatus::Interrupted,
-            5 => JobStatus::Completed,
-            6 => JobStatus::Error,
+            _ if value == JobStatus::Unknown as i64 => JobStatus::Unknown,
+            _ if value == JobStatus::Pending as i64 => JobStatus::Pending,
+            _ if value == JobStatus::InProgress as i64 => JobStatus::InProgress,
+            _ if value == JobStatus::Stopped as i64 => JobStatus::Stopped,
+            _ if value == JobStatus::Interrupted as i64 => JobStatus::Interrupted,
+            _ if value == JobStatus::Completed as i64 => JobStatus::Completed,
+            _ if value == JobStatus::Error as i64 => JobStatus::Error,
+            _ if value == JobStatus::Unknown as i64 => JobStatus::Unknown,
             _ => JobStatus::Unknown,
-        }
-    }
-}
-
-impl From<JobStatus> for i64 {
-    fn from(value: JobStatus) -> Self {
-        value as i64
-    }
-}
-
-impl From<JobStatus> for &str {
-    fn from(value: JobStatus) -> &'static str {
-        match value {
-            JobStatus::Unknown => "Unknown",
-            JobStatus::Pending => "Pending",
-            JobStatus::InProgress => "InProgress",
-            JobStatus::Stopped => "Stopped",
-            JobStatus::Interrupted => "Interrupted",
-            JobStatus::Completed => "Completed",
-            JobStatus::Error => "Error",
         }
     }
 }
@@ -149,7 +114,7 @@ impl From<JobStatus> for &str {
 #[cfg(feature = "server")]
 impl ToSql for JobStatus {
     fn to_sql(&self) -> rusqlite::Result<ToSqlOutput<'_>> {
-        Ok(i64::from(*self).into())
+        Ok((*self as i64).into())
     }
 }
 
@@ -162,7 +127,6 @@ impl FromSql for JobStatus {
 
 #[cfg(test)]
 mod tests {
-
     #[test]
     fn job_type_enum() {}
 
