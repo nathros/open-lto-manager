@@ -162,59 +162,33 @@ impl TableJobMetadata {
 
 #[cfg(test)]
 mod tests {
-    #![allow(clippy::unwrap_used)]
-
     use crate::backend::database::tables::{
-        table::Table, table_job::TableJob, table_job_metadata::TableJobMetadata,
-        table_user::TableUser,
+        table::Table,
+        table_job::{self},
+        table_job_metadata::TableJobMetadata,
     };
 
-    fn create() -> rusqlite::Connection {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
+    fn create_table(conn: &rusqlite::Connection) {
         // TableJobMetadata depends on TableJob which depends on TableUser
-        assert!(
-            !conn.table_exists(None, "user").unwrap(),
-            "user table should be empty"
-        );
-        assert!(
-            TableUser::create_table(&conn).is_ok(),
-            "Failed to create user table"
-        );
-        assert!(
-            conn.table_exists(None, "user").unwrap(),
-            "create_table() user reported Ok but table does not exist"
-        );
-
-        assert!(
-            !conn.table_exists(None, "job").unwrap(),
-            "job table should be empty"
-        );
-        assert!(
-            TableJob::create_table(&conn).is_ok(),
-            "Failed to create job table"
-        );
-        assert!(
-            conn.table_exists(None, "job").unwrap(),
-            "create_table() job reported Ok but table does not exist"
-        );
+        table_job::tests::create_table(conn);
 
         assert!(
             !conn.table_exists(None, "job_metadata").unwrap(),
             "job_metadata table should be empty"
         );
         assert!(
-            TableJobMetadata::create_table(&conn).is_ok(),
+            TableJobMetadata::create_table(conn).is_ok(),
             "Failed to create job_metadata table"
         );
         assert!(
             conn.table_exists(None, "job_metadata").unwrap(),
             "create_table() job_metadata reported Ok but table does not exist"
         );
-        conn
     }
 
     #[test]
     fn suite() {
-        let _db = create();
+        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        create_table(&conn);
     }
 }

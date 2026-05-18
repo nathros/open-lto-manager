@@ -193,46 +193,34 @@ impl TableJob {
 }
 
 #[cfg(test)]
-mod tests {
-    #![allow(clippy::unwrap_used)]
-
+pub mod tests {
     use crate::backend::database::tables::{
-        table::Table, table_job::TableJob, table_user::TableUser,
+        table::Table,
+        table_job::TableJob,
+        table_user::{self},
     };
 
-    fn create() -> rusqlite::Connection {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
+    pub fn create_table(conn: &rusqlite::Connection) {
         // TableJob depends on TableUser
-        assert!(
-            !conn.table_exists(None, "user").unwrap(),
-            "New table should be empty"
-        );
-        assert!(
-            TableUser::create_table(&conn).is_ok(),
-            "Failed to create user table"
-        );
-        assert!(
-            conn.table_exists(None, "user").unwrap(),
-            "create_table() user reported Ok but table does not exist"
-        );
+        table_user::tests::create_table(conn);
 
         assert!(
             !conn.table_exists(None, "job").unwrap(),
             "New table should be empty"
         );
         assert!(
-            TableJob::create_table(&conn).is_ok(),
+            TableJob::create_table(conn).is_ok(),
             "Failed to create job table"
         );
         assert!(
             conn.table_exists(None, "job").unwrap(),
             "create_table() job reported Ok but table does not exist"
         );
-        conn
     }
 
     #[test]
     fn suite() {
-        let _db = create();
+        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        create_table(&conn);
     }
 }

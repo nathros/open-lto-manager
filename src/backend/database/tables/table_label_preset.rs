@@ -145,7 +145,7 @@ mod tests {
 
     fn create(conn: &rusqlite::Connection) {
         // TableLabelPreset depends on TableUser, so this must be created first
-        table_user::tests::create(conn);
+        table_user::tests::create_table(conn);
 
         assert!(
             !conn.table_exists(None, "label_preset").unwrap(),

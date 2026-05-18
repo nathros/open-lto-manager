@@ -131,38 +131,38 @@ impl TableManufacturer {
 }
 
 #[cfg(test)]
-mod tests {
+pub mod tests {
     use crate::{
         backend::database::tables::{table::Table, table_manufacturer::TableManufacturer},
         shared::models::database::model_manufacturer::RecordManufacturer,
     };
 
-    fn create_table() -> rusqlite::Connection {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
+    pub fn create_table(conn: &rusqlite::Connection) {
         assert!(
             !conn.table_exists(None, "manufacturer").unwrap(),
             "New table should be empty"
         );
         assert!(
-            TableManufacturer::create_table(&conn).is_ok(),
+            TableManufacturer::create_table(conn).is_ok(),
             "Failed to create table"
         );
         assert!(
             conn.table_exists(None, "manufacturer").unwrap(),
             "create_table() reported Ok but table does not exist"
         );
-        conn
     }
 
     #[test]
     fn create() {
-        let _db = create_table();
+        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        create_table(&conn);
     }
 
     #[test]
     fn insert() {
-        let db = create_table();
-        let all_records_current = TableManufacturer::get_all(&db).unwrap();
+        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        create_table(&conn);
+        let all_records_current = TableManufacturer::get_all(&conn).unwrap();
         let new_manufacturer_name = "NewName".to_string();
         assert_eq!(
             all_records_current
@@ -171,7 +171,7 @@ mod tests {
             None
         );
         let insert_result = TableManufacturer::insert_record(
-            &db,
+            &conn,
             &RecordManufacturer {
                 id: 0,
                 name: new_manufacturer_name.clone(),
@@ -179,7 +179,7 @@ mod tests {
         );
         assert_eq!(insert_result.unwrap(), 13); // There are 12 predefined entries in create_table()
 
-        let all_records_updated = TableManufacturer::get_all(&db).unwrap();
+        let all_records_updated = TableManufacturer::get_all(&conn).unwrap();
         assert!(
             all_records_updated
                 .iter()
@@ -194,8 +194,9 @@ mod tests {
 
     #[test]
     fn update() {
-        let db = create_table();
-        let all_records_result = TableManufacturer::get_all(&db);
+        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        create_table(&conn);
+        let all_records_result = TableManufacturer::get_all(&conn);
         assert!(
             all_records_result.is_ok(),
             "Failed to get all Manufacturer records"
@@ -215,18 +216,19 @@ mod tests {
         let mut update_record: RecordManufacturer = original_record.clone();
         update_record.name = new_name;
         assert!(
-            TableManufacturer::update_record(&db, &update_record).is_ok(),
+            TableManufacturer::update_record(&conn, &update_record).is_ok(),
             "Failed to update record"
         );
 
-        let all_records_updated = TableManufacturer::get_all(&db).unwrap();
+        let all_records_updated = TableManufacturer::get_all(&conn).unwrap();
         assert_eq!(update_record, *all_records_updated.get(test_index).unwrap());
     }
 
     #[test]
     fn delete() {
-        let db = create_table();
-        let all_records_result = TableManufacturer::get_all(&db);
+        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        create_table(&conn);
+        let all_records_result = TableManufacturer::get_all(&conn);
         assert!(
             all_records_result.is_ok(),
             "Failed to get all Manufacturer records"
@@ -235,11 +237,11 @@ mod tests {
 
         let record_to_delete = all_records.get(all_records.len() / 2).unwrap().clone();
         assert!(
-            TableManufacturer::delete_record(&db, record_to_delete.id).is_ok(),
+            TableManufacturer::delete_record(&conn, record_to_delete.id).is_ok(),
             "Failed to delete record"
         );
 
-        let all_records_refetch = TableManufacturer::get_all(&db).unwrap();
+        let all_records_refetch = TableManufacturer::get_all(&conn).unwrap();
         let find = all_records_refetch
             .iter()
             .find(|r| r.name == record_to_delete.name);

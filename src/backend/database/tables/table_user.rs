@@ -281,7 +281,7 @@ pub mod tests {
         shared::models::database::model_user::{ColourMode, RecordUser},
     };
 
-    pub fn create(conn: &rusqlite::Connection) {
+    pub fn create_table(conn: &rusqlite::Connection) {
         assert!(
             !conn.table_exists(None, "user").unwrap(),
             "New table should be empty"
@@ -334,7 +334,7 @@ pub mod tests {
     #[test]
     fn suite() {
         let conn = rusqlite::Connection::open_in_memory().unwrap();
-        create(&conn);
+        create_table(&conn);
         insert(&conn);
     }
 }

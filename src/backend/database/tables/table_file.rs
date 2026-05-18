@@ -234,54 +234,16 @@ impl TableFile {
 
 #[cfg(test)]
 mod tests {
-    #![allow(clippy::unwrap_used)]
-
     use crate::backend::database::tables::{
-        table::Table, table_file::TableFile, table_manufacturer::TableManufacturer,
-        table_tape::TableTape, table_tape_type::TableTapeType,
+        table::Table,
+        table_file::TableFile,
+        table_tape::{self},
     };
 
     fn create_table() -> rusqlite::Connection {
         let conn = rusqlite::Connection::open_in_memory().unwrap();
         // TableFile depends on TableManufacturer, TableTapeType and TableTape, so these must be created first
-        assert!(
-            !conn.table_exists(None, "manufacturer").unwrap(),
-            "New table manufacturer should be empty"
-        );
-        assert!(
-            TableManufacturer::create_table(&conn).is_ok(),
-            "Failed to create manufacturer table"
-        );
-        assert!(
-            conn.table_exists(None, "manufacturer").unwrap(),
-            "create_table() manufacturer reported Ok but table does not exist"
-        );
-
-        assert!(
-            !conn.table_exists(None, "tape_type").unwrap(),
-            "New table tape_type should be empty"
-        );
-        assert!(
-            TableTapeType::create_table(&conn).is_ok(),
-            "Failed to create tape_type table"
-        );
-        assert!(
-            conn.table_exists(None, "tape_type").unwrap(),
-            "create_table() tape_type reported Ok but table does not exist"
-        );
-
-        assert!(
-            !conn.table_exists(None, "tape").unwrap(),
-            "New table tape_type should be empty"
-        );
-        assert!(
-            TableTape::create_table(&conn).is_ok(),
-            "Failed to create tape table"
-        );
-        assert!(
-            conn.table_exists(None, "tape").unwrap(),
-            "create_table() tape reported Ok but table does not exist"
-        );
+        table_tape::tests::create_table(&conn); // This creates TableManufacturer and TableTapeType
 
         assert!(
             !conn.table_exists(None, "file").unwrap(),

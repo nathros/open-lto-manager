@@ -24,6 +24,7 @@
         "reqwest",
         "rfind",
         "Routable",
+        "rowid",
         "rusqlite",
         "rustfmt",
         "serde",

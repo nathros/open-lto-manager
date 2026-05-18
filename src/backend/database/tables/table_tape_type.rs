@@ -483,7 +483,7 @@ impl TableTapeType {
 }
 
 #[cfg(test)]
-mod tests {
+pub mod tests {
     #![allow(clippy::unwrap_used)]
 
     use crate::{
@@ -491,14 +491,13 @@ mod tests {
         shared::models::database::model_tape_type::RecordTapeType,
     };
 
-    fn create() -> rusqlite::Connection {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
+    pub fn create_table(conn: &rusqlite::Connection) {
         assert!(
             !conn.table_exists(None, "tape_type").unwrap(),
             "New table should be empty"
         );
 
-        let create_result = TableTapeType::create_table(&conn);
+        let create_result = TableTapeType::create_table(conn);
         if create_result.is_err() {
             println!("--Error create table: {:?}", create_result);
         }
@@ -507,7 +506,6 @@ mod tests {
             conn.table_exists(None, "tape_type").unwrap(),
             "create_table() reported Ok but table does not exist"
         );
-        conn
     }
 
     fn update(db: &rusqlite::Connection) {
@@ -535,7 +533,8 @@ mod tests {
 
     #[test]
     fn suite() {
-        let db = create();
-        update(&db);
+        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        create_table(&conn);
+        update(&conn);
     }
 }

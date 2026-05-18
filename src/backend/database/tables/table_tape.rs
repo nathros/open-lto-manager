@@ -266,63 +266,38 @@ impl TableTape {
 }
 
 #[cfg(test)]
-mod tests {
-    #![allow(clippy::unwrap_used)]
-
+pub mod tests {
     use chrono::Local;
 
     use crate::{
         backend::database::tables::{
-            table::Table, table_manufacturer::TableManufacturer, table_tape::TableTape,
-            table_tape_type::TableTapeType,
+            table::Table,
+            table_manufacturer::{self, TableManufacturer},
+            table_tape::TableTape,
+            table_tape_type::{self, TableTapeType},
         },
         shared::models::database::model_tape::{
             EncryptionType, HardwareEncryptionType, RecordTape, SoftwareEncryptionType, TapeFormat,
         },
     };
 
-    fn create() -> rusqlite::Connection {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
+    pub fn create_table(conn: &rusqlite::Connection) {
         // TableTape depends on TableManufacturer and TableTapeType, so these must be created first
-        assert!(
-            !conn.table_exists(None, "manufacturer").unwrap(),
-            "New table manufacturer should be empty"
-        );
-        assert!(
-            TableManufacturer::create_table(&conn).is_ok(),
-            "Failed to create manufacturer table"
-        );
-        assert!(
-            conn.table_exists(None, "manufacturer").unwrap(),
-            "create_table() manufacturer reported Ok but table does not exist"
-        );
-
-        assert!(
-            !conn.table_exists(None, "tape_type").unwrap(),
-            "New table tape_type should be empty"
-        );
-        assert!(
-            TableTapeType::create_table(&conn).is_ok(),
-            "Failed to create tape_type table"
-        );
-        assert!(
-            conn.table_exists(None, "tape_type").unwrap(),
-            "create_table() tape_type reported Ok but table does not exist"
-        );
+        table_manufacturer::tests::create_table(conn);
+        table_tape_type::tests::create_table(conn);
 
         assert!(
             !conn.table_exists(None, "tape").unwrap(),
             "New table should be empty"
         );
         assert!(
-            TableTape::create_table(&conn).is_ok(),
+            TableTape::create_table(conn).is_ok(),
             "Failed to create tape table"
         );
         assert!(
             conn.table_exists(None, "tape").unwrap(),
             "create_table() tape reported Ok but table does not exist"
         );
-        conn
     }
 
     fn insert(db: &rusqlite::Connection) -> i64 {
@@ -405,9 +380,10 @@ mod tests {
 
     #[test]
     fn suite() {
-        let db = create();
-        let new_id = insert(&db);
-        update(&db, new_id);
-        delete(&db, new_id);
+        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        create_table(&conn);
+        let new_id = insert(&conn);
+        update(&conn, new_id);
+        delete(&conn, new_id);
     }
 }
