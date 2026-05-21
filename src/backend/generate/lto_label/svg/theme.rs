@@ -157,8 +157,8 @@ pub static CODE_39_BARCODE_THEMES: LazyLock<HashMap<LabelTheme, HashMap<char, &s
 
 #[cfg(test)]
 mod tests {
-    use crate::backend::generate::code39::{
-        segment::BARCODE_VALID_CHARS,
+    use crate::backend::generate::lto_label::svg::{
+        code_39::BARCODE_VALID_CHARS,
         theme::{CODE_39_BARCODE_THEMES, LabelTheme},
     };
 

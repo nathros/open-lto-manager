@@ -8,8 +8,8 @@ use crate::shared::{
 };
 
 use super::{
-    segment::{BARCODE_VALID_CHARS, CODE_39_BARCODE_SEGMENTS},
-    svg::SvgLabel,
+    code_39::{BARCODE_VALID_CHARS, CODE_39_BARCODE_SEGMENTS},
+    svg_label::SvgLabel,
 };
 
 const TEXT_BOX_ID: &str = "t";

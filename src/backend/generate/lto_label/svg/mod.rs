@@ -1,6 +1,5 @@
-mod font;
+mod code_39;
 pub mod generate;
 pub mod options;
-mod segment;
-mod svg;
+mod svg_label;
 mod theme;

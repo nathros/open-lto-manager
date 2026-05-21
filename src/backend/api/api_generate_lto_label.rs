@@ -5,7 +5,7 @@ pub async fn generate_svg_label(mut barcode: String, mut designation: String) ->
     use base64::prelude::*;
 
     use crate::{
-        backend::generate::code39::generate::generate_lto_label_svg,
+        backend::generate::lto_label::svg::generate::generate_lto_label_svg,
         shared::models::database::model_label_preset::LabelOptions,
     };
 
@@ -23,10 +23,25 @@ pub async fn generate_svg_label(mut barcode: String, mut designation: String) ->
     let options = LabelOptions::default();
 
     match generate_lto_label_svg(barcode, options) {
-        Ok(o) => Ok(format!(
-            "data:image/svg+xml;base64,{}",
-            BASE64_STANDARD.encode(o)
-        )),
+        Ok(o) => {
+            use crate::backend::generate::lto_label::pdf::{
+                generate::generate_lto_label_pdf, page::PDFPageType,
+            };
+
+            // Test TODO remove
+            let mut labels = vec![];
+            for _i in 0..32 {
+                labels.push(o.clone());
+            }
+            generate_lto_label_pdf(labels, PDFPageType::A4);
+            // Test
+
+            // TODO avoid base64 encode
+            Ok(format!(
+                "data:image/svg+xml;base64,{}",
+                BASE64_STANDARD.encode(o)
+            ))
+        }
         Err(e) => Ok(e),
     }
 }

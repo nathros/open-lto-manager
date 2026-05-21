@@ -1,1 +1,1 @@
-pub mod code39;
+pub mod lto_label;

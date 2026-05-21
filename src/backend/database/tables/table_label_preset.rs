@@ -103,12 +103,12 @@ impl Table<RecordLabelPreset, RecordLabelPresetJoin> for TableLabelPreset {
         db.execute("DELETE FROM label_preset;", ())
     }
 
-    fn fill(row: &Row<'_>, _offset: usize) -> Result<RecordLabelPreset, Error> {
+    fn fill(row: &Row<'_>, offset: usize) -> Result<RecordLabelPreset, Error> {
         Ok(RecordLabelPreset {
             id: row.get(0)?,
-            user_id: row.get(1)?,
-            name: row.get(2)?,
-            options: row.get(3)?,
+            user_id: row.get(offset + 1)?,
+            name: row.get(offset + 2)?,
+            options: row.get(offset + 3)?,
         })
     }
 }
