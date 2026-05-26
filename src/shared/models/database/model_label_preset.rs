@@ -1,4 +1,5 @@
 use dioxus::fullstack::serde::{Deserialize, Serialize};
+use enum_iterator::Sequence;
 #[cfg(feature = "server")]
 use rusqlite::{
     ToSql, ffi,
@@ -31,12 +32,12 @@ pub struct LabelOptions {
     pub font: LabelFont,
     pub text_direction: LabelTextDirection,
     pub text_orientation: LabelTextOrientation,
-    pub stroke_outer: f64,
-    pub stroke_inner: f64,
+    pub stroke_outer: f64, // Units in millimeter
+    pub stroke_inner: f64, // Units in millimeter
     pub radius_outer: f64,
     pub radius_inner: f64,
-    pub width: f64,
-    pub height: f64,
+    pub width: f64,  // Units in millimeter
+    pub height: f64, // Units in millimeter
     pub barcode_scale: f64,
     pub text_box_width: f64,
     pub text_box_height: f64,
@@ -50,9 +51,9 @@ impl Default for LabelOptions {
             font: LabelFont::SansSerif,
             text_direction: LabelTextDirection::Normal,
             text_orientation: LabelTextOrientation::Normal,
-            stroke_outer: 0.035,
-            stroke_inner: 0.035,
-            radius_outer: 1.0,
+            stroke_outer: 0.035, // 0.01 PostScript point
+            stroke_inner: 0.035, // 0.01 PostScript point
+            radius_outer: 0.0,
             radius_inner: 0.0,
             width: 80.5,
             height: 18.5,
@@ -60,6 +61,15 @@ impl Default for LabelOptions {
             text_box_width: 10.0_f64,
             text_box_height: 5.8_f64,
             background_colour: Some("#FFF".to_string()),
+        }
+    }
+}
+
+impl LabelOptions {
+    pub fn default_preview() -> LabelOptions {
+        LabelOptions {
+            radius_outer: 1.0,
+            ..Default::default()
         }
     }
 }
@@ -91,7 +101,7 @@ impl FromSql for LabelOptions {
 }
 
 #[repr(i64)]
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy, Eq, Hash)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy, Eq, Hash, Sequence)]
 pub enum LabelTheme {
     Standard = 0,
     Warm = 1,

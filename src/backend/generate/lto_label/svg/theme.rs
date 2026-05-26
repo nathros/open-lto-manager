@@ -157,6 +157,10 @@ pub static CODE_39_BARCODE_THEMES: LazyLock<HashMap<LabelTheme, HashMap<char, &s
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashSet;
+
+    use enum_iterator::{all, cardinality};
+
     use crate::backend::generate::lto_label::svg::{
         code_39::BARCODE_VALID_CHARS,
         theme::{CODE_39_BARCODE_THEMES, LabelTheme},
@@ -164,17 +168,13 @@ mod tests {
 
     #[test]
     fn check() {
-        const THEME_COUNT: usize = 3;
-        let themes: [LabelTheme; THEME_COUNT] = [
-            LabelTheme::Standard,
-            LabelTheme::Warm,
-            LabelTheme::Greyscale,
-        ];
-        /*assert_eq!( // TODO Unstable for now
-            std::mem::variant_count::<LabelTheme>(),
-            THEME_COUNT,
+        let themes: HashSet<LabelTheme> =
+            HashSet::from_iter(all::<LabelTheme>().collect::<Vec<_>>());
+        assert_eq!(
+            themes.len(),
+            cardinality::<LabelTheme>(),
             "Check all themes are added"
-        );*/
+        );
         for theme in themes {
             let check_theme = CODE_39_BARCODE_THEMES.get(&theme);
             assert!(check_theme.is_some(), "Check all themes added to list");

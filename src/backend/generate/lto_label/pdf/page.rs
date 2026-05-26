@@ -1,6 +1,8 @@
 use std::{collections::HashMap, sync::LazyLock};
 
-#[derive(Debug, PartialEq, Eq, Hash)]
+use enum_iterator::Sequence;
+
+#[derive(Debug, PartialEq, Eq, Hash, Sequence)]
 pub enum PDFPageType {
     A4,
     Letter,
@@ -13,11 +15,11 @@ pub struct PDFPageConfig {
     pub count_label: usize,  // Number of labels for a page
     pub count_column: usize, // Number of columns for a page
 
-    pub start_x: f32,
-    pub start_y: f32,
+    pub start_x: f32, // Start X position for row
+    pub start_y: f32, // Start Y position for page
 
-    pub increment_x: f32,
-    pub increment_y: f32,
+    pub increment_x: f32, // Add this to start_x to move to next column
+    pub increment_y: f32, // Add this to start_y to move to next row
 }
 
 impl PDFPageType {
@@ -68,15 +70,18 @@ pub static PDF_PAGE_DIMENSIONS: LazyLock<HashMap<PDFPageType, PDFPageConfig>> =
 mod tests {
     use std::collections::HashSet;
 
+    use enum_iterator::{all, cardinality};
+
     use crate::backend::generate::lto_label::pdf::page::PDF_PAGE_DIMENSIONS;
 
     use super::PDFPageType;
 
     #[test]
     fn check() {
-        const OPTIONS_COUNT: usize = 2; // TODO replace with std::mem::variant_count when stable
-        let options = HashSet::from([PDFPageType::A4, PDFPageType::Letter]);
-        assert_eq!(OPTIONS_COUNT, options.len());
+        // TODO replace with std::mem::variant_count when stable
+        let options: HashSet<PDFPageType> =
+            HashSet::from_iter(all::<PDFPageType>().collect::<Vec<_>>());
+        assert_eq!(cardinality::<PDFPageType>(), options.len());
 
         assert_eq!(PDF_PAGE_DIMENSIONS.len(), options.len());
 

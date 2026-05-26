@@ -50,7 +50,9 @@ impl PDFLabelPosition<'_> {
 #[cfg(test)]
 mod tests {
 
-    use std::collections::{HashMap, HashSet};
+    use std::collections::HashMap;
+
+    use enum_iterator::all;
 
     use crate::backend::generate::lto_label::pdf::page::PDFPageType;
 
@@ -58,9 +60,7 @@ mod tests {
 
     #[test]
     fn label_positions() {
-        let page_types = HashSet::from([PDFPageType::A4, PDFPageType::Letter]);
-
-        for page_type in page_types {
+        for page_type in all::<PDFPageType>() {
             let page_config = page_type.get_config();
             let mut position = PDFLabelPosition::new(page_config);
 

@@ -20,7 +20,7 @@ pub async fn generate_svg_label(mut barcode: String, mut designation: String) ->
     );
     barcode.push_str(designation.as_str());
 
-    let options = LabelOptions::default();
+    let options = LabelOptions::default_preview();
 
     match generate_lto_label_svg(barcode, options) {
         Ok(o) => {
