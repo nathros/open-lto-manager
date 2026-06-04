@@ -4,23 +4,30 @@ use crate::route::Route;
 
 #[component]
 pub fn Sandpit() -> Element {
+    let style = "border-right: 1px solid #000; padding: 1rem";
+
     rsx! {
         div {
             Link { to: Route::SandpitShowcase {}, "UI Showcase" }
             hr {}
 
-            span { "UI Elements" }
-            br {}
-            Link { to: Route::SandpitButton {}, "Button" }
-            hr {}
-            span { "UI Modules" }
-            br {}
-            Link { to: Route::SandpitModal {}, "Modal" }
-            hr {}
-            span { "UI Collections" }
-            br {}
-            Link { to: Route::SandpitMessage {}, "Message" }
-            hr {}
+            div { class: "flex-row",
+                div { style,
+                    b { "UI Elements" }
+                    br {}
+                    Link { to: Route::SandpitButton {}, "Button" }
+                }
+                div { style,
+                    b { "UI Modules" }
+                    br {}
+                    Link { to: Route::SandpitModal {}, "Modal" }
+                }
+                div {
+                    b { "UI Collections" }
+                    br {}
+                    Link { to: Route::SandpitMessage {}, "Message" }
+                }
+            }
         }
     }
 }

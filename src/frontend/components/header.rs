@@ -10,16 +10,17 @@ fn route_eq<T>(a: &T, b: &T) -> bool {
 
 #[component]
 pub fn Header() -> Element {
-    let icon_theme = format!("{:?}", RecordUser::default().icon_theme).to_lowercase();
+    let user = RecordUser::default();
+    let icon_theme = format!("{:?}", user.icon_theme).to_lowercase();
     let route: Route = use_route();
 
     #[cfg(debug_assertions)]
-    let debug_build = true;
+    let debug_build = true; // Show Sandpit for debug build
     #[cfg(not(debug_assertions))]
     let debug_build = false;
 
     rsx! {
-        div { style: "--icon-theme:{icon_theme}",
+        div { style: "--icon-theme:{icon_theme}; --colour-accent:{user.accent_colour}",
             header { class: "main-header",
                 div { class: "header-logo", "{APP_NAME}" }
                 div { class: "header-icon header-notification" }

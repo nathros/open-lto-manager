@@ -149,7 +149,7 @@ impl Default for RecordUser {
             system_theme: ColourMode::System,
             icon_theme: IconTheme::Tabler,
             file_theme: FileTheme::Breeze,
-            accent_colour: "".to_string(),
+            accent_colour: "#1677ff".to_string(),
         }
     }
 }

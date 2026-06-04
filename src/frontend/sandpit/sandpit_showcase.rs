@@ -1,6 +1,8 @@
 use dioxus::prelude::*;
 
-use crate::frontend::sandpit::{sandpit_button::SandpitButton, sandpit_modal::SandpitModal};
+use crate::frontend::sandpit::{
+    sandpit_button::SandpitButton, sandpit_message::SandpitMessage, sandpit_modal::SandpitModal,
+};
 
 #[component]
 pub fn SandpitShowcase() -> Element {
@@ -11,6 +13,10 @@ pub fn SandpitShowcase() -> Element {
 
         span { "Modal" }
         div { SandpitModal {} }
+        hr {}
+
+        span { "Message" }
+        div { SandpitMessage {} }
         hr {}
     }
 }

@@ -8,6 +8,9 @@ pub struct ButtonProps {
     #[props(default = "".into())]
     text: String,
 
+    #[props(optional, default = false)]
+    primary: bool,
+
     #[props(optional)]
     onclick: EventHandler<MouseEvent>,
 
@@ -35,7 +38,7 @@ impl ButtonType {
 pub fn Button(props: ButtonProps) -> Element {
     rsx! {
         button {
-            class: "btn",
+            class: if props.primary { "btn pri" } else { "btn" },
             style: props.style,
             onclick: props.onclick,
             ..props.attributes,
