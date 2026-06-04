@@ -57,8 +57,8 @@ fn Inner() -> Element {
                 td { "{rec.language}" }
                 td { "{rec.avatar}" }
                 td { "{rec.system_theme:?}" }
-                td { "{rec.icon_theme}" }
-                td { "{rec.fm_theme}" }
+                td { "{rec.icon_theme:?}" }
+                td { "{rec.file_theme:?}" }
                 td { "{rec.accent_colour}" }
             }
         }

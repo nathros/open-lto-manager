@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
 use crate::frontend::{
-    components::navbar::Navbar,
+    components::header::Header,
     pages::{
         dbg::{
             db_app_state::ShowAppState, db_dev::ShowDev, db_file::DBFile, db_job::DBJob,
@@ -22,7 +22,7 @@ use crate::frontend::{
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 pub enum Route {
-    #[layout(Navbar)]
+    #[layout(Header)]
     #[route("/")]
     Home {},
 

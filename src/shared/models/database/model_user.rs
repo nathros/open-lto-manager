@@ -20,8 +20,8 @@ pub struct RecordUser {
     pub language: i64,
     pub avatar: String,
     pub system_theme: ColourMode,
-    pub icon_theme: String,
-    pub fm_theme: String,
+    pub icon_theme: IconTheme,
+    pub file_theme: FileTheme,
     pub accent_colour: String,
 }
 
@@ -69,5 +69,87 @@ impl ToSql for ColourMode {
 impl FromSql for ColourMode {
     fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
         FromSqlResult::Ok(ColourMode::from(value.as_i64().unwrap_or(0)))
+    }
+}
+
+#[repr(i64)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+pub enum IconTheme {
+    Tabler = 0,
+    Remix = 1,
+}
+
+impl From<i64> for IconTheme {
+    fn from(value: i64) -> Self {
+        match value {
+            _ if value == IconTheme::Tabler as i64 => IconTheme::Tabler,
+            _ if value == IconTheme::Remix as i64 => IconTheme::Remix,
+            _ => IconTheme::Tabler, // Fallback
+        }
+    }
+}
+
+#[cfg(feature = "server")]
+impl ToSql for IconTheme {
+    fn to_sql(&self) -> rusqlite::Result<ToSqlOutput<'_>> {
+        Ok((*self as i64).into())
+    }
+}
+
+#[cfg(feature = "server")]
+impl FromSql for IconTheme {
+    fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
+        FromSqlResult::Ok(IconTheme::from(value.as_i64().unwrap_or(0)))
+    }
+}
+
+#[repr(i64)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+pub enum FileTheme {
+    Breeze = 0,
+    Kora = 1,
+}
+
+impl From<i64> for FileTheme {
+    fn from(value: i64) -> Self {
+        match value {
+            _ if value == FileTheme::Breeze as i64 => FileTheme::Breeze,
+            _ if value == FileTheme::Kora as i64 => FileTheme::Kora,
+            _ => FileTheme::Breeze, // Fallback
+        }
+    }
+}
+
+#[cfg(feature = "server")]
+impl ToSql for FileTheme {
+    fn to_sql(&self) -> rusqlite::Result<ToSqlOutput<'_>> {
+        Ok((*self as i64).into())
+    }
+}
+
+#[cfg(feature = "server")]
+impl FromSql for FileTheme {
+    fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
+        FromSqlResult::Ok(FileTheme::from(value.as_i64().unwrap_or(0)))
+    }
+}
+
+impl Default for RecordUser {
+    fn default() -> Self {
+        Self {
+            id: 0,
+            username: "default".to_string(),
+            description: "default".to_string(),
+            hash: "".to_string(),
+            salt: "".to_string(),
+            enabled: true,
+            created: Local::now(),
+            language: 0,
+            avatar: "".to_string(),
+            system_theme: ColourMode::System,
+            icon_theme: IconTheme::Tabler,
+            file_theme: FileTheme::Breeze,
+            accent_colour: "".to_string(),
+        }
     }
 }

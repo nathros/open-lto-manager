@@ -3,7 +3,9 @@ use rusqlite::{Connection, Error, params};
 
 use crate::{
     backend::database::tables::table::Table,
-    shared::models::database::model_user::{ColourMode, RecordUser, RecordUserWithRoles},
+    shared::models::database::model_user::{
+        ColourMode, FileTheme, IconTheme, RecordUser, RecordUserWithRoles,
+    },
 };
 
 pub struct TableUser {}
@@ -31,8 +33,8 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
                 language INTEGER NOT NULL,
                 avatar TEXT,
                 system_theme INTEGER NOT NULL,
-                icon_theme TEXT NOT NULL,
-                fm_theme TEXT NOT NULL,
+                icon_theme INTEGER NOT NULL,
+                file_theme INTEGER NOT NULL,
                 accent_colour TEXT NOT NULL
             );",
             (),
@@ -51,8 +53,8 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
                 language: 0,
                 avatar: "".to_string(),
                 system_theme: ColourMode::System,
-                icon_theme: "".to_string(),
-                fm_theme: "".to_string(),
+                icon_theme: IconTheme::Tabler,
+                file_theme: FileTheme::Breeze,
                 accent_colour: "".to_string(),
             },
         )?;
@@ -78,7 +80,7 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
                 avatar,
                 system_theme,
                 icon_theme,
-                fm_theme,
+                file_theme,
                 accent_colour
             FROM user
             WHERE id = ?1",
@@ -103,7 +105,7 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
                     avatar,
                     system_theme,
                     icon_theme,
-                    fm_theme,
+                    file_theme,
                     accent_colour)
                 VALUES (
                     ?1,
@@ -129,7 +131,7 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
                 record.avatar,
                 record.system_theme,
                 record.icon_theme,
-                record.fm_theme,
+                record.file_theme,
                 record.accent_colour,
             ],
         )?;
@@ -150,7 +152,7 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
                     avatar,
                     system_theme,
                     icon_theme,
-                    fm_theme,
+                    file_theme,
                     accent_colour)
                 VALUES (
                     ?1,
@@ -178,7 +180,7 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
                 record.avatar,
                 record.system_theme,
                 record.icon_theme,
-                record.fm_theme,
+                record.file_theme,
                 record.accent_colour,
             ])?;
         }
@@ -198,7 +200,7 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
                     avatar = ?8,
                     system_theme = ?9,
                     icon_theme = ?10,
-                    fm_theme = ?11,
+                    file_theme = ?11,
                     accent_colour = ?12
                 WHERE id = ?13;",
             params![
@@ -212,7 +214,7 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
                 record.avatar,
                 record.system_theme,
                 record.icon_theme,
-                record.fm_theme,
+                record.file_theme,
                 record.accent_colour,
                 record.id
             ],
@@ -240,7 +242,7 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
             avatar: row.get(offset + 8)?,
             system_theme: row.get(offset + 9)?,
             icon_theme: row.get(offset + 10)?,
-            fm_theme: row.get(offset + 11)?,
+            file_theme: row.get(offset + 11)?,
             accent_colour: row.get(offset + 12)?,
         })
     }
@@ -261,7 +263,7 @@ impl TableUser {
                     avatar,
                     system_theme,
                     icon_theme,
-                    fm_theme,
+                    file_theme,
                     accent_colour
                 FROM user
                 ORDER BY id",
@@ -278,7 +280,7 @@ pub mod tests {
 
     use crate::{
         backend::database::tables::{table::Table, table_user::TableUser},
-        shared::models::database::model_user::{ColourMode, RecordUser},
+        shared::models::database::model_user::{ColourMode, FileTheme, IconTheme, RecordUser},
     };
 
     pub fn create_table(conn: &rusqlite::Connection) {
@@ -308,8 +310,8 @@ pub mod tests {
             language: 0,
             avatar: "test5".to_string(),
             system_theme: ColourMode::Dark,
-            icon_theme: "test".to_string(),
-            fm_theme: "test".to_string(),
+            icon_theme: IconTheme::Tabler,
+            file_theme: FileTheme::Breeze,
             accent_colour: "test".to_string(),
         };
 

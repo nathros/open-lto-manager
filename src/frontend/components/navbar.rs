@@ -11,7 +11,6 @@ fn route_eq<T>(a: &T, b: &T) -> bool {
 #[component]
 pub fn Navbar() -> Element {
     let route: Route = use_route();
-    let mut multiplier = use_signal(|| String::new());
     #[cfg(debug_assertions)]
     let debug_build = true;
     #[cfg(not(debug_assertions))]
@@ -59,27 +58,5 @@ pub fn Navbar() -> Element {
             }
         }
         hr {}
-
-        ErrorBoundary {
-            handle_error: move |errors: ErrorContext| {
-                //let cloned_errors = errors.clone(); // Can
-                //use_effect(move || {
-                //    cloned_errors.clear_errors();
-                //
-                //});
-                rsx! {
-                    p { style: "color: purple", "Unrecoverable error: {errors:?}" }
-                    p { "-- Refresh needed --" }
-                    button {
-                        onclick: move |_| {
-                            errors.clear_errors();
-                            multiplier.set("mutate".to_string());
-                        },
-                        "Retry"
-                    }
-                }
-            },
-            Outlet::<Route> {}
-        }
     }
 }

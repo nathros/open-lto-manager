@@ -176,5 +176,5 @@ cd "$(dirname "$0")" # cd to this script dir
 
 git submodule update --progress --init --recursive
 
-#process_theme "icons.json" "icons" "../assets/"
+process_theme "icons.json" "icons" "../assets/"
 process_theme "logos.json" "logos" "../assets/"

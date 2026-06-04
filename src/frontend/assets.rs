@@ -1,7 +1,21 @@
 use dioxus::prelude::*;
 
-pub const FAVICON: Asset = asset!("/assets/logo.svg");
+pub const APP_NAME: &str = "Open LTO Manager";
+
+pub const FAVICON: Asset = asset!(
+    "/assets/logo.svg",
+    AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
+);
 pub const LOGO_ASSET: Asset = asset!("/assets/logos-all.svg");
+
+pub const _ICONS_ASSET_REMIX: Asset = asset!(
+    "/assets/icons-remix.svg",
+    AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
+);
+pub const _ICONS_ASSET_TABLER: Asset = asset!(
+    "/assets/icons-tabler.svg",
+    AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
+);
 
 // CSS
 #[cfg(not(debug_assertions))] // Release build combined CSS files
@@ -12,10 +26,11 @@ pub const CSS_ASSETS: [Asset; 1] = [asset!(
 
 // Release (build.rs) will combine all these files into single bundle.css
 #[cfg(debug_assertions)] // Debug build individual CSS files
-pub const CSS_ASSETS: [Asset; 6] = [
+pub const CSS_ASSETS: [Asset; 7] = [
     asset!("/assets/css/:root.css"),
     asset!("/assets/font/font.css"),
     asset!("/assets/css/common.css"),
+    asset!("/assets/css/header.css"),
     asset!("/assets/css/table.css"),
     asset!("/assets/css/button.css"),
     asset!("/assets/css/tape-preview.css"),
