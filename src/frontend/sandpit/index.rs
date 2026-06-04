@@ -17,6 +17,10 @@ pub fn Sandpit() -> Element {
             br {}
             Link { to: Route::SandpitModal {}, "Modal" }
             hr {}
+            span { "UI Collections" }
+            br {}
+            Link { to: Route::SandpitMessage {}, "Message" }
+            hr {}
         }
     }
 }

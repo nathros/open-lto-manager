@@ -20,6 +20,10 @@
 			"tabler": "icons/filled/info-circle.svg",
 			"remix": "icons/System/information-fill.svg"
 		},
+		"alert-success": {
+			"tabler": "icons/filled/circle-check.svg",
+			"remix": "icons/System/checkbox-circle-fill.svg"
+		},
 		"alert-warning": {
 			"tabler": "icons/filled/alert-triangle.svg",
 			"remix": "icons/System/alert-fill.svg"

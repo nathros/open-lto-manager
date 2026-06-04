@@ -1,5 +1,12 @@
 :root {
 	--s-padding: 0.5rem;
 	--m-padding: 1rem;
-	--header-height: 3rem;
+	--main-header-height: 3rem;
+	--main-aside-width: 10rem;
+	--radius: 6px;
+
+	--colour-primary: #1677ff;
+	--colour-success: #52c41a;
+	--colour-warning: #faad14;
+	--colour-error: #ff4d4f;
 }

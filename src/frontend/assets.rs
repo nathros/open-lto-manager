@@ -26,11 +26,14 @@ pub const CSS_ASSETS: [Asset; 1] = [asset!(
 
 // Release (build.rs) will combine all these files into single bundle.css
 #[cfg(debug_assertions)] // Debug build individual CSS files
-pub const CSS_ASSETS: [Asset; 7] = [
+pub const CSS_ASSETS: [Asset; 10] = [
     asset!("/assets/css/:root.css"),
     asset!("/assets/font/font.css"),
     asset!("/assets/css/common.css"),
     asset!("/assets/css/header.css"),
+    asset!("/assets/css/icon.css"),
+    asset!("/assets/css/message.css"),
+    asset!("/assets/css/modal.css"),
     asset!("/assets/css/table.css"),
     asset!("/assets/css/button.css"),
     asset!("/assets/css/tape-preview.css"),

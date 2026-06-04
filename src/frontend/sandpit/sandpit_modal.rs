@@ -11,7 +11,7 @@ use crate::shared::level::Level;
 
 #[component]
 pub fn SandpitModal() -> Element {
-    let mut message_input = use_signal(|| "test message".to_string());
+    let mut message_input = use_signal(|| "Test message".to_string());
     let mut message_error = use_signal(|| String::default());
     let mut message_warning = use_signal(|| String::default());
     let mut message_info = use_signal(|| String::default());
@@ -45,6 +45,7 @@ pub fn SandpitModal() -> Element {
             value: message_input(),
         }
         br {}
+        br {}
 
         Button {
             onclick: move |_| async move {
@@ -52,18 +53,21 @@ pub fn SandpitModal() -> Element {
             },
             text: "Show Error",
         }
+        span { " " }
         Button {
             onclick: move |_| async move {
                 message_warning.set(message_input());
             },
             text: "Show Warning",
         }
+        span { " " }
         Button {
             onclick: move |_| async move {
                 message_info.set(message_input());
             },
             text: "Show Info",
         }
+        span { " " }
         Button {
             onclick: move |_| async move {
                 message_success.set(message_input());

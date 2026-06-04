@@ -10,6 +10,8 @@ pub const MODAL_SANDPIT_WARNING: &str = "modal-sandpit_w";
 pub const MODAL_SANDPIT_INFO: &str = "modal-sandpit_i";
 pub const MODAL_SANDPIT_SUCCESS: &str = "modal-sandpit_s";
 
+// CSS: assets/css/modal.css
+
 #[component]
 pub fn Modal(id: &'static str, level: Level, message: Signal<String>) -> Element {
     use_effect(move || {
@@ -22,9 +24,11 @@ pub fn Modal(id: &'static str, level: Level, message: Signal<String>) -> Element
     });
 
     rsx! {
-        dialog { id, style: level.to_style(),
-            p { "{message}" }
-            br {}
+        dialog { id, class: level.to_class(),
+            div { class: "flex-row",
+                div { class: format!("icon {}", level.to_class()) }
+                p { "{message}" }
+            }
             br {}
             Button {
                 r#type: "button",
@@ -35,6 +39,7 @@ pub fn Modal(id: &'static str, level: Level, message: Signal<String>) -> Element
                 },
                 text: "OK",
             }
+
         }
     }
 }

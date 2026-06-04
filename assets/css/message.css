@@ -1,0 +1,32 @@
+.message {
+	border-style: solid;
+	border-width: 4px;
+	border-radius: var(--radius);
+	padding: var(--m-padding);
+	background-color: white;
+}
+
+.message.error {
+	border-color: var(--colour-error);
+	background: linear-gradient(rgb(from var(--colour-error) r g b / 25%), rgb(from var(--colour-error) r g b / 25%)),
+		linear-gradient(white, white);
+}
+
+.message.warning {
+	border-color: var(--colour-warning);
+	background: linear-gradient(rgb(from var(--colour-warning) r g b / 25%), rgb(from var(--colour-warning) r g b / 25%)),
+		linear-gradient(white, white);
+}
+
+.message.info {
+	border-color: var(--colour-primary);
+	background: linear-gradient(rgb(from var(--colour-primary) r g b / 25%), rgb(from var(--colour-primary) r g b / 25%)),
+		linear-gradient(white, white);
+}
+
+.message.success {
+	border-color: var(--colour-success);
+	background: linear-gradient(rgb(from var(--colour-success) r g b / 25%), rgb(from var(--colour-success) r g b / 25%)),
+		linear-gradient(white, white);
+}
+

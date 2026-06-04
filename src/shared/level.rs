@@ -7,12 +7,12 @@ pub enum Level {
 }
 
 impl Level {
-    pub fn to_style(&self) -> &str {
+    pub fn to_class(&self) -> &str {
         match self {
-            Level::Error => "background-color:red",
-            Level::Warning => "background-color:orange",
-            Level::Info => "background-color:lightblue",
-            Level::Success => "background-color:green",
+            Level::Error => "error",
+            Level::Warning => "warning",
+            Level::Info => "info",
+            Level::Success => "success",
         }
     }
 }

@@ -15,8 +15,8 @@ use crate::frontend::{
         test::Test,
     },
     sandpit::{
-        index::Sandpit, sandpit_button::SandpitButton, sandpit_modal::SandpitModal,
-        sandpit_showcase::SandpitShowcase,
+        index::Sandpit, sandpit_button::SandpitButton, sandpit_message::SandpitMessage,
+        sandpit_modal::SandpitModal, sandpit_showcase::SandpitShowcase,
     },
 };
 
@@ -50,6 +50,8 @@ pub enum Route {
     SandpitButton {},
     #[route("/sandpit/modal")]
     SandpitModal {},
+    #[route("/sandpit/message")]
+    SandpitMessage {},
 
     #[route("/db-man")]
     DBMan {},

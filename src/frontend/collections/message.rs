@@ -6,7 +6,10 @@ use crate::shared::level::Level;
 pub fn Message(level: Level, text: String) -> Element {
     rsx! {
         if !text.is_empty() {
-            p { style: level.to_style(), "{text}" }
+            div { class: format!("flex-row message {}", level.to_class()),
+                div { class: format!("icon {}", level.to_class()) }
+                span { "{text}" }
+            }
         }
     }
 }
