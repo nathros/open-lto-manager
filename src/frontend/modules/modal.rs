@@ -1,7 +1,6 @@
 use dioxus::prelude::*;
 
-use crate::frontend::elements::button::Button;
-use crate::shared::level::Level;
+use crate::frontend::{elements::button::Button, level::Level};
 
 // Only 1 reference to avoid duplicate ids
 pub const MODAL_JOB_ID: &str = "modal-b_job";

@@ -2,9 +2,12 @@ use std::mem::discriminant;
 
 use dioxus::prelude::*;
 
-use crate::shared::icons::Icons;
 use crate::static_concat;
-use crate::{Route, frontend::assets::APP_NAME, shared::models::database::model_user::RecordUser};
+use crate::{
+    Route,
+    frontend::{assets::APP_NAME, css::Css, icons::Icons},
+    shared::models::database::model_user::RecordUser,
+};
 
 fn route_eq<T>(a: &T, b: &T) -> bool {
     discriminant(a) == discriminant(b)
@@ -23,13 +26,13 @@ pub fn Header() -> Element {
 
     rsx! {
         div { style: "--icon-theme:{icon_theme}; --colour-accent:{user.accent_colour}",
-            header { class: "main-header",
+            header { class: Css::MAIN_HEADER,
                 div { class: "header-logo", "{APP_NAME}" }
                 div { class: static_concat!("header-icon icon-s icon ", Icons::NOTIFICATION) }
-                div { class: "header-icon icon-s icon info" }
-                div { class: "header-icon icon user" }
+                div { class: static_concat!("header-icon icon-s icon ", Icons::INFO) }
+                div { class: static_concat!("header-icon icon ", Icons::USER) }
             }
-            aside { class: "main-aside",
+            aside { class: Css::MAIN_ASIDE,
                 div {
                     Link { to: Route::Home {}, "Home" }
                     Link {

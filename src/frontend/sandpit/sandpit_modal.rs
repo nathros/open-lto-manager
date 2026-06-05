@@ -2,12 +2,12 @@ use dioxus::prelude::*;
 
 use crate::frontend::{
     elements::{button::Button, input::InputType},
+    level::Level,
     modules::modal::{
         MODAL_SANDPIT_ERROR, MODAL_SANDPIT_INFO, MODAL_SANDPIT_SUCCESS, MODAL_SANDPIT_WARNING,
         Modal,
     },
 };
-use crate::shared::level::Level;
 
 #[component]
 pub fn SandpitModal() -> Element {

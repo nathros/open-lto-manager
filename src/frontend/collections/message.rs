@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-use crate::shared::level::Level;
+use crate::frontend::level::Level;
 
 #[component]
 pub fn Message(level: Level, text: String) -> Element {

@@ -1,9 +1,6 @@
 use dioxus::prelude::*;
 
-use crate::{
-    frontend::{collections::message::Message, elements::input::InputType},
-    shared::level::Level,
-};
+use crate::frontend::{collections::message::Message, elements::input::InputType, level::Level};
 
 #[component]
 pub fn SandpitMessage() -> Element {

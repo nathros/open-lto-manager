@@ -1,4 +1,4 @@
-.main-header {
+.main-header { /* impl Css::MAIN_HEADER */
 	display: flex;
 	align-items: center;
 	position: fixed;
@@ -22,7 +22,7 @@
 	height: 2rem;
 	align-content: center;
 }
-.main-aside {
+.main-aside { /* impl Css::MAIN_ASIDE */
 	position: fixed;
 	top: 0;
 	left: 0;

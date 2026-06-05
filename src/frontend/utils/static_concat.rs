@@ -1,4 +1,4 @@
-/* Concatenate several static &str into single one */
+/* Concatenate several static &str into single one at compile time */
 #[macro_export]
 macro_rules! static_concat {
     ($($x: expr),* $(,)?) => { const {

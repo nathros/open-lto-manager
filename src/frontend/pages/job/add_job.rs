@@ -1,19 +1,19 @@
 use dioxus::prelude::*;
 use std::collections::HashSet;
 
-use crate::backend::api::api_job::new_backup;
-use crate::frontend::{
-    collections::{file_view::FileViewer, message::Message},
-    elements::button::Button,
-    modules::{
-        modal::{MODAL_JOB_ID, Modal},
-        tab::Tab,
+use crate::{
+    backend::api::api_job::new_backup,
+    frontend::{
+        collections::{file_view::FileViewer, message::Message},
+        elements::button::Button,
+        level::Level,
+        modules::{
+            modal::{MODAL_JOB_ID, Modal},
+            tab::Tab,
+        },
+        pages::job::backup_job_form::BackupJobForm,
     },
-    pages::job::backup_job_form::BackupJobForm,
-};
-use crate::shared::{
-    level::Level,
-    models::database::model_job::{JobType, RecordJob},
+    shared::models::database::model_job::{JobType, RecordJob},
 };
 
 #[component]

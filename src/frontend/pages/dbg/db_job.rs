@@ -2,8 +2,8 @@ use dioxus::{fullstack::Loader, prelude::*};
 
 use crate::{
     backend::api::api_job::{delete_job, list_jobs},
-    frontend::{collections::message::Message, elements::button::Button},
-    shared::{level::Level, models::database::model_job::RecordJob},
+    frontend::{collections::message::Message, elements::button::Button, level::Level},
+    shared::models::database::model_job::RecordJob,
 };
 
 #[component]

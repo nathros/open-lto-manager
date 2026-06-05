@@ -2,8 +2,8 @@ use dioxus::{fullstack::Loader, prelude::*};
 
 use crate::{
     backend::api::api_devices::{list_tape_devices, text_stream3},
-    frontend::collections::message::Message,
-    shared::{level::Level, models::tape_drive::TapeDrive},
+    frontend::{collections::message::Message, level::Level},
+    shared::models::tape_drive::TapeDrive,
 };
 
 #[component]

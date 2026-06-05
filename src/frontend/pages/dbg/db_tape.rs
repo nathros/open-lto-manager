@@ -2,8 +2,8 @@ use dioxus::{fullstack::Loader, prelude::*};
 
 use crate::{
     backend::api::api_tape::{api_del_tape, list_tape},
-    frontend::{collections::message::Message, elements::button::Button},
-    shared::{level::Level, models::database::model_tape::RecordTape},
+    frontend::{collections::message::Message, elements::button::Button, level::Level},
+    shared::models::database::model_tape::RecordTape,
 };
 
 #[component]
