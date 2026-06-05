@@ -12,19 +12,19 @@
 		}
 	},
 	"icons": {
-		"alert-error": {
+		"error": {
 			"tabler": "icons/filled/alert-octagon.svg",
 			"remix": "icons/System/spam-2-fill.svg"
 		},
-		"alert-info": {
+		"info": {
 			"tabler": "icons/filled/info-circle.svg",
 			"remix": "icons/System/information-fill.svg"
 		},
-		"alert-success": {
+		"success": {
 			"tabler": "icons/filled/circle-check.svg",
 			"remix": "icons/System/checkbox-circle-fill.svg"
 		},
-		"alert-warning": {
+		"warning": {
 			"tabler": "icons/filled/alert-triangle.svg",
 			"remix": "icons/System/alert-fill.svg"
 		},

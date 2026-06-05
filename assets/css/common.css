@@ -5,8 +5,8 @@ html {
 }
 
 body {
-	margin-top: calc(var(--main-header-height) + var(--m-padding));
-	margin-left: calc(var(--main-aside-width) + var(--m-padding));
+	margin-top: calc(var(--main-header-height) + var(--padding-m));
+	margin-left: calc(var(--main-aside-width) + var(--padding-m));
 }
 
 .monospace {
@@ -18,5 +18,5 @@ body {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: var(--m-padding);
+	gap: var(--padding-m);
 }

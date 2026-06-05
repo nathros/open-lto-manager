@@ -26,7 +26,7 @@ pub fn Modal(id: &'static str, level: Level, message: Signal<String>) -> Element
     rsx! {
         dialog { id, class: level.to_class(),
             div { class: "flex-row",
-                div { class: format!("icon {}", level.to_class()) }
+                div { class: format!("icon bg {}", level.to_class()) }
                 p { "{message}" }
             }
             br {}

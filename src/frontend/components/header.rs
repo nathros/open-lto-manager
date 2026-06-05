@@ -2,6 +2,8 @@ use std::mem::discriminant;
 
 use dioxus::prelude::*;
 
+use crate::shared::icons::Icons;
+use crate::static_concat;
 use crate::{Route, frontend::assets::APP_NAME, shared::models::database::model_user::RecordUser};
 
 fn route_eq<T>(a: &T, b: &T) -> bool {
@@ -23,9 +25,9 @@ pub fn Header() -> Element {
         div { style: "--icon-theme:{icon_theme}; --colour-accent:{user.accent_colour}",
             header { class: "main-header",
                 div { class: "header-logo", "{APP_NAME}" }
-                div { class: "header-icon header-notification" }
-                div { class: "header-icon header-info" }
-                div { class: "header-icon header-user" }
+                div { class: static_concat!("header-icon icon-s icon ", Icons::NOTIFICATION) }
+                div { class: "header-icon icon-s icon info" }
+                div { class: "header-icon icon user" }
             }
             aside { class: "main-aside",
                 div {

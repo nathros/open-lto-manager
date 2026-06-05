@@ -1,5 +1,5 @@
 .btn {
-	padding: var(--s-padding);
+	padding: var(--padding-s);
 	border-radius: var(--radius);
 	border-width: 1px;
 	border-style: solid;

@@ -1,6 +1,6 @@
 :root {
-	--s-padding: 0.5rem;
-	--m-padding: 1rem;
+	--padding-s: 0.5rem;
+	--padding-m: 1rem;
 	--main-header-height: 3rem;
 	--main-aside-width: 10rem;
 	--radius: 6px;

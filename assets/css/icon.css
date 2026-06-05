@@ -3,36 +3,21 @@
 	height: 2rem;
 	background-color: black;
 }
-
-.icon.error {
+.icon-s {
+	width: 1rem;
+	height: 1rem;
+	background-size: 1rem;
+	background-color: black;
+}
+.bg.error {
 	background-color: var(--colour-error);
-	mask-image: if(
-		style(--icon-theme: remix): url(/assets/icons-remix.svg#alert-error);
-		else: url(/assets/icons-tabler.svg#alert-error);
-	);
 }
-
-.icon.warning {
+.bg.warning {
 	background-color: var(--colour-warning);
-	mask-image: if(
-		style(--icon-theme: remix): url(/assets/icons-remix.svg#alert-warning);
-		else: url(/assets/icons-tabler.svg#alert-warning);
-	);
 }
-
-.icon.info {
+.bg.info {
 	background-color: var(--colour-primary);
-	mask-image: if(
-		style(--icon-theme: remix): url(/assets/icons-remix.svg#alert-info);
-		else: url(/assets/icons-tabler.svg#alert-info);
-	);
 }
-
-
-.icon.success {
+.bg.success {
 	background-color: var(--colour-success);
-	mask-image: if(
-		style(--icon-theme: remix): url(/assets/icons-remix.svg#alert-success);
-		else: url(/assets/icons-tabler.svg#alert-success);
-	);
 }
