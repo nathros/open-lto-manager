@@ -153,3 +153,19 @@ impl Default for RecordUser {
         }
     }
 }
+
+#[cfg(feature = "server")]
+impl RecordUser {
+    pub fn create(username: String, description: String, raw_password: &str) -> RecordUser {
+        use crate::backend::crypto::{generate_hash, generate_salt};
+
+        let salt = generate_salt();
+        RecordUser {
+            username,
+            description,
+            hash: generate_hash(raw_password, &salt),
+            salt,
+            ..Default::default()
+        }
+    }
+}

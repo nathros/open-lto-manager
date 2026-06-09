@@ -1,6 +1,6 @@
 use super::icons::Icons;
 
-#[derive(PartialEq, Clone)]
+#[derive(PartialEq, Eq, Clone)]
 pub enum Level {
     Error,
     Warning,

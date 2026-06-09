@@ -1,11 +1,15 @@
 use std::mem::discriminant;
 
+use dioxus::fullstack::FullstackContext;
 use dioxus::prelude::*;
 
 use crate::static_concat;
 use crate::{
     Route,
-    frontend::{assets::APP_NAME, css::Css, icons::Icons},
+    frontend::{
+        assets::APP_NAME, collections::message::Message, collections::message::MessageDetails,
+        css::Css, icons::Icons, level::Level,
+    },
     shared::models::database::model_user::RecordUser,
 };
 
@@ -56,6 +60,7 @@ pub fn Header() -> Element {
                         "[Add Job]"
                     }
                     Link { to: Route::ShowDevices {}, "Devices" }
+                    Link { to: Route::LoginUser {}, "Login" }
                     hr { style: "width:100%" }
                     Link { to: Route::DBMan {}, "Manufacturer" }
                     Link { to: Route::DBType {}, "Type" }
@@ -76,18 +81,33 @@ pub fn Header() -> Element {
             }
 
             ErrorBoundary {
-                handle_error: move |errors: ErrorContext| {
-                    //let cloned_errors = errors.clone(); // Can
+                handle_error: move |err: ErrorContext| {
+                    let mut msg = MessageDetails::default();
+                    if let Some(e) = err.error() {
+                        let http_error = FullstackContext::commit_error_status(e);
+                        match http_error.status {
+                            StatusCode::NOT_FOUND => msg.text = "404 - Page not found".to_string(),
+                            StatusCode::UNAUTHORIZED => {
+                                msg.text = "401 - Unauthorized".to_string();
+                                msg.level = Level::Warning;
+                            }
+                            StatusCode::INTERNAL_SERVER_ERROR => {
+                                msg.text = "500 - Internal Server Error".to_string();
+                            }
+                            _ => msg.text = "An unknown error occurred".to_string(),
+                        }
+                    }
+                    //let cloned_errors = err.clone(); // Clear on load
                     //use_effect(move || {
                     //    cloned_errors.clear_errors();
-                    //
+                    //    error!("clear");
                     //});
                     rsx! {
-                        p { style: "color: purple", "Unrecoverable error: {errors:?}" }
+                        Message { details: msg }
                         p { "-- Refresh needed --" }
                         button {
                             onclick: move |_| {
-                                errors.clear_errors();
+                                err.clear_errors();
                             },
                             "Retry"
                         }

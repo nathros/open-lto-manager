@@ -24,6 +24,12 @@ Tar support will need `mt` installed. For most distributions access to tape devi
 ```shell
 bash <(curl -L https://raw.githubusercontent.com/nathros/open-lto-manager/main/scripts/deps-install.sh)
 ```
+<!--
+### Recommended dependencies
+```shell
+bash <(curl -L https://raw.githubusercontent.com/nathros/open-lto-manager/main/scripts/release-install.sh)
+```
+-->
 <!--### Manual install-->
 
 ## Config
@@ -43,33 +49,4 @@ IP=0.0.0.0 CONSOLE_LOG=ON ./openltomanager
 ```
 
 ## Build
-### Vs Code Setup
-#### Install Toolchains
-- Rust 1.92
-- Dioxus 0.7.9
-
-https://dioxuslabs.com/learn/0.7/getting_started/
-
-#### Install Recommend Extensions
-Paste @recommended in Search Extensions (Ctrl+Shift+X)
-- rust-analyzer
-- Dioxus
-- Code spell check
-
-### Final Checks
-Run: `dev.env.check.sh` or Vs Code task: `Check::Env`
-
-This should pass with no errors.
-
-### Local run with hotreloading
-Vs Code task: `Serve::localhost`
-```shell
-dx serve
-```
-
-### Release Build
-Vs Code task: `Build::Release`
-```shell
-dx build --web --release
-```
-Output will be in: `target/dx/openltomanager/release/`
+See: CONTRIBUTING.md

@@ -2,7 +2,10 @@ use dioxus::{fullstack::Loader, prelude::*};
 
 use crate::{
     backend::api::api_devices::{list_tape_devices, text_stream3},
-    frontend::{collections::message::Message, level::Level},
+    frontend::{
+        collections::message::{Message, MessageDetails},
+        level::Level,
+    },
     shared::models::tape_drive::TapeDrive,
 };
 
@@ -35,7 +38,12 @@ pub fn ShowDevices() -> Element {
                 }
             },
             Err(e) => rsx! {
-                Message { level: Level::Error, text: e }
+                Message {
+                    details: MessageDetails {
+                        level: Level::Error,
+                        text: e,
+                    },
+                }
             },
         }
         for i in stream_output.read().iter() {

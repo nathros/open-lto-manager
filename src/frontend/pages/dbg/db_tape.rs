@@ -2,7 +2,10 @@ use dioxus::{fullstack::Loader, prelude::*};
 
 use crate::{
     backend::api::api_tape::{api_del_tape, list_tape},
-    frontend::{collections::message::Message, elements::button::Button, level::Level},
+    frontend::{
+        collections::message::{Message, MessageDetails},
+        elements::button::Button,
+    },
     shared::models::database::model_tape::RecordTape,
 };
 
@@ -49,13 +52,13 @@ fn Table(children: Element) -> Element {
 #[component]
 fn Inner() -> Element {
     let mut tapes_list: Loader<Vec<RecordTape>> = use_loader(list_tape)?;
-    let mut message: Signal<String> = use_signal(|| String::default());
+    let mut message: Signal<MessageDetails> = use_signal(|| MessageDetails::default());
 
     rsx! {
         if let Some(e) = tapes_list.error() {
             p { "Failed with error: {e}" }
         } else {
-            Message { level: Level::Error, text: message() }
+            Message { details: message() }
             Table {
                 for rec in tapes_list.cloned() {
                     tr {
@@ -78,10 +81,10 @@ fn Inner() -> Element {
                                 onclick: move |_| async move {
                                     match api_del_tape(rec.id).await {
                                         Ok(_) => {
-                                            message.write().clear();
+                                            message.write().text.clear();
                                             tapes_list.restart();
                                         }
-                                        Err(e) => message.set(format!("{}", e)),
+                                        Err(e) => message.write().text = format!("{}", e),
                                     }
                                 },
                                 text: "Delete",

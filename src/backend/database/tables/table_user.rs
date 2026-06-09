@@ -1,11 +1,8 @@
-use chrono::Local;
 use rusqlite::{Connection, Error, params};
 
 use crate::{
     backend::database::tables::table::Table,
-    shared::models::database::model_user::{
-        ColourMode, FileTheme, IconTheme, RecordUser, RecordUserWithRoles,
-    },
+    shared::models::database::model_user::{RecordUser, RecordUserWithRoles},
 };
 
 pub struct TableUser {}
@@ -42,21 +39,7 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
 
         Self::insert_record(
             db,
-            &RecordUser {
-                id: 0,
-                username: "admin".to_string(),
-                description: "Admin".to_string(),
-                hash: "".to_string(),
-                salt: "".to_string(),
-                enabled: true,
-                created: Local::now(),
-                language: 0,
-                avatar: "".to_string(),
-                system_theme: ColourMode::System,
-                icon_theme: IconTheme::Tabler,
-                file_theme: FileTheme::Breeze,
-                accent_colour: "".to_string(),
-            },
+            &RecordUser::create("admin".to_string(), "Admin".to_string(), "admin"),
         )?;
 
         Ok(true)
@@ -271,6 +254,28 @@ impl TableUser {
         .query_map([], |row| TableUser::fill(row, 0))?
         .collect::<Result<Vec<RecordUser>, rusqlite::Error>>()
     }
+
+    pub fn get_by_username(db: &Connection, username: String) -> Result<RecordUser, Error> {
+        db.prepare(
+            "SELECT
+                id,
+                username,
+                description,
+                hash,
+                salt,
+                enabled,
+                created,
+                language,
+                avatar,
+                system_theme,
+                icon_theme,
+                file_theme,
+                accent_colour
+            FROM user
+            WHERE username = ?1",
+        )?
+        .query_one([username], |row| TableUser::fill(row, 0))
+    }
 }
 
 #[cfg(test)]
@@ -282,6 +287,8 @@ pub mod tests {
         backend::database::tables::{table::Table, table_user::TableUser},
         shared::models::database::model_user::{ColourMode, FileTheme, IconTheme, RecordUser},
     };
+
+    const TEST_USERNAME: &str = "test1";
 
     pub fn create_table(conn: &rusqlite::Connection) {
         assert!(
@@ -301,7 +308,7 @@ pub mod tests {
     fn insert(db: &rusqlite::Connection) {
         let mut new_user = RecordUser {
             id: 0,
-            username: "test1".to_string(),
+            username: TEST_USERNAME.to_string(),
             description: "test2".to_string(),
             hash: "test3".to_string(),
             salt: "test4".to_string(),
@@ -333,10 +340,21 @@ pub mod tests {
         assert_eq!(inserted_user, new_user);
     }
 
+    fn get(db: &rusqlite::Connection) {
+        assert!(TableUser::get_by_username(db, "xzy".to_string()).is_err()); // Does not exist
+        let existing_user = TableUser::get_by_username(db, TEST_USERNAME.to_string());
+        assert_eq!(
+            existing_user.unwrap().username,
+            TEST_USERNAME,
+            "Expected username to match"
+        );
+    }
+
     #[test]
     fn suite() {
         let conn = rusqlite::Connection::open_in_memory().unwrap();
         create_table(&conn);
         insert(&conn);
+        get(&conn);
     }
 }

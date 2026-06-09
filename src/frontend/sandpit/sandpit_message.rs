@@ -1,6 +1,10 @@
 use dioxus::prelude::*;
 
-use crate::frontend::{collections::message::Message, elements::input::InputType, level::Level};
+use crate::frontend::{
+    collections::message::{Message, MessageDetails},
+    elements::input::InputType,
+    level::Level,
+};
 
 #[component]
 pub fn SandpitMessage() -> Element {
@@ -14,12 +18,32 @@ pub fn SandpitMessage() -> Element {
         }
         br {}
         br {}
-        Message { level: Level::Error, text: message_input() }
+        Message {
+            details: MessageDetails {
+                level: Level::Error,
+                text: message_input(),
+            },
+        }
         br {}
-        Message { level: Level::Warning, text: message_input() }
+        Message {
+            details: MessageDetails {
+                level: Level::Warning,
+                text: message_input(),
+            },
+        }
         br {}
-        Message { level: Level::Info, text: message_input() }
+        Message {
+            details: MessageDetails {
+                level: Level::Info,
+                text: message_input(),
+            },
+        }
         br {}
-        Message { level: Level::Success, text: message_input() }
+        Message {
+            details: MessageDetails {
+                level: Level::Success,
+                text: message_input(),
+            },
+        }
     }
 }

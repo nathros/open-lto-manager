@@ -2,7 +2,10 @@ use dioxus::{fullstack::Loader, prelude::*};
 
 use crate::{
     backend::api::api_job::{delete_job, list_jobs},
-    frontend::{collections::message::Message, elements::button::Button, level::Level},
+    frontend::{
+        collections::message::{Message, MessageDetails},
+        elements::button::Button,
+    },
     shared::models::database::model_job::RecordJob,
 };
 
@@ -43,10 +46,10 @@ fn Table(children: Element) -> Element {
 #[component]
 fn Inner() -> Element {
     let mut jobs_list: Loader<Vec<RecordJob>> = use_loader(list_jobs)?;
-    let mut message: Signal<String> = use_signal(|| String::default());
+    let mut msg: Signal<MessageDetails> = use_signal(|| MessageDetails::default());
 
     rsx! {
-        Message { level: Level::Error, text: message() }
+        Message { details: msg() }
         for rec in jobs_list.cloned() {
 
             tr {
@@ -63,10 +66,10 @@ fn Inner() -> Element {
                         onclick: move |_| async move {
                             match delete_job(rec.id).await {
                                 Ok(_) => {
-                                    message.write().clear();
+                                    msg.write().text.clear();
                                     jobs_list.restart();
                                 }
-                                Err(e) => message.set(format!("{}", e)),
+                                Err(e) => msg.write().text = format!("{}", e),
                             }
                         },
                         text: "Delete",

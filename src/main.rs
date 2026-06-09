@@ -26,8 +26,14 @@ fn main() {
                 error!("Error: {}", error_message);
             }
         }
+
+        dioxus::serve(|| async {
+            use backend::auth::SessionId;
+            Ok(dioxus::server::router(App).layer(axum::middleware::from_fn(SessionId::layer)))
+        });
     }
 
+    #[cfg(not(feature = "server"))]
     dioxus::LaunchBuilder::new().launch(App);
 }
 

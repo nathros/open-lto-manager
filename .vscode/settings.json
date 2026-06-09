@@ -6,6 +6,14 @@
     },
     "rust-analyzer.check.command": "clippy",
     "workbench.editor.wrapTabs": true,
+    "emeraldwalk.runonsave": {
+        "commands": [
+          {
+            "match": "\\.css$",
+            "cmd": "${workspaceRoot}/external/generate-css-const.sh",
+          },
+        ],
+      },
     "cSpell.words": [
         "chrono",
         "clippy",

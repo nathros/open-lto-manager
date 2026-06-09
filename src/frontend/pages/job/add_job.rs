@@ -4,7 +4,10 @@ use std::collections::HashSet;
 use crate::{
     backend::api::api_job::new_backup,
     frontend::{
-        collections::{file_view::FileViewer, message::Message},
+        collections::{
+            file_view::FileViewer,
+            message::{Message, MessageDetails},
+        },
         elements::button::Button,
         level::Level,
         modules::{
@@ -19,8 +22,7 @@ use crate::{
 #[component]
 pub fn AddJob() -> Element {
     let mut modal_message: Signal<String> = use_signal(|| String::default());
-    let mut error_message: Signal<String> = use_signal(|| String::default());
-    let mut success_message: Signal<String> = use_signal(|| String::default());
+    let mut message: Signal<MessageDetails> = use_signal(|| MessageDetails::default());
     let selected_files: Signal<HashSet<String>> = use_signal(|| HashSet::new());
     let new_job: Signal<RecordJob> = use_signal(|| RecordJob::blank(JobType::Backup));
 
@@ -44,8 +46,14 @@ pub fn AddJob() -> Element {
             modal_message.set("No files selected".to_string());
         } else {
             match new_backup(new_job(), selected_files()).await {
-                Ok(_) => success_message.set("Added".to_string()),
-                Err(e) => error_message.set(format!("{}", e)),
+                Ok(_) => message.set(MessageDetails {
+                    level: Level::Success,
+                    text: "Added".to_string(),
+                }),
+                Err(e) => message.set(MessageDetails {
+                    level: Level::Error,
+                    text: format!("{}", e),
+                }),
             }
         }
     };
@@ -63,8 +71,7 @@ pub fn AddJob() -> Element {
             ],
         }
         hr {}
-        Message { level: Level::Error, text: error_message() }
-        Message { level: Level::Success, text: success_message() }
+        Message { details: message() }
         Button { r#type: "button", onclick: submit, text: "Add" }
     }
 }

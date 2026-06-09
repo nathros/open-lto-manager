@@ -1,3 +1,6 @@
+use dioxus::prelude::*;
+
+#[derive(PartialEq, Clone)]
 pub enum InputType {
     // Uncomment when needed
     //button,
@@ -11,7 +14,7 @@ pub enum InputType {
     //image,
     //month,
     //number,
-    //password,
+    Password,
     //radio,
     //range,
     //reset,
@@ -38,7 +41,7 @@ impl InputType {
             //InputType::image => "image",
             //InputType::month => "month",
             //InputType::number => "number",
-            //InputType::password => "password",
+            InputType::Password => "password",
             //InputType::radio => "radio",
             //InputType::range => "range",
             //InputType::reset => "reset",
@@ -49,6 +52,33 @@ impl InputType {
             //InputType::time => "time",
             //InputType::url => "url",
             //InputType::week => "week",
+        }
+    }
+}
+
+#[derive(Props, PartialEq, Clone)]
+pub struct InputProps {
+    #[props]
+    type_: InputType,
+
+    #[props(default = "".into())]
+    style: String,
+
+    #[props(optional)]
+    oninput: EventHandler<FormEvent>,
+
+    #[props(extends = input, extends = GlobalAttributes)]
+    attributes: Vec<Attribute>,
+}
+
+#[component]
+pub fn Input(props: InputProps) -> Element {
+    rsx! {
+        input {
+            r#type: props.type_.to_string(),
+            style: props.style,
+            oninput: props.oninput,
+            ..props.attributes,
         }
     }
 }

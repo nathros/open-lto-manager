@@ -10,6 +10,7 @@ use crate::frontend::{
         },
         home::Home,
         job::add_job::AddJob,
+        login::login_user::LoginUser,
         show::Show,
         tape::Tape,
         test::Test,
@@ -25,6 +26,9 @@ pub enum Route {
     #[layout(Header)]
     #[route("/")]
     Home {},
+
+    #[route("/login")]
+    LoginUser {},
 
     #[route("/show")]
     Show {},
