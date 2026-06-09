@@ -60,6 +60,7 @@ pub fn Header() -> Element {
                         "[Add Job]"
                     }
                     Link { to: Route::ShowDevices {}, "Devices" }
+                    Link { to: Route::Sessions {}, "Sessions" }
                     Link { to: Route::LoginUser {}, "Login" }
                     hr { style: "width:100%" }
                     Link { to: Route::DBMan {}, "Manufacturer" }

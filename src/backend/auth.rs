@@ -20,16 +20,16 @@ use crate::shared::models::database::model_user::RecordUser;
 
 use super::crypto::validate_password;
 
-const SESSION_KEY: &str = "session";
+pub const SESSION_KEY: &str = "session";
 
 #[derive(Clone, PartialEq, Eq, Hash)]
-pub struct SessionId(Uuid);
+pub struct SessionId(Uuid); // Used to validate sessions
 
 #[non_exhaustive]
 #[derive(Clone)]
 pub struct Session {
-    user_id: i64,
-    expire: i64,
+    pub user_id: i64,
+    pub expire: i64,
 }
 
 type SessionMap = RwLock<HashMap<SessionId, Mutex<Session>>>;
@@ -72,25 +72,38 @@ impl SessionId {
         res
     }
 
+    pub fn process_cookie_str(cookie: &str) -> Option<&str> {
+        for key_value_pair in cookie.split("; ") {
+            let mut itr = key_value_pair.split("=");
+            if let Some(key) = itr.next()
+                && key == SESSION_KEY
+                && let Some(value) = itr.next()
+            {
+                return Some(value);
+            }
+        }
+        None
+    }
+
     fn get_session_id(headers: &HeaderMap<HeaderValue>) -> Option<&str> {
         if let Some(cookie_value) = headers.get(COOKIE)
             && let Ok(cookie) = cookie_value.to_str()
         {
-            for key_value_pair in cookie.split("; ") {
-                let mut itr = key_value_pair.split("=");
-                if let Some(key) = itr.next()
-                    && key == SESSION_KEY
-                    && let Some(value) = itr.next()
-                {
-                    return Some(value);
-                }
-            }
+            return Self::process_cookie_str(cookie);
         }
         None
     }
 
     pub fn generate_set_cookie(&self) -> String {
         format!("{}={};max-age=31536000;path=/", SESSION_KEY, self.0)
+    }
+
+    pub fn generate_remove_cookie() -> String {
+        format!("{}=unset;max-age=-1;path=/", SESSION_KEY)
+    }
+
+    pub fn get_uuid(&self) -> &Uuid {
+        &self.0
     }
 }
 
@@ -132,6 +145,29 @@ impl Session {
             }
         }
         None
+    }
+
+    pub fn remove(session_uuid_str: &str) -> bool {
+        if let Ok(id) = Uuid::parse_str(session_uuid_str)
+            && let Ok(mut session_map) = SESSIONS.try_write()
+        {
+            return session_map.remove(&SessionId(id)).is_some();
+        }
+        false
+    }
+
+    pub fn current() -> Vec<(SessionId, Session)> {
+        let mut results = vec![];
+
+        if let Ok(session_map) = SESSIONS.try_read() {
+            for (id, session_mutex) in session_map.iter() {
+                if let Ok(session) = session_mutex.try_lock() {
+                    results.push((id.clone(), session.clone()));
+                }
+            }
+        }
+
+        results
     }
 }
 
@@ -233,14 +269,23 @@ mod tests {
 
         let user = RecordUser::create(username.to_string(), "description".to_string(), password);
 
-        let new_session_id = Session::new_and_add(user, password.to_string());
+        let new_session_id_result = Session::new_and_add(user, password.to_string());
         assert!(
-            new_session_id.is_some(),
+            new_session_id_result.is_some(),
             "Expected new session to be created"
         );
+        let new_session_id = new_session_id_result.unwrap();
         assert!(
-            Session::find(&new_session_id.unwrap()).is_some(),
+            Session::find(&new_session_id).is_some(),
             "Expected new session to be added"
+        );
+        assert!(
+            Session::remove(&new_session_id.get_uuid().to_string()),
+            "Expected session to be removed"
+        );
+        assert!(
+            Session::find(&new_session_id).is_none(),
+            "Expected session to now longer exist"
         );
     }
 }

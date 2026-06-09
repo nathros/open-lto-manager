@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
 use crate::{
-    backend::api::api_login::api_login,
+    backend::api::{api_login::api_login, api_logout::api_logout},
     frontend::{
         collections::message::{Message, MessageDetails},
         elements::{
@@ -44,6 +44,30 @@ pub fn LoginUser() -> Element {
                 text: "Login",
                 onclick: move |_| async move {
                     match api_login(username(), password()).await {
+                        Ok(_o) => {
+                            result
+                                .set(MessageDetails {
+                                    level: Level::Success,
+                                    text: "ok".to_string(),
+                                });
+                        }
+                        Err(e) => {
+                            result
+                                .set(MessageDetails {
+                                    level: Level::Error,
+                                    text: format!("{}", e),
+                                });
+                        }
+                    }
+                },
+            }
+            br {}
+            Button {
+                style: "float:right",
+                primary: false,
+                text: "Logout",
+                onclick: move |_| async move {
+                    match api_logout().await {
                         Ok(_o) => {
                             result
                                 .set(MessageDetails {
