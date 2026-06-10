@@ -19,9 +19,6 @@ pub async fn list_sessions() -> Result<Vec<SessionInfo>> {
     };
     use chrono::Local;
 
-    #[cfg(feature = "slow_server")]
-    std::thread::sleep(std::time::Duration::from_millis(1000));
-
     DB.with(|db| match TableUser::get_all(db) {
         Ok(users) => {
             let mut results = vec![];

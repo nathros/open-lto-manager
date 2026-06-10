@@ -8,9 +8,6 @@ use crate::shared::models::database::model_job::RecordJob;
 pub async fn list_jobs() -> Result<Vec<RecordJob>> {
     use crate::backend::database::{db::DB, tables::table_job::TableJob};
 
-    #[cfg(feature = "slow_server")]
-    std::thread::sleep(std::time::Duration::from_millis(1000));
-
     DB.with(|db| match TableJob::get_all(db) {
         Ok(records) => Ok(records),
         Err(e) => Err(e)?,
@@ -26,9 +23,6 @@ pub async fn new_backup(new_job: RecordJob, files: HashSet<String>) -> Result<bo
         },
         shared::models::database::model_job_metadata::{JobMetadataKey, RecordJobMetadata},
     };
-
-    #[cfg(feature = "slow_server")]
-    std::thread::sleep(std::time::Duration::from_millis(1000));
 
     DB.with(|db| {
         let job_id = match TableJob::insert_record(db, &new_job) {
@@ -67,9 +61,6 @@ pub async fn new_backup(new_job: RecordJob, files: HashSet<String>) -> Result<bo
 pub async fn delete_job(job_id: i64) -> Result<usize> {
     use crate::backend::database::tables::table::Table;
     use crate::backend::database::{db::DB, tables::table_job::TableJob};
-
-    #[cfg(feature = "slow_server")]
-    std::thread::sleep(std::time::Duration::from_millis(1000));
 
     DB.with(|db| match TableJob::delete_record(db, job_id) {
         Ok(records) => Ok(records),

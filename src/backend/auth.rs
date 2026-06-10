@@ -66,6 +66,9 @@ where
 
 impl SessionId {
     pub async fn layer(request: http::Request<Body>, next: Next) -> Response<Body> {
+        #[cfg(feature = "slow_server")]
+        std::thread::sleep(std::time::Duration::from_millis(1000));
+
         trace!("Request: {} {}", request.method(), request.uri().path());
         let res = next.run(request).await; // Run the handler, returning the response
         trace!("Response: {}", res.status()); // Read/write the response

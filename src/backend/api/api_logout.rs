@@ -9,9 +9,6 @@ pub async fn api_logout() -> Result<SetHeader<SetCookie>> {
 
     use crate::backend::auth::{SESSION_KEY, Session, SessionId};
 
-    #[cfg(feature = "slow_server")]
-    std::thread::sleep(std::time::Duration::from_millis(1000));
-
     if let Some(session_uuid_str) = header.get(SESSION_KEY) {
         Session::remove(session_uuid_str);
     }

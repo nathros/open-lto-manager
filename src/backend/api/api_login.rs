@@ -10,9 +10,6 @@ pub async fn api_login(username: String, password: String) -> Result<SetHeader<S
         database::{db::DB, tables::table_user::TableUser},
     };
 
-    #[cfg(feature = "slow_server")]
-    std::thread::sleep(std::time::Duration::from_millis(1000));
-
     let cookie = DB.with(|db| match TableUser::get_by_username(db, username) {
         Ok(user) => {
             if let Some(session_id) = Session::new_and_add(user, password) {
