@@ -1,14 +1,20 @@
+use std::marker::PhantomData;
+
 use rusqlite::{Connection, Error, params};
 
 use crate::{
-    backend::database::tables::table::Table,
-    shared::models::database::model_user::{RecordUser, RecordUserWithRoles},
+    backend::database::tables::table::{
+        RecordDelete, RecordFill, RecordInsert, RecordRead, RecordUpdate, TableCreate, TableUpdate,
+    },
+    shared::models::database::user::model_user::RecordUser,
 };
 
-pub struct TableUser {}
+pub struct TableUser<T = RecordUser> {
+    phantom: PhantomData<T>,
+}
 
-impl Table<RecordUser, RecordUserWithRoles> for TableUser {
-    fn create_table(db: &Connection) -> Result<bool, Error> {
+impl TableCreate<RecordUser> for TableUser<RecordUser> {
+    fn create_table(db: &Connection) -> Result<bool, rusqlite::Error> {
         match db.table_exists(None, "user") {
             std::result::Result::Ok(exist) => {
                 if exist {
@@ -37,19 +43,23 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
             (),
         )?;
 
-        Self::insert_record(
+        Self::insert(
             db,
             &RecordUser::create("admin".to_string(), "Admin".to_string(), "admin"),
         )?;
 
         Ok(true)
     }
+}
 
-    fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, Error> {
+impl TableUpdate<RecordUser> for TableUser<RecordUser> {
+    fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, rusqlite::Error> {
         Ok(false)
     }
+}
 
-    fn get(db: &Connection, record_id: i64) -> Result<RecordUser, Error> {
+impl RecordRead<RecordUser> for TableUser<RecordUser> {
+    fn get(db: &Connection, record_id: i64) -> Result<RecordUser, rusqlite::Error> {
         db.prepare(
             "SELECT
                 id,
@@ -70,12 +80,10 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
         )?
         .query_one([record_id], |row| TableUser::fill(row, 0))
     }
+}
 
-    fn get_join(_db: &Connection, _record_id: i64) -> Result<RecordUserWithRoles, Error> {
-        todo!()
-    }
-
-    fn insert_record(db: &Connection, record: &RecordUser) -> Result<i64, Error> {
+impl RecordInsert<RecordUser> for TableUser<RecordUser> {
+    fn insert(db: &Connection, record: &RecordUser) -> Result<i64, rusqlite::Error> {
         db.execute(
             "INSERT INTO user (
                     username,
@@ -120,57 +128,10 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
         )?;
         Ok(db.last_insert_rowid())
     }
+}
 
-    fn insert_batch(db: &Connection, records: &[RecordUser]) -> Result<usize, Error> {
-        let mut count = 0;
-        let mut prepared = db.prepare(
-            "INSERT INTO user (
-                    username,
-                    description,
-                    hash,
-                    salt,
-                    enabled,
-                    created,
-                    language,
-                    avatar,
-                    system_theme,
-                    icon_theme,
-                    file_theme,
-                    accent_colour)
-                VALUES (
-                    ?1,
-                    ?2,
-                    ?3,
-                    ?4,
-                    ?5,
-                    ?6,
-                    ?7,
-                    ?8,
-                    ?9,
-                    ?10,
-                    ?11,
-                    ?12);",
-        )?;
-        for record in records {
-            count += prepared.execute(params![
-                record.username,
-                record.description,
-                record.hash,
-                record.salt,
-                record.enabled,
-                record.created,
-                record.language,
-                record.avatar,
-                record.system_theme,
-                record.icon_theme,
-                record.file_theme,
-                record.accent_colour,
-            ])?;
-        }
-        Ok(count)
-    }
-
-    fn update_record(db: &Connection, record: &RecordUser) -> Result<usize, Error> {
+impl RecordUpdate<RecordUser> for TableUser<RecordUser> {
+    fn update(db: &Connection, record: &RecordUser) -> Result<usize, rusqlite::Error> {
         db.execute(
             "UPDATE user SET
                     username = ?1,
@@ -203,16 +164,16 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
             ],
         )
     }
+}
 
-    fn delete_record(db: &Connection, record_id: i64) -> Result<usize, Error> {
+impl RecordDelete<RecordUser> for TableUser<RecordUser> {
+    fn delete(db: &Connection, record_id: i64) -> Result<usize, rusqlite::Error> {
         db.execute("DELETE FROM user WHERE id = ?1;", params![record_id])
     }
+}
 
-    fn clear_table(db: &Connection) -> Result<usize, rusqlite::Error> {
-        db.execute("DELETE FROM user;", ())
-    }
-
-    fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordUser, Error> {
+impl RecordFill<RecordUser> for TableUser<RecordUser> {
+    fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordUser, rusqlite::Error> {
         Ok(RecordUser {
             id: row.get(offset)?,
             username: row.get(offset + 1)?,
@@ -231,7 +192,29 @@ impl Table<RecordUser, RecordUserWithRoles> for TableUser {
     }
 }
 
-impl TableUser {
+impl TableUser<RecordUser> {
+    pub fn get_by_username(db: &Connection, username: String) -> Result<RecordUser, Error> {
+        db.prepare(
+            "SELECT
+                id,
+                username,
+                description,
+                hash,
+                salt,
+                enabled,
+                created,
+                language,
+                avatar,
+                system_theme,
+                icon_theme,
+                file_theme,
+                accent_colour
+            FROM user
+            WHERE username = ?1",
+        )?
+        .query_one([username], |row| TableUser::fill(row, 0))
+    }
+
     pub fn get_all(db: &Connection) -> Result<Vec<RecordUser>, rusqlite::Error> {
         db.prepare(
             "SELECT
@@ -254,28 +237,6 @@ impl TableUser {
         .query_map([], |row| TableUser::fill(row, 0))?
         .collect::<Result<Vec<RecordUser>, rusqlite::Error>>()
     }
-
-    pub fn get_by_username(db: &Connection, username: String) -> Result<RecordUser, Error> {
-        db.prepare(
-            "SELECT
-                id,
-                username,
-                description,
-                hash,
-                salt,
-                enabled,
-                created,
-                language,
-                avatar,
-                system_theme,
-                icon_theme,
-                file_theme,
-                accent_colour
-            FROM user
-            WHERE username = ?1",
-        )?
-        .query_one([username], |row| TableUser::fill(row, 0))
-    }
 }
 
 #[cfg(test)]
@@ -284,8 +245,13 @@ pub mod tests {
     use chrono::Local;
 
     use crate::{
-        backend::database::tables::{table::Table, table_user::TableUser},
-        shared::models::database::model_user::{ColourMode, FileTheme, IconTheme, RecordUser},
+        backend::database::tables::{
+            table::{RecordInsert, RecordRead, TableCreate},
+            user::table_user::TableUser,
+        },
+        shared::models::database::user::model_user::{
+            ColourMode, FileTheme, IconTheme, RecordUser,
+        },
     };
 
     const TEST_USERNAME: &str = "test1";
@@ -296,7 +262,7 @@ pub mod tests {
             "New table should be empty"
         );
         assert!(
-            TableUser::create_table(conn).is_ok(),
+            TableUser::<RecordUser>::create_table(conn).is_ok(),
             "Failed to create table"
         );
         assert!(
@@ -322,12 +288,12 @@ pub mod tests {
             accent_colour: "test".to_string(),
         };
 
-        let insert_result = TableUser::insert_record(db, &new_user);
+        let insert_result = TableUser::<RecordUser>::insert(db, &new_user);
         if insert_result.is_err() {
             println!("--insert_result: {:?}", insert_result);
         }
         assert!(insert_result.is_ok(), "Failed to insert new user");
-        let get_inserted_user_result = TableUser::get(db, 2); // 1 is Admin
+        let get_inserted_user_result = TableUser::<RecordUser>::get(db, 2); // 1 is Admin
         if insert_result.is_err() {
             println!("--get_inserted_user_result: {:?}", get_inserted_user_result);
         }

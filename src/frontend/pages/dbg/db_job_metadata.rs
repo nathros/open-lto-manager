@@ -2,7 +2,7 @@ use dioxus::{fullstack::Loader, prelude::*};
 
 use crate::{
     backend::api::api_job_metadata::list_metadata,
-    shared::models::database::model_job_metadata::RecordJobMetadata,
+    shared::models::database::job_metadata::model_job_metadata::RecordJobMetadata,
 };
 #[component]
 pub fn DBJobMetaData() -> Element {

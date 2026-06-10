@@ -1,6 +1,8 @@
 use dioxus::{fullstack::Loader, prelude::*};
 
-use crate::{backend::api::api_file::list_files, shared::models::database::model_file::RecordFile};
+use crate::{
+    backend::api::api_file::list_files, shared::models::database::file::model_file::RecordFile,
+};
 
 #[component]
 pub fn DBFile() -> Element {

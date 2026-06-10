@@ -2,11 +2,11 @@ use std::collections::HashSet;
 
 use dioxus::prelude::*;
 
-use crate::shared::models::database::model_job::RecordJob;
+use crate::shared::models::database::job::model_job::RecordJob;
 
 #[get("/api/job/all")]
 pub async fn list_jobs() -> Result<Vec<RecordJob>> {
-    use crate::backend::database::{db::DB, tables::table_job::TableJob};
+    use crate::backend::database::{db::DB, tables::job::table_job::TableJob};
 
     DB.with(|db| match TableJob::get_all(db) {
         Ok(records) => Ok(records),
@@ -19,13 +19,19 @@ pub async fn new_backup(new_job: RecordJob, files: HashSet<String>) -> Result<bo
     use crate::{
         backend::database::{
             db::DB,
-            tables::{table::Table, table_job::TableJob, table_job_metadata::TableJobMetadata},
+            tables::{
+                job::table_job::TableJob,
+                job_metadata::table_job_metadata::TableJobMetadata,
+                table::{RecordDelete, RecordInsert, RecordInsertBatch},
+            },
         },
-        shared::models::database::model_job_metadata::{JobMetadataKey, RecordJobMetadata},
+        shared::models::database::job_metadata::model_job_metadata::{
+            JobMetadataKey, RecordJobMetadata,
+        },
     };
 
     DB.with(|db| {
-        let job_id = match TableJob::insert_record(db, &new_job) {
+        let job_id = match TableJob::insert(db, &new_job) {
             Ok(id) => id,
             Err(e) => return Err(e)?,
         };
@@ -48,7 +54,7 @@ pub async fn new_backup(new_job: RecordJob, files: HashSet<String>) -> Result<bo
             Err(e) => {
                 error!("Failed to insert JobMetadata batch {} for {:?}", e, new_job);
                 // On error to insert clear up job
-                match TableJob::delete_record(db, job_id) {
+                match TableJob::delete(db, job_id) {
                     Ok(_) => Err(e)?,
                     Err(e_inner) => Err(e_inner)?,
                 }
@@ -59,10 +65,12 @@ pub async fn new_backup(new_job: RecordJob, files: HashSet<String>) -> Result<bo
 
 #[delete("/api/job")]
 pub async fn delete_job(job_id: i64) -> Result<usize> {
-    use crate::backend::database::tables::table::Table;
-    use crate::backend::database::{db::DB, tables::table_job::TableJob};
+    use crate::backend::database::{
+        db::DB,
+        tables::{job::table_job::TableJob, table::RecordDelete},
+    };
 
-    DB.with(|db| match TableJob::delete_record(db, job_id) {
+    DB.with(|db| match TableJob::delete(db, job_id) {
         Ok(records) => Ok(records),
         Err(e) => Err(e)?,
     })

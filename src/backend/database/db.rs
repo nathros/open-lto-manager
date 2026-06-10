@@ -8,14 +8,23 @@ use std::{
 use crate::{
     backend::{
         database::tables::{
-            table::Table, table_file::TableFile, table_job::TableJob,
-            table_job_metadata::TableJobMetadata, table_label_preset::TableLabelPreset,
-            table_manufacturer::TableManufacturer, table_tape::TableTape,
-            table_tape_type::TableTapeType, table_user::TableUser, table_version::TableVersion,
+            file::table_file::TableFile,
+            job::table_job::TableJob,
+            job_metadata::table_job_metadata::TableJobMetadata,
+            label_preset::table_label_preset::TableLabelPreset,
+            manufacturer::table_manufacturer::TableManufacturer,
+            setting::table_setting::TableSetting,
+            table::{RecordInsert, RecordUpdate, TableCreate, TableUpdate},
+            tape::table_tape::TableTape,
+            tape_type::table_tape_type::TableTapeType,
+            user::table_user::TableUser,
         },
         env::{get_database_file, get_database_path},
     },
-    shared::models::database::model_version::RecordVersion,
+    shared::models::database::setting::{
+        model_setting::{RecordMisc, SettingsKey},
+        types_setting::SettingTableVersion,
+    },
 };
 
 static DB_VERSION_LATEST: i64 = 0;
@@ -23,21 +32,22 @@ static DB_VERSION_LATEST: i64 = 0;
 fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, String> {
     let current_database_version: i64;
 
-    match TableVersion::create_table(&conn) {
+    match TableSetting::create_table(&conn) {
         Ok(created) => {
             if created {
-                match TableVersion::insert_record(
+                match TableSetting::<RecordMisc<SettingTableVersion>>::insert(
                     &conn,
-                    &RecordVersion {
-                        version_number: DB_VERSION_LATEST,
+                    &RecordMisc::<SettingTableVersion> {
+                        key: SettingsKey::Version,
+                        data: DB_VERSION_LATEST,
                     },
                 ) {
                     Ok(_) => current_database_version = DB_VERSION_LATEST,
                     Err(e) => return Err(format!("Failed to set table version {}", e)),
                 }
             } else {
-                match TableVersion::get(&conn, 1) {
-                    Ok(v) => current_database_version = v.version_number,
+                match TableSetting::<RecordMisc<SettingTableVersion>>::get(&conn) {
+                    Ok(v) => current_database_version = v.data,
                     Err(e) => return Err(format!("Failed to get table version {}", e)),
                 };
             }
@@ -111,10 +121,11 @@ fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, Str
     }
 
     if current_database_version != DB_VERSION_LATEST {
-        match TableVersion::update_record(
+        match TableSetting::<RecordMisc<SettingTableVersion>>::update(
             &conn,
-            &RecordVersion {
-                version_number: DB_VERSION_LATEST,
+            &RecordMisc::<SettingTableVersion> {
+                key: SettingsKey::Version,
+                data: DB_VERSION_LATEST,
             },
         ) {
             Ok(_) => info!(

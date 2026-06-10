@@ -7,7 +7,7 @@ use dioxus::{
 pub async fn api_login(username: String, password: String) -> Result<SetHeader<SetCookie>> {
     use crate::backend::{
         auth::Session,
-        database::{db::DB, tables::table_user::TableUser},
+        database::{db::DB, tables::user::table_user::TableUser},
     };
 
     let cookie = DB.with(|db| match TableUser::get_by_username(db, username) {

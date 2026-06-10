@@ -6,7 +6,7 @@ use crate::{
         collections::message::{Message, MessageDetails},
         elements::button::Button,
     },
-    shared::models::database::model_job::RecordJob,
+    shared::models::database::job::model_job::RecordJob,
 };
 
 #[component]

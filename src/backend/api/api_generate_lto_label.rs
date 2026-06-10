@@ -6,7 +6,7 @@ pub async fn generate_svg_label(mut barcode: String, mut designation: String) ->
 
     use crate::{
         backend::generate::lto_label::svg::generate::generate_lto_label_svg,
-        shared::models::database::model_label_preset::LabelOptions,
+        shared::models::database::label_preset::model_label_preset::LabelOptions,
     };
 
     if designation.len() != 2 {

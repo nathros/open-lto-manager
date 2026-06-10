@@ -4,8 +4,8 @@ use crate::{
     backend::api::api_generate_lto_label::generate_svg_label,
     frontend::assets::{IMG_TAPE_PREVIEW, IMG_TAPE_PREVIEW_TAB, LOGO_ASSET},
     shared::models::database::{
-        model_manufacturer::RecordManufacturer, model_tape::RecordTape,
-        model_tape_type::RecordTapeType,
+        manufacturer::model_manufacturer::RecordManufacturer, tape::model_tape::RecordTape,
+        tape_type::model_tape_type::RecordTapeType,
     },
 };
 

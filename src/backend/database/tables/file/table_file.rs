@@ -1,14 +1,21 @@
-use rusqlite::{Connection, Error, params};
+use std::marker::PhantomData;
+
+use rusqlite::{Connection, params};
 
 use crate::{
-    backend::database::tables::table::Table,
-    shared::models::database::model_file::{RecordFile, RecordFileJoin},
+    backend::database::tables::table::{
+        RecordDelete, RecordFill, RecordInsert, RecordRead, RecordUpdate, TableClear, TableCreate,
+        TableUpdate,
+    },
+    shared::models::database::file::model_file::RecordFile,
 };
 
-pub struct TableFile {}
+pub struct TableFile<T = RecordFile> {
+    phantom: PhantomData<T>,
+}
 
-impl Table<RecordFile, RecordFileJoin> for TableFile {
-    fn create_table(db: &Connection) -> Result<bool, Error> {
+impl TableCreate<RecordFile> for TableFile<RecordFile> {
+    fn create_table(db: &Connection) -> Result<bool, rusqlite::Error> {
         match db.table_exists(None, "file") {
             std::result::Result::Ok(exist) => {
                 if exist {
@@ -40,16 +47,20 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
         db.execute("CREATE INDEX v_path ON file(file_path_virt);", ())?;
         db.execute("CREATE INDEX p_path ON file(file_path_phy);", ())?;
 
-        Self::insert_record(db, &RecordFile::root_dir())?;
+        TableFile::insert(db, &RecordFile::root_dir())?;
 
         Ok(true)
     }
+}
 
-    fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, Error> {
+impl TableUpdate<RecordFile> for TableFile<RecordFile> {
+    fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, rusqlite::Error> {
         Ok(false)
     }
+}
 
-    fn get(db: &Connection, record_id: i64) -> Result<RecordFile, Error> {
+impl RecordRead<RecordFile> for TableFile<RecordFile> {
+    fn get(db: &Connection, record_id: i64) -> Result<RecordFile, rusqlite::Error> {
         db.prepare(
             "SELECT
                     id,
@@ -68,12 +79,10 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
         )?
         .query_one([record_id], |row| TableFile::fill(row, 0))
     }
+}
 
-    fn get_join(_db: &Connection, _record_id: i64) -> Result<RecordFileJoin, Error> {
-        todo!()
-    }
-
-    fn insert_record(db: &Connection, record: &RecordFile) -> Result<i64, Error> {
+impl RecordInsert<RecordFile> for TableFile<RecordFile> {
+    fn insert(db: &Connection, record: &RecordFile) -> Result<i64, rusqlite::Error> {
         db.execute(
             "INSERT INTO file (
                     tape_id,
@@ -112,51 +121,10 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
         )?;
         Ok(db.last_insert_rowid())
     }
+}
 
-    fn insert_batch(db: &Connection, records: &[RecordFile]) -> Result<usize, Error> {
-        let mut count = 0;
-        let mut prepared = db.prepare(
-            "INSERT INTO file (
-                    tape_id,
-                    file_name_virt,
-                    file_path_virt,
-                    file_name_phy,
-                    file_path_phy,
-                    file_size,
-                    created,
-                    modified,
-                    hash,
-                    icon)
-                VALUES (
-                    ?1,
-                    ?2,
-                    ?3,
-                    ?4,
-                    ?5,
-                    ?6,
-                    ?7,
-                    ?8,
-                    ?9,
-                    ?10);",
-        )?;
-        for record in records {
-            count += prepared.execute(params![
-                record.tape_id,
-                record.file_name_virt,
-                record.file_path_virt,
-                record.file_name_phy,
-                record.file_path_phy,
-                record.file_size,
-                record.created,
-                record.modified,
-                record.hash,
-                record.icon,
-            ])?;
-        }
-        Ok(count)
-    }
-
-    fn update_record(db: &Connection, record: &RecordFile) -> Result<usize, Error> {
+impl RecordUpdate<RecordFile> for TableFile<RecordFile> {
+    fn update(db: &Connection, record: &RecordFile) -> Result<usize, rusqlite::Error> {
         db.execute(
             "UPDATE file SET
                     file_name_virt = ?1,
@@ -183,16 +151,22 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
             ],
         )
     }
+}
 
-    fn delete_record(db: &Connection, record_id: i64) -> Result<usize, Error> {
+impl RecordDelete<RecordFile> for TableFile<RecordFile> {
+    fn delete(db: &Connection, record_id: i64) -> Result<usize, rusqlite::Error> {
         db.execute("DELETE FROM file WHERE id = ?1;", params![record_id])
     }
+}
 
+impl TableClear<RecordFile> for TableFile<RecordFile> {
     fn clear_table(db: &Connection) -> Result<usize, rusqlite::Error> {
         db.execute("DELETE FROM file;", ())
     }
+}
 
-    fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordFile, Error> {
+impl RecordFill<RecordFile> for TableFile<RecordFile> {
+    fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordFile, rusqlite::Error> {
         Ok(RecordFile {
             id: row.get(offset)?,
             tape_id: row.get(offset + 1)?,
@@ -209,7 +183,7 @@ impl Table<RecordFile, RecordFileJoin> for TableFile {
     }
 }
 
-impl TableFile {
+impl TableFile<RecordFile> {
     pub fn get_all(db: &Connection) -> Result<Vec<RecordFile>, rusqlite::Error> {
         db.prepare(
             "SELECT
@@ -234,16 +208,12 @@ impl TableFile {
 
 #[cfg(test)]
 mod tests {
-    use crate::backend::database::tables::{
-        table::Table,
-        table_file::TableFile,
-        table_tape::{self},
-    };
+    use crate::backend::database::tables::{file::table_file::TableFile, table::TableCreate, tape};
 
     fn create_table() -> rusqlite::Connection {
         let conn = rusqlite::Connection::open_in_memory().unwrap();
         // TableFile depends on TableManufacturer, TableTapeType and TableTape, so these must be created first
-        table_tape::tests::create_table(&conn); // This creates TableManufacturer and TableTapeType
+        tape::table_tape::tests::create_table(&conn); // This creates TableManufacturer and TableTapeType
 
         assert!(
             !conn.table_exists(None, "file").unwrap(),

@@ -1,6 +1,6 @@
 use std::{collections::HashMap, sync::LazyLock};
 
-use crate::shared::models::database::model_label_preset::LabelTheme;
+use crate::shared::models::database::label_preset::model_label_preset::LabelTheme;
 
 pub static CODE_39_BARCODE_THEMES: LazyLock<HashMap<LabelTheme, HashMap<char, &str>>> =
     LazyLock::new(|| {

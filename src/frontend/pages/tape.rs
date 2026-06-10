@@ -8,9 +8,9 @@ use crate::{
     },
     frontend::collections::tape_preview::TapePreview,
     shared::models::database::{
-        model_manufacturer::RecordManufacturer,
-        model_tape::{RecordTape, TapeFormat},
-        model_tape_type::RecordTapeType,
+        manufacturer::model_manufacturer::RecordManufacturer,
+        tape::model_tape::{RecordTape, TapeFormat},
+        tape_type::model_tape_type::RecordTapeType,
     },
 };
 

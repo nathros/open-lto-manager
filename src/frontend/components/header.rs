@@ -3,6 +3,7 @@ use std::mem::discriminant;
 use dioxus::fullstack::FullstackContext;
 use dioxus::prelude::*;
 
+use crate::shared::models::database::user::model_user::RecordUser;
 use crate::static_concat;
 use crate::{
     Route,
@@ -10,7 +11,6 @@ use crate::{
         assets::APP_NAME, collections::message::Message, collections::message::MessageDetails,
         css::Css, icons::Icons, level::Level,
     },
-    shared::models::database::model_user::RecordUser,
 };
 
 fn route_eq<T>(a: &T, b: &T) -> bool {

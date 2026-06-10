@@ -1,13 +1,23 @@
+use std::marker::PhantomData;
+
 use rusqlite::{Connection, params};
 
 use crate::{
-    backend::database::tables::{table::Table, table_job_metadata::TableJobMetadata},
-    shared::models::database::model_job::{RecordJob, RecordJobJoin},
+    backend::database::tables::{
+        job_metadata::table_job_metadata::TableJobMetadata,
+        table::{
+            RecordDelete, RecordFill, RecordInsert, RecordRead, RecordUpdate, TableCreate,
+            TableUpdate,
+        },
+    },
+    shared::models::database::job::model_job::RecordJob,
 };
 
-pub struct TableJob {}
+pub struct TableJob<T = RecordJob> {
+    phantom: PhantomData<T>,
+}
 
-impl Table<RecordJob, RecordJobJoin> for TableJob {
+impl TableCreate<RecordJob> for TableJob<RecordJob> {
     fn create_table(db: &Connection) -> Result<bool, rusqlite::Error> {
         match db.table_exists(None, "job") {
             std::result::Result::Ok(exist) => {
@@ -34,11 +44,15 @@ impl Table<RecordJob, RecordJobJoin> for TableJob {
         )?;
         Ok(true)
     }
+}
 
+impl TableUpdate<RecordJob> for TableJob<RecordJob> {
     fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, rusqlite::Error> {
         Ok(false)
     }
+}
 
+impl RecordRead<RecordJob> for TableJob<RecordJob> {
     fn get(db: &Connection, record_id: i64) -> Result<RecordJob, rusqlite::Error> {
         db.prepare(
             "SELECT
@@ -55,12 +69,10 @@ impl Table<RecordJob, RecordJobJoin> for TableJob {
         )?
         .query_one([record_id], |row| TableJob::fill(row, 0))
     }
+}
 
-    fn get_join(_db: &Connection, _record_id: i64) -> Result<RecordJobJoin, rusqlite::Error> {
-        todo!()
-    }
-
-    fn insert_record(db: &Connection, record: &RecordJob) -> Result<i64, rusqlite::Error> {
+impl RecordInsert<RecordJob> for TableJob<RecordJob> {
+    fn insert(db: &Connection, record: &RecordJob) -> Result<i64, rusqlite::Error> {
         db.execute(
             "INSERT INTO job (
                     user_id,
@@ -90,42 +102,10 @@ impl Table<RecordJob, RecordJobJoin> for TableJob {
         )?;
         Ok(db.last_insert_rowid())
     }
+}
 
-    fn insert_batch(db: &Connection, records: &[RecordJob]) -> Result<usize, rusqlite::Error> {
-        let mut count = 0;
-        let mut prepared = db.prepare(
-            "INSERT INTO job (
-                    user_id,
-                    name,
-                    job_type,
-                    job_status,
-                    start_time,
-                    end_time,
-                    comment)
-                VALUES (
-                    ?1,
-                    ?2,
-                    ?3,
-                    ?4,
-                    ?5,
-                    ?6,
-                    ?7);",
-        )?;
-        for record in records {
-            count += prepared.execute(params![
-                record.user_id,
-                record.name,
-                record.job_type,
-                record.job_status,
-                record.start_time,
-                record.end_time,
-                record.comment,
-            ])?;
-        }
-        Ok(count)
-    }
-
-    fn update_record(db: &Connection, record: &RecordJob) -> Result<usize, rusqlite::Error> {
+impl RecordUpdate<RecordJob> for TableJob<RecordJob> {
+    fn update(db: &Connection, record: &RecordJob) -> Result<usize, rusqlite::Error> {
         db.execute(
             "UPDATE job SET
                     user_id = ?1,
@@ -148,16 +128,16 @@ impl Table<RecordJob, RecordJobJoin> for TableJob {
             ],
         )
     }
+}
 
-    fn delete_record(db: &Connection, record_id: i64) -> Result<usize, rusqlite::Error> {
+impl RecordDelete<RecordJob> for TableJob<RecordJob> {
+    fn delete(db: &Connection, record_id: i64) -> Result<usize, rusqlite::Error> {
         TableJobMetadata::delete_by_job(db, record_id)?;
         db.execute("DELETE FROM job WHERE id = ?1;", params![record_id])
     }
+}
 
-    fn clear_table(db: &Connection) -> Result<usize, rusqlite::Error> {
-        db.execute("DELETE FROM job;", ())
-    }
-
+impl RecordFill<RecordJob> for TableJob<RecordJob> {
     fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordJob, rusqlite::Error> {
         Ok(RecordJob {
             id: row.get(offset)?,
@@ -172,7 +152,7 @@ impl Table<RecordJob, RecordJobJoin> for TableJob {
     }
 }
 
-impl TableJob {
+impl TableJob<RecordJob> {
     pub fn get_all(db: &Connection) -> Result<Vec<RecordJob>, rusqlite::Error> {
         db.prepare(
             "SELECT
@@ -194,10 +174,11 @@ impl TableJob {
 
 #[cfg(test)]
 pub mod tests {
-    use crate::backend::database::tables::{
-        table::Table,
-        table_job::TableJob,
-        table_user::{self},
+    use crate::{
+        backend::database::tables::{
+            job::table_job::TableJob, table::TableCreate, user::table_user,
+        },
+        shared::models::database::job::model_job::RecordJob,
     };
 
     pub fn create_table(conn: &rusqlite::Connection) {
@@ -209,7 +190,7 @@ pub mod tests {
             "New table should be empty"
         );
         assert!(
-            TableJob::create_table(conn).is_ok(),
+            TableJob::<RecordJob>::create_table(conn).is_ok(),
             "Failed to create job table"
         );
         assert!(

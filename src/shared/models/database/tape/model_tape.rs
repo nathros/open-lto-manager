@@ -6,8 +6,6 @@ use rusqlite::{
     types::{FromSql, FromSqlResult, ToSqlOutput, ValueRef},
 };
 
-use super::{model_manufacturer::RecordManufacturer, model_tape_type::RecordTapeType};
-
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct RecordTape {
     pub id: i64,
@@ -15,24 +13,6 @@ pub struct RecordTape {
     pub tape_type_id: i64,
     pub barcode: String,
     pub serial: String,
-    pub format: TapeFormat,
-    pub worm: bool,
-    pub encryption_type: EncryptionType,
-    pub encryption_sw: SoftwareEncryptionType,
-    pub encryption_hw: HardwareEncryptionType,
-    pub compressed: bool,
-    pub used_space: i64,
-    pub created: DateTime<Local>,
-    pub last_used: DateTime<Local>,
-}
-
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
-pub struct RecordTapeJoin {
-    pub id: i64,
-    pub manufacturer: RecordManufacturer,
-    pub tape_type: RecordTapeType,
-    pub barcode: String,
-    pub serial: String, // FIXME allow null serial
     pub format: TapeFormat,
     pub worm: bool,
     pub encryption_type: EncryptionType,
@@ -203,7 +183,7 @@ impl FromSql for HardwareEncryptionType {
 mod tests {
     use rusqlite::types::ValueRef;
 
-    use crate::shared::models::database::model_tape::TapeFormat;
+    use crate::shared::models::database::tape::model_tape::TapeFormat;
 
     #[test]
     fn table_format_enum() {

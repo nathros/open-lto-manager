@@ -1,6 +1,8 @@
 use dioxus::{fullstack::Loader, prelude::*};
 
-use crate::{backend::api::api_user::list_users, shared::models::database::model_user::RecordUser};
+use crate::{
+    backend::api::api_user::list_users, shared::models::database::user::model_user::RecordUser,
+};
 
 #[component]
 pub fn DBUser() -> Element {

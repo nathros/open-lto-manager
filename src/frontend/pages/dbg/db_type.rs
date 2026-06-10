@@ -2,7 +2,7 @@ use dioxus::{fullstack::Loader, prelude::*};
 
 use crate::{
     backend::api::api_tape_type::list_type_type,
-    shared::models::database::model_tape_type::RecordTapeType,
+    shared::models::database::tape_type::model_tape_type::RecordTapeType,
 };
 
 #[component]

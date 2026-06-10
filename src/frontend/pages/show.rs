@@ -2,7 +2,7 @@ use dioxus::{fullstack::Loader, prelude::*};
 
 use crate::{
     backend::api::api_manufacturer::list_manu,
-    shared::models::database::model_manufacturer::RecordManufacturer,
+    shared::models::database::manufacturer::model_manufacturer::RecordManufacturer,
 };
 
 /// Home page

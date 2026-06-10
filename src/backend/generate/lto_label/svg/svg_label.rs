@@ -1,4 +1,4 @@
-use crate::shared::models::database::model_label_preset::LabelOptions;
+use crate::shared::models::database::label_preset::model_label_preset::LabelOptions;
 
 pub struct SvgLabel {
     buffer: String,

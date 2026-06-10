@@ -8,20 +8,10 @@ use rusqlite::{
 #[cfg(feature = "server")]
 use std::fmt::{Display, Formatter, Result};
 
-use super::model_user::RecordUser;
-
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct RecordLabelPreset {
     pub id: i64,
     pub user_id: i64,
-    pub name: String,
-    pub options: LabelOptions,
-}
-
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
-pub struct RecordLabelPresetJoin {
-    pub id: i64,
-    pub user: RecordUser,
     pub name: String,
     pub options: LabelOptions,
 }

@@ -6,24 +6,10 @@ use rusqlite::{
     types::{FromSql, FromSqlResult, ToSqlOutput, ValueRef},
 };
 
-use super::model_user::RecordUser;
-
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct RecordJob {
     pub id: i64,
     pub user_id: i64,
-    pub name: String,
-    pub job_type: JobType,
-    pub job_status: JobStatus,
-    pub start_time: DateTime<Local>,
-    pub end_time: DateTime<Local>,
-    pub comment: String,
-}
-
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
-pub struct RecordJobJoin {
-    pub id: i64,
-    pub user: RecordUser,
     pub name: String,
     pub job_type: JobType,
     pub job_status: JobStatus,

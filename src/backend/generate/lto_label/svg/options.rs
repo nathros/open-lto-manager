@@ -1,6 +1,8 @@
 use std::fmt::{Display, Formatter, Result};
 
-use crate::shared::models::database::model_label_preset::{LabelOptions, LabelTextOrientation};
+use crate::shared::models::database::label_preset::model_label_preset::{
+    LabelOptions, LabelTextOrientation,
+};
 
 use super::theme::CODE_39_BARCODE_THEMES;
 

@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use crate::shared::{
     error::ErrorStr,
-    models::database::model_label_preset::{
+    models::database::label_preset::model_label_preset::{
         LabelOptions, LabelTextDirection, LabelTextOrientation,
     },
 };

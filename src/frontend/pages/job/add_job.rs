@@ -16,7 +16,7 @@ use crate::{
         },
         pages::job::backup_job_form::BackupJobForm,
     },
-    shared::models::database::model_job::{JobType, RecordJob},
+    shared::models::database::job::model_job::{JobType, RecordJob},
 };
 
 #[component]

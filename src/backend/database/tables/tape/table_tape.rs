@@ -1,13 +1,20 @@
-use rusqlite::{Connection, Error, params};
+use std::marker::PhantomData;
 
-use crate::shared::models::database::model_tape::{RecordTape, RecordTapeJoin};
+use rusqlite::{Connection, params};
 
-use super::table::Table;
+use crate::{
+    backend::database::tables::table::{
+        RecordDelete, RecordFill, RecordInsert, RecordRead, RecordUpdate, TableCreate, TableUpdate,
+    },
+    shared::models::database::tape::model_tape::RecordTape,
+};
 
-pub struct TableTape {}
+pub struct TableTape<T = RecordTape> {
+    phantom: PhantomData<T>,
+}
 
-impl Table<RecordTape, RecordTapeJoin> for TableTape {
-    fn create_table(db: &Connection) -> Result<bool, Error> {
+impl TableCreate<RecordTape> for TableTape<RecordTape> {
+    fn create_table(db: &Connection) -> Result<bool, rusqlite::Error> {
         match db.table_exists(None, "tape") {
             std::result::Result::Ok(exist) => {
                 if exist {
@@ -40,12 +47,16 @@ impl Table<RecordTape, RecordTapeJoin> for TableTape {
         )?;
         Ok(true)
     }
+}
 
-    fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, Error> {
+impl TableUpdate<RecordTape> for TableTape<RecordTape> {
+    fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, rusqlite::Error> {
         Ok(false)
     }
+}
 
-    fn get(db: &Connection, record_id: i64) -> Result<RecordTape, Error> {
+impl RecordRead<RecordTape> for TableTape<RecordTape> {
+    fn get(db: &Connection, record_id: i64) -> Result<RecordTape, rusqlite::Error> {
         db.prepare(
             "SELECT
                     id,
@@ -67,12 +78,10 @@ impl Table<RecordTape, RecordTapeJoin> for TableTape {
         )?
         .query_one([record_id], |row| TableTape::fill(row, 0))
     }
+}
 
-    fn get_join(_db: &Connection, _record_id: i64) -> Result<RecordTapeJoin, Error> {
-        todo!()
-    }
-
-    fn insert_record(db: &Connection, record: &RecordTape) -> Result<i64, Error> {
+impl RecordInsert<RecordTape> for TableTape<RecordTape> {
+    fn insert(db: &Connection, record: &RecordTape) -> Result<i64, rusqlite::Error> {
         db.execute(
             "INSERT INTO tape (
                     id,
@@ -123,60 +132,10 @@ impl Table<RecordTape, RecordTapeJoin> for TableTape {
         )?;
         Ok(db.last_insert_rowid())
     }
+}
 
-    fn insert_batch(db: &Connection, records: &[RecordTape]) -> Result<usize, Error> {
-        let mut count = 0;
-        let mut prepared = db.prepare(
-            "INSERT INTO tape (
-                    manufacturer_id,
-                    tape_type_id,
-                    barcode,
-                    serial,
-                    format,
-                    worm,
-                    encryption_type,
-                    encryption_sw,
-                    encryption_hw,
-                    compressed,
-                    used_space,
-                    created,
-                    last_used)
-                VALUES (
-                    ?1,
-                    ?2,
-                    ?3,
-                    ?4,
-                    ?5,
-                    ?6,
-                    ?7,
-                    ?8,
-                    ?9,
-                    ?10,
-                    ?11,
-                    ?12,
-                    ?13);",
-        )?;
-        for record in records {
-            count += prepared.execute(params![
-                record.manufacturer_id,
-                record.tape_type_id,
-                record.barcode,
-                record.serial,
-                record.format,
-                record.worm,
-                record.encryption_type,
-                record.encryption_sw,
-                record.encryption_hw,
-                record.compressed,
-                record.used_space,
-                record.created,
-                record.last_used
-            ])?;
-        }
-        Ok(count)
-    }
-
-    fn update_record(db: &Connection, record: &RecordTape) -> Result<usize, Error> {
+impl RecordUpdate<RecordTape> for TableTape<RecordTape> {
+    fn update(db: &Connection, record: &RecordTape) -> Result<usize, rusqlite::Error> {
         db.execute(
             "UPDATE tape SET
                     manufacturer_id = ?1,
@@ -211,16 +170,16 @@ impl Table<RecordTape, RecordTapeJoin> for TableTape {
             ],
         )
     }
+}
 
-    fn delete_record(db: &Connection, record_id: i64) -> Result<usize, Error> {
+impl RecordDelete<RecordTape> for TableTape<RecordTape> {
+    fn delete(db: &Connection, record_id: i64) -> Result<usize, rusqlite::Error> {
         db.execute("DELETE FROM tape WHERE id = ?1;", params![record_id])
     }
+}
 
-    fn clear_table(db: &Connection) -> Result<usize, rusqlite::Error> {
-        db.execute("DELETE FROM tape;", ())
-    }
-
-    fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordTape, Error> {
+impl RecordFill<RecordTape> for TableTape<RecordTape> {
+    fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordTape, rusqlite::Error> {
         Ok(RecordTape {
             id: row.get(offset)?,
             manufacturer_id: row.get(offset + 1)?,
@@ -240,7 +199,7 @@ impl Table<RecordTape, RecordTapeJoin> for TableTape {
     }
 }
 
-impl TableTape {
+impl TableTape<RecordTape> {
     pub fn get_all(db: &Connection) -> Result<Vec<RecordTape>, rusqlite::Error> {
         db.prepare(
             "SELECT
@@ -271,20 +230,20 @@ pub mod tests {
 
     use crate::{
         backend::database::tables::{
-            table::Table,
-            table_manufacturer::{self, TableManufacturer},
-            table_tape::TableTape,
-            table_tape_type::{self, TableTapeType},
+            manufacturer::{self, table_manufacturer::TableManufacturer},
+            table::{RecordDelete, RecordInsert, RecordRead, RecordUpdate, TableCreate},
+            tape::table_tape::TableTape,
+            tape_type::{self, table_tape_type::TableTapeType},
         },
-        shared::models::database::model_tape::{
+        shared::models::database::tape::model_tape::{
             EncryptionType, HardwareEncryptionType, RecordTape, SoftwareEncryptionType, TapeFormat,
         },
     };
 
     pub fn create_table(conn: &rusqlite::Connection) {
         // TableTape depends on TableManufacturer and TableTapeType, so these must be created first
-        table_manufacturer::tests::create_table(conn);
-        table_tape_type::tests::create_table(conn);
+        manufacturer::table_manufacturer::tests::create_table(conn);
+        tape_type::table_tape_type::tests::create_table(conn);
 
         assert!(
             !conn.table_exists(None, "tape").unwrap(),
@@ -319,7 +278,7 @@ pub mod tests {
             created: Local::now(),
             last_used: Local::now(),
         };
-        let new_id = TableTape::insert_record(db, &new_tape).unwrap();
+        let new_id = TableTape::insert(db, &new_tape).unwrap();
 
         let inserted_tape = TableTape::get(db, new_id).unwrap();
         new_tape.id = inserted_tape.id;
@@ -360,7 +319,7 @@ pub mod tests {
             last_used: Local::now(),
         };
 
-        TableTape::update_record(db, &changed_tape).unwrap();
+        TableTape::update(db, &changed_tape).unwrap();
 
         let updated_tape = TableTape::get(db, test_record_id).unwrap();
         assert_eq!(updated_tape, changed_tape, "Update record failure");
@@ -371,7 +330,7 @@ pub mod tests {
             TableTape::get(db, test_record_id).is_ok(),
             "Test record does not exist"
         );
-        TableTape::delete_record(db, test_record_id).unwrap();
+        TableTape::delete(db, test_record_id).unwrap();
         assert!(
             TableTape::get(db, test_record_id).is_err(),
             "Failed to delete"

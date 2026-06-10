@@ -1,10 +1,10 @@
 use dioxus::prelude::*;
 
-use crate::shared::models::database::model_tape::RecordTape;
+use crate::shared::models::database::tape::model_tape::RecordTape;
 
 #[get("/api/tape")]
 pub async fn list_tape() -> Result<Vec<RecordTape>> {
-    use crate::backend::database::{db::DB, tables::table_tape::TableTape};
+    use crate::backend::database::{db::DB, tables::tape::table_tape::TableTape};
 
     DB.with(|db| match TableTape::get_all(db) {
         Ok(records) => Ok(records),
@@ -16,7 +16,7 @@ pub async fn list_tape() -> Result<Vec<RecordTape>> {
 pub async fn api_get_tape(id: i64) -> Result<RecordTape> {
     use crate::backend::database::{
         db::DB,
-        tables::{table::Table, table_tape::TableTape},
+        tables::{table::RecordRead, tape::table_tape::TableTape},
     };
 
     if id == 0 {
@@ -33,10 +33,10 @@ pub async fn api_get_tape(id: i64) -> Result<RecordTape> {
 pub async fn api_add_tape(tape: RecordTape) -> Result<bool> {
     use crate::backend::database::{
         db::DB,
-        tables::{table::Table, table_tape::TableTape},
+        tables::{table::RecordInsert, tape::table_tape::TableTape},
     };
 
-    DB.with(|db| match TableTape::insert_record(db, &tape) {
+    DB.with(|db| match TableTape::insert(db, &tape) {
         Ok(record) => Ok(record > 1),
         Err(e) => Err(e)?,
     })
@@ -46,10 +46,10 @@ pub async fn api_add_tape(tape: RecordTape) -> Result<bool> {
 pub async fn api_del_tape(id: i64) -> Result<bool> {
     use crate::backend::database::{
         db::DB,
-        tables::{table::Table, table_tape::TableTape},
+        tables::{table::RecordDelete, tape::table_tape::TableTape},
     };
 
-    DB.with(|db| match TableTape::delete_record(db, id) {
+    DB.with(|db| match TableTape::delete(db, id) {
         Ok(record) => Ok(record > 1),
         Err(e) => Err(e)?,
     })

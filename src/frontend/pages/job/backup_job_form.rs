@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-use crate::shared::models::database::model_job::RecordJob;
+use crate::shared::models::database::job::model_job::RecordJob;
 
 #[component]
 pub fn BackupJobForm(job: Signal<RecordJob>) -> Element {

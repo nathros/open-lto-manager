@@ -5,21 +5,10 @@ use rusqlite::{
     types::{FromSql, FromSqlResult, ToSqlOutput, ValueRef},
 };
 
-use crate::shared::models::database::model_job::RecordJob;
-
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct RecordJobMetadata {
     pub id: i64,
     pub job_id: i64,
-    pub key: JobMetadataKey,
-    pub index: i64,
-    pub value: String,
-}
-
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
-pub struct RecordJobMetadataJoin {
-    pub id: i64,
-    pub job: RecordJob,
     pub key: JobMetadataKey,
     pub index: i64,
     pub value: String,

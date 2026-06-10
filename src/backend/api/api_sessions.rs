@@ -15,7 +15,7 @@ pub struct SessionInfo {
 pub async fn list_sessions() -> Result<Vec<SessionInfo>> {
     use crate::backend::{
         auth::Session,
-        database::{db::DB, tables::table_user::TableUser},
+        database::{db::DB, tables::user::table_user::TableUser},
     };
     use chrono::Local;
 

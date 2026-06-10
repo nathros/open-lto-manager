@@ -16,7 +16,7 @@ use reqwest::header::COOKIE;
 use tracing::{trace, warn};
 use uuid::Uuid;
 
-use crate::shared::models::database::model_user::RecordUser;
+use crate::shared::models::database::user::model_user::RecordUser;
 
 use super::crypto::validate_password;
 
@@ -182,7 +182,7 @@ mod tests {
 
     use crate::{
         backend::auth::{SESSION_KEY, SessionId},
-        shared::models::database::model_user::RecordUser,
+        shared::models::database::user::model_user::RecordUser,
         static_concat,
     };
 

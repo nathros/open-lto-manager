@@ -1,12 +1,10 @@
-// These should not be gated by #[cfg(feature = "server")]
-// As they are shared between client and server
-pub mod model_file;
-pub mod model_job;
-pub mod model_job_metadata;
-pub mod model_label_preset;
-pub mod model_manufacturer;
-pub mod model_role;
-pub mod model_tape;
-pub mod model_tape_type;
-pub mod model_user;
-pub mod model_version;
+pub mod file;
+pub mod job;
+pub mod job_metadata;
+pub mod label_preset;
+pub mod manufacturer;
+#[cfg(feature = "server")]
+pub mod setting;
+pub mod tape;
+pub mod tape_type;
+pub mod user;

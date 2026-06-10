@@ -10,13 +10,17 @@ use crate::{
     backend::{
         database::{
             db::{DB, backup_database},
-            tables::{table::Table, table_file::TableFile, table_tape::TableTape},
+            tables::{
+                file::table_file::TableFile,
+                table::{RecordInsert, TableClear, TableCreate},
+                tape::table_tape::TableTape,
+            },
         },
         env::get_database_path,
     },
     shared::models::database::{
-        model_file::RecordFile,
-        model_tape::{
+        file::model_file::RecordFile,
+        tape::model_tape::{
             EncryptionType, HardwareEncryptionType, RecordTape, SoftwareEncryptionType, TapeFormat,
         },
     },
@@ -375,10 +379,10 @@ pub fn dev_database_restore(dir: String) -> Option<bool> {
                     return None;
                 }
                 // Got all records, now insert. Order matters
-                match TableTape::clear_table(db) {
+                match TableTape::create_table(db) {
                     Ok(_) => {
                         for t in tapes {
-                            if let Err(e) = TableTape::insert_record(db, &t) {
+                            if let Err(e) = TableTape::insert(db, &t) {
                                 error!("Tape insert error {}", e);
                                 return None;
                             }
@@ -390,7 +394,7 @@ pub fn dev_database_restore(dir: String) -> Option<bool> {
                     }
                 }
                 for t in files {
-                    if let Err(e) = TableFile::insert_record(db, &t) {
+                    if let Err(e) = TableFile::insert(db, &t) {
                         error!("File insert error {}", e);
                         return None;
                     }

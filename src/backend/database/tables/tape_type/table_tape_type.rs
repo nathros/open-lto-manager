@@ -1,13 +1,20 @@
-use rusqlite::{Connection, Error, params};
+use std::marker::PhantomData;
 
-use crate::shared::models::database::model_tape_type::RecordTapeType;
+use rusqlite::{Connection, params};
 
-use super::table::Table;
+use crate::{
+    backend::database::tables::table::{
+        RecordDelete, RecordFill, RecordInsert, RecordRead, RecordUpdate, TableCreate, TableUpdate,
+    },
+    shared::models::database::tape_type::model_tape_type::RecordTapeType,
+};
 
-pub struct TableTapeType {}
+pub struct TableTapeType<T = RecordTapeType> {
+    phantom: PhantomData<T>,
+}
 
-impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
-    fn create_table(db: &Connection) -> Result<bool, Error> {
+impl TableCreate<RecordTapeType> for TableTapeType<RecordTapeType> {
+    fn create_table(db: &Connection) -> Result<bool, rusqlite::Error> {
         match db.table_exists(None, "tape_type") {
             std::result::Result::Ok(exist) => {
                 if exist {
@@ -38,7 +45,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
 
         let bytes_per_gib = 1000 * 1000 * 1000;
 
-        TableTapeType::insert_record(
+        TableTapeType::insert(
             db,
             &RecordTapeType {
                 id: 0,
@@ -57,7 +64,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             },
         )?;
 
-        TableTapeType::insert_record(
+        TableTapeType::insert(
             db,
             &RecordTapeType {
                 id: 0,
@@ -76,7 +83,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             },
         )?;
 
-        TableTapeType::insert_record(
+        TableTapeType::insert(
             db,
             &RecordTapeType {
                 id: 0,
@@ -95,7 +102,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             },
         )?;
 
-        TableTapeType::insert_record(
+        TableTapeType::insert(
             db,
             &RecordTapeType {
                 id: 0,
@@ -114,7 +121,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             },
         )?;
 
-        TableTapeType::insert_record(
+        TableTapeType::insert(
             db,
             &RecordTapeType {
                 id: 0,
@@ -133,7 +140,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             },
         )?;
 
-        TableTapeType::insert_record(
+        TableTapeType::insert(
             db,
             &RecordTapeType {
                 id: 0,
@@ -152,7 +159,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             },
         )?;
 
-        TableTapeType::insert_record(
+        TableTapeType::insert(
             db,
             &RecordTapeType {
                 id: 0,
@@ -171,7 +178,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             },
         )?;
 
-        TableTapeType::insert_record(
+        TableTapeType::insert(
             db,
             &RecordTapeType {
                 id: 0,
@@ -190,7 +197,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             },
         )?;
 
-        TableTapeType::insert_record(
+        TableTapeType::insert(
             db,
             &RecordTapeType {
                 id: 0,
@@ -209,7 +216,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             },
         )?;
 
-        TableTapeType::insert_record(
+        TableTapeType::insert(
             db,
             &RecordTapeType {
                 id: 0,
@@ -228,7 +235,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             },
         )?;
 
-        TableTapeType::insert_record(
+        TableTapeType::insert(
             db,
             &RecordTapeType {
                 id: 0,
@@ -247,7 +254,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             },
         )?;
 
-        TableTapeType::insert_record(
+        TableTapeType::insert(
             db,
             &RecordTapeType {
                 id: 0,
@@ -268,12 +275,16 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
 
         Ok(true)
     }
+}
 
-    fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, Error> {
+impl TableUpdate<RecordTapeType> for TableTapeType<RecordTapeType> {
+    fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, rusqlite::Error> {
         Ok(false)
     }
+}
 
-    fn get(db: &Connection, record_id: i64) -> Result<RecordTapeType, Error> {
+impl RecordRead<RecordTapeType> for TableTapeType<RecordTapeType> {
+    fn get(db: &Connection, record_id: i64) -> Result<RecordTapeType, rusqlite::Error> {
         db.prepare(
             "SELECT
                     id,
@@ -294,12 +305,10 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
         )?
         .query_one([record_id], |row| TableTapeType::fill(row, 0))
     }
+}
 
-    fn get_join(db: &Connection, record_id: i64) -> Result<RecordTapeType, Error> {
-        TableTapeType::get(db, record_id)
-    }
-
-    fn insert_record(db: &Connection, record: &RecordTapeType) -> Result<i64, Error> {
+impl RecordInsert<RecordTapeType> for TableTapeType<RecordTapeType> {
+    fn insert(db: &Connection, record: &RecordTapeType) -> Result<i64, rusqlite::Error> {
         db.execute(
             "INSERT INTO tape_type (
                     generation,
@@ -345,60 +354,12 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
         )?;
         Ok(db.last_insert_rowid())
     }
+}
 
-    fn insert_batch(db: &Connection, records: &[RecordTapeType]) -> Result<usize, Error> {
-        let mut count = 0;
-        let mut prepared = db.prepare(
-            "INSERT INTO tape_type (
-                    generation,
-                    description,
-                    id_reg,
-                    id_worm,
-                    native_capacity,
-                    colour_reg,
-                    colour_hp,
-                    colour_worm_reg,
-                    colour_worm_hp,
-                    supports_worm,
-                    supports_encryption,
-                    supports_ltfs)
-                VALUES (
-                    ?1,
-                    ?2,
-                    ?3,
-                    ?4,
-                    ?5,
-                    ?6,
-                    ?7,
-                    ?8,
-                    ?9,
-                    ?10,
-                    ?11,
-                    ?12
-                );",
-        )?;
-        for record in records {
-            count += prepared.execute(params![
-                record.generation,
-                record.description,
-                record.id_reg,
-                record.id_worm,
-                record.native_capacity,
-                record.colour_reg,
-                record.colour_hp,
-                record.colour_worm_reg,
-                record.colour_worm_hp,
-                record.supports_worm,
-                record.supports_encryption,
-                record.supports_ltfs,
-            ])?;
-        }
-        Ok(count)
-    }
-
-    fn update_record(db: &Connection, record: &RecordTapeType) -> Result<usize, Error> {
+impl RecordUpdate<RecordTapeType> for TableTapeType<RecordTapeType> {
+    fn update(db: &Connection, record: &RecordTapeType) -> Result<usize, rusqlite::Error> {
         db.execute(
-            "UPDATE tape_type SET 
+            "UPDATE tape_type SET
                     generation = ?1,
                     description = ?2,
                     id_reg = ?3,
@@ -429,16 +390,16 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
             ],
         )
     }
+}
 
-    fn delete_record(db: &Connection, record_id: i64) -> Result<usize, Error> {
+impl RecordDelete<RecordTapeType> for TableTapeType<RecordTapeType> {
+    fn delete(db: &Connection, record_id: i64) -> Result<usize, rusqlite::Error> {
         db.execute("DELETE FROM tape_type WHERE id = ?1;", params![record_id])
     }
+}
 
-    fn clear_table(db: &Connection) -> Result<usize, rusqlite::Error> {
-        db.execute("DELETE FROM tape_type;", ())
-    }
-
-    fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordTapeType, Error> {
+impl RecordFill<RecordTapeType> for TableTapeType<RecordTapeType> {
+    fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordTapeType, rusqlite::Error> {
         Ok(RecordTapeType {
             id: row.get(offset)?,
             generation: row.get(offset + 1)?,
@@ -457,7 +418,7 @@ impl Table<RecordTapeType, RecordTapeType> for TableTapeType {
     }
 }
 
-impl TableTapeType {
+impl TableTapeType<RecordTapeType> {
     pub fn get_all(db: &Connection) -> Result<Vec<RecordTapeType>, rusqlite::Error> {
         db.prepare(
             "SELECT 
@@ -484,11 +445,12 @@ impl TableTapeType {
 
 #[cfg(test)]
 pub mod tests {
-    #![allow(clippy::unwrap_used)]
-
     use crate::{
-        backend::database::tables::{table::Table, table_tape_type::TableTapeType},
-        shared::models::database::model_tape_type::RecordTapeType,
+        backend::database::tables::{
+            table::{RecordUpdate, TableCreate},
+            tape_type::table_tape_type::TableTapeType,
+        },
+        shared::models::database::tape_type::model_tape_type::RecordTapeType,
     };
 
     pub fn create_table(conn: &rusqlite::Connection) {
@@ -523,7 +485,7 @@ pub mod tests {
         let mut update_record: RecordTapeType = original_record.clone();
         update_record.description = new_name;
         assert!(
-            TableTapeType::update_record(db, &update_record).is_ok(),
+            TableTapeType::update(db, &update_record).is_ok(),
             "Failed to update record"
         );
 

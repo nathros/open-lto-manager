@@ -1,15 +1,20 @@
-use rusqlite::{Connection, Error, Row, params};
+use std::marker::PhantomData;
 
-use crate::shared::models::database::model_label_preset::{
-    RecordLabelPreset, RecordLabelPresetJoin,
+use rusqlite::{Connection, Row, params};
+
+use crate::{
+    backend::database::tables::table::{
+        RecordDelete, RecordFill, RecordInsert, RecordRead, RecordUpdate, TableCreate, TableUpdate,
+    },
+    shared::models::database::label_preset::model_label_preset::RecordLabelPreset,
 };
 
-use super::table::Table;
+pub struct TableLabelPreset<T = RecordLabelPreset> {
+    phantom: PhantomData<T>,
+}
 
-pub struct TableLabelPreset {}
-
-impl Table<RecordLabelPreset, RecordLabelPresetJoin> for TableLabelPreset {
-    fn create_table(db: &Connection) -> Result<bool, Error> {
+impl TableCreate<RecordLabelPreset> for TableLabelPreset<RecordLabelPreset> {
+    fn create_table(db: &Connection) -> Result<bool, rusqlite::Error> {
         match db.table_exists(None, "label_preset") {
             std::result::Result::Ok(exist) => {
                 if exist {
@@ -32,12 +37,16 @@ impl Table<RecordLabelPreset, RecordLabelPresetJoin> for TableLabelPreset {
 
         Ok(true)
     }
+}
 
-    fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, Error> {
+impl TableUpdate<RecordLabelPreset> for TableLabelPreset<RecordLabelPreset> {
+    fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, rusqlite::Error> {
         Ok(false)
     }
+}
 
-    fn get(db: &Connection, record_id: i64) -> Result<RecordLabelPreset, Error> {
+impl RecordRead<RecordLabelPreset> for TableLabelPreset<RecordLabelPreset> {
+    fn get(db: &Connection, record_id: i64) -> Result<RecordLabelPreset, rusqlite::Error> {
         db.prepare(
             "SELECT
                     id,
@@ -49,12 +58,10 @@ impl Table<RecordLabelPreset, RecordLabelPresetJoin> for TableLabelPreset {
         )?
         .query_one([record_id], |row| TableLabelPreset::fill(row, 0))
     }
+}
 
-    fn get_join(_db: &Connection, _record_id: i64) -> Result<RecordLabelPresetJoin, Error> {
-        todo!()
-    }
-
-    fn insert_record(db: &Connection, record: &RecordLabelPreset) -> Result<i64, Error> {
+impl RecordInsert<RecordLabelPreset> for TableLabelPreset<RecordLabelPreset> {
+    fn insert(db: &Connection, record: &RecordLabelPreset) -> Result<i64, rusqlite::Error> {
         db.execute(
             "INSERT INTO label_preset (
                     user_id,
@@ -65,23 +72,10 @@ impl Table<RecordLabelPreset, RecordLabelPresetJoin> for TableLabelPreset {
         )?;
         Ok(db.last_insert_rowid())
     }
+}
 
-    fn insert_batch(db: &Connection, records: &[RecordLabelPreset]) -> Result<usize, Error> {
-        let mut count = 0;
-        let mut prepared = db.prepare(
-            "INSERT INTO label_preset (
-                    user_id,
-                    name,
-                    settings)
-                VALUES (?1, ?2, ?3)",
-        )?;
-        for record in records {
-            count += prepared.execute(params![record.user_id, record.name, record.options])?;
-        }
-        Ok(count)
-    }
-
-    fn update_record(db: &Connection, record: &RecordLabelPreset) -> Result<usize, Error> {
+impl RecordUpdate<RecordLabelPreset> for TableLabelPreset<RecordLabelPreset> {
+    fn update(db: &Connection, record: &RecordLabelPreset) -> Result<usize, rusqlite::Error> {
         db.execute(
             "UPDATE label_preset SET
                     user_id = ?1,
@@ -91,19 +85,19 @@ impl Table<RecordLabelPreset, RecordLabelPresetJoin> for TableLabelPreset {
             params![record.user_id, record.name, record.options, record.id],
         )
     }
+}
 
-    fn delete_record(db: &Connection, record_id: i64) -> Result<usize, Error> {
+impl RecordDelete<RecordLabelPreset> for TableLabelPreset<RecordLabelPreset> {
+    fn delete(db: &Connection, record_id: i64) -> Result<usize, rusqlite::Error> {
         db.execute(
             "DELETE FROM label_preset WHERE id = ?1;",
             params![record_id],
         )
     }
+}
 
-    fn clear_table(db: &Connection) -> Result<usize, rusqlite::Error> {
-        db.execute("DELETE FROM label_preset;", ())
-    }
-
-    fn fill(row: &Row<'_>, offset: usize) -> Result<RecordLabelPreset, Error> {
+impl RecordFill<RecordLabelPreset> for TableLabelPreset<RecordLabelPreset> {
+    fn fill(row: &Row<'_>, offset: usize) -> Result<RecordLabelPreset, rusqlite::Error> {
         Ok(RecordLabelPreset {
             id: row.get(0)?,
             user_id: row.get(offset + 1)?,
@@ -113,7 +107,7 @@ impl Table<RecordLabelPreset, RecordLabelPresetJoin> for TableLabelPreset {
     }
 }
 
-impl TableLabelPreset {
+impl TableLabelPreset<RecordLabelPreset> {
     pub fn get_user_presets(
         db: &Connection,
         user_id: i64,
@@ -136,16 +130,18 @@ impl TableLabelPreset {
 mod tests {
     use crate::{
         backend::database::tables::{
-            table::Table,
-            table_label_preset::TableLabelPreset,
-            table_user::{self, TableUser},
+            label_preset::table_label_preset::TableLabelPreset,
+            table::{RecordDelete, RecordInsert, RecordUpdate, TableCreate},
+            user::{self, table_user::TableUser},
         },
-        shared::models::database::model_label_preset::{LabelOptions, RecordLabelPreset},
+        shared::models::database::label_preset::model_label_preset::{
+            LabelOptions, RecordLabelPreset,
+        },
     };
 
     fn create(conn: &rusqlite::Connection) {
         // TableLabelPreset depends on TableUser, so this must be created first
-        table_user::tests::create_table(conn);
+        user::table_user::tests::create_table(conn);
 
         assert!(
             !conn.table_exists(None, "label_preset").unwrap(),
@@ -186,7 +182,7 @@ mod tests {
             name: "test1".to_string(),
             options: LabelOptions::default(),
         };
-        assert!(TableLabelPreset::insert_record(&conn, &preset).is_ok());
+        assert!(TableLabelPreset::insert(&conn, &preset).is_ok());
         let user_presets = TableLabelPreset::get_user_presets(&conn, user.id).unwrap();
         let user_preset = user_presets.first().unwrap();
         preset.id = user_preset.id; // Before insert id cannot be known
@@ -195,7 +191,7 @@ mod tests {
         // Update
         preset.name = "new_name".to_string();
         preset.options.stroke_inner = 99_f64;
-        assert!(TableLabelPreset::update_record(&conn, &preset).is_ok());
+        assert!(TableLabelPreset::update(&conn, &preset).is_ok());
         let user_presets = TableLabelPreset::get_user_presets(&conn, user.id).unwrap();
         let user_preset = user_presets.first().unwrap();
         assert_eq!(preset, *user_preset, "Expected new preset to be the same");
@@ -219,7 +215,7 @@ mod tests {
             name: "test1".to_string(),
             options: LabelOptions::default(),
         };
-        let new_id = TableLabelPreset::insert_record(&conn, &preset).unwrap();
+        let new_id = TableLabelPreset::insert(&conn, &preset).unwrap();
         assert!(
             TableLabelPreset::get_user_presets(&conn, user.id)
                 .unwrap()
@@ -227,7 +223,7 @@ mod tests {
                 == 1,
             "Expected user to have 1 preset"
         );
-        let delete_result = TableLabelPreset::delete_record(&conn, new_id);
+        let delete_result = TableLabelPreset::delete(&conn, new_id);
         assert!(delete_result.unwrap() == 1);
         assert!(
             TableLabelPreset::get_user_presets(&conn, user.id)

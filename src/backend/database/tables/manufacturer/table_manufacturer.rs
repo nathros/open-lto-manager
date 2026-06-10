@@ -1,13 +1,20 @@
-use rusqlite::{Connection, Error, Row, params};
+use std::marker::PhantomData;
 
-use crate::shared::models::database::model_manufacturer::RecordManufacturer;
+use rusqlite::{Connection, Row, params};
 
-use super::table::Table;
+use crate::{
+    backend::database::tables::table::{
+        RecordDelete, RecordFill, RecordInsert, RecordRead, RecordUpdate, TableCreate, TableUpdate,
+    },
+    shared::models::database::manufacturer::model_manufacturer::RecordManufacturer,
+};
 
-pub struct TableManufacturer {}
+pub struct TableManufacturer<T = RecordManufacturer> {
+    phantom: PhantomData<T>,
+}
 
-impl Table<RecordManufacturer, RecordManufacturer> for TableManufacturer {
-    fn create_table(db: &Connection) -> Result<bool, Error> {
+impl TableCreate<RecordManufacturer> for TableManufacturer<RecordManufacturer> {
+    fn create_table(db: &Connection) -> Result<bool, rusqlite::Error> {
         match db.table_exists(None, "manufacturer") {
             std::result::Result::Ok(exist) => {
                 if exist {
@@ -25,8 +32,7 @@ impl Table<RecordManufacturer, RecordManufacturer> for TableManufacturer {
             (),
         )?;
 
-        let manufacturers = vec![
-            "Other",
+        let mut manufacturers = vec![
             "Dell",
             "Fujifilm",
             "HP",
@@ -39,9 +45,11 @@ impl Table<RecordManufacturer, RecordManufacturer> for TableManufacturer {
             "Spectra",
             "TDK",
         ];
+        manufacturers.sort();
+        manufacturers.insert(0, "Other");
 
         for m_name in manufacturers.iter() {
-            TableManufacturer::insert_record(
+            TableManufacturer::insert(
                 db,
                 &RecordManufacturer {
                     id: 0,
@@ -52,63 +60,58 @@ impl Table<RecordManufacturer, RecordManufacturer> for TableManufacturer {
 
         Ok(true)
     }
+}
 
-    fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, Error> {
+impl TableUpdate<RecordManufacturer> for TableManufacturer<RecordManufacturer> {
+    fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, rusqlite::Error> {
         Ok(false)
     }
+}
 
-    fn get(db: &Connection, record_id: i64) -> Result<RecordManufacturer, Error> {
+impl RecordRead<RecordManufacturer> for TableManufacturer<RecordManufacturer> {
+    fn get(db: &Connection, record_id: i64) -> Result<RecordManufacturer, rusqlite::Error> {
         db.prepare(
             "SELECT
-                    id,
-                    name
-                    FROM manufacturer
-                    WHERE id = ?1",
+                id,
+                name
+                FROM manufacturer
+                WHERE id = ?1",
         )?
         .query_one([record_id], |row| TableManufacturer::fill(row, 0))
     }
+}
 
-    fn get_join(db: &Connection, record_id: i64) -> Result<RecordManufacturer, Error> {
-        TableManufacturer::get(db, record_id)
-    }
-
-    fn insert_record(db: &Connection, record: &RecordManufacturer) -> Result<i64, Error> {
+impl RecordInsert<RecordManufacturer> for TableManufacturer<RecordManufacturer> {
+    fn insert(db: &Connection, record: &RecordManufacturer) -> Result<i64, rusqlite::Error> {
         db.execute(
             "INSERT INTO manufacturer (name) VALUES (?1)",
             params![record.name],
         )?;
         Ok(db.last_insert_rowid())
     }
+}
 
-    fn insert_batch(db: &Connection, records: &[RecordManufacturer]) -> Result<usize, Error> {
-        let mut count = 0;
-        let mut prepared = db.prepare("INSERT INTO manufacturer (name) VALUES (?1)")?;
-        for record in records {
-            count += prepared.execute(params![record.name])?;
-        }
-        Ok(count)
-    }
-
-    fn update_record(db: &Connection, record: &RecordManufacturer) -> Result<usize, Error> {
+impl RecordUpdate<RecordManufacturer> for TableManufacturer<RecordManufacturer> {
+    fn update(db: &Connection, record: &RecordManufacturer) -> Result<usize, rusqlite::Error> {
         db.execute(
             "UPDATE manufacturer SET name = ?1
                 WHERE id = ?2;",
             params![record.name, record.id],
         )
     }
+}
 
-    fn delete_record(db: &Connection, record_id: i64) -> Result<usize, Error> {
+impl RecordDelete<RecordManufacturer> for TableManufacturer<RecordManufacturer> {
+    fn delete(db: &Connection, record_id: i64) -> Result<usize, rusqlite::Error> {
         db.execute(
             "DELETE FROM manufacturer WHERE id = ?1;",
             params![record_id],
         )
     }
+}
 
-    fn clear_table(db: &Connection) -> Result<usize, rusqlite::Error> {
-        db.execute("DELETE FROM manufacturer;", ())
-    }
-
-    fn fill(row: &Row<'_>, _offset: usize) -> Result<RecordManufacturer, Error> {
+impl RecordFill<RecordManufacturer> for TableManufacturer<RecordManufacturer> {
+    fn fill(row: &Row<'_>, _offset: usize) -> Result<RecordManufacturer, rusqlite::Error> {
         Ok(RecordManufacturer {
             id: row.get(0)?,
             name: row.get(1)?,
@@ -116,7 +119,7 @@ impl Table<RecordManufacturer, RecordManufacturer> for TableManufacturer {
     }
 }
 
-impl TableManufacturer {
+impl TableManufacturer<RecordManufacturer> {
     pub fn get_all(db: &Connection) -> Result<Vec<RecordManufacturer>, rusqlite::Error> {
         db.prepare(
             "SELECT * FROM manufacturer ORDER BY
@@ -133,8 +136,11 @@ impl TableManufacturer {
 #[cfg(test)]
 pub mod tests {
     use crate::{
-        backend::database::tables::{table::Table, table_manufacturer::TableManufacturer},
-        shared::models::database::model_manufacturer::RecordManufacturer,
+        backend::database::tables::{
+            manufacturer::table_manufacturer::TableManufacturer,
+            table::{RecordDelete, RecordInsert, RecordUpdate, TableCreate},
+        },
+        shared::models::database::manufacturer::model_manufacturer::RecordManufacturer,
     };
 
     pub fn create_table(conn: &rusqlite::Connection) {
@@ -170,7 +176,7 @@ pub mod tests {
                 .find(|&m| m.name == new_manufacturer_name),
             None
         );
-        let insert_result = TableManufacturer::insert_record(
+        let insert_result = TableManufacturer::insert(
             &conn,
             &RecordManufacturer {
                 id: 0,
@@ -216,7 +222,7 @@ pub mod tests {
         let mut update_record: RecordManufacturer = original_record.clone();
         update_record.name = new_name;
         assert!(
-            TableManufacturer::update_record(&conn, &update_record).is_ok(),
+            TableManufacturer::update(&conn, &update_record).is_ok(),
             "Failed to update record"
         );
 
@@ -237,7 +243,7 @@ pub mod tests {
 
         let record_to_delete = all_records.get(all_records.len() / 2).unwrap().clone();
         assert!(
-            TableManufacturer::delete_record(&conn, record_to_delete.id).is_ok(),
+            TableManufacturer::delete(&conn, record_to_delete.id).is_ok(),
             "Failed to delete record"
         );
 
