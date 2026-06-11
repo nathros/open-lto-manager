@@ -13,13 +13,16 @@ pub struct SessionInfo {
 
 #[get("/api/sessions", _auth: crate::backend::auth::SessionId)]
 pub async fn list_sessions() -> Result<Vec<SessionInfo>> {
-    use crate::backend::{
-        auth::Session,
-        database::{db::DB, tables::user::table_user::TableUser},
+    use crate::{
+        backend::{
+            auth::Session,
+            database::{db::DB, tables::user::table_user::TableUser},
+        },
+        shared::models::database::user::model_user::RecordUserConfig,
     };
     use chrono::Local;
 
-    DB.with(|db| match TableUser::get_all(db) {
+    DB.with(|db| match TableUser::<RecordUserConfig>::get_all(db) {
         Ok(users) => {
             let mut results = vec![];
             for (session_id, session) in Session::current() {
@@ -29,7 +32,7 @@ pub async fn list_sessions() -> Result<Vec<SessionInfo>> {
                     .map_or_else(|| "??".to_string(), |f| f.username.clone());
 
                 results.push(SessionInfo {
-                    uuid: session_id.get_uuid().to_string(),
+                    uuid: session_id.0,
                     username,
                     expiry: Local
                         .timestamp_millis_opt(session.expire)

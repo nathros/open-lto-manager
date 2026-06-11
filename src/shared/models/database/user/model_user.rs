@@ -1,4 +1,3 @@
-use chrono::{DateTime, Local};
 use dioxus::fullstack::serde::{Deserialize, Serialize};
 #[cfg(feature = "server")]
 use rusqlite::{
@@ -6,17 +5,15 @@ use rusqlite::{
     types::{FromSql, FromSqlResult, ToSqlOutput, ValueRef},
 };
 
-use super::model_role::RecordRole;
+#[cfg(feature = "server")]
+use super::model_user_sensitive::RecordUser;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
-pub struct RecordUser {
+pub struct RecordUserConfig {
     pub id: i64,
     pub username: String,
     pub description: String,
-    pub hash: String,
-    pub salt: String,
     pub enabled: bool,
-    pub created: DateTime<Local>,
     pub language: i64,
     pub avatar: String,
     pub system_theme: ColourMode,
@@ -25,18 +22,39 @@ pub struct RecordUser {
     pub accent_colour: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
-pub struct RecordUserWithRoles {
-    pub id: i64,
-    pub roles: Vec<RecordRole>,
-    pub username: String,
-    pub description: String,
-    pub hash: String,
-    pub salt: String,
-    pub enabled: bool,
-    pub created: DateTime<Local>,
-    pub language: i64,
-    pub avatar: String,
+#[cfg(feature = "server")]
+impl From<RecordUser> for RecordUserConfig {
+    fn from(value: RecordUser) -> Self {
+        RecordUserConfig {
+            id: value.id,
+            username: value.username,
+            description: value.description,
+            enabled: value.enabled,
+            language: value.language,
+            avatar: value.avatar,
+            system_theme: value.system_theme,
+            icon_theme: value.icon_theme,
+            file_theme: value.file_theme,
+            accent_colour: value.accent_colour,
+        }
+    }
+}
+
+impl Default for RecordUserConfig {
+    fn default() -> Self {
+        Self {
+            id: 0,
+            username: "default".to_string(),
+            description: "default".to_string(),
+            enabled: true,
+            language: 0,
+            avatar: "".to_string(),
+            system_theme: ColourMode::System,
+            icon_theme: IconTheme::Tabler,
+            file_theme: FileTheme::Breeze,
+            accent_colour: "#1677ff".to_string(),
+        }
+    }
 }
 
 #[repr(i64)]
@@ -131,41 +149,5 @@ impl ToSql for FileTheme {
 impl FromSql for FileTheme {
     fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
         FromSqlResult::Ok(FileTheme::from(value.as_i64().unwrap_or(0)))
-    }
-}
-
-impl Default for RecordUser {
-    fn default() -> Self {
-        Self {
-            id: 0,
-            username: "default".to_string(),
-            description: "default".to_string(),
-            hash: "".to_string(),
-            salt: "".to_string(),
-            enabled: true,
-            created: Local::now(),
-            language: 0,
-            avatar: "".to_string(),
-            system_theme: ColourMode::System,
-            icon_theme: IconTheme::Tabler,
-            file_theme: FileTheme::Breeze,
-            accent_colour: "#1677ff".to_string(),
-        }
-    }
-}
-
-#[cfg(feature = "server")]
-impl RecordUser {
-    pub fn create(username: String, description: String, raw_password: &str) -> RecordUser {
-        use crate::backend::crypto::{generate_hash, generate_salt};
-
-        let salt = generate_salt();
-        RecordUser {
-            username,
-            description,
-            hash: generate_hash(raw_password, &salt),
-            salt,
-            ..Default::default()
-        }
     }
 }

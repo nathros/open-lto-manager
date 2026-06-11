@@ -16,14 +16,14 @@ use reqwest::header::COOKIE;
 use tracing::{trace, warn};
 use uuid::Uuid;
 
-use crate::shared::models::database::user::model_user::RecordUser;
+use crate::shared::models::database::user::model_user_sensitive::RecordUser;
 
 use super::crypto::validate_password;
 
 pub const SESSION_KEY: &str = "session";
 
-#[derive(Clone, PartialEq, Eq, Hash)]
-pub struct SessionId(Uuid); // Used to validate sessions
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct SessionId(pub String); // Used to validate sessions
 
 #[non_exhaustive]
 #[derive(Clone)]
@@ -46,17 +46,17 @@ where
 
         //info!("Called {:?}", req);
         if let Some(session_id_str) = SessionId::get_session_id(&req.headers)
-            && let Ok(session_id) = Uuid::parse_str(session_id_str)
-            && let Some(session) = Session::find(&SessionId(session_id))
+            && let session_id = SessionId(session_id_str.to_string())
+            && let Some(session) = Session::find(&session_id)
         {
             if session.expired() {
                 warn!(
-                    "Session {} has expired for user {}",
+                    "Session {:?} has expired for user {}",
                     session_id, session.user_id
                 );
                 return Err((http::StatusCode::UNAUTHORIZED, "Session expired"));
             } else {
-                return Ok(SessionId(session_id)); // Session exists and is value
+                return Ok(session_id); // Session exists and is value
             }
         }
 
@@ -104,16 +104,12 @@ impl SessionId {
     pub fn generate_remove_cookie() -> String {
         format!("{}=unset;max-age=-1;path=/", SESSION_KEY)
     }
-
-    pub fn get_uuid(&self) -> &Uuid {
-        &self.0
-    }
 }
 
 impl Session {
     fn new(user_id: i64) -> (SessionId, Session) {
         (
-            SessionId(Uuid::new_v4()),
+            SessionId(Uuid::new_v4().to_string()),
             Session {
                 user_id,
                 expire: Local::now().timestamp() + 10000000,
@@ -150,11 +146,22 @@ impl Session {
         None
     }
 
+    #[cfg(all(feature = "auto_login", debug_assertions))]
+    pub fn new_and_add_bypass(user: RecordUser) -> Option<SessionId> {
+        let (id, session) = Self::new(user.id);
+        if let Ok(mut write_guard) = SESSIONS.try_write()
+            && write_guard.insert(id.clone(), session.into()).is_none()
+        {
+            return Some(id);
+        }
+        None
+    }
+
     pub fn remove(session_uuid_str: &str) -> bool {
         if let Ok(id) = Uuid::parse_str(session_uuid_str)
             && let Ok(mut session_map) = SESSIONS.try_write()
         {
-            return session_map.remove(&SessionId(id)).is_some();
+            return session_map.remove(&SessionId(id.to_string())).is_some();
         }
         false
     }
@@ -182,7 +189,7 @@ mod tests {
 
     use crate::{
         backend::auth::{SESSION_KEY, SessionId},
-        shared::models::database::user::model_user::RecordUser,
+        shared::models::database::user::model_user_sensitive::RecordUser,
         static_concat,
     };
 
@@ -257,7 +264,7 @@ mod tests {
         let uuid = Uuid::new_v4();
         let id_str = uuid.to_string();
 
-        let id = SessionId(uuid);
+        let id = SessionId(id_str.clone());
         let cookie = id.generate_set_cookie();
         assert_eq!(
             format!("{}={};max-age=31536000;path=/", SESSION_KEY, id_str),
@@ -283,7 +290,7 @@ mod tests {
             "Expected new session to be added"
         );
         assert!(
-            Session::remove(&new_session_id.get_uuid().to_string()),
+            Session::remove(&new_session_id.0),
             "Expected session to be removed"
         );
         assert!(

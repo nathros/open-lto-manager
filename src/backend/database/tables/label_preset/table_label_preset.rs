@@ -134,8 +134,9 @@ mod tests {
             table::{RecordDelete, RecordInsert, RecordUpdate, TableCreate},
             user::{self, table_user::TableUser},
         },
-        shared::models::database::label_preset::model_label_preset::{
-            LabelOptions, RecordLabelPreset,
+        shared::models::database::{
+            label_preset::model_label_preset::{LabelOptions, RecordLabelPreset},
+            user::model_user::RecordUserConfig,
         },
     };
 
@@ -167,7 +168,7 @@ mod tests {
     fn insert_and_update() {
         let conn = rusqlite::Connection::open_in_memory().unwrap();
         create(&conn);
-        let users = TableUser::get_all(&conn).unwrap();
+        let users = TableUser::<RecordUserConfig>::get_all(&conn).unwrap();
         let user = users.first().unwrap(); // User used for this test
 
         assert!(
@@ -201,7 +202,7 @@ mod tests {
     fn delete() {
         let conn = rusqlite::Connection::open_in_memory().unwrap();
         create(&conn);
-        let users = TableUser::get_all(&conn).unwrap();
+        let users = TableUser::<RecordUserConfig>::get_all(&conn).unwrap();
         let user = users.first().unwrap(); // User used for this test
         assert!(
             TableLabelPreset::get_user_presets(&conn, user.id)

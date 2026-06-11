@@ -6,7 +6,7 @@ use crate::{
     backend::database::tables::table::{
         RecordDelete, RecordFill, RecordInsert, RecordRead, RecordUpdate, TableCreate, TableUpdate,
     },
-    shared::models::database::user::model_user::RecordUser,
+    shared::models::database::user::model_user_sensitive::RecordUser,
 };
 
 pub struct TableUser<T = RecordUser> {
@@ -241,7 +241,6 @@ impl TableUser<RecordUser> {
 
 #[cfg(test)]
 pub mod tests {
-    #![allow(clippy::unwrap_used)]
     use chrono::Local;
 
     use crate::{
@@ -249,8 +248,9 @@ pub mod tests {
             table::{RecordInsert, RecordRead, TableCreate},
             user::table_user::TableUser,
         },
-        shared::models::database::user::model_user::{
-            ColourMode, FileTheme, IconTheme, RecordUser,
+        shared::models::database::user::{
+            model_user::{ColourMode, FileTheme, IconTheme},
+            model_user_sensitive::RecordUser,
         },
     };
 

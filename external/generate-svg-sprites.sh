@@ -29,7 +29,7 @@ function preview_end() {
 function icon_start() {
 	local OUTPUT=$1
 	echo "<svg xmlns=\"http://www.w3.org/2000/svg\">" > $OUTPUT
-	echo -n "<defs><style>.icon { display: none } .icon:target { display: inline }</style></defs>" >> $OUTPUT
+	echo -n "<defs><style>.icon{display:none}.icon:target{display:inline}</style></defs>" >> $OUTPUT
 }
 
 function icon_end() {
@@ -196,6 +196,9 @@ function process_theme() {
 						| sed -e 's/<\/style>/}<\/style>/g'                             `# Wrap styles inside @scope close` \
 						| sed -e 's/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"//g'        `# Remove xmlns` \
 						| tr -d '\n'                                                    `# Remove new lines` \
+						| sed -e 's/> *</></g'                                          `# Replace '> <' with '><'` \
+						| sed -e 's/ *>/>/g'                                            `# Replace ' >' with '>'` \
+						| sed -e 's/ *\/>/\/>/g'                                        `# Replace ' \>' with '\>'` \
 						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `# Remove whitespace`
 				else
 					echo "$SVG" | sed -e "s/id\=\"/id\=\"${ICON_NAME}-/g"               `# Append icon name to inner ids to make them unique` \
@@ -206,6 +209,9 @@ function process_theme() {
 						| sed -e 's/<\/style>/}<\/style>/g'                             `# Wrap styles inside @scope close` \
 						| sed -e 's/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"//g'        `# Remove xmlns` \
 						| tr -d '\n'                                                    `# Remove new lines` \
+						| sed -e 's/> *</></g'                                          `# Replace '> <' with '><'` \
+						| sed -e 's/ *>/>/g'                                            `# Replace ' >' with '>'` \
+						| sed -e 's/ *\/>/\/>/g'                                        `# Replace ' \>' with '\>'` \
 						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `# Remove whitespace`
 				fi
 

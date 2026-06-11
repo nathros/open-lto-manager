@@ -1,7 +1,8 @@
 use dioxus::{fullstack::Loader, prelude::*};
 
 use crate::{
-    backend::api::api_user::list_users, shared::models::database::user::model_user::RecordUser,
+    backend::api::api_user::list_users,
+    shared::models::database::user::model_user::RecordUserConfig,
 };
 
 #[component]
@@ -26,10 +27,7 @@ fn Table(children: Element) -> Element {
                 th { "id" }
                 th { "username" }
                 th { "description" }
-                th { "hash" }
-                th { "salt" }
                 th { "enabled" }
-                th { "created" }
                 th { "language" }
                 th { "avatar" }
                 th { "system_theme" }
@@ -44,7 +42,7 @@ fn Table(children: Element) -> Element {
 
 #[component]
 fn Inner() -> Element {
-    let users_list: Loader<Vec<RecordUser>> = use_loader(list_users)?;
+    let users_list: Loader<Vec<RecordUserConfig>> = use_loader(list_users)?;
 
     rsx! {
         for rec in users_list.cloned() {
@@ -52,10 +50,7 @@ fn Inner() -> Element {
                 td { "{rec.id}" }
                 td { "{rec.username}" }
                 td { "{rec.description}" }
-                td { "{rec.hash}" }
-                td { "{rec.salt}" }
                 td { "{rec.enabled}" }
-                td { "{rec.created}" }
                 td { "{rec.language}" }
                 td { "{rec.avatar}" }
                 td { "{rec.system_theme:?}" }

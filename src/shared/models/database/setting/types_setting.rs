@@ -1,2 +1,2 @@
-pub struct SettingEmpty(String);
+pub struct SettingEmpty {}
 pub type SettingTableVersion = i64;

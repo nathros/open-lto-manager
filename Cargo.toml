@@ -35,7 +35,9 @@ tempdir = "0.3.7"
 
 [features]
 default = ["web", "server"]
-web = ["dioxus/web"]
+web = ["dioxus/web",
+       "auto_login", # Testing only
+]
 # desktop = ["dioxus/desktop"]
 # mobile = ["dioxus/mobile"]
 server = ["dioxus/server",
@@ -55,9 +57,11 @@ server = ["dioxus/server",
           "dep:usvg",                # PDF
           "dep:uuid",
           "dep:uzers",
-#         "slow_server"              # Testing only
+#         "slow_server",             # Testing only
+          "auto_login",              # Testing only
           "dep:whoami"]
 slow_server = [] # Testing only, adds delay to all backend requests
+auto_login = []  # Testing only, auto login as admin for debug build only
 
 [lints.clippy]
 unwrap_used = "deny"

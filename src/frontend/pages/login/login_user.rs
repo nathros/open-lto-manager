@@ -13,7 +13,7 @@ use crate::{
 };
 
 #[component]
-pub fn LoginUser() -> Element {
+pub fn LoginUser(#[props(default)] success_signal: Callback) -> Element {
     let mut username = use_signal(|| "".to_string());
     let mut password = use_signal(|| "".to_string());
     let mut result = use_signal(|| MessageDetails::default());
@@ -50,6 +50,7 @@ pub fn LoginUser() -> Element {
                                     level: Level::Success,
                                     text: "ok".to_string(),
                                 });
+                            success_signal(());
                         }
                         Err(e) => {
                             result
