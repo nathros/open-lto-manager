@@ -4,3 +4,10 @@
 [submodule "external/tabler-icons"]
 	path = external/tabler-icons
 	url = https://github.com/tabler/tabler-icons
+
+[submodule "external/iconoir"]
+	path = external/iconoir
+	url = https://github.com/iconoir-icons/iconoir
+[submodule "external/sargam-icons"]
+	path = external/sargam-icons
+	url = https://github.com/planetabhi/sargam-icons

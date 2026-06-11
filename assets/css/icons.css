@@ -45,3 +45,49 @@
 		mask-image: url(/assets/icons-remix.svg#user);
 	}
 }
+@container style(--icon-theme: iconoir) {
+	.icon.error {
+		mask-image: url(/assets/icons-iconoir.svg#error);
+	}
+	.icon.info {
+		mask-image: url(/assets/icons-iconoir.svg#info);
+	}
+	.icon.success {
+		mask-image: url(/assets/icons-iconoir.svg#success);
+	}
+	.icon.warning {
+		mask-image: url(/assets/icons-iconoir.svg#warning);
+	}
+	.icon.home {
+		mask-image: url(/assets/icons-iconoir.svg#home);
+	}
+	.icon.notification {
+		mask-image: url(/assets/icons-iconoir.svg#notification);
+	}
+	.icon.user {
+		mask-image: url(/assets/icons-iconoir.svg#user);
+	}
+}
+@container style(--icon-theme: sargamline) {
+	.icon.error {
+		mask-image: url(/assets/icons-sargamline.svg#error);
+	}
+	.icon.info {
+		mask-image: url(/assets/icons-sargamline.svg#info);
+	}
+	.icon.success {
+		mask-image: url(/assets/icons-sargamline.svg#success);
+	}
+	.icon.warning {
+		mask-image: url(/assets/icons-sargamline.svg#warning);
+	}
+	.icon.home {
+		mask-image: url(/assets/icons-sargamline.svg#home);
+	}
+	.icon.notification {
+		mask-image: url(/assets/icons-sargamline.svg#notification);
+	}
+	.icon.user {
+		mask-image: url(/assets/icons-sargamline.svg#user);
+	}
+}

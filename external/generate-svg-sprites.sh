@@ -184,7 +184,7 @@ function process_theme() {
 
 				echo >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg" # Add new line
 
-				if [[ "${THEME_ACTION[${I}]}" == "tab" ]]; then
+				if [[ "${THEME_ACTION[${I}]}" == "tabler" ]]; then
 					echo "$SVG" | sed -e "s/id\=\"/id\=\"${ICON_NAME}-/g"               `# Append icon name to inner ids to make them unique` \
 						| sed -e "s/href=\"#/href=\"#${ICON_NAME}-/g"                   `# Update url(#) with new ids` \
 						| sed -e "s/=\"url(#/=\"url(#${ICON_NAME}-/g"                   `# Update href(#) with new ids` \
@@ -212,6 +212,7 @@ function process_theme() {
 						| sed -e 's/> *</></g'                                          `# Replace '> <' with '><'` \
 						| sed -e 's/ *>/>/g'                                            `# Replace ' >' with '>'` \
 						| sed -e 's/ *\/>/\/>/g'                                        `# Replace ' \>' with '\>'` \
+						| sed -e 's/width=\"24\" height=\"24\"//g'                      `# Remove 'width="24" height="24"'` \
 						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `# Remove whitespace`
 				fi
 

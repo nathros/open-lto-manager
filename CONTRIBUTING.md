@@ -47,9 +47,9 @@ Remove `auto_login` from `web` and `server` in `Cargo.toml` to disable completel
     * This makes is easy to reference the class name in rsx! and handle CSS changes
 * SVG sprites
     * The script `external/generate-svg-sprites.sh` will use `external/icons.json` and `external/logos.json` to create these files:
-        * `assets/icons-remix.svg` [Remix icon sprite from submodule: external/remixicon]
-        * `assets/tabler-remix.svg` [Table icon sprite from submodule: external/tabler-icons]
+        * `assets/icons-{PACK}.svg` [Icon pack sprites from submodules: external/ defined in `icons.json`]
         * `assets/icons.preview.html` [Showcase for icons listed above]
         * `assets/logo.svg` [Company logos sprite from: external/logos]
         * `assets/logos.preview.html` [Showcase for logos]
         * `src/frontend/icons.rs` [Icon #anchor names for rsx!]
+        * `assets/css/icons.css` [Icon pack definitions]

@@ -16,6 +16,14 @@ pub const _ICONS_ASSET_TABLER: Asset = asset!(
     "/assets/icons-tabler.svg",
     AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
 );
+pub const _ICONS_ASSET_ICONOIR: Asset = asset!(
+    "/assets/icons-iconoir.svg",
+    AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
+);
+pub const _ICONS_ASSET_SARGAM_LINE: Asset = asset!(
+    "/assets/icons-sargamline.svg",
+    AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
+);
 
 // CSS
 #[cfg(not(debug_assertions))] // Release build combined CSS files

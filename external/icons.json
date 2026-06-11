@@ -3,42 +3,66 @@
 		"tabler": {
 			"path": "external/tabler-icons/",
 			"repo": "https://github.com/tabler/tabler-icons",
-			"action": "tab"
+			"action": "tabler"
 		},
 		"remix": {
 			"path": "external/remixicon/",
 			"repo": "https://github.com/Remix-Design/remixicon",
+			"action": "none"
+		},
+		"iconoir": {
+			"path": "external/iconoir/",
+			"repo": "https://github.com/iconoir-icons/iconoir",
+			"action": "none"
+		},
+		"sargamline": {
+			"path": "external/sargam-icons/",
+			"repo": "https://github.com/planetabhi/sargam-icons",
 			"action": "none"
 		}
 	},
 	"icons": {
 		"error": {
 			"tabler": "icons/filled/alert-octagon.svg",
-			"remix": "icons/System/spam-2-fill.svg"
+			"remix": "icons/System/spam-2-fill.svg",
+			"iconoir": "icons/regular/xmark-circle.svg",
+			"sargamline": "Icons/Line/si_Error.svg"
 		},
 		"info": {
 			"tabler": "icons/filled/info-circle.svg",
-			"remix": "icons/System/information-fill.svg"
+			"remix": "icons/System/information-fill.svg",
+			"iconoir": "icons/regular/info-circle.svg",
+			"sargamline": "Icons/Line/si_Info.svg"
 		},
 		"success": {
 			"tabler": "icons/filled/circle-check.svg",
-			"remix": "icons/System/checkbox-circle-fill.svg"
+			"remix": "icons/System/checkbox-circle-fill.svg",
+			"iconoir": "icons/regular/check-circle.svg",
+			"sargamline": "Icons/Line/si_Check_circle.svg"
 		},
 		"warning": {
 			"tabler": "icons/filled/alert-triangle.svg",
-			"remix": "icons/System/alert-fill.svg"
+			"remix": "icons/System/alert-fill.svg",
+			"iconoir": "icons/regular/warning-triangle.svg",
+			"sargamline": "Icons/Line/si_Warning.svg"
 		},
 		"home": {
 			"tabler": "icons/filled/home.svg",
-			"remix": "icons/Buildings/home-4-fill.svg"
+			"remix": "icons/Buildings/home-4-fill.svg",
+			"iconoir": "icons/regular/home.svg",
+			"sargamline": "Icons/Line/si_Home_detailed.svg"
 		},
 		"notification": {
 			"tabler": "icons/filled/bell.svg",
-			"remix": "icons/Media/notification-2-fill.svg"
+			"remix": "icons/Media/notification-2-fill.svg",
+			"iconoir": "icons/regular/bell.svg",
+			"sargamline": "Icons/Line/si_Notifications.svg"
 		},
 		"user": {
 			"tabler": "icons/filled/user.svg",
-			"remix": "icons/User & Faces/user-fill.svg"
+			"remix": "icons/User & Faces/user-fill.svg",
+			"iconoir": "icons/regular/user.svg",
+			"sargamline": "Icons/Line/si_User.svg"
 		}
 	}
 }
