@@ -6,3 +6,4 @@ pub mod login;
 pub mod show;
 pub mod tape;
 pub mod test;
+pub mod user;

@@ -4,6 +4,11 @@
         "editor.defaultFormatter": "rust-lang.rust-analyzer",
         "editor.formatOnSave": true,
     },
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true,
+      "prettier.useTabs": true
+    },
     "rust-analyzer.check.command": "clippy",
     "workbench.editor.wrapTabs": true,
     "emeraldwalk.runonsave": {

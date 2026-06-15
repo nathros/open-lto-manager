@@ -35,3 +35,16 @@
 	display: flex;
 	flex-direction: column;
 }
+.header-dropdown:hover { /* impl Css::HEADER_DROPDOWN */
+	background-color: #F5F5F5;
+	cursor: pointer;
+}
+.header-dropdown-content { /* impl Css::HEADER_DROPDOWN_CONTENT */
+	display: none;
+	position: absolute;
+	background-color: green;
+}
+.header-dropdown.show > .header-dropdown-content {
+	display: block;
+	cursor: default;
+}

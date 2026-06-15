@@ -48,6 +48,20 @@ pub const CSS_ASSETS: [Asset; 11] = [
     asset!("/assets/css/tape-preview.css"),
 ];
 
+// JS
+#[cfg(not(debug_assertions))] // Release build combined JS files
+pub const JS_ASSETS: [Asset; 1] = [asset!(
+    "/assets/bundle.js", // Created via build.rs (release only) by combining other CSS_ASSETS array bellow into single file
+    AssetOptions::js().with_minify(true)
+)];
+
+// Release (build.rs) will combine all these files into single bundle.js
+#[cfg(debug_assertions)] // Debug build individual JS files
+pub const JS_ASSETS: [Asset; 2] = [
+    asset!("/assets/js/common.js"),
+    asset!("/assets/js/header.js"),
+];
+
 // Fonts
 const _FONT_LATO_N_400: Asset = asset!(
     "/assets/font/lato-v25-normal-400.woff2",

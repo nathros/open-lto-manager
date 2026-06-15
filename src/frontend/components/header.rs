@@ -1,6 +1,5 @@
-use std::mem::discriminant;
-
 use dioxus::{fullstack::FullstackContext, prelude::*};
+use std::mem::discriminant;
 
 #[cfg(all(feature = "auto_login", debug_assertions))]
 use crate::backend::api::api_login::api_login_bypass;
@@ -8,6 +7,7 @@ use crate::backend::api::api_login::api_login_bypass;
 use crate::{
     Route,
     backend::api::api_login::api_current_user,
+    either,
     frontend::{
         assets::APP_NAME,
         collections::message::{Message, MessageDetails},
@@ -80,6 +80,7 @@ pub fn Header() -> Element {
             }
         }
     };
+    let mut show = use_signal(|| false);
 
     rsx! {
         if let user = current_user().unwrap_or_default()
@@ -87,12 +88,6 @@ pub fn Header() -> Element {
         {
             div { style: "--icon-theme:{icon_theme}; --colour-accent:{user.accent_colour}",
                 if current_user().is_some() {
-                    header { class: Css::MAIN_HEADER,
-                        div { class: "header-logo", "{APP_NAME}" }
-                        div { class: static_concat!("header-icon icon-s icon ", Icons::NOTIFICATION) }
-                        div { class: static_concat!("header-icon icon-s icon ", Icons::INFO) }
-                        div { class: static_concat!("header-icon icon ", Icons::USER) }
-                    }
                     aside { class: Css::MAIN_ASIDE,
                         div {
                             Link { to: Route::Home {}, "Home" }
@@ -134,6 +129,35 @@ pub fn Header() -> Element {
                             if debug_build {
                                 Link { to: Route::Sandpit {}, "Sandpit" }
                                 Link { to: Route::ShowDev {}, "Dev" }
+                            }
+                        }
+                    }
+                    header { class: Css::MAIN_HEADER,
+                        div { class: "header-logo", "{APP_NAME}" }
+                        div { class: static_concat!("header-icon icon-s icon ", Icons::NOTIFICATION) }
+                        div { class: static_concat!("header-icon icon-s icon ", Icons::INFO) }
+                        div {
+                            class: [Css::HEADER_DROPDOWN, either!(show(), Css::SHOW, "")].concat(),
+                            onclick: move |evt: Event<MouseData>| {
+                                evt.stop_propagation();
+                                show.set(!show());
+                            },
+                            div {
+                                class: [Css::SCREEN_FILL, either!(show(), Css::SHOW, "")].concat(),
+                                onclick: move |evt: Event<MouseData>| {
+                                    evt.stop_propagation();
+                                    show.set(false);
+                                },
+                            }
+                            span { class: static_concat!("header-icon icon dropbtn ", Icons::USER) }
+                            div {
+                                class: Css::HEADER_DROPDOWN_CONTENT,
+                                onclick: move |evt: Event<MouseData>| {
+                                    evt.stop_propagation();
+                                },
+                                p { "item" }
+                                p { "item" }
+                                p { "item" }
                             }
                         }
                     }

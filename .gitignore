@@ -9,5 +9,6 @@
 # Working dir from local run
 /data
 
-# Release bundle CSS
+# Release bundles
 assets/bundle.css
+assets/bundle.js

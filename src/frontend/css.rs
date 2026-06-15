@@ -4,6 +4,11 @@
 pub struct Css; // CSS class names
 
 impl Css {
-    pub const MAIN_HEADER: &str = "main-header "; // Defined in assets/css/header.css line 1
-    pub const MAIN_ASIDE: &str = "main-aside "; // Defined in assets/css/header.css line 25
+    pub const FLEX_ROW: &str = "flex-row "; // Defined in assets/css/common.css line -f1
+    pub const SHOW: &str = "show "; // Defined in assets/css/common.css line -f1
+    pub const SCREEN_FILL: &str = "screen-fill "; // Defined in assets/css/common.css line -f1
+    pub const MAIN_HEADER: &str = "main-header "; // Defined in assets/css/header.css line -f1
+    pub const MAIN_ASIDE: &str = "main-aside "; // Defined in assets/css/header.css line -f1
+    pub const HEADER_DROPDOWN: &str = "header-dropdown "; // Defined in assets/css/header.css line -f1
+    pub const HEADER_DROPDOWN_CONTENT: &str = "header-dropdown-content "; // Defined in assets/css/header.css line -f1
 }

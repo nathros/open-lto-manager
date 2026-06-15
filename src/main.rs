@@ -2,7 +2,7 @@
 //#![deny(warnings)] // Do not allow warnings
 
 use dioxus::prelude::*;
-use frontend::assets::{CSS_ASSETS, FAVICON};
+use frontend::assets::{CSS_ASSETS, FAVICON, JS_ASSETS};
 
 mod backend;
 #[allow(clippy::redundant_closure, irrefutable_let_patterns)]
@@ -43,6 +43,9 @@ fn App() -> Element {
 
     rsx! {
         document::Link { rel: "icon", r#type: "image/svg+xml", href: FAVICON }
+        for asset in JS_ASSETS.iter() {
+            script { r#type: "text/javascript", src: *asset }
+        }
         for asset in CSS_ASSETS.iter() {
             document::Link { rel: "stylesheet", href: *asset }
         }

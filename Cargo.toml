@@ -23,7 +23,10 @@ serde = { version = "1.0.228", features = [] }
 serde_json = { version = "1.0.149", features = [], optional = true } # /dev only
 sha2 = { version = "0.10.9", optional = true }
 tokio = { version = "1.52.3", features = ["process"], optional = true }
+[target.'cfg( feature = "server" )'.dependencies]
 tracing = { version = "0.1.44" }
+[target.'cfg(not( feature = "server" ))'.dependencies]
+tracing = { version = "0.1.44", features = ["release_max_level_off"] } # Remove logging for release wasm to reduce size
 tracing-subscriber = { version = "0.3.22", optional = true }
 usvg  = { version = "0.45.1", optional = true }
 uuid  = { version = "1.23.0", features = ["v4"], optional = true }
