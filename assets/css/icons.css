@@ -21,6 +21,30 @@
 	.icon.user {
 		mask-image: url(/assets/icons-tabler.svg#user);
 	}
+	.icon.sandpit {
+		mask-image: url(/assets/icons-tabler.svg#sandpit);
+	}
+	.icon.logout {
+		mask-image: url(/assets/icons-tabler.svg#logout);
+	}
+	.icon.palette {
+		mask-image: url(/assets/icons-tabler.svg#palette);
+	}
+	.icon.fill-half {
+		mask-image: url(/assets/icons-tabler.svg#fill-half);
+	}
+	.icon.chevron-right {
+		mask-image: url(/assets/icons-tabler.svg#chevron-right);
+	}
+	.icon.light {
+		mask-image: url(/assets/icons-tabler.svg#light);
+	}
+	.icon.dark {
+		mask-image: url(/assets/icons-tabler.svg#dark);
+	}
+	.icon.system {
+		mask-image: url(/assets/icons-tabler.svg#system);
+	}
 }
 @container style(--icon-theme: remix) {
 	.icon.error {
@@ -43,6 +67,30 @@
 	}
 	.icon.user {
 		mask-image: url(/assets/icons-remix.svg#user);
+	}
+	.icon.sandpit {
+		mask-image: url(/assets/icons-remix.svg#sandpit);
+	}
+	.icon.logout {
+		mask-image: url(/assets/icons-remix.svg#logout);
+	}
+	.icon.palette {
+		mask-image: url(/assets/icons-remix.svg#palette);
+	}
+	.icon.fill-half {
+		mask-image: url(/assets/icons-remix.svg#fill-half);
+	}
+	.icon.chevron-right {
+		mask-image: url(/assets/icons-remix.svg#chevron-right);
+	}
+	.icon.light {
+		mask-image: url(/assets/icons-remix.svg#light);
+	}
+	.icon.dark {
+		mask-image: url(/assets/icons-remix.svg#dark);
+	}
+	.icon.system {
+		mask-image: url(/assets/icons-remix.svg#system);
 	}
 }
 @container style(--icon-theme: iconoir) {
@@ -67,6 +115,30 @@
 	.icon.user {
 		mask-image: url(/assets/icons-iconoir.svg#user);
 	}
+	.icon.sandpit {
+		mask-image: url(/assets/icons-iconoir.svg#sandpit);
+	}
+	.icon.logout {
+		mask-image: url(/assets/icons-iconoir.svg#logout);
+	}
+	.icon.palette {
+		mask-image: url(/assets/icons-iconoir.svg#palette);
+	}
+	.icon.fill-half {
+		mask-image: url(/assets/icons-iconoir.svg#fill-half);
+	}
+	.icon.chevron-right {
+		mask-image: url(/assets/icons-iconoir.svg#chevron-right);
+	}
+	.icon.light {
+		mask-image: url(/assets/icons-iconoir.svg#light);
+	}
+	.icon.dark {
+		mask-image: url(/assets/icons-iconoir.svg#dark);
+	}
+	.icon.system {
+		mask-image: url(/assets/icons-iconoir.svg#system);
+	}
 }
 @container style(--icon-theme: sargamline) {
 	.icon.error {
@@ -89,5 +161,29 @@
 	}
 	.icon.user {
 		mask-image: url(/assets/icons-sargamline.svg#user);
+	}
+	.icon.sandpit {
+		mask-image: url(/assets/icons-sargamline.svg#sandpit);
+	}
+	.icon.logout {
+		mask-image: url(/assets/icons-sargamline.svg#logout);
+	}
+	.icon.palette {
+		mask-image: url(/assets/icons-sargamline.svg#palette);
+	}
+	.icon.fill-half {
+		mask-image: url(/assets/icons-sargamline.svg#fill-half);
+	}
+	.icon.chevron-right {
+		mask-image: url(/assets/icons-sargamline.svg#chevron-right);
+	}
+	.icon.light {
+		mask-image: url(/assets/icons-sargamline.svg#light);
+	}
+	.icon.dark {
+		mask-image: url(/assets/icons-sargamline.svg#dark);
+	}
+	.icon.system {
+		mask-image: url(/assets/icons-sargamline.svg#system);
 	}
 }

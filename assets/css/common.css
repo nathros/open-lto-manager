@@ -1,19 +1,31 @@
 html {
 	font-family: "Lato", sans-serif;
 	scrollbar-width: thin;
-	scrollbar-color: #eaeaea transparent;
+	scrollbar-color: #EAEAEA transparent;
 }
-
+@container style(--darkmode: 1) {
+	body {
+	  background-color: grey;
+	}
+}
 body {
 	margin-top: calc(var(--main-header-height) + var(--padding-m));
 	margin-left: calc(var(--main-aside-width) + var(--padding-m));
 }
-
+a {
+	all: unset;
+	cursor: pointer;
+}
+hr {
+	width: 100%;
+	height: 1px;
+	border: 0;
+	background: lightgray;
+}
 .monospace {
 	font-family: "JetBrains Mono", monospace;
 	font-size: small;
 }
-
 .flex-row { /* impl Css::FLEX_ROW */
 	display: flex;
 	flex-direction: row;
@@ -21,7 +33,14 @@ body {
 	gap: var(--padding-m);
 }
 .show { /* impl Css::SHOW */
-	display: block !important;
+	display: block;
+}
+.selected { /* impl Css::SELECTED */
+	box-shadow: inset 4px 0px 0px 0px var(--colour-accent);
+}
+.sm { /* impl Css::SM */
+	width: 1rem;
+	height: 1rem;
 }
 .screen-fill { /* impl Css::SCREEN_FILL */
 	display: none;
@@ -32,4 +51,22 @@ body {
 	bottom: 0;
 	background-color: transparent;
 	cursor: default;
+}
+.screen-fill.show {
+	display: block;
+}
+.bg { /* impl Css::BG */
+	background-color: black;
+}
+.bg.error {
+	background-color: var(--colour-error);
+}
+.bg.warning {
+	background-color: var(--colour-warning);
+}
+.bg.info {
+	background-color: var(--colour-primary);
+}
+.bg.success {
+	background-color: var(--colour-success);
 }

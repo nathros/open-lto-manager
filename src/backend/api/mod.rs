@@ -6,6 +6,7 @@ pub mod api_generate_lto_label;
 pub mod api_init;
 pub mod api_job;
 pub mod api_job_metadata;
+pub mod api_label_preset;
 pub mod api_login;
 pub mod api_logout;
 pub mod api_manufacturer;

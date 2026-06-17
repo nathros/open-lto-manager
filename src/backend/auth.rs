@@ -208,7 +208,21 @@ mod tests {
     }
 
     #[test]
-    fn test_get_session_exists() {
+    fn test_get_session_exists_start() {
+        const SESSION_ID: &str = "b792ca2e-79a1-4ad2-89fb-69defc0ee2d7";
+        let headers = test_headers(Some(static_concat!(
+            SESSION_KEY,
+            "=",
+            SESSION_ID,
+            "; log-compact=on; log-autoscroll=off;"
+        )));
+
+        let found_session = SessionId::get_session_id(&headers);
+        assert_eq!(SESSION_ID, found_session.unwrap());
+    }
+
+    #[test]
+    fn test_get_session_exists_end() {
         const SESSION_ID: &str = "b792ca2e-79a1-4ad2-89fb-69defc0ee2d7";
         let headers = test_headers(Some(static_concat!(
             "log-compact=on; log-autoscroll=off; ",

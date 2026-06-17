@@ -5,8 +5,6 @@ use dioxus::{
 
 #[get("/api/logout", header: dioxus::fullstack::TypedHeader<Cookie>)]
 pub async fn api_logout() -> Result<SetHeader<SetCookie>> {
-    use dioxus::fullstack::SetHeader;
-
     use crate::backend::auth::{SESSION_KEY, Session, SessionId};
 
     if let Some(session_uuid_str) = header.get(SESSION_KEY) {

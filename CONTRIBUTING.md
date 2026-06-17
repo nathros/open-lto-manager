@@ -1,7 +1,7 @@
 # Build
 ## Install Toolchains
 ### Rust
-Version 2024 or newer, [https://rust-lang.org/tools/install/](https://rust-lang.org/tools/install/)
+1.95 newer, [https://rust-lang.org/tools/install/](https://rust-lang.org/tools/install/)
 ```
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
@@ -58,7 +58,7 @@ Remove `auto_login` from `web` and `server` in `Cargo.toml` to disable for debug
 * CSS class names
     * On save of a .css file the script `external/generate-css-const.sh` is executed (Vs Code)
     * This is defined by the extension: `emeraldwalk.runonsave` in `.vscode/settings.json`
-    * This script search for CSS files as defined in `src/frontend/assets.rs::CSS_ASSETS`
+    * This script searches for CSS files as defined in `src/frontend/assets.rs::CSS_ASSETS`
     * For each file it searches for CSS comments containing `impl Css::XYZ` and creates a const str to this class name (same line) to: `src/frontend/css.rs`
     * This makes is easy to reference the class name in rsx! and handle CSS changes
 * SVG sprites

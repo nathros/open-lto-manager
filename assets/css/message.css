@@ -1,4 +1,4 @@
-.message {
+.message { /* impl Css::MESSAGE */
 	border-style: solid;
 	border-width: 2px;
 	border-radius: var(--radius);

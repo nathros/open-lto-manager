@@ -6,16 +6,18 @@ use crate::backend::api::api_login::api_login_bypass;
 
 use crate::{
     Route,
-    backend::api::api_login::api_current_user,
+    backend::api::{api_login::api_current_user, api_logout::api_logout, api_user::update_user},
     either,
     frontend::{
         assets::APP_NAME,
         collections::message::{Message, MessageDetails},
+        components::colour_mode::ColourModeHidden,
         css::Css,
         icons::Icons,
         level::Level,
         pages::login::login_user::LoginUser,
     },
+    shared::models::database::user::model_user::ColourMode,
     static_concat,
 };
 
@@ -30,7 +32,7 @@ pub fn Header() -> Element {
     #[cfg(all(feature = "auto_login", debug_assertions))]
     {
         let mut skip = use_signal(|| false);
-        if !skip() {
+        if !skip() && current_user().is_none() {
             spawn(async move {
                 // TODO fix called twice
                 if api_login_bypass().await.is_ok() {
@@ -80,13 +82,29 @@ pub fn Header() -> Element {
             }
         }
     };
+
     let mut show = use_signal(|| false);
+    let mut show_theme = use_signal(|| false);
+    let mut close = move |evt: Event<MouseData>| {
+        evt.stop_propagation();
+        show.set(false);
+        show_theme.set(false);
+    };
+    let change_theme = move |theme: ColourMode| async move {
+        if let Some(mut user) = current_user() {
+            user.system_theme = theme;
+            if update_user(user.clone()).await.is_ok() {
+                current_user.set(Some(user));
+            }
+        }
+    };
 
     rsx! {
         if let user = current_user().unwrap_or_default()
             && let icon_theme = format!("{:?}", user.icon_theme).to_lowercase()
         {
             div { style: "--icon-theme:{icon_theme}; --colour-accent:{user.accent_colour}",
+                ColourModeHidden { theme: user.system_theme }
                 if current_user().is_some() {
                     aside { class: Css::MAIN_ASIDE,
                         div {
@@ -133,9 +151,9 @@ pub fn Header() -> Element {
                         }
                     }
                     header { class: Css::MAIN_HEADER,
-                        div { class: "header-logo", "{APP_NAME}" }
-                        div { class: static_concat!("header-icon icon-s icon ", Icons::NOTIFICATION) }
-                        div { class: static_concat!("header-icon icon-s icon ", Icons::INFO) }
+                        div { class: Css::MAIN_HEADER_LOGO, "{APP_NAME}" }
+                        div { class: static_concat!(Css::ICON, Css::SM, Icons::NOTIFICATION) }
+                        div { class: static_concat!(Css::ICON, Css::SM, Icons::INFO) }
                         div {
                             class: [Css::HEADER_DROPDOWN, either!(show(), Css::SHOW, "")].concat(),
                             onclick: move |evt: Event<MouseData>| {
@@ -144,20 +162,92 @@ pub fn Header() -> Element {
                             },
                             div {
                                 class: [Css::SCREEN_FILL, either!(show(), Css::SHOW, "")].concat(),
-                                onclick: move |evt: Event<MouseData>| {
-                                    evt.stop_propagation();
-                                    show.set(false);
-                                },
+                                onclick: close,
                             }
-                            span { class: static_concat!("header-icon icon dropbtn ", Icons::USER) }
+                            span { class: static_concat!(Css::ICON, Icons::USER) }
                             div {
                                 class: Css::HEADER_DROPDOWN_CONTENT,
                                 onclick: move |evt: Event<MouseData>| {
                                     evt.stop_propagation();
                                 },
-                                p { "item" }
-                                p { "item" }
-                                p { "item" }
+                                Link {
+                                    class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
+                                    onclick: close,
+                                    to: Route::DBUser {},
+                                    span { class: static_concat!(Css::ICON, Css::SM, Icons::USER) }
+                                    span { "Account" }
+                                }
+                                div {
+                                    class: [Css::ICON_LIST_ITEM, Css::FLEX_ROW, either!(show_theme(), Css::SELECTED, "")]
+                                        .concat(),
+                                    onclick: move |evt: Event<MouseData>| {
+                                        evt.stop_propagation();
+                                        show_theme.set(!show_theme());
+                                    },
+                                    span { class: static_concat!(Css::ICON, Css::SM, Icons::FILL_HALF) }
+                                    span { "Theme" }
+                                    span { class: static_concat!(Css::ICON, Css::SM, Icons::CHEVRON_RIGHT, Css::FLOAT_RIGHT) }
+                                    div {
+                                        class: [
+                                            Css::HEADER_DROPDOWN_CONTENT,
+                                            Css::HEADER_DROPDOWN_NESTED,
+                                            either!(show_theme(), Css::SHOW, ""),
+                                        ]
+                                            .concat(),
+                                        div {
+                                            class: [
+                                                Css::ICON_LIST_ITEM,
+                                                Css::FLEX_ROW,
+                                                either!(user.system_theme == ColourMode::System, Css::SELECTED, ""),
+                                            ]
+                                                .concat(),
+                                            onclick: move |evt: Event<MouseData>| async move {
+                                                change_theme(ColourMode::System).await;
+                                                close(evt);
+                                            },
+                                            span { class: static_concat!(Css::ICON, Css::SM, Icons::SYSTEM) }
+                                            span { "System" }
+                                        }
+                                        div {
+                                            class: [
+                                                Css::ICON_LIST_ITEM,
+                                                Css::FLEX_ROW,
+                                                either!(user.system_theme == ColourMode::Light, Css::SELECTED, ""),
+                                            ]
+                                                .concat(),
+                                            onclick: move |evt: Event<MouseData>| async move {
+                                                change_theme(ColourMode::Light).await;
+                                                close(evt);
+                                            },
+                                            span { class: static_concat!(Css::ICON, Css::SM, Icons::LIGHT) }
+                                            span { "Light" }
+                                        }
+                                        div {
+                                            class: [
+                                                Css::ICON_LIST_ITEM,
+                                                Css::FLEX_ROW,
+                                                either!(user.system_theme == ColourMode::Dark, Css::SELECTED, ""),
+                                            ]
+                                                .concat(),
+                                            onclick: move |evt: Event<MouseData>| async move {
+                                                change_theme(ColourMode::Dark).await;
+                                                close(evt);
+                                            },
+                                            span { class: static_concat!(Css::ICON, Css::SM, Icons::DARK) }
+                                            span { "Dark" }
+                                        }
+                                    }
+                                }
+                                hr {}
+                                Link {
+                                    class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
+                                    onclick: |_| async {
+                                        let _ = api_logout().await;
+                                    },
+                                    to: Route::LoginUser {},
+                                    span { class: static_concat!(Css::ICON, Css::SM, Icons::LOGOUT) }
+                                    span { "Log out" }
+                                }
                             }
                         }
                     }

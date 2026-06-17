@@ -1,15 +1,13 @@
 use dioxus::prelude::*;
 
-use crate::frontend::{elements::button::Button, level::Level};
+use crate::frontend::{css::Css, elements::button::Button, level::Level};
 
-// Only 1 reference to avoid duplicate ids
+// Only 1 reference per ID to avoid duplicate ids
 pub const MODAL_JOB_ID: &str = "modal-b_job";
 pub const MODAL_SANDPIT_ERROR: &str = "modal-sandpit_e";
 pub const MODAL_SANDPIT_WARNING: &str = "modal-sandpit_w";
 pub const MODAL_SANDPIT_INFO: &str = "modal-sandpit_i";
 pub const MODAL_SANDPIT_SUCCESS: &str = "modal-sandpit_s";
-
-// CSS: assets/css/modal.css
 
 #[component]
 pub fn Modal(id: &'static str, level: Level, message: Signal<String>) -> Element {
@@ -24,13 +22,12 @@ pub fn Modal(id: &'static str, level: Level, message: Signal<String>) -> Element
 
     rsx! {
         dialog { id, class: level.to_class(),
-            div { class: "flex-row",
-                div { class: format!("icon bg {}", level.to_class()) }
+            div { class: Css::FLEX_ROW,
+                div { class: [Css::ICON, Css::BG, level.to_class()].concat() }
                 p { "{message}" }
             }
             br {}
             Button {
-                r#type: "button",
                 "commandfor": id,
                 "command": "close",
                 onclick: move |_| {

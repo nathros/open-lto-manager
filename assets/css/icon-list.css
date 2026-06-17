@@ -1,0 +1,22 @@
+.icon-list-item { /* impl Css::ICON_LIST_ITEM */
+	padding: var(--padding-s);
+	padding-left: var(--padding-m);
+    position: relative;
+    cursor: pointer;
+}
+.icon-list-item.selected {
+	background-color: hsl(from var(--colour-accent) h s calc(l + 40));
+}
+.icon-list-item.selected > .icon {
+	background-color: var(--colour-accent);
+	color: var(--colour-accent);
+}
+.icon-list-item.selected > span {
+	color: var(--colour-accent);
+}
+.icon-list-item:hover {
+    box-shadow: var(--hover);
+}
+.icon-list-item.selected:hover {
+    box-shadow: inset 4px 0px 0px 0px var(--colour-accent), var(--hover);
+}

@@ -11,4 +11,12 @@ impl Icons {
     pub const HOME: &str = "home ";
     pub const NOTIFICATION: &str = "notification ";
     pub const USER: &str = "user ";
+    pub const SANDPIT: &str = "sandpit ";
+    pub const LOGOUT: &str = "logout ";
+    pub const PALETTE: &str = "palette ";
+    pub const FILL_HALF: &str = "fill-half ";
+    pub const CHEVRON_RIGHT: &str = "chevron-right ";
+    pub const LIGHT: &str = "light ";
+    pub const DARK: &str = "dark ";
+    pub const SYSTEM: &str = "system ";
 }

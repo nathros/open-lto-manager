@@ -5,9 +5,33 @@
 	--main-aside-width: 10rem;
 	--radius: 6px;
 
-	--colour-accent: #1677ff;
-	--colour-primary: #1677ff;
-	--colour-success: #52c41a;
-	--colour-warning: #faad14;
-	--colour-error: #ff4d4f;
+	--shadow-overlay: 0px 8px 12px #1E1F2126, 0px 0px 1px #1E1F214F;
+	--shadow-raised: 0px 1px 1px #1E1F2140, 0px 0px 1px #1E1F214F;
+
+	--hover: inset 999px 999px 999px #00000010;
+
+	--colour-accent: #1677FF;
+	--colour-primary: #1677FF;
+	--colour-success: #52C41A;
+	--colour-warning: #FAAD14;
+	--colour-error: #FF4D4F;
+}
+@media (prefers-color-scheme: dark) {
+	html {
+		--darkmode: 1;
+	}
+}
+@media (prefers-color-scheme: light) {
+	html {
+		--darkmode: 0;
+	}
+}
+/*.colour-scheme        [trim] impl Css::COLOUR_SCHEME */
+/*.colour-scheme-light  [trim] impl Css::COLOUR_SCHEME_LIGHT */
+/*.colour-scheme-dark   [trim] impl Css::COLOUR_SCHEME_DARK */
+html:has(#colour-scheme-light:checked) {
+	--darkmode: 0;
+}
+html:has(#colour-scheme-dark:checked) {
+	--darkmode: 1;
 }

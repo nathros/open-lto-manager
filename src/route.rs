@@ -28,9 +28,6 @@ pub enum Route {
     #[route("/")]
     Home {},
 
-    #[route("/login")]
-    LoginUser {},
-
     #[route("/show")]
     Show {},
 
@@ -79,4 +76,8 @@ pub enum Route {
     ShowAppState {},
     #[route("/dev")]
     ShowDev {},
+    #[end_layout]
+    // No layout
+    #[route("/login")]
+    LoginUser {},
 }

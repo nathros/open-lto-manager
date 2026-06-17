@@ -63,6 +63,54 @@
 			"remix": "icons/User & Faces/user-fill.svg",
 			"iconoir": "icons/regular/user.svg",
 			"sargamline": "Icons/Line/si_User.svg"
+		},
+		"sandpit": {
+			"tabler": "icons/outline/bucket-droplet.svg",
+			"remix": "icons/Health & Medical/test-tube-fill.svg",
+			"iconoir": "icons/regular/test-tube.svg",
+			"sargamline": "Icons/Line/si_Traffic_cone.svg"
+		},
+		"logout": {
+			"tabler": "icons/outline/logout.svg",
+			"remix": "icons/System/logout-box-r-fill.svg",
+			"iconoir": "icons/regular/log-out.svg",
+			"sargamline": "Icons/Line/si_Sign_in.svg"
+		},
+		"palette": {
+			"tabler": "icons/filled/palette.svg",
+			"remix": "icons/Design/palette-fill.svg",
+			"iconoir": "icons/regular/palette.svg",
+			"sargamline": "Icons/Line/si_Swatch.svg"
+		},
+		"fill-half": {
+			"tabler": "icons/outline/circle-half-2.svg",
+			"remix": "icons/Design/paint-fill.svg",
+			"iconoir": "icons/regular/droplet-half.svg",
+			"sargamline": "Icons/Line/si_Sun_set.svg"
+		},
+		"chevron-right": {
+			"tabler": "icons/filled/chevron-right.svg",
+			"remix": "icons/Arrows/arrow-right-s-line.svg",
+			"iconoir": "icons/regular/nav-arrow-right.svg",
+			"sargamline": "Icons/Fill/si_Chevron_right_alt.svg"
+		},
+		"light": {
+			"tabler": "icons/outline/sun.svg",
+			"remix": "icons/Weather/sun-line.svg",
+			"iconoir": "icons/regular/sun-light.svg",
+			"sargamline": "Icons/Line/si_Sun.svg"
+		},
+		"dark": {
+			"tabler": "icons/filled/moon.svg",
+			"remix": "icons/Weather/moon-fill.svg",
+			"iconoir": "icons/regular/half-moon.svg",
+			"sargamline": "Icons/Line/si_Moon.svg"
+		},
+		"system": {
+			"tabler": "icons/outline/device-desktop.svg",
+			"remix": "icons/Device/computer-line.svg",
+			"iconoir": "icons/regular/computer.svg",
+			"sargamline": "Icons/Line/si_Monitor.svg"
 		}
 	}
 }

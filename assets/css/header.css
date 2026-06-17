@@ -12,7 +12,7 @@
 .main-header > * {
 	margin: var(--padding-s);
 }
-.header-logo {
+.header-logo { /* impl Css::MAIN_HEADER_LOGO */
 	background-image: url(/assets/logo.svg);
 	background-size: 2rem;
 	background-repeat: no-repeat;
@@ -35,16 +35,34 @@
 	display: flex;
 	flex-direction: column;
 }
-.header-dropdown:hover { /* impl Css::HEADER_DROPDOWN */
-	background-color: #F5F5F5;
+.header-dropdown { /* impl Css::HEADER_DROPDOWN */
+	position: relative;
+}
+.header-dropdown:hover {
+	box-shadow: var(--hover);
 	cursor: pointer;
 }
 .header-dropdown-content { /* impl Css::HEADER_DROPDOWN_CONTENT */
 	display: none;
 	position: absolute;
-	background-color: green;
+	right: 0;
+	user-select: none;
+	padding-top: var(--padding-s);
+	padding-bottom: var(--padding-s);
+	background-color: white;
+	box-shadow: var(--shadow-overlay);
+	border-radius: var(--radius);
+	min-width: 14rem;
+}
+.header-dropdown-content.nested { /* impl Css::HEADER_DROPDOWN_NESTED */
+	right: 101%;
+	top: calc(var(--padding-s) * -1);
 }
 .header-dropdown.show > .header-dropdown-content {
-	display: block;
+	display: flex;
+	flex-direction: column;
 	cursor: default;
+}
+.float-right { /* impl Css::FLOAT_RIGHT */
+	margin-left: auto;
 }

@@ -10,12 +10,12 @@ pub enum InputType {
     //datetimelocal,
     //email,
     //file,
-    //hidden,
+    //Hidden,
     //image,
     //month,
     //number,
     Password,
-    //radio,
+    Radio,
     //range,
     //reset,
     //search,
@@ -28,7 +28,7 @@ pub enum InputType {
 }
 
 impl InputType {
-    pub fn to_string(&self) -> &str {
+    pub const fn to_string(&self) -> &str {
         match self {
             //InputType::button => "button",
             //InputType::checkbox => "checkbox",
@@ -37,12 +37,12 @@ impl InputType {
             //InputType::datetimelocal => "datetime-local",
             //InputType::email => "email",
             //InputType::file => "file",
-            //InputType::hidden => "hidden",
+            //InputType::Hidden => "hidden",
             //InputType::image => "image",
             //InputType::month => "month",
             //InputType::number => "number",
             InputType::Password => "password",
-            //InputType::radio => "radio",
+            InputType::Radio => "radio",
             //InputType::range => "range",
             //InputType::reset => "reset",
             //InputType::search => "search",

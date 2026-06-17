@@ -9,7 +9,7 @@ pub enum Level {
 }
 
 impl Level {
-    pub fn to_class(&self) -> &str {
+    pub const fn to_class(&self) -> &str {
         match self {
             Level::Error => Icons::ERROR,
             Level::Warning => Icons::WARNING,

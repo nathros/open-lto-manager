@@ -34,11 +34,11 @@ pub const CSS_ASSETS: [Asset; 1] = [asset!(
 
 // Release (build.rs) will combine all these files into single bundle.css
 #[cfg(debug_assertions)] // Debug build individual CSS files
-pub const CSS_ASSETS: [Asset; 11] = [
+pub const CSS_ASSETS: [Asset; 12] = [
     asset!("/assets/css/:root.css"),
     asset!("/assets/font/font.css"),
-    asset!("/assets/css/common.css"),
     asset!("/assets/css/header.css"),
+    asset!("/assets/css/icon-list.css"),
     asset!("/assets/css/icon.css"),
     asset!("/assets/css/icons.css"),
     asset!("/assets/css/message.css"),
@@ -46,12 +46,13 @@ pub const CSS_ASSETS: [Asset; 11] = [
     asset!("/assets/css/table.css"),
     asset!("/assets/css/button.css"),
     asset!("/assets/css/tape-preview.css"),
+    asset!("/assets/css/common.css"),
 ];
 
 // JS
 #[cfg(not(debug_assertions))] // Release build combined JS files
 pub const JS_ASSETS: [Asset; 1] = [asset!(
-    "/assets/bundle.js", // Created via build.rs (release only) by combining other CSS_ASSETS array bellow into single file
+    "/assets/bundle.js", // Created via build.rs (release only) by combining other JS_ASSETS array bellow into single file
     AssetOptions::js().with_minify(true)
 )];
 

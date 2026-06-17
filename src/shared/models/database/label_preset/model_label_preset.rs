@@ -17,6 +17,7 @@ pub struct RecordLabelPreset {
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[serde(default)]
 pub struct LabelOptions {
     pub theme: LabelTheme,
     pub font: LabelFont,
@@ -135,9 +136,79 @@ pub enum LabelTextOrientation {
 
 #[cfg(test)]
 mod tests {
+    use rusqlite::{
+        ToSql,
+        types::{FromSql, FromSqlResult, ValueRef},
+    };
+
+    use crate::shared::models::database::label_preset::model_label_preset::LabelTextDirection;
+
+    use super::{LabelOptions, LabelTheme};
 
     #[test]
-    fn table_format_enum() {
-        //
+    fn label_options_sql_deserialise() {
+        {
+            // Empty
+            let default = LabelOptions::default();
+            let json_str = r#"{}"#;
+            let val_ref = ValueRef::Text(json_str.as_bytes());
+            let options_result: FromSqlResult<LabelOptions> = FromSql::column_result(val_ref);
+            println!("{:?}", options_result);
+            assert!(options_result.is_ok(), "Failed to deserialise");
+            assert_eq!(
+                default,
+                options_result.unwrap(),
+                "Expected empty to be default"
+            );
+        }
+        {
+            // Partial
+            let check = LabelOptions {
+                text_direction: LabelTextDirection::Reversed,
+                ..Default::default()
+            };
+            let json_str = r#"{"text_direction":"Reversed"}"#;
+            let val_ref = ValueRef::Text(json_str.as_bytes());
+            let options_result: FromSqlResult<LabelOptions> = FromSql::column_result(val_ref);
+            println!("{:?}", options_result);
+            assert!(options_result.is_ok(), "Failed to deserialise");
+            assert_eq!(check, options_result.unwrap(), "Expected to be the same");
+        }
+    }
+
+    #[test]
+    fn label_options_sql_serialise() {
+        let reference = LabelOptions {
+            theme: LabelTheme::Warm,
+            ..Default::default()
+        };
+        let sql_result = reference.to_sql();
+        assert!(sql_result.is_ok(), "Serialise failure");
+        let sql_output = sql_result.unwrap();
+
+        let sql_output_string = format!("{:?}", sql_output).replace("\\", "");
+        let expected = r##"
+        Owned(
+            Text("{
+                "theme":"Warm",
+                "font":"SansSerif",
+                "text_direction":"Normal",
+                "text_orientation":"Normal",
+                "stroke_outer":0.035,
+                "stroke_inner":0.035,
+                "radius_outer":0.0,
+                "radius_inner":0.0,
+                "width":80.5,
+                "height":18.5,
+                "barcode_scale":1.0,
+                "text_box_width":10.0,
+                "text_box_height":5.8,
+                "background_colour":"#FFF"
+            }")
+        )"##
+        .to_string()
+        .replace([' ', '\n'], "");
+
+        assert_eq!(expected, sql_output_string);
     }
 }

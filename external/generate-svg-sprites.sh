@@ -122,7 +122,7 @@ function process_theme() {
 				for N in ${THEME_NAME[*]} ; do # Start of .svg
 					I=${THEME_NAME_INDEX[$N]}
 					icon_start "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"
-					echo "	<th>${THEME_NAME[$I]}.svg (${THEME_VERSION[$I]})<a href='${THEME_REPO[$I]}' target='_blank'> &#128279;</a></th>" >> ${PREVIEW}
+					echo "	<th>${OUTPUT_NAME}-${THEME_NAME[$I]}.svg (${THEME_VERSION[$I]})<a href='${THEME_REPO[$I]}' target='_blank'> &#128279;</a></th>" >> ${PREVIEW}
 				done
 				
 				echo "</tr>" >> ${PREVIEW}
@@ -164,7 +164,9 @@ function process_theme() {
 				echo "<tr>" >> ${PREVIEW}
 				echo "	<td>$ICON_NAME</td>" >> ${PREVIEW}
 
-				rs_line "    pub const ${ICON_NAME^^}: &str = \"${ICON_NAME} \";" $OUTPUT_RS
+				local INAME=${ICON_NAME^^} # To uppercase
+				INAME=${INAME//-/_}        # Replace - with _
+				rs_line "    pub const ${INAME}: &str = \"${ICON_NAME} \";" $OUTPUT_RS
 
 			elif [[ $LINE == *"},"* ]]; then
 				echo "</tr>" >> ${PREVIEW}
@@ -213,6 +215,8 @@ function process_theme() {
 						| sed -e 's/ *>/>/g'                                            `# Replace ' >' with '>'` \
 						| sed -e 's/ *\/>/\/>/g'                                        `# Replace ' \>' with '\>'` \
 						| sed -e 's/width=\"24\" height=\"24\"//g'                      `# Remove 'width="24" height="24"'` \
+						| sed -e 's/width=\"24\" //g'                                   `# Remove 'width="24"'` \
+						| sed -e 's/height=\"24\" //g'                                  `# Remove 'height="24"'` \
 						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `# Remove whitespace`
 				fi
 

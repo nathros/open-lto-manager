@@ -4,7 +4,7 @@ set -e # Exit on error
 
 cd "$(dirname "$0")" # cd to this script dir
 
-TMP=../css.rs.tmp
+TMP=/tmp/css.rs.tmp
 OUTPUT=../src/frontend/css.rs
 ASSETS_FILE=../src/frontend/assets.rs
 
@@ -19,15 +19,25 @@ function process_css_file() {
 		if [[ $CSS_LINE == *"impl Css::"* ]]; then
 			local CLASS=${CSS_LINE%{*}
 			local NAME=${CSS_LINE#*::}
-			local INDEX="-f1"
+			local I="-f1"
 			NAME=$(echo $NAME | cut -d ' ' -f1)
-			CLASS=$(echo $CLASS | cut -d ' ' $INDEX)
+			CLASS=$(echo $CLASS | cut -d ' ' $I)
 			CLASS=${CLASS%::*} # Remove after ::
-			CLASS=${CLASS%:*} # Remove after ::
-			echo "    pub const $NAME: &str = \"${CLASS:1} \"; // Defined in ${1:3} line $INDEX" >> $OUTPUT
+			CLASS=${CLASS%:*} # Remove after :
+			CLASS=${CLASS%,*} # Remove after ,
+			CLASS=${CLASS#*.} # Remove after .
+			CLASS=${CLASS#*.} # Remove after .
+			CLASS="${CLASS} " # Add space at end
+			if [[ $CSS_LINE == *"["*"]"* ]]; then
+				local ACTION=$(echo $CSS_LINE | cut -d "[" -f2 | cut -d "]" -f1)
+				if [[ $CSS_LINE == *"[trim]"* ]]; then
+					CLASS=$(echo -e $CLASS | tr -d "[:blank:]") # Trim space
+				fi
+			fi
+			echo "    pub const $NAME: &str = \"${CLASS}\"; // Defined in ${1:3} line $INDEX" >> $OUTPUT
 		fi
 		INDEX=$((INDEX + 1))
-	done < $1
+	done < $FILE
 }
 
 while IFS= read -r LINE; do
