@@ -5,16 +5,16 @@
 	--main-aside-width: 10rem;
 	--radius: 6px;
 
-	--shadow-overlay: 0px 8px 12px #1E1F2126, 0px 0px 1px #1E1F214F;
-	--shadow-raised: 0px 1px 1px #1E1F2140, 0px 0px 1px #1E1F214F;
+	--shadow-overlay: 0px 8px 12px #1e1f2126, 0px 0px 1px #1e1f214f;
+	--shadow-raised: 0px 1px 1px #1e1f2140, 0px 0px 1px #1e1f214f;
 
 	--hover: inset 999px 999px 999px #00000010;
 
-	--colour-accent: #1677FF;
-	--colour-primary: #1677FF;
-	--colour-success: #52C41A;
-	--colour-warning: #FAAD14;
-	--colour-error: #FF4D4F;
+	--colour-accent: #1677ff;
+	--colour-primary: #1677ff;
+	--colour-success: #52c41a;
+	--colour-warning: #faad14;
+	--colour-error: #ff4d4f;
 }
 @media (prefers-color-scheme: dark) {
 	html {

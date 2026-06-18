@@ -5,7 +5,7 @@ pub enum InputType {
     // Uncomment when needed
     //button,
     //checkbox,
-    //color,
+    Colour,
     //date,
     //datetimelocal,
     //email,
@@ -32,7 +32,7 @@ impl InputType {
         match self {
             //InputType::button => "button",
             //InputType::checkbox => "checkbox",
-            //InputType::color => "color",
+            InputType::Colour => "color",
             //InputType::date => "date",
             //InputType::datetimelocal => "datetime-local",
             //InputType::email => "email",

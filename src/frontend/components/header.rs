@@ -13,11 +13,14 @@ use crate::{
         collections::message::{Message, MessageDetails},
         components::colour_mode::ColourModeHidden,
         css::Css,
+        elements::input::InputType,
         icons::Icons,
         level::Level,
         pages::login::login_user::LoginUser,
     },
-    shared::models::database::user::model_user::ColourMode,
+    shared::models::database::user::model_user::{
+        ACCENT_BLUE, ACCENT_GREEN, ACCENT_RED, ACCENT_STANDARD, ColourMode,
+    },
     static_concat,
 };
 
@@ -83,16 +86,26 @@ pub fn Header() -> Element {
         }
     };
 
-    let mut show = use_signal(|| false);
+    let mut show_menu = use_signal(|| false);
     let mut show_theme = use_signal(|| false);
+    let mut show_accent = use_signal(|| false);
     let mut close = move |evt: Event<MouseData>| {
         evt.stop_propagation();
-        show.set(false);
+        show_menu.set(false);
         show_theme.set(false);
+        show_accent.set(false);
     };
     let change_theme = move |theme: ColourMode| async move {
         if let Some(mut user) = current_user() {
             user.system_theme = theme;
+            if update_user(user.clone()).await.is_ok() {
+                current_user.set(Some(user));
+            }
+        }
+    };
+    let change_accent = move |colour: String| async move {
+        if let Some(mut user) = current_user() {
+            user.accent_colour = colour.clone().to_string();
             if update_user(user.clone()).await.is_ok() {
                 current_user.set(Some(user));
             }
@@ -155,13 +168,13 @@ pub fn Header() -> Element {
                         div { class: static_concat!(Css::ICON, Css::SM, Icons::NOTIFICATION) }
                         div { class: static_concat!(Css::ICON, Css::SM, Icons::INFO) }
                         div {
-                            class: [Css::HEADER_DROPDOWN, either!(show(), Css::SHOW, "")].concat(),
+                            class: [Css::HEADER_DROPDOWN, either!(show_menu(), Css::SHOW, "")].concat(),
                             onclick: move |evt: Event<MouseData>| {
                                 evt.stop_propagation();
-                                show.set(!show());
+                                show_menu.set(!show_menu());
                             },
                             div {
-                                class: [Css::SCREEN_FILL, either!(show(), Css::SHOW, "")].concat(),
+                                class: [Css::SCREEN_FILL, either!(show_menu(), Css::SHOW, "")].concat(),
                                 onclick: close,
                             }
                             span { class: static_concat!(Css::ICON, Icons::USER) }
@@ -170,6 +183,9 @@ pub fn Header() -> Element {
                                 onclick: move |evt: Event<MouseData>| {
                                     evt.stop_propagation();
                                 },
+                                div { class: static_concat!(Css::ICON_LIST_ITEM, Css::HEADER_USER),
+                                    "{user.username}"
+                                }
                                 Link {
                                     class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
                                     onclick: close,
@@ -178,11 +194,130 @@ pub fn Header() -> Element {
                                     span { "Account" }
                                 }
                                 div {
+                                    class: [Css::ICON_LIST_ITEM, Css::FLEX_ROW, either!(show_accent(), Css::SELECTED, "")]
+                                        .concat(),
+                                    onclick: move |evt: Event<MouseData>| {
+                                        evt.stop_propagation();
+                                        show_accent.set(!show_accent());
+                                        show_theme.set(false);
+                                    },
+                                    span { class: static_concat!(Css::ICON, Css::SM, Icons::PALETTE) }
+                                    span { "Accent" }
+                                    span { class: static_concat!(Css::ICON, Css::SM, Icons::CHEVRON_RIGHT, Css::FLOAT_RIGHT) }
+                                    div {
+                                        class: [
+                                            Css::HEADER_DROPDOWN_CONTENT,
+                                            Css::HEADER_DROPDOWN_NESTED,
+                                            either!(show_accent(), Css::SHOW, ""),
+                                        ]
+                                            .concat(),
+                                        div {
+                                            class: [
+                                                Css::ICON_LIST_ITEM,
+                                                Css::FLEX_ROW,
+                                                either!(user.accent_colour == ACCENT_STANDARD, Css::SELECTED, ""),
+                                            ]
+                                                .concat(),
+                                            onclick: move |evt: Event<MouseData>| async move {
+                                                change_accent(ACCENT_STANDARD.into()).await;
+                                                close(evt);
+                                            },
+                                            span {
+                                                style: static_concat!("background-color:", ACCENT_STANDARD),
+                                                class: static_concat!(Css::ICON, Css::SM, Css::HEADER_COL),
+                                            }
+                                            span { "Standard" }
+                                        }
+                                        div {
+                                            class: [
+                                                Css::ICON_LIST_ITEM,
+                                                Css::FLEX_ROW,
+                                                either!(user.accent_colour == ACCENT_RED, Css::SELECTED, ""),
+                                            ]
+                                                .concat(),
+                                            onclick: move |evt: Event<MouseData>| async move {
+                                                change_accent(ACCENT_RED.into()).await;
+                                                close(evt);
+                                            },
+                                            span {
+                                                style: static_concat!("background-color:", ACCENT_RED),
+                                                class: static_concat!(Css::ICON, Css::SM, Css::HEADER_COL),
+                                            }
+                                            span { "Red" }
+                                        }
+                                        div {
+                                            class: [
+                                                Css::ICON_LIST_ITEM,
+                                                Css::FLEX_ROW,
+                                                either!(user.accent_colour == ACCENT_GREEN, Css::SELECTED, ""),
+                                            ]
+                                                .concat(),
+                                            onclick: move |evt: Event<MouseData>| async move {
+                                                change_accent(ACCENT_GREEN.into()).await;
+                                                close(evt);
+                                            },
+                                            span {
+                                                style: static_concat!("background-color:", ACCENT_GREEN),
+                                                class: static_concat!(Css::ICON, Css::SM, Css::HEADER_COL),
+                                            }
+                                            span { "Green" }
+                                        }
+                                        div {
+                                            class: [
+                                                Css::ICON_LIST_ITEM,
+                                                Css::FLEX_ROW,
+                                                either!(user.accent_colour == ACCENT_BLUE, Css::SELECTED, ""),
+                                            ]
+                                                .concat(),
+                                            onclick: move |evt: Event<MouseData>| async move {
+                                                change_accent(ACCENT_BLUE.into()).await;
+                                                close(evt);
+                                            },
+                                            span {
+                                                style: static_concat!("background-color:", ACCENT_BLUE),
+                                                class: static_concat!(Css::ICON, Css::SM, Css::HEADER_COL),
+                                            }
+                                            span { "Blue" }
+                                        }
+                                        label {
+                                            class: [
+                                                Css::ICON_LIST_ITEM,
+                                                Css::FLEX_ROW,
+                                                either!(
+                                                    user.accent_colour == ACCENT_STANDARD ||
+                                                    user.accent_colour == ACCENT_RED ||
+                                                    user.accent_colour == ACCENT_GREEN ||
+                                                    user.accent_colour == ACCENT_BLUE,
+                                                    "",
+                                                    Css::SELECTED
+                                                ),
+                                            ]
+                                                .concat(),
+                                            r#for: Css::ID_ACCENT_PICKER,
+                                            onclick: move |evt: Event<MouseData>| {
+                                                evt.stop_propagation();
+                                            },
+                                            span { class: static_concat!(Css::ICON, Css::SM, Css::HEADER_COL, Css::RAINBOW) }
+                                            span { "Custom" }
+                                            input {
+                                                id: Css::ID_ACCENT_PICKER,
+                                                r#type: InputType::Colour.to_string(),
+                                                oninput: move |evt| async move {
+                                                    evt.stop_propagation();
+                                                    change_accent(evt.value()).await;
+                                                },
+                                                value: user.accent_colour.clone(),
+                                            }
+                                        }
+                                    }
+                                }
+                                div {
                                     class: [Css::ICON_LIST_ITEM, Css::FLEX_ROW, either!(show_theme(), Css::SELECTED, "")]
                                         .concat(),
                                     onclick: move |evt: Event<MouseData>| {
                                         evt.stop_propagation();
                                         show_theme.set(!show_theme());
+                                        show_accent.set(false);
                                     },
                                     span { class: static_concat!(Css::ICON, Css::SM, Icons::FILL_HALF) }
                                     span { "Theme" }

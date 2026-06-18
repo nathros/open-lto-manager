@@ -1,5 +1,5 @@
 use dioxus::{
-    fullstack::{Cookie, SetCookie, SetHeader},
+    fullstack::{SetCookie, SetHeader},
     prelude::*,
 };
 
@@ -33,7 +33,7 @@ pub async fn api_login(username: String, password: String) -> Result<SetHeader<S
     HttpError::unauthorized("Invalid username or password")?
 }
 
-#[get("/api/current_user", header: dioxus::fullstack::TypedHeader<Cookie>)]
+#[get("/api/current_user", header: dioxus::fullstack::TypedHeader<dioxus::fullstack::Cookie>)]
 pub async fn api_current_user() -> Result<Option<RecordUserConfig>> {
     use crate::backend::{
         auth::{SESSION_KEY, Session, SessionId},

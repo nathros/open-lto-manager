@@ -1,4 +1,3 @@
-use chrono::TimeZone;
 use dioxus::{
     fullstack::serde::{Deserialize, Serialize},
     prelude::*,
@@ -20,7 +19,7 @@ pub async fn list_sessions() -> Result<Vec<SessionInfo>> {
         },
         shared::models::database::user::model_user::RecordUserConfig,
     };
-    use chrono::Local;
+    use chrono::{Local, TimeZone};
 
     DB.with(|db| match TableUser::<RecordUserConfig>::get_all(db) {
         Ok(users) => {

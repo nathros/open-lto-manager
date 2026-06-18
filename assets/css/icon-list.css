@@ -4,9 +4,6 @@
     position: relative;
     cursor: pointer;
 }
-.icon-list-item.selected {
-	background-color: hsl(from var(--colour-accent) h s calc(l + 40));
-}
 .icon-list-item.selected > .icon {
 	background-color: var(--colour-accent);
 	color: var(--colour-accent);

@@ -8,6 +8,11 @@ use rusqlite::{
 #[cfg(feature = "server")]
 use super::model_user_sensitive::RecordUser;
 
+pub const ACCENT_STANDARD: &str = "#777777";
+pub const ACCENT_RED: &str = "#aa1c13";
+pub const ACCENT_GREEN: &str = "#13aa52";
+pub const ACCENT_BLUE: &str = "#1677ff";
+
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct RecordUserConfig {
     pub id: i64,
@@ -52,7 +57,7 @@ impl Default for RecordUserConfig {
             system_theme: ColourMode::System,
             icon_theme: IconTheme::Tabler,
             file_theme: FileTheme::Breeze,
-            accent_colour: "#1677ff".to_string(),
+            accent_colour: ACCENT_BLUE.to_string(),
         }
     }
 }

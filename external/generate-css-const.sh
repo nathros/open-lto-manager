@@ -25,6 +25,7 @@ function process_css_file() {
 			CLASS=${CLASS%::*} # Remove after ::
 			CLASS=${CLASS%:*} # Remove after :
 			CLASS=${CLASS%,*} # Remove after ,
+			CLASS=${CLASS#*#} # Remove after #
 			CLASS=${CLASS#*.} # Remove after .
 			CLASS=${CLASS#*.} # Remove after .
 			CLASS="${CLASS} " # Add space at end

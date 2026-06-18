@@ -37,6 +37,7 @@ hr {
 }
 .selected { /* impl Css::SELECTED */
 	box-shadow: inset 4px 0px 0px 0px var(--colour-accent);
+	background-color: hsl(from var(--colour-accent) h s calc(l + 40));
 }
 .sm { /* impl Css::SM */
 	width: 1rem;

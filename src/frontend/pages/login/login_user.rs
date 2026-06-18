@@ -1,3 +1,5 @@
+use std::mem::discriminant;
+
 use dioxus::prelude::*;
 
 use crate::{
@@ -10,6 +12,7 @@ use crate::{
         },
         level::Level,
     },
+    route::Route,
 };
 
 #[component]
@@ -45,12 +48,12 @@ pub fn LoginUser(#[props(default)] success_signal: Callback) -> Element {
                 onclick: move |_| async move {
                     match api_login(username(), password()).await {
                         Ok(_o) => {
-                            result
-                                .set(MessageDetails {
-                                    level: Level::Success,
-                                    text: "ok".to_string(),
-                                });
                             success_signal(());
+                            if discriminant(&use_route::<Route>())
+                                == discriminant(&Route::LoginUser {})
+                            {
+                                use_navigator().push(Route::Home {});
+                            }
                         }
                         Err(e) => {
                             result
