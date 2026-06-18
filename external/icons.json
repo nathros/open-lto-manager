@@ -82,10 +82,10 @@
 			"iconoir": "icons/regular/palette.svg",
 			"sargamline": "Icons/Line/si_Swatch.svg"
 		},
-		"fill-half": {
-			"tabler": "icons/outline/circle-half-2.svg",
-			"remix": "icons/Design/paint-fill.svg",
-			"iconoir": "icons/regular/droplet-half.svg",
+		"contrast": {
+			"tabler": "icons/filled/contrast.svg",
+			"remix": "icons/Design/contrast-line.svg",
+			"iconoir": "icons/regular/brightness.svg",
 			"sargamline": "Icons/Line/si_Sun_set.svg"
 		},
 		"chevron-right": {
@@ -111,6 +111,18 @@
 			"remix": "icons/Device/computer-line.svg",
 			"iconoir": "icons/regular/computer.svg",
 			"sargamline": "Icons/Line/si_Monitor.svg"
+		},
+		"bug": {
+			"tabler": "icons/filled/bug.svg",
+			"remix": "icons/Development/bug-2-fill.svg",
+			"iconoir": "icons/regular/bug.svg",
+			"sargamline": "../iconoir/icons/regular/bug.svg"
+		},
+		"book": {
+			"tabler": "icons/filled/book.svg",
+			"remix": "icons/Document/book-3-fill.svg",
+			"iconoir": "icons/regular/book.svg",
+			"sargamline": "Icons/Line/si_Book.svg"
 		}
 	}
 }

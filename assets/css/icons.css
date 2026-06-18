@@ -30,8 +30,8 @@
 	.icon.palette {
 		mask-image: url(/assets/icons-tabler.svg#palette);
 	}
-	.icon.fill-half {
-		mask-image: url(/assets/icons-tabler.svg#fill-half);
+	.icon.contrast {
+		mask-image: url(/assets/icons-tabler.svg#contrast);
 	}
 	.icon.chevron-right {
 		mask-image: url(/assets/icons-tabler.svg#chevron-right);
@@ -44,6 +44,12 @@
 	}
 	.icon.system {
 		mask-image: url(/assets/icons-tabler.svg#system);
+	}
+	.icon.bug {
+		mask-image: url(/assets/icons-tabler.svg#bug);
+	}
+	.icon.book {
+		mask-image: url(/assets/icons-tabler.svg#book);
 	}
 }
 @container style(--icon-theme: remix) {
@@ -77,8 +83,8 @@
 	.icon.palette {
 		mask-image: url(/assets/icons-remix.svg#palette);
 	}
-	.icon.fill-half {
-		mask-image: url(/assets/icons-remix.svg#fill-half);
+	.icon.contrast {
+		mask-image: url(/assets/icons-remix.svg#contrast);
 	}
 	.icon.chevron-right {
 		mask-image: url(/assets/icons-remix.svg#chevron-right);
@@ -91,6 +97,12 @@
 	}
 	.icon.system {
 		mask-image: url(/assets/icons-remix.svg#system);
+	}
+	.icon.bug {
+		mask-image: url(/assets/icons-remix.svg#bug);
+	}
+	.icon.book {
+		mask-image: url(/assets/icons-remix.svg#book);
 	}
 }
 @container style(--icon-theme: iconoir) {
@@ -124,8 +136,8 @@
 	.icon.palette {
 		mask-image: url(/assets/icons-iconoir.svg#palette);
 	}
-	.icon.fill-half {
-		mask-image: url(/assets/icons-iconoir.svg#fill-half);
+	.icon.contrast {
+		mask-image: url(/assets/icons-iconoir.svg#contrast);
 	}
 	.icon.chevron-right {
 		mask-image: url(/assets/icons-iconoir.svg#chevron-right);
@@ -138,6 +150,12 @@
 	}
 	.icon.system {
 		mask-image: url(/assets/icons-iconoir.svg#system);
+	}
+	.icon.bug {
+		mask-image: url(/assets/icons-iconoir.svg#bug);
+	}
+	.icon.book {
+		mask-image: url(/assets/icons-iconoir.svg#book);
 	}
 }
 @container style(--icon-theme: sargamline) {
@@ -171,8 +189,8 @@
 	.icon.palette {
 		mask-image: url(/assets/icons-sargamline.svg#palette);
 	}
-	.icon.fill-half {
-		mask-image: url(/assets/icons-sargamline.svg#fill-half);
+	.icon.contrast {
+		mask-image: url(/assets/icons-sargamline.svg#contrast);
 	}
 	.icon.chevron-right {
 		mask-image: url(/assets/icons-sargamline.svg#chevron-right);
@@ -185,5 +203,11 @@
 	}
 	.icon.system {
 		mask-image: url(/assets/icons-sargamline.svg#system);
+	}
+	.icon.bug {
+		mask-image: url(/assets/icons-sargamline.svg#bug);
+	}
+	.icon.book {
+		mask-image: url(/assets/icons-sargamline.svg#book);
 	}
 }

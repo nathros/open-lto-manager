@@ -9,7 +9,7 @@ use crate::{
     backend::api::{api_login::api_current_user, api_logout::api_logout, api_user::update_user},
     either,
     frontend::{
-        assets::APP_NAME,
+        assets::{APP_NAME, LOGO_ASSET},
         collections::message::{Message, MessageDetails},
         components::colour_mode::ColourModeHidden,
         css::Css,
@@ -86,6 +86,10 @@ pub fn Header() -> Element {
         }
     };
 
+    let mut show_notifications = use_signal(|| false);
+
+    let mut show_info = use_signal(|| false);
+
     let mut show_menu = use_signal(|| false);
     let mut show_theme = use_signal(|| false);
     let mut show_accent = use_signal(|| false);
@@ -94,6 +98,7 @@ pub fn Header() -> Element {
         show_menu.set(false);
         show_theme.set(false);
         show_accent.set(false);
+        show_info.set(false);
     };
     let change_theme = move |theme: ColourMode| async move {
         if let Some(mut user) = current_user() {
@@ -165,18 +170,80 @@ pub fn Header() -> Element {
                     }
                     header { class: Css::MAIN_HEADER,
                         div { class: Css::MAIN_HEADER_LOGO, "{APP_NAME}" }
-                        div { class: static_concat!(Css::ICON, Css::SM, Icons::NOTIFICATION) }
-                        div { class: static_concat!(Css::ICON, Css::SM, Icons::INFO) }
+                        div {
+                            class: [
+                                Css::SCREEN_FILL,
+                                either!(show_notifications() || show_info() || show_menu(), Css::SHOW, ""),
+                            ]
+                                .concat(),
+                            onclick: close,
+                        }
+                        div {
+                            class: [Css::HEADER_DROPDOWN, either!(show_notifications(), Css::SHOW, "")].concat(),
+                            onclick: move |evt: Event<MouseData>| {
+                                evt.stop_propagation();
+                                show_theme.set(false);
+                                show_accent.set(false);
+                                show_menu.set(false);
+                                show_info.set(false);
+                                show_notifications.set(!show_notifications())
+                            },
+                            span { class: static_concat!(Css::ICON, Icons::NOTIFICATION) }
+                            div { class: Css::HEADER_DROPDOWN_CONTENT,
+                                div { class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
+                                    "..."
+                                }
+                            }
+                        }
+                        div {
+                            class: [Css::HEADER_DROPDOWN, either!(show_info(), Css::SHOW, "")].concat(),
+                            onclick: move |evt: Event<MouseData>| {
+                                evt.stop_propagation();
+                                show_theme.set(false);
+                                show_accent.set(false);
+                                show_menu.set(false);
+                                show_notifications.set(false);
+                                show_info.set(!show_info());
+                            },
+                            span { class: static_concat!(Css::ICON, Icons::INFO) }
+                            div { class: Css::HEADER_DROPDOWN_CONTENT,
+                                div {
+                                    class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
+                                    onclick: move |_evt: Event<MouseData>| async move {
+                                        let _ = document::eval("alert('Not ready yet');").await;
+                                    },
+                                    span { class: static_concat!(Css::ICON, Css::SM, Icons::BOOK) }
+                                    span { "Docs" }
+                                }
+                                Link {
+                                    "target": "_blank",
+                                    class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
+                                    to: "https://github.com/nathros/open-lto-manager",
+                                    span {
+                                        style: format!("mask-image:url({}#github)", LOGO_ASSET),
+                                        class: static_concat!(Css::ICON, Css::SM),
+                                    }
+                                    span { "GitHub" }
+                                }
+                                Link {
+                                    "target": "_blank",
+                                    class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
+                                    to: "https://github.com/nathros/open-lto-manager/issues",
+                                    span { class: static_concat!(Css::ICON, Css::SM, Icons::BUG) }
+                                    span { "Bug report" }
+                                }
+                            }
+                        }
                         div {
                             class: [Css::HEADER_DROPDOWN, either!(show_menu(), Css::SHOW, "")].concat(),
                             onclick: move |evt: Event<MouseData>| {
                                 evt.stop_propagation();
+                                show_theme.set(false);
+                                show_accent.set(false);
+                                show_info.set(false);
+                                show_notifications.set(false);
                                 show_menu.set(!show_menu());
                             },
-                            div {
-                                class: [Css::SCREEN_FILL, either!(show_menu(), Css::SHOW, "")].concat(),
-                                onclick: close,
-                            }
                             span { class: static_concat!(Css::ICON, Icons::USER) }
                             div {
                                 class: Css::HEADER_DROPDOWN_CONTENT,
@@ -319,7 +386,7 @@ pub fn Header() -> Element {
                                         show_theme.set(!show_theme());
                                         show_accent.set(false);
                                     },
-                                    span { class: static_concat!(Css::ICON, Css::SM, Icons::FILL_HALF) }
+                                    span { class: static_concat!(Css::ICON, Css::SM, Icons::CONTRAST) }
                                     span { "Theme" }
                                     span { class: static_concat!(Css::ICON, Css::SM, Icons::CHEVRON_RIGHT, Css::FLOAT_RIGHT) }
                                     div {

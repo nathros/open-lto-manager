@@ -8,8 +8,8 @@ function preview_start() {
 	echo "<html>" >> $OUTPUT
 	echo "	<head>" >> $OUTPUT
 	echo "		<title>$2 preview</title>" >> $OUTPUT
-	echo "		<style>td, th { border: 1px solid; } td { padding: 4px;} tr th { position: sticky; top: 0; background-color: white; }</style>" >> $OUTPUT
-	echo "		<style>img { width: 6rem; height: 6rem; margin: 2px; } .sm { width: 2rem; } .fill { background-color: lightgrey; } a { text-decoration: none; }</style>" >> $OUTPUT
+	echo "		<style>td, th { border: 1px solid; } td { padding: 4px;} tr th { position: sticky; top: 0; background-color: white; } td > div { display: inline-flex; }</style>" >> $OUTPUT
+	echo "		<style>img { width: 6rem; height: 6rem; margin: 2px; } .sm { width: 1rem; height: 1rem; } .md { width: 2rem; height: 2rem; } .fill { background-color: lightgrey; } a { text-decoration: none; }</style>" >> $OUTPUT
 	echo "	</head>" >> $OUTPUT
 	echo "<body>" >> $OUTPUT
 	echo "<p>This is a preview of SVG sprites which are accessed via: #anchor</p>" >> $OUTPUT
@@ -221,10 +221,14 @@ function process_theme() {
 				fi
 
 				echo "	<td>" >> ${PREVIEW}
-				echo "		<img src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
-				echo "		<img class='sm' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
-				echo "		<img class='fill' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
-				echo "		<img class='fill sm' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
+				echo "		<div>" >> ${PREVIEW}
+				echo "			<img src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
+				echo "			<img class='md' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
+				echo "			<img class='sm' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
+				echo "			<img class='fill' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
+				echo "			<img class='fill md' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
+				echo "			<img class='fill sm' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
+				echo "		</div>" >> ${PREVIEW}
 				echo "	</td>" >> ${PREVIEW}
 
 				css_line "	.icon.$ICON_NAME {" $N $OUTPUT_CSS
