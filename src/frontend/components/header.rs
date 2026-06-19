@@ -9,7 +9,10 @@ use crate::{
     backend::api::{api_login::api_current_user, api_logout::api_logout, api_user::update_user},
     either,
     frontend::{
-        assets::{APP_NAME, LOGO_ASSET},
+        assets::{
+            APP_NAME, ICONS_ASSET_ICONOIR, ICONS_ASSET_REMIX, ICONS_ASSET_SARGAM_LINE,
+            ICONS_ASSET_TABLER, LOGO_ASSET,
+        },
         collections::message::{Message, MessageDetails},
         components::colour_mode::ColourModeHidden,
         css::Css,
@@ -19,7 +22,7 @@ use crate::{
         pages::login::login_user::LoginUser,
     },
     shared::models::database::user::model_user::{
-        ACCENT_BLUE, ACCENT_GREEN, ACCENT_RED, ACCENT_STANDARD, ColourMode,
+        ACCENT_BLUE, ACCENT_GREEN, ACCENT_RED, ACCENT_STANDARD, ColourMode, IconTheme,
     },
     static_concat,
 };
@@ -93,12 +96,15 @@ pub fn Header() -> Element {
     let mut show_menu = use_signal(|| false);
     let mut show_theme = use_signal(|| false);
     let mut show_accent = use_signal(|| false);
+    let mut show_icon = use_signal(|| false);
     let mut close = move |evt: Event<MouseData>| {
         evt.stop_propagation();
         show_menu.set(false);
         show_theme.set(false);
         show_accent.set(false);
+        show_icon.set(false);
         show_info.set(false);
+        show_notifications.set(false); // FIXME not always close
     };
     let change_theme = move |theme: ColourMode| async move {
         if let Some(mut user) = current_user() {
@@ -111,6 +117,14 @@ pub fn Header() -> Element {
     let change_accent = move |colour: String| async move {
         if let Some(mut user) = current_user() {
             user.accent_colour = colour.clone().to_string();
+            if update_user(user.clone()).await.is_ok() {
+                current_user.set(Some(user));
+            }
+        }
+    };
+    let change_icon = move |icon: IconTheme| async move {
+        if let Some(mut user) = current_user() {
+            user.icon_theme = icon;
             if update_user(user.clone()).await.is_ok() {
                 current_user.set(Some(user));
             }
@@ -267,6 +281,7 @@ pub fn Header() -> Element {
                                         evt.stop_propagation();
                                         show_accent.set(!show_accent());
                                         show_theme.set(false);
+                                        show_icon.set(false);
                                     },
                                     span { class: static_concat!(Css::ICON, Css::SM, Icons::PALETTE) }
                                     span { "Accent" }
@@ -379,12 +394,102 @@ pub fn Header() -> Element {
                                     }
                                 }
                                 div {
+                                    class: [Css::ICON_LIST_ITEM, Css::FLEX_ROW, either!(show_icon(), Css::SELECTED, "")]
+                                        .concat(),
+                                    onclick: move |evt: Event<MouseData>| {
+                                        evt.stop_propagation();
+                                        show_icon.set(!show_icon());
+                                        show_theme.set(false);
+                                        show_accent.set(false);
+                                    },
+                                    span { class: static_concat!(Css::ICON, Css::SM, Icons::SANDPIT) }
+                                    span { "Icons" }
+                                    span { class: static_concat!(Css::ICON, Css::SM, Icons::CHEVRON_RIGHT, Css::FLOAT_RIGHT) }
+                                    div {
+                                        class: [
+                                            Css::HEADER_DROPDOWN_CONTENT,
+                                            Css::HEADER_DROPDOWN_NESTED,
+                                            either!(show_icon(), Css::SHOW, ""),
+                                        ]
+                                            .concat(),
+                                        div {
+                                            class: [
+                                                Css::ICON_LIST_ITEM,
+                                                Css::FLEX_ROW,
+                                                either!(user.icon_theme == IconTheme::Tabler, Css::SELECTED, ""),
+                                            ]
+                                                .concat(),
+                                            onclick: move |evt: Event<MouseData>| async move {
+                                                change_icon(IconTheme::Tabler).await;
+                                                close(evt);
+                                            },
+                                            span {
+                                                style: format!("mask-image:url({}#sandpit)", ICONS_ASSET_TABLER),
+                                                class: static_concat!(Css::ICON, Css::SM, Css::HEADER_COL),
+                                            }
+                                            span { "Tabler" }
+                                        }
+                                        div {
+                                            class: [
+                                                Css::ICON_LIST_ITEM,
+                                                Css::FLEX_ROW,
+                                                either!(user.icon_theme == IconTheme::Remix, Css::SELECTED, ""),
+                                            ]
+                                                .concat(),
+                                            onclick: move |evt: Event<MouseData>| async move {
+                                                change_icon(IconTheme::Remix).await;
+                                                close(evt);
+                                            },
+                                            span {
+                                                style: format!("mask-image:url({}#sandpit)", ICONS_ASSET_REMIX),
+                                                class: static_concat!(Css::ICON, Css::SM, Css::HEADER_COL),
+                                            }
+                                            span { "Remix" }
+                                        }
+                                        div {
+                                            class: [
+                                                Css::ICON_LIST_ITEM,
+                                                Css::FLEX_ROW,
+                                                either!(user.icon_theme == IconTheme::Iconoir, Css::SELECTED, ""),
+                                            ]
+                                                .concat(),
+                                            onclick: move |evt: Event<MouseData>| async move {
+                                                change_icon(IconTheme::Iconoir).await;
+                                                close(evt);
+                                            },
+                                            span {
+                                                style: format!("mask-image:url({}#sandpit)", ICONS_ASSET_ICONOIR),
+                                                class: static_concat!(Css::ICON, Css::SM, Css::HEADER_COL),
+                                            }
+                                            span { "Iconoir" }
+                                        }
+                                        div {
+                                            class: [
+                                                Css::ICON_LIST_ITEM,
+                                                Css::FLEX_ROW,
+                                                either!(user.icon_theme == IconTheme::SargamLine, Css::SELECTED, ""),
+                                            ]
+                                                .concat(),
+                                            onclick: move |evt: Event<MouseData>| async move {
+                                                change_icon(IconTheme::SargamLine).await;
+                                                close(evt);
+                                            },
+                                            span {
+                                                style: format!("mask-image:url({}#sandpit)", ICONS_ASSET_SARGAM_LINE),
+                                                class: static_concat!(Css::ICON, Css::SM, Css::HEADER_COL),
+                                            }
+                                            span { "Sargam" }
+                                        }
+                                    }
+                                }
+                                div {
                                     class: [Css::ICON_LIST_ITEM, Css::FLEX_ROW, either!(show_theme(), Css::SELECTED, "")]
                                         .concat(),
                                     onclick: move |evt: Event<MouseData>| {
                                         evt.stop_propagation();
                                         show_theme.set(!show_theme());
                                         show_accent.set(false);
+                                        show_icon.set(false);
                                     },
                                     span { class: static_concat!(Css::ICON, Css::SM, Icons::CONTRAST) }
                                     span { "Theme" }

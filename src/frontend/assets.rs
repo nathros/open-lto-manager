@@ -8,19 +8,19 @@ pub const FAVICON: Asset = asset!(
 );
 pub const LOGO_ASSET: Asset = asset!("/assets/logos-all.svg");
 
-pub const _ICONS_ASSET_REMIX: Asset = asset!(
+pub const ICONS_ASSET_REMIX: Asset = asset!(
     "/assets/icons-remix.svg",
     AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
 );
-pub const _ICONS_ASSET_TABLER: Asset = asset!(
+pub const ICONS_ASSET_TABLER: Asset = asset!(
     "/assets/icons-tabler.svg",
     AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
 );
-pub const _ICONS_ASSET_ICONOIR: Asset = asset!(
+pub const ICONS_ASSET_ICONOIR: Asset = asset!(
     "/assets/icons-iconoir.svg",
     AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
 );
-pub const _ICONS_ASSET_SARGAM_LINE: Asset = asset!(
+pub const ICONS_ASSET_SARGAM_LINE: Asset = asset!(
     "/assets/icons-sargamline.svg",
     AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
 );
