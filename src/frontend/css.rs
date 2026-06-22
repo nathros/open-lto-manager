@@ -4,9 +4,9 @@
 pub struct Css; // CSS class names
 
 impl Css {
-    pub const COLOUR_SCHEME: &str = "colour-scheme"; // Defined in assets/css/:root.css line 29
-    pub const COLOUR_SCHEME_LIGHT: &str = "colour-scheme-light"; // Defined in assets/css/:root.css line 30
-    pub const COLOUR_SCHEME_DARK: &str = "colour-scheme-dark"; // Defined in assets/css/:root.css line 31
+    pub const COLOUR_SCHEME: &str = "colour-scheme"; // Defined in assets/css/:root.css line 30
+    pub const COLOUR_SCHEME_LIGHT: &str = "colour-scheme-light"; // Defined in assets/css/:root.css line 31
+    pub const COLOUR_SCHEME_DARK: &str = "colour-scheme-dark"; // Defined in assets/css/:root.css line 32
     pub const MAIN_HEADER: &str = "main-header "; // Defined in assets/css/header.css line 1
     pub const MAIN_HEADER_LOGO: &str = "header-logo "; // Defined in assets/css/header.css line 15
     pub const MAIN_ASIDE: &str = "main-aside "; // Defined in assets/css/header.css line 25
@@ -21,10 +21,13 @@ impl Css {
     pub const ICON_LIST_ITEM: &str = "icon-list-item "; // Defined in assets/css/icon-list.css line 1
     pub const ICON: &str = "icon "; // Defined in assets/css/icon.css line 1
     pub const MESSAGE: &str = "message "; // Defined in assets/css/message.css line 1
+    pub const LOGIN_CONTAINER: &str = "login-container "; // Defined in assets/css/login.css line 1
     pub const FLEX_ROW: &str = "flex-row "; // Defined in assets/css/common.css line 29
-    pub const SHOW: &str = "show "; // Defined in assets/css/common.css line 35
-    pub const SELECTED: &str = "selected "; // Defined in assets/css/common.css line 38
-    pub const SM: &str = "sm "; // Defined in assets/css/common.css line 42
-    pub const SCREEN_FILL: &str = "screen-fill "; // Defined in assets/css/common.css line 46
-    pub const BG: &str = "bg "; // Defined in assets/css/common.css line 59
+    pub const FLEX_COL: &str = "flex-col "; // Defined in assets/css/common.css line 32
+    pub const FLEX_CENTRE: &str = "flex-centre "; // Defined in assets/css/common.css line 40
+    pub const SHOW: &str = "show "; // Defined in assets/css/common.css line 45
+    pub const SELECTED: &str = "selected "; // Defined in assets/css/common.css line 48
+    pub const SM: &str = "sm "; // Defined in assets/css/common.css line 52
+    pub const SCREEN_FILL: &str = "screen-fill "; // Defined in assets/css/common.css line 56
+    pub const BG: &str = "bg "; // Defined in assets/css/common.css line 69
 }

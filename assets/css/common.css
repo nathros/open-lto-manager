@@ -27,10 +27,20 @@ hr {
 	font-size: small;
 }
 .flex-row { /* impl Css::FLEX_ROW */
-	display: flex;
 	flex-direction: row;
+}
+.flex-col { /* impl Css::FLEX_COL */
+	flex-direction: column;
+}
+.flex-row, .flex-col {
+	display: flex;
 	align-items: center;
 	gap: var(--padding-m);
+}
+.flex-centre { /* impl Css::FLEX_CENTRE */
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 .show { /* impl Css::SHOW */
 	display: block;

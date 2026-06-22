@@ -4,6 +4,7 @@
 	--main-header-height: 3rem;
 	--main-aside-width: 10rem;
 	--radius: 6px;
+	--border: 1px solid #d9d9d9;
 
 	--shadow-overlay: 0px 8px 12px #1e1f2126, 0px 0px 1px #1e1f214f;
 	--shadow-raised: 0px 1px 1px #1e1f2140, 0px 0px 1px #1e1f214f;

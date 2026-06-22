@@ -1,0 +1,5 @@
+section {
+	border-radius: var(--radius);
+	border: var(--border);
+}
+
