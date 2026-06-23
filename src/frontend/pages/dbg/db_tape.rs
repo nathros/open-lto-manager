@@ -78,7 +78,7 @@ fn Inner() -> Element {
                         td { "{rec.last_used}" }
                         td {
                             Button {
-                                onclick: move |_| async move {
+                                onclick: move |_evt: MouseEvent| async move {
                                     match api_del_tape(rec.id).await {
                                         Ok(_) => {
                                             message.write().text.clear();

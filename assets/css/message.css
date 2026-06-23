@@ -1,4 +1,4 @@
-.message { /* impl Css::MESSAGE */
+.message /* impl Css::MESSAGE */ {
 	border-style: solid;
 	border-width: 2px;
 	border-radius: var(--radius);
@@ -7,17 +7,17 @@
 }
 .message.error {
 	border-color: var(--colour-error);
-	background-color: hsl(from var(--colour-error) h s calc(l + 25))
+	background-color: hsl(from var(--colour-error) h s calc(l + 25));
 }
 .message.warning {
 	border-color: var(--colour-warning);
-	background-color: hsl(from var(--colour-warning) h s calc(l + 34))
+	background-color: hsl(from var(--colour-warning) h s calc(l + 34));
 }
 .message.info {
 	border-color: var(--colour-primary);
-	background-color: hsl(from var(--colour-primary) h s calc(l + 32))
+	background-color: hsl(from var(--colour-primary) h s calc(l + 32));
 }
 .message.success {
 	border-color: var(--colour-success);
-	background-color: hsl(from var(--colour-success) h s calc(l + 42))
+	background-color: hsl(from var(--colour-success) h s calc(l + 42));
 }

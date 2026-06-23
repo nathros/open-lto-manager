@@ -63,7 +63,7 @@ fn Inner() -> Element {
                 td { "{rec.comment}" }
                 td {
                     Button {
-                        onclick: move |_| async move {
+                        onclick: move |_evt: MouseEvent| async move {
                             match delete_job(rec.id).await {
                                 Ok(_) => {
                                     msg.write().text.clear();

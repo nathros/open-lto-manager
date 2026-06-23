@@ -9,6 +9,11 @@
       "editor.formatOnSave": true,
       "prettier.useTabs": true
     },
+    "[css]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true,
+      "prettier.useTabs": true,
+    },
     "rust-analyzer.check.command": "clippy",
     "workbench.editor.wrapTabs": true,
     "emeraldwalk.runonsave": {
@@ -27,6 +32,7 @@
       "distro",
       "fontdb",
       "Greyscale",
+      "Iconoir",
       "Imation",
       "Initialise",
       "Inkscape",
@@ -44,6 +50,7 @@
       "rowid",
       "rusqlite",
       "rustfmt",
+      "Sargam",
       "serde",
       "STFS",
       "stylesheet",

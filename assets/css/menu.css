@@ -1,0 +1,19 @@
+.menu-container /* impl Css::MENU_CONTAINER */ {
+	padding: var(--padding-s);
+	gap: var(--padding-s);
+}
+.menu-container > input {
+	margin-top: var(--padding-s);
+	margin-bottom: var(--padding-m);
+}
+.menu-group /* impl Css::MENU_GROUP */ {
+	display: flex;
+	flex-direction: column;
+	width: stretch;
+}
+.menu-group > div {
+	padding-left: 3rem;
+}
+.icon.tape /* impl Css::ICON_TAPE */ {
+	mask-image: url(/assets/logos-all.svg#tape-back);
+}

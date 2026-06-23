@@ -51,7 +51,7 @@ pub fn ShowDev() -> Element {
         }
         Button {
             style: "float:right",
-            onclick: move |_| async move {
+            onclick: move |_evt: MouseEvent| async move {
                 match dev_db_restore(dir()).await {
                     Ok(result) => {
                         if result {

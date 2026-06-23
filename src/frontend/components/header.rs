@@ -14,7 +14,10 @@ use crate::{
             ICONS_ASSET_TABLER, LOGO_ASSET,
         },
         collections::message::{Message, MessageDetails},
-        components::colour_mode::ColourModeHidden,
+        components::{
+            colour_mode::ColourModeHidden,
+            menu::{Menu, MenuConfig, MenuGroup, MenuItemConfig},
+        },
         css::Css,
         elements::input::InputType,
         icons::Icons,
@@ -50,11 +53,6 @@ pub fn Header() -> Element {
     }
 
     let route: Route = use_route();
-
-    #[cfg(debug_assertions)]
-    let debug_build = true; // Show Sandpit for debug build
-    #[cfg(not(debug_assertions))]
-    let debug_build = false;
 
     let error_handler = move |err: ErrorContext| {
         let mut msg = MessageDetails::default();
@@ -104,7 +102,7 @@ pub fn Header() -> Element {
         show_accent.set(false);
         show_icon.set(false);
         show_info.set(false);
-        show_notifications.set(false); // FIXME not always close
+        show_notifications.set(false); // FIXME not always close when switch
     };
     let change_theme = move |theme: ColourMode| async move {
         if let Some(mut user) = current_user() {
@@ -131,6 +129,163 @@ pub fn Header() -> Element {
         }
     };
 
+    let aside_config = use_signal(|| MenuConfig {
+        enable_search: true,
+        groups: vec![
+            MenuGroup {
+                icon: Icons::HOME.into(),
+                label: "Home".to_string(),
+                open: route_eq(&route, &Route::Home {}),
+                items: vec![MenuItemConfig {
+                    icon: "".to_string(),
+                    label: "Home".to_string(),
+                    link: Route::Home {}.to_string(),
+                    selected: route_eq(&route, &Route::Home {}),
+                }],
+            },
+            MenuGroup {
+                icon: Css::ICON_TAPE.into(),
+                label: "Library".to_string(),
+                open: route_eq(&route, &Route::Tape { id: (0) }),
+                items: vec![MenuItemConfig {
+                    icon: "".to_string(),
+                    label: "Add Tape".to_string(),
+                    link: Route::Tape { id: (0) }.to_string(),
+                    selected: route_eq(&route, &Route::Tape { id: (0) }),
+                }],
+            },
+            MenuGroup {
+                icon: Icons::LIST.into(),
+                label: "Jobs".to_string(),
+                open: route_eq(&route, &Route::AddJob {}),
+                items: vec![MenuItemConfig {
+                    icon: "".to_string(),
+                    label: "Add Job".to_string(),
+                    link: Route::AddJob {}.to_string(),
+                    selected: route_eq(&route, &Route::AddJob {}),
+                }],
+            },
+            MenuGroup {
+                icon: Icons::WARNING.into(),
+                label: "System".to_string(),
+                open: route_eq(&route, &Route::Sessions {})
+                    || route_eq(&route, &Route::ShowDevices {}),
+                items: vec![
+                    MenuItemConfig {
+                        icon: "".to_string(),
+                        label: "Show devices".to_string(),
+                        link: Route::ShowDevices {}.to_string(),
+                        selected: route_eq(&route, &Route::ShowDevices {}),
+                    },
+                    MenuItemConfig {
+                        icon: "".to_string(),
+                        label: "Login sessions".to_string(),
+                        link: Route::Sessions {}.to_string(),
+                        selected: route_eq(&route, &Route::Sessions {}),
+                    },
+                ],
+            },
+            #[cfg(debug_assertions)]
+            MenuGroup {
+                icon: Icons::BUG.into(),
+                label: "Debug".to_string(),
+                open: route_eq(&route, &Route::Test {})
+                    || route_eq(&route, &Route::Show {})
+                    || route_eq(&route, &Route::ShowDev {})
+                    || route_eq(&route, &Route::DBUser {})
+                    || route_eq(&route, &Route::DBType {})
+                    || route_eq(&route, &Route::DBFile {})
+                    || route_eq(&route, &Route::DBTape {})
+                    || route_eq(&route, &Route::DBJob {})
+                    || route_eq(&route, &Route::DBJobMetaData {})
+                    || route_eq(&route, &Route::ShowAppState {}),
+                items: vec![
+                    MenuItemConfig {
+                        icon: "".to_string(),
+                        label: "Test".to_string(),
+                        link: Route::Test {}.to_string(),
+                        selected: route_eq(&route, &Route::Test {}),
+                    },
+                    MenuItemConfig {
+                        icon: "".to_string(),
+                        label: "Show".to_string(),
+                        link: Route::Show {}.to_string(),
+                        selected: route_eq(&route, &Route::Show {}),
+                    },
+                    MenuItemConfig {
+                        icon: "".to_string(),
+                        label: "Dev".to_string(),
+                        link: Route::ShowDev {}.to_string(),
+                        selected: route_eq(&route, &Route::ShowDev {}),
+                    },
+                    MenuItemConfig {
+                        icon: "".to_string(),
+                        label: "User".to_string(),
+                        link: Route::DBUser {}.to_string(),
+                        selected: route_eq(&route, &Route::DBUser {}),
+                    },
+                    MenuItemConfig {
+                        icon: "".to_string(),
+                        label: "Type".to_string(),
+                        link: Route::DBType {}.to_string(),
+                        selected: route_eq(&route, &Route::DBType {}),
+                    },
+                    MenuItemConfig {
+                        icon: "".to_string(),
+                        label: "Tape".to_string(),
+                        link: Route::DBTape {}.to_string(),
+                        selected: route_eq(&route, &Route::DBTape {}),
+                    },
+                    MenuItemConfig {
+                        icon: "".to_string(),
+                        label: "File".to_string(),
+                        link: Route::DBFile {}.to_string(),
+                        selected: route_eq(&route, &Route::DBFile {}),
+                    },
+                    MenuItemConfig {
+                        icon: "".to_string(),
+                        label: "Job".to_string(),
+                        link: Route::DBJob {}.to_string(),
+                        selected: route_eq(&route, &Route::DBJob {}),
+                    },
+                    MenuItemConfig {
+                        icon: "".to_string(),
+                        label: "Job Metadata".to_string(),
+                        link: Route::DBJobMetaData {}.to_string(),
+                        selected: route_eq(&route, &Route::DBJobMetaData {}),
+                    },
+                    MenuItemConfig {
+                        icon: "".to_string(),
+                        label: "App State".to_string(),
+                        link: Route::ShowAppState {}.to_string(),
+                        selected: route_eq(&route, &Route::ShowAppState {}),
+                    },
+                ],
+            },
+            #[cfg(debug_assertions)]
+            MenuGroup {
+                icon: Icons::SANDPIT.into(),
+                label: "Sandpit".to_string(),
+                open: route_eq(&route, &Route::Sandpit {})
+                    || route_eq(&route, &Route::SandpitShowcase {}),
+                items: vec![
+                    MenuItemConfig {
+                        icon: "".to_string(),
+                        label: "Index".to_string(),
+                        link: Route::Sandpit {}.to_string(),
+                        selected: route_eq(&route, &Route::Sandpit {}),
+                    },
+                    MenuItemConfig {
+                        icon: "".to_string(),
+                        label: "Showcase".to_string(),
+                        link: Route::SandpitShowcase {}.to_string(),
+                        selected: route_eq(&route, &Route::SandpitShowcase {}),
+                    },
+                ],
+            },
+        ],
+    });
+
     rsx! {
         if let user = current_user().unwrap_or_default()
             && let icon_theme = format!("{:?}", user.icon_theme).to_lowercase()
@@ -139,48 +294,7 @@ pub fn Header() -> Element {
                 ColourModeHidden { theme: user.system_theme }
                 if current_user().is_some() {
                     aside { class: Css::MAIN_ASIDE,
-                        div {
-                            Link { to: Route::Home {}, "Home" }
-                            Link {
-                                style: if route_eq(&route, &Route::Show {}) { "background-color: cyan" } else { "background-color: white" },
-                                to: Route::Show {},
-                                "Show"
-                            }
-                            Link {
-                                style: if route_eq(&route, &Route::Test {}) { "background-color: cyan" } else { "background-color: white" },
-                                to: Route::Test {},
-                                "Test"
-                            }
-                            Link {
-                                style: if route_eq(&route, &Route::Tape { id: 0 }) { "background-color: cyan" } else { "background-color: white" },
-                                to: Route::Tape { id: (0) },
-                                "[Add/Edit Tape]"
-                            }
-                            Link {
-                                style: if route_eq(&route, &Route::AddJob {}) { "background-color: cyan" } else { "background-color: white" },
-                                to: Route::AddJob {},
-                                "[Add Job]"
-                            }
-                            Link { to: Route::ShowDevices {}, "Devices" }
-                            Link { to: Route::Sessions {}, "Sessions" }
-                            Link { to: Route::LoginUser {}, "Login" }
-                            hr { style: "width:100%" }
-                            Link { to: Route::DBMan {}, "Manufacturer" }
-                            Link { to: Route::DBType {}, "Type" }
-                            Link { to: Route::DBUser {}, "User" }
-                            Link { to: Route::DBFile {}, "File" }
-                            Link { to: Route::DBJob {}, "Job" }
-                            Link { to: Route::DBJobMetaData {},
-                                {}
-                                "Job-Meta"
-                            }
-                            Link { to: Route::DBTape {}, "Tape" }
-                            Link { to: Route::ShowAppState {}, "AppState" }
-                            if debug_build {
-                                Link { to: Route::Sandpit {}, "Sandpit" }
-                                Link { to: Route::ShowDev {}, "Dev" }
-                            }
-                        }
+                        Menu { config: aside_config }
                     }
                     header { class: Css::MAIN_HEADER,
                         div { class: Css::MAIN_HEADER_LOGO, "{APP_NAME}" }
@@ -467,11 +581,11 @@ pub fn Header() -> Element {
                                             class: [
                                                 Css::ICON_LIST_ITEM,
                                                 Css::FLEX_ROW,
-                                                either!(user.icon_theme == IconTheme::SargamLine, Css::SELECTED, ""),
+                                                either!(user.icon_theme == IconTheme::Sargam, Css::SELECTED, ""),
                                             ]
                                                 .concat(),
                                             onclick: move |evt: Event<MouseData>| async move {
-                                                change_icon(IconTheme::SargamLine).await;
+                                                change_icon(IconTheme::Sargam).await;
                                                 close(evt);
                                             },
                                             span {

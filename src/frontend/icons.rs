@@ -19,6 +19,8 @@ impl Icons {
     pub const LIGHT: &str = "light ";
     pub const DARK: &str = "dark ";
     pub const SYSTEM: &str = "system ";
+    pub const LIST: &str = "list ";
     pub const BUG: &str = "bug ";
     pub const BOOK: &str = "book ";
+    pub const SEARCH: &str = "search ";
 }

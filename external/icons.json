@@ -15,7 +15,7 @@
 			"repo": "https://github.com/iconoir-icons/iconoir",
 			"action": "none"
 		},
-		"sargamline": {
+		"sargam": {
 			"path": "external/sargam-icons/",
 			"repo": "https://github.com/planetabhi/sargam-icons",
 			"action": "none"
@@ -26,103 +26,115 @@
 			"tabler": "icons/filled/alert-octagon.svg",
 			"remix": "icons/System/spam-2-fill.svg",
 			"iconoir": "icons/regular/xmark-circle.svg",
-			"sargamline": "Icons/Line/si_Error.svg"
+			"sargam": "Icons/Line/si_Error.svg"
 		},
 		"info": {
 			"tabler": "icons/filled/info-circle.svg",
 			"remix": "icons/System/information-fill.svg",
 			"iconoir": "icons/regular/info-circle.svg",
-			"sargamline": "Icons/Line/si_Info.svg"
+			"sargam": "Icons/Line/si_Info.svg"
 		},
 		"success": {
 			"tabler": "icons/filled/circle-check.svg",
 			"remix": "icons/System/checkbox-circle-fill.svg",
 			"iconoir": "icons/regular/check-circle.svg",
-			"sargamline": "Icons/Line/si_Check_circle.svg"
+			"sargam": "Icons/Line/si_Check_circle.svg"
 		},
 		"warning": {
 			"tabler": "icons/filled/alert-triangle.svg",
 			"remix": "icons/System/alert-fill.svg",
 			"iconoir": "icons/regular/warning-triangle.svg",
-			"sargamline": "Icons/Line/si_Warning.svg"
+			"sargam": "Icons/Line/si_Warning.svg"
 		},
 		"home": {
 			"tabler": "icons/filled/home.svg",
 			"remix": "icons/Buildings/home-4-fill.svg",
 			"iconoir": "icons/regular/home.svg",
-			"sargamline": "Icons/Line/si_Home_detailed.svg"
+			"sargam": "Icons/Line/si_Home_detailed.svg"
 		},
 		"notification": {
 			"tabler": "icons/filled/bell.svg",
 			"remix": "icons/Media/notification-2-fill.svg",
 			"iconoir": "icons/regular/bell.svg",
-			"sargamline": "Icons/Line/si_Notifications.svg"
+			"sargam": "Icons/Line/si_Notifications.svg"
 		},
 		"user": {
 			"tabler": "icons/filled/user.svg",
 			"remix": "icons/User & Faces/user-fill.svg",
 			"iconoir": "icons/regular/user.svg",
-			"sargamline": "Icons/Line/si_User.svg"
+			"sargam": "Icons/Line/si_User.svg"
 		},
 		"sandpit": {
 			"tabler": "icons/outline/bucket-droplet.svg",
 			"remix": "icons/Health & Medical/test-tube-fill.svg",
 			"iconoir": "icons/regular/test-tube.svg",
-			"sargamline": "Icons/Line/si_Traffic_cone.svg"
+			"sargam": "Icons/Line/si_Traffic_cone.svg"
 		},
 		"logout": {
 			"tabler": "icons/outline/logout.svg",
 			"remix": "icons/System/logout-box-r-fill.svg",
 			"iconoir": "icons/regular/log-out.svg",
-			"sargamline": "Icons/Line/si_Sign_in.svg"
+			"sargam": "Icons/Line/si_Sign_in.svg"
 		},
 		"palette": {
 			"tabler": "icons/filled/palette.svg",
 			"remix": "icons/Design/palette-fill.svg",
 			"iconoir": "icons/regular/palette.svg",
-			"sargamline": "Icons/Line/si_Swatch.svg"
+			"sargam": "Icons/Line/si_Swatch.svg"
 		},
 		"contrast": {
 			"tabler": "icons/filled/contrast.svg",
 			"remix": "icons/Design/contrast-line.svg",
 			"iconoir": "icons/regular/brightness.svg",
-			"sargamline": "Icons/Line/si_Sun_set.svg"
+			"sargam": "Icons/Line/si_Sun_set.svg"
 		},
 		"chevron-right": {
 			"tabler": "icons/filled/chevron-right.svg",
-			"remix": "icons/Arrows/arrow-right-s-line.svg",
+			"remix": "icons/Arrows/arrow-right-s-fill.svg",
 			"iconoir": "icons/regular/nav-arrow-right.svg",
-			"sargamline": "Icons/Fill/si_Chevron_right_alt.svg"
+			"sargam": "Icons/Line/si_Chevron_right_square.svg"
 		},
 		"light": {
 			"tabler": "icons/outline/sun.svg",
 			"remix": "icons/Weather/sun-line.svg",
 			"iconoir": "icons/regular/sun-light.svg",
-			"sargamline": "Icons/Line/si_Sun.svg"
+			"sargam": "Icons/Line/si_Sun.svg"
 		},
 		"dark": {
 			"tabler": "icons/filled/moon.svg",
 			"remix": "icons/Weather/moon-fill.svg",
 			"iconoir": "icons/regular/half-moon.svg",
-			"sargamline": "Icons/Line/si_Moon.svg"
+			"sargam": "Icons/Line/si_Moon.svg"
 		},
 		"system": {
 			"tabler": "icons/outline/device-desktop.svg",
 			"remix": "icons/Device/computer-line.svg",
 			"iconoir": "icons/regular/computer.svg",
-			"sargamline": "Icons/Line/si_Monitor.svg"
+			"sargam": "Icons/Line/si_Monitor.svg"
+		},
+		"list": {
+			"tabler": "icons/filled/clipboard-list.svg",
+			"remix": "icons/Document/file-list-3-fill.svg",
+			"iconoir": "icons/regular/task-list.svg",
+			"sargam": "Icons/Line/si_Featured_playlist.svg"
 		},
 		"bug": {
 			"tabler": "icons/filled/bug.svg",
 			"remix": "icons/Development/bug-2-fill.svg",
 			"iconoir": "icons/regular/bug.svg",
-			"sargamline": "../iconoir/icons/regular/bug.svg"
+			"sargam": "../iconoir/icons/regular/bug.svg"
 		},
 		"book": {
 			"tabler": "icons/filled/book.svg",
 			"remix": "icons/Document/book-3-fill.svg",
 			"iconoir": "icons/regular/book.svg",
-			"sargamline": "Icons/Line/si_Book.svg"
+			"sargam": "Icons/Line/si_Book.svg"
+		},
+		"search": {
+			"tabler": "icons/outline/search.svg",
+			"remix": "icons/System/search-2-line.svg",
+			"iconoir": "icons/regular/search-engine.svg",
+			"sargam": "Icons/Line/si_Search_alt.svg"
 		}
 	}
 }

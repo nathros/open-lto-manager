@@ -9,7 +9,7 @@ function preview_start() {
 	echo "	<head>" >> $OUTPUT
 	echo "		<title>$2 preview</title>" >> $OUTPUT
 	echo "		<style>td, th { border: 1px solid; } td { padding: 4px;} tr th { position: sticky; top: 0; background-color: white; } td > div { display: inline-flex; }</style>" >> $OUTPUT
-	echo "		<style>img { width: 6rem; height: 6rem; margin: 2px; } .sm { width: 1rem; height: 1rem; } .md { width: 2rem; height: 2rem; } .fill { background-color: lightgrey; } a { text-decoration: none; }</style>" >> $OUTPUT
+	echo "		<style>img { width: 5rem; height: 5rem; margin: 2px; } .sm { width: 1rem; height: 1rem; } .md { width: 1.5rem; height: 1.5rem; } .sm, .md { margin-top: auto; margin-bottom: auto; } .fill { background-color: lightgrey; } a { text-decoration: none; }</style>" >> $OUTPUT
 	echo "	</head>" >> $OUTPUT
 	echo "<body>" >> $OUTPUT
 	echo "<p>This is a preview of SVG sprites which are accessed via: #anchor</p>" >> $OUTPUT
@@ -179,38 +179,39 @@ function process_theme() {
 				I=${THEME_NAME_INDEX[$THEME]} # Get icon them index from name
 				N=${THEME_NAME[${I}]}
 				SVG=$(cat "../${THEME_PATH[$I]}$ICON_PATH")
-				FIND="viewBox"
-				REPLACE="id=\"$ICON_NAME\" class=\"icon\" $FIND"
+				FIND="<svg"
+				REPLACE="$FIND id=\"$ICON_NAME\" class=\"icon\" "
 				# After: id="achor" class="icon" viewBox
 				# First occurrence only
 
 				echo >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg" # Add new line
 
 				if [[ "${THEME_ACTION[${I}]}" == "tabler" ]]; then
-					echo "$SVG" | sed -e "s/id\=\"/id\=\"${ICON_NAME}-/g"               `# Append icon name to inner ids to make them unique` \
+					echo "$SVG" | tr -d '\n'                                            `# Remove new lines` \
+						| sed -e "s/<!--.*-->//"                                        `# Remove comments` \
+						| sed -e "s/id\=\"/id\=\"${ICON_NAME}-/g"                       `# Append icon name to inner ids to make them unique` \
 						| sed -e "s/href=\"#/href=\"#${ICON_NAME}-/g"                   `# Update url(#) with new ids` \
 						| sed -e "s/=\"url(#/=\"url(#${ICON_NAME}-/g"                   `# Update href(#) with new ids` \
 						| sed -e "s/$FIND/$REPLACE/g"                                   `# Add icon class` \
-						| sed -e '1,4d'                                                 `# # tab # Delete lines 1-4 (comments)` \
 						| sed -e 's/  \(width\|height\)="[0-9]*"//g'                    `# # tab # Find replace width and height` \
 						| sed -r '/^\s*$/d'                                             `# # tab # Remove empty lines` \
 						| sed -e 's/<style>/<style>@scope{/g'                           `# Wrap styles inside @scope open` \
 						| sed -e 's/<\/style>/}<\/style>/g'                             `# Wrap styles inside @scope close` \
 						| sed -e 's/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"//g'        `# Remove xmlns` \
-						| tr -d '\n'                                                    `# Remove new lines` \
 						| sed -e 's/> *</></g'                                          `# Replace '> <' with '><'` \
 						| sed -e 's/ *>/>/g'                                            `# Replace ' >' with '>'` \
 						| sed -e 's/ *\/>/\/>/g'                                        `# Replace ' \>' with '\>'` \
 						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `# Remove whitespace`
 				else
-					echo "$SVG" | sed -e "s/id\=\"/id\=\"${ICON_NAME}-/g"               `# Append icon name to inner ids to make them unique` \
+					echo "$SVG" | tr -d '\n'                                            `# Remove new lines` \
+						| sed -e "s/<!--.*-->//"                                        `# Remove comments` \
+						| sed -e "s/id\=\"/id\=\"${ICON_NAME}-/g"                       `# Append icon name to inner ids to make them unique` \
 						| sed -e "s/href=\"#/href=\"#${ICON_NAME}-/g"                   `# Update url(#) with new ids` \
 						| sed -e "s/=\"url(#/=\"url(#${ICON_NAME}-/g"                   `# Update href(#) with new ids` \
 						| sed -e "s/$FIND/$REPLACE/g"                                   `# Add icon class` \
 						| sed -e 's/<style>/<style>@scope{/g'                           `# Wrap styles inside @scope open` \
 						| sed -e 's/<\/style>/}<\/style>/g'                             `# Wrap styles inside @scope close` \
 						| sed -e 's/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"//g'        `# Remove xmlns` \
-						| tr -d '\n'                                                    `# Remove new lines` \
 						| sed -e 's/> *</></g'                                          `# Replace '> <' with '><'` \
 						| sed -e 's/ *>/>/g'                                            `# Replace ' >' with '>'` \
 						| sed -e 's/ *\/>/\/>/g'                                        `# Replace ' \>' with '\>'` \

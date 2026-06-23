@@ -15,7 +15,7 @@ pub fn FileViewer(mut selected_files: WriteSignal<HashSet<String>>) -> Element {
         current_path_input.set(evt.value());
     };
 
-    let apply = move |_| {
+    let apply = move |_evt: MouseEvent| {
         info!("apply {} = {}", current_path, current_path_input);
         current_path.set(current_path_input());
         selected_files.write().clear(); // If changing dir current files will be lost, TODO add warning message

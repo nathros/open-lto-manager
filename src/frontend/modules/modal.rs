@@ -30,7 +30,7 @@ pub fn Modal(id: &'static str, level: Level, message: Signal<String>) -> Element
             Button {
                 "commandfor": id,
                 "command": "close",
-                onclick: move |_| {
+                onclick: move |_evt: MouseEvent| {
                     message.set("".to_string());
                 },
                 text: "OK",

@@ -1,4 +1,4 @@
-.icon { /* impl Css::ICON */
+.icon /* impl Css::ICON */ {
 	display: block;
 	width: 2rem;
 	height: 2rem;

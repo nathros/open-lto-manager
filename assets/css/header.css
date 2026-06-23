@@ -1,4 +1,4 @@
-.main-header { /* impl Css::MAIN_HEADER */
+.main-header /* impl Css::MAIN_HEADER */ {
 	display: flex;
 	align-items: center;
 	position: fixed;
@@ -6,13 +6,14 @@
 	left: 0;
 	right: 0;
 	height: var(--main-header-height);
-	border-bottom: 1px solid black;
+	border-bottom: var(--border);
 	background-color: white;
+	z-index: 10;
 }
 .main-header > * {
 	margin: var(--padding-s);
 }
-.header-logo { /* impl Css::MAIN_HEADER_LOGO */
+.header-logo /* impl Css::MAIN_HEADER_LOGO */ {
 	background-image: url(/assets/logo.svg);
 	background-size: 2rem;
 	background-repeat: no-repeat;
@@ -22,20 +23,20 @@
 	height: 2rem;
 	align-content: center;
 }
-.main-aside { /* impl Css::MAIN_ASIDE */
+.main-aside /* impl Css::MAIN_ASIDE */ {
 	position: fixed;
 	top: 0;
 	left: 0;
 	height: 100vh;
 	width: var(--main-aside-width);
 	margin-top: calc(var(--main-header-height));
-	border-right: 1px solid black;
+	border-right: var(--border);
 }
 .main-aside > div {
 	display: flex;
 	flex-direction: column;
 }
-.header-user { /* impl Css::HEADER_USER */
+.header-user /* impl Css::HEADER_USER */ {
 	font-size: large;
 	font-weight: bold;
 	text-align: center;
@@ -45,14 +46,14 @@
 	cursor: default;
 	box-shadow: none !important;
 }
-.header-dropdown { /* impl Css::HEADER_DROPDOWN */
+.header-dropdown /* impl Css::HEADER_DROPDOWN */ {
 	position: relative;
 }
 .header-dropdown:hover {
 	cursor: pointer;
 	box-shadow: var(--hover);
 }
-.header-dropdown-content { /* impl Css::HEADER_DROPDOWN_CONTENT */
+.header-dropdown-content /* impl Css::HEADER_DROPDOWN_CONTENT */ {
 	display: none;
 	position: absolute;
 	right: 0;
@@ -63,9 +64,10 @@
 	box-shadow: var(--shadow-overlay);
 	border-radius: var(--radius);
 	min-width: 14rem;
+	border: var(--border);
 	animation: float-down 250ms ease forwards;
 }
-.header-dropdown-content.nested { /* impl Css::HEADER_DROPDOWN_NESTED */
+.header-dropdown-content.nested /* impl Css::HEADER_DROPDOWN_NESTED */ {
 	right: 101%;
 	top: calc(var(--padding-s) * -1);
 }
@@ -74,28 +76,29 @@
 	flex-direction: column;
 	cursor: default;
 }
-.float-right { /* impl Css::FLOAT_RIGHT */
+.float-right /* impl Css::FLOAT_RIGHT */ {
 	margin-left: auto;
 }
-.header-colour { /* impl Css::HEADER_COL */
+.header-colour /* impl Css::HEADER_COL */ {
 	border-radius: 100%;
 }
-.rainbow { /* impl Css::RAINBOW */
+.rainbow /* impl Css::RAINBOW */ {
 	background: linear-gradient(
 		90deg,
-		rgb(255,0,0) 0%,
-		rgb(255,154,0) 10%,
-		rgb(208,222,33) 20%,
-		rgb(79,220,74) 30%,
-		rgb(63,218,216) 40%,
-		rgb(47,201,226) 50%,
-		rgb(28,127,238) 60%,
-		rgb(95,21,242) 70%,
-		rgb(186,12,248) 80%,
-		rgb(251,7,217) 90%,
-		rgb(255,0,0) 100%);
+		rgb(255, 0, 0) 0%,
+		rgb(255, 154, 0) 10%,
+		rgb(208, 222, 33) 20%,
+		rgb(79, 220, 74) 30%,
+		rgb(63, 218, 216) 40%,
+		rgb(47, 201, 226) 50%,
+		rgb(28, 127, 238) 60%,
+		rgb(95, 21, 242) 70%,
+		rgb(186, 12, 248) 80%,
+		rgb(251, 7, 217) 90%,
+		rgb(255, 0, 0) 100%
+	);
 }
-#accent-picker { /* [trim] impl Css::ID_ACCENT_PICKER */
+#accent-picker /* [trim] impl Css::ID_ACCENT_PICKER */ {
 	all: unset;
 	width: 0;
 }

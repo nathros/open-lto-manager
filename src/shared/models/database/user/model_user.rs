@@ -101,7 +101,7 @@ pub enum IconTheme {
     Tabler = 0,
     Remix = 1,
     Iconoir = 2,
-    SargamLine = 3,
+    Sargam = 3,
 }
 
 impl From<i64> for IconTheme {
@@ -110,7 +110,7 @@ impl From<i64> for IconTheme {
             _ if value == IconTheme::Tabler as i64 => IconTheme::Tabler,
             _ if value == IconTheme::Remix as i64 => IconTheme::Remix,
             _ if value == IconTheme::Iconoir as i64 => IconTheme::Iconoir,
-            _ if value == IconTheme::SargamLine as i64 => IconTheme::SargamLine,
+            _ if value == IconTheme::Sargam as i64 => IconTheme::Sargam,
             _ => IconTheme::Tabler, // Fallback
         }
     }

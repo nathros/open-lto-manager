@@ -39,7 +39,7 @@ pub fn AddJob() -> Element {
         }
     };
 
-    let submit = move |_| async move {
+    let submit = move |_evt: MouseEvent| async move {
         if new_job().name.is_empty() {
             modal_message.set("Name cannot be empty".to_string());
         } else if selected_files().is_empty() {

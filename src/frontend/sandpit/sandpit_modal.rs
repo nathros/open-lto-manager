@@ -48,28 +48,28 @@ pub fn SandpitModal() -> Element {
         br {}
 
         Button {
-            onclick: move |_| async move {
+            onclick: move |_evt: MouseEvent| async move {
                 message_error.set(message_input());
             },
             text: "Show Error",
         }
         span { " " }
         Button {
-            onclick: move |_| async move {
+            onclick: move |_evt: MouseEvent| async move {
                 message_warning.set(message_input());
             },
             text: "Show Warning",
         }
         span { " " }
         Button {
-            onclick: move |_| async move {
+            onclick: move |_evt: MouseEvent| async move {
                 message_info.set(message_input());
             },
             text: "Show Info",
         }
         span { " " }
         Button {
-            onclick: move |_| async move {
+            onclick: move |_evt: MouseEvent| async move {
                 message_success.set(message_input());
             },
             text: "Show Success",

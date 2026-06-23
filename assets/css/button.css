@@ -1,32 +1,28 @@
-.btn {
+.btn /* impl Css::BTN */ {
 	padding: var(--padding-s);
 	border-radius: var(--radius);
 	border: var(--border);
 	background-color: transparent;
+	font-size: smaller;
 	transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
-
 .btn:hover {
 	border-color: var(--colour-accent);
 	color: var(--colour-accent);
 	cursor: pointer;
 }
-
 .btn:active {
 	border-color: hsl(from var(--colour-accent) h s calc(l - 10));
 	color: hsl(from var(--colour-accent) h s calc(l - 10));
 }
-
-.btn.pri {
+.btn.pri /* impl Css::BTN_PRI */ {
 	background-color: hsl(from var(--colour-accent) h s calc(l - 10));
 	color: white;
 	border: none;
 }
-
 .btn.pri:hover {
 	background-color: hsl(from var(--colour-accent) h s calc(l + 10));
 }
-
 .btn.pri:active {
 	background-color: hsl(from var(--colour-accent) h s calc(l - 10));
 }

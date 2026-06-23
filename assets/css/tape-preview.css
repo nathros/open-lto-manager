@@ -16,13 +16,15 @@
 .tape-worm {
 	display: none; /* FIXME: mask will not be fetched until .show applied */
 	mask: url(tape-preview-mask.jxl);
-    mask-size: var(--tape-prev-size);
-    filter: saturate(0);
+	mask-size: var(--tape-prev-size);
+	filter: saturate(0);
 }
 .tape-worm.show {
 	display: block;
 }
-.tape-main, .tape-worm, .tape-tab {
+.tape-main,
+.tape-worm,
+.tape-tab {
 	width: var(--tape-prev-size);
 }
 .tape-preview > img:not(:first-child),
@@ -30,7 +32,8 @@
 .tape-size {
 	position: absolute;
 }
-.tape-worm, .tape-tab {
+.tape-worm,
+.tape-tab {
 	left: 0;
 	top: 0;
 }

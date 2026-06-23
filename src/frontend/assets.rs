@@ -6,7 +6,11 @@ pub const FAVICON: Asset = asset!(
     "/assets/logo.svg",
     AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
 );
-pub const LOGO_ASSET: Asset = asset!("/assets/logos-all.svg");
+
+pub const LOGO_ASSET: Asset = asset!(
+    "/assets/logos-all.svg",
+    AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
+);
 
 pub const ICONS_ASSET_REMIX: Asset = asset!(
     "/assets/icons-remix.svg",
@@ -21,7 +25,7 @@ pub const ICONS_ASSET_ICONOIR: Asset = asset!(
     AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
 );
 pub const ICONS_ASSET_SARGAM_LINE: Asset = asset!(
-    "/assets/icons-sargamline.svg",
+    "/assets/icons-sargam.svg",
     AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
 );
 
@@ -34,7 +38,7 @@ pub const CSS_ASSETS: [Asset; 1] = [asset!(
 
 // Release (build.rs) will combine all these files into single bundle.css
 #[cfg(debug_assertions)] // Debug build individual CSS files
-pub const CSS_ASSETS: [Asset; 14] = [
+pub const CSS_ASSETS: [Asset; 15] = [
     asset!("/assets/css/:root.css"),
     asset!("/assets/font/font.css"),
     asset!("/assets/css/header.css"),
@@ -47,6 +51,7 @@ pub const CSS_ASSETS: [Asset; 14] = [
     asset!("/assets/css/button.css"),
     asset!("/assets/css/section.css"),
     asset!("/assets/css/login.css"),
+    asset!("/assets/css/menu.css"),
     asset!("/assets/css/tape-preview.css"),
     asset!("/assets/css/common.css"),
 ];

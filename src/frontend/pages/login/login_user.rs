@@ -55,7 +55,7 @@ pub fn LoginUser(#[props(default)] success_signal: Callback) -> Element {
                         Button {
                             primary: true,
                             text: "Login",
-                            onclick: move |_| async move {
+                            onclick: move |_evt: MouseEvent| async move {
                                 match api_login(username(), password()).await {
                                     Ok(_o) => {
                                         success_signal(());

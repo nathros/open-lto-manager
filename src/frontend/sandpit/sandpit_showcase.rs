@@ -1,22 +1,31 @@
 use dioxus::prelude::*;
 
-use crate::frontend::sandpit::{
-    sandpit_button::SandpitButton, sandpit_message::SandpitMessage, sandpit_modal::SandpitModal,
+use crate::frontend::{
+    css::Css,
+    sandpit::{
+        sandpit_button::SandpitButton, sandpit_menu::SandpitMenu,
+        sandpit_menu_item::SandpitMenuItem, sandpit_message::SandpitMessage,
+        sandpit_modal::SandpitModal,
+    },
 };
 
 #[component]
 pub fn SandpitShowcase() -> Element {
+    let list: Vec<(&str, Element)> = vec![
+        ("Button", SandpitButton()),
+        ("Modal", SandpitModal()),
+        ("Message", SandpitMessage()),
+        ("Menu Item", SandpitMenuItem()),
+        ("Menu", SandpitMenu()),
+    ];
+
     rsx! {
-        span { "Button" }
-        div { SandpitButton {} }
-        hr {}
-
-        span { "Modal" }
-        div { SandpitModal {} }
-        hr {}
-
-        span { "Message" }
-        div { SandpitMessage {} }
-        hr {}
+        div { class: Css::FLEX_COL, style: "align-items:unset",
+            for (name , component) in list {
+                h3 { "{name}" }
+                div { {component} }
+                hr {}
+            }
+        }
     }
 }

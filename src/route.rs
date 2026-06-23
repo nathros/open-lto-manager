@@ -6,8 +6,8 @@ use crate::frontend::{
         admin::sessions::Sessions,
         dbg::{
             db_app_state::ShowAppState, db_dev::ShowDev, db_file::DBFile, db_job::DBJob,
-            db_job_metadata::DBJobMetaData, db_man::DBMan, db_tape::DBTape, db_type::DBType,
-            db_user::DBUser, show_devices::ShowDevices,
+            db_job_metadata::DBJobMetaData, db_tape::DBTape, db_type::DBType, db_user::DBUser,
+            show_devices::ShowDevices,
         },
         home::Home,
         job::add_job::AddJob,
@@ -17,7 +17,8 @@ use crate::frontend::{
         test::Test,
     },
     sandpit::{
-        index::Sandpit, sandpit_button::SandpitButton, sandpit_message::SandpitMessage,
+        index::Sandpit, sandpit_button::SandpitButton, sandpit_menu::SandpitMenu,
+        sandpit_menu_item::SandpitMenuItem, sandpit_message::SandpitMessage,
         sandpit_modal::SandpitModal, sandpit_showcase::SandpitShowcase,
     },
 };
@@ -57,9 +58,11 @@ pub enum Route {
     SandpitModal {},
     #[route("/sandpit/message")]
     SandpitMessage {},
+    #[route("/sandpit/menu")]
+    SandpitMenu {},
+    #[route("/sandpit/menu-item")]
+    SandpitMenuItem {},
 
-    #[route("/db-man")]
-    DBMan {},
     #[route("/db-type")]
     DBType {},
     #[route("/db-user")]
