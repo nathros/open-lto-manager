@@ -17,7 +17,7 @@ impl Css {
     pub const FLOAT_RIGHT: &str = "float-right "; // Defined in assets/css/header.css line 79
     pub const HEADER_COL: &str = "header-colour "; // Defined in assets/css/header.css line 82
     pub const RAINBOW: &str = "rainbow "; // Defined in assets/css/header.css line 85
-    pub const ID_ACCENT_PICKER: &str = "accent-picker"; // Defined in assets/css/header.css line 101
+    pub const ID_ACCENT_PICKER: &str = "accent-picker"; // Defined in assets/css/header.css line 88
     pub const ICON_LIST_ITEM: &str = "icon-list-item "; // Defined in assets/css/icon-list.css line 1
     pub const ICON: &str = "icon "; // Defined in assets/css/icon.css line 1
     pub const MESSAGE: &str = "message "; // Defined in assets/css/message.css line 1
@@ -34,6 +34,8 @@ impl Css {
     pub const SHOW: &str = "show "; // Defined in assets/css/common.css line 49
     pub const SELECTED: &str = "selected "; // Defined in assets/css/common.css line 52
     pub const SM: &str = "sm "; // Defined in assets/css/common.css line 56
-    pub const SCREEN_FILL: &str = "screen-fill "; // Defined in assets/css/common.css line 60
-    pub const BG: &str = "bg "; // Defined in assets/css/common.css line 73
+    pub const MD: &str = "md "; // Defined in assets/css/common.css line 60
+    pub const SCREEN_FILL: &str = "screen-fill "; // Defined in assets/css/common.css line 64
+    pub const BG: &str = "bg "; // Defined in assets/css/common.css line 77
+    pub const ID_SNA: &str = "sna"; // Defined in assets/css/common.css line 92
 }

@@ -2,11 +2,13 @@ use dioxus::prelude::*;
 
 use crate::{
     frontend::{
+        assets::LOGO_ASSET,
         css::Css,
         elements::{
             input::{Input, InputType},
             menu_item::MenuItem,
         },
+        js::js_system_canvas,
         utils::function::fn_link_follow,
     },
     static_concat,
@@ -123,6 +125,16 @@ pub fn Menu(config: Signal<MenuConfig>) -> Element {
                         }
                         if count == 0 {
                             p { "No results" }
+                            div { class: static_concat!(Css::FLEX_CENTRE, Css::MD),
+                                img {
+                                    id: Css::ID_SNA,
+                                    src: format!("{}#sna", LOGO_ASSET),
+                                    onclick: move |_: MouseEvent| {
+                                        js_system_canvas();
+                                    },
+                                }
+                                i { "{MSG}" }
+                            }
                         }
                     }
                 }
@@ -130,3 +142,15 @@ pub fn Menu(config: Signal<MenuConfig>) -> Element {
         }
     }
 }
+
+const MSG: &str = {
+    const fn _f(i: &[u8]) -> &str {
+        let Ok(s) = std::str::from_utf8(i) else {
+            unreachable!();
+        };
+        s
+    }
+    _f
+}(&[
+    0x53u8, 0x6eu8, 0x61u8, 0x6bu8, 0x65u8, 0x2eu8, 0x2eu8, 0x2eu8,
+]);

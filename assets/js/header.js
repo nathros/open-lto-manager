@@ -1,4 +1,4 @@
-let systemCanvas = new (function () {
+var systemCanvas = function () {
 	// Isolates this code from other JavaScript
 
 	let showGrid = false; // Debug, toggle with ` Tilde key.
@@ -30,7 +30,7 @@ let systemCanvas = new (function () {
 	let drawInterval;
 	let bodyOverflowOriginal;
 
-	//createSystemCanvas();
+	createSystemCanvas();
 
 	function createSystemCanvas() {
 		// Create canvas, is exists then replace.
@@ -572,10 +572,4 @@ let systemCanvas = new (function () {
 		);
 		ctx.restore();
 	}
-
-	return {
-		createSystem: function () {
-			createSystemCanvas();
-		},
-	};
-})();
+};
