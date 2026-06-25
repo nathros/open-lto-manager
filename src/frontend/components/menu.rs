@@ -38,8 +38,16 @@ pub struct MenuConfig {
 
 impl MenuConfig {
     pub fn toggle_group(&mut self, index: usize) {
+        let original = {
+            if let Some(group) = self.groups.get(index) {
+                group.open
+            } else {
+                false
+            }
+        };
+        self.groups.iter_mut().for_each(|g| g.open = false);
         if let Some(group) = self.groups.get_mut(index) {
-            group.open = !group.open;
+            group.open = !original;
         }
     }
     pub fn set_selected(&mut self, index_group: usize, index_item: usize) {

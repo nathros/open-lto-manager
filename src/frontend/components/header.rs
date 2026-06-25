@@ -296,16 +296,16 @@ pub fn Header() -> Element {
                     aside { class: Css::MAIN_ASIDE,
                         Menu { config: aside_config }
                     }
-                    header { class: Css::MAIN_HEADER,
+                    div {
+                        class: [
+                            Css::SCREEN_FILL,
+                            either!(show_notifications() || show_info() || show_menu(), Css::SHOW, ""),
+                        ]
+                            .concat(),
+                        onclick: close,
+                    }
+                    header { class: Css::MAIN_HEADER, onclick: close,
                         div { class: Css::MAIN_HEADER_LOGO, "{APP_NAME}" }
-                        div {
-                            class: [
-                                Css::SCREEN_FILL,
-                                either!(show_notifications() || show_info() || show_menu(), Css::SHOW, ""),
-                            ]
-                                .concat(),
-                            onclick: close,
-                        }
                         div {
                             class: [Css::HEADER_DROPDOWN, either!(show_notifications(), Css::SHOW, "")].concat(),
                             onclick: move |evt: Event<MouseData>| {

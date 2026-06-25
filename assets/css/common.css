@@ -3,14 +3,15 @@ html {
 	scrollbar-width: thin;
 	scrollbar-color: #eaeaea transparent;
 }
-@container style(--darkmode: 1) {
-	body {
-		background-color: grey;
-	}
-}
 body {
 	margin-top: calc(var(--main-header-height) + var(--padding-m));
 	margin-left: calc(var(--main-aside-width) + var(--padding-m));
+	background-color: #f0f0f0;
+}
+@container style(--darkmode: 1) {
+	body {
+		background-color: #2d2d2d;
+	}
 }
 a {
 	all: unset;
@@ -20,7 +21,7 @@ hr {
 	width: 100%;
 	height: 1px;
 	border: 0;
-	background: lightgray;
+	background: var(--border-col);
 }
 .monospace {
 	font-family: "JetBrains Mono", monospace;

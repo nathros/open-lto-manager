@@ -1,12 +1,12 @@
 pub mod assets;
-pub mod collections;
+mod collections;
 pub mod components;
-pub mod css;
-pub mod elements;
+mod css;
+mod elements;
 mod icons;
-pub mod js;
+mod js;
 mod level;
-pub mod modules;
+mod modules;
 pub mod pages;
 pub mod sandpit;
 mod utils;

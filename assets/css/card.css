@@ -1,0 +1,5 @@
+.card /* impl Css::CARD */ {
+	background-color: var(--fill);
+	box-shadow: var(--shadow-raised);
+	padding: var(--padding-m);
+}

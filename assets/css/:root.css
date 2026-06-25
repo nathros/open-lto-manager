@@ -4,12 +4,10 @@
 	--main-header-height: 3rem;
 	--main-aside-width: 14rem;
 	--radius: 6px;
-	--border: 1px solid #d9d9d9;
+	--border: 1px solid var(--border-col);
 
 	--shadow-overlay: 0px 8px 12px #1e1f2126, 0px 0px 1px #1e1f214f;
 	--shadow-raised: 0px 1px 1px #1e1f2140, 0px 0px 1px #1e1f214f;
-
-	--hover: inset 999px 999px 999px #00000010;
 
 	--colour-accent: #1677ff;
 	--colour-primary: #1677ff;
@@ -17,14 +15,32 @@
 	--colour-warning: #faad14;
 	--colour-error: #ff4d4f;
 }
-@media (prefers-color-scheme: dark) {
-	html {
-		--darkmode: 1;
-	}
+:where(html) {
+	--darkmode: 0;
+	color: var(--fg);
 }
 @media (prefers-color-scheme: light) {
 	html {
 		--darkmode: 0;
+	}
+	:root {
+		--fill: white;
+		--bg: white;
+		--fg: black;
+		--border-col: #d9d9d9;
+		--hover: inset 999px 999px 999px #00000010;
+	}
+}
+@media (prefers-color-scheme: dark) {
+	html {
+		--darkmode: 1;
+	}
+	:root {
+		--fill: #333333;
+		--bg: black;
+		--fg: white;
+		--border-col: #424242;
+		--hover: inset 999px 999px 999px #ffffff50;
 	}
 }
 /*.colour-scheme        [trim] impl Css::COLOUR_SCHEME */
@@ -32,7 +48,17 @@
 /*.colour-scheme-dark   [trim] impl Css::COLOUR_SCHEME_DARK */
 html:has(#colour-scheme-light:checked) {
 	--darkmode: 0;
+	--fill: white;
+	--bg: white;
+	--fg: black;
+	--border-col: #d9d9d9;
+	--hover: inset 999px 999px 999px #00000010;
 }
 html:has(#colour-scheme-dark:checked) {
 	--darkmode: 1;
+	--fill: #333333;
+	--bg: black;
+	--fg: white;
+	--border-col: #424242;
+	--hover: inset 999px 999px 999px #ffffff50;
 }

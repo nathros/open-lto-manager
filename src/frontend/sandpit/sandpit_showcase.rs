@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 
 use crate::frontend::{
+    components::card::Card,
     css::Css,
     sandpit::{
         sandpit_button::SandpitButton, sandpit_menu::SandpitMenu,
@@ -22,9 +23,10 @@ pub fn SandpitShowcase() -> Element {
     rsx! {
         div { class: Css::FLEX_COL, style: "align-items:unset",
             for (name , component) in list {
-                h3 { "{name}" }
-                div { {component} }
-                hr {}
+                Card { top_padding: false,
+                    h3 { "{name}" }
+                    div { {component} }
+                }
             }
         }
     }
