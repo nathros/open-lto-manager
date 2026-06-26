@@ -3,6 +3,7 @@
 	padding-left: var(--padding-m);
 	position: relative;
 	cursor: pointer;
+	user-select: none;
 	width: stretch;
 }
 .icon-list-item.selected > .icon {

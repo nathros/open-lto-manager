@@ -27,16 +27,18 @@ impl Css {
     pub const LOGIN_CONTAINER: &str = "login-container "; // Defined in assets/css/login.css line 1
     pub const MENU_CONTAINER: &str = "menu-container "; // Defined in assets/css/menu.css line 1
     pub const MENU_GROUP: &str = "menu-group "; // Defined in assets/css/menu.css line 9
-    pub const ICON_TAPE: &str = "tape "; // Defined in assets/css/menu.css line 17
+    pub const ICON_TAPE: &str = "tape "; // Defined in assets/css/menu.css line 21
     pub const FLEX_ROW: &str = "flex-row "; // Defined in assets/css/common.css line 30
     pub const FLEX_COL: &str = "flex-col "; // Defined in assets/css/common.css line 33
     pub const FLEX_CENTRE: &str = "flex-centre "; // Defined in assets/css/common.css line 42
-    pub const NO_GAP: &str = "no-gap "; // Defined in assets/css/common.css line 47
-    pub const SHOW: &str = "show "; // Defined in assets/css/common.css line 50
-    pub const SELECTED: &str = "selected "; // Defined in assets/css/common.css line 53
-    pub const SM: &str = "sm "; // Defined in assets/css/common.css line 57
-    pub const MD: &str = "md "; // Defined in assets/css/common.css line 61
-    pub const SCREEN_FILL: &str = "screen-fill "; // Defined in assets/css/common.css line 65
-    pub const BG: &str = "bg "; // Defined in assets/css/common.css line 78
-    pub const ID_SNA: &str = "sna"; // Defined in assets/css/common.css line 93
+    pub const FLEX_ALIGN_LEFT: &str = "align-left "; // Defined in assets/css/common.css line 47
+    pub const NO_GAP: &str = "no-gap "; // Defined in assets/css/common.css line 50
+    pub const SHOW: &str = "show "; // Defined in assets/css/common.css line 53
+    pub const SELECTED: &str = "selected "; // Defined in assets/css/common.css line 56
+    pub const SM: &str = "sm "; // Defined in assets/css/common.css line 60
+    pub const MD: &str = "md "; // Defined in assets/css/common.css line 64
+    pub const SCREEN_FILL: &str = "screen-fill "; // Defined in assets/css/common.css line 68
+    pub const BG: &str = "bg "; // Defined in assets/css/common.css line 81
+    pub const ID_SNA: &str = "sna"; // Defined in assets/css/common.css line 96
+    pub const ID_SAND: &str = "sandpit"; // Defined in assets/css/common.css line 118
 }

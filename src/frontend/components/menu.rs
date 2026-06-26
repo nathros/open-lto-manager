@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 
 use crate::{
+    either,
     frontend::{
         assets::LOGO_ASSET,
         css::Css,
@@ -93,19 +94,19 @@ pub fn Menu(config: Signal<MenuConfig>) -> Element {
                             vertical: true,
                             children: rsx! {},
                         }
-                        div { class: static_concat!(Css::MENU_GROUP),
-                            if group.open {
-                                for (i_index , item) in group.items.iter().enumerate() {
-                                    if let link = item.link.clone() {
-                                        MenuItem {
-                                            onclick: move |evt: MouseEvent| {
-                                                evt.stop_propagation();
-                                                config.write().set_selected(g_index, i_index);
-                                                fn_link_follow(link.clone());
-                                            },
-                                            text: item.label.to_owned(),
-                                            selected: item.selected,
-                                        }
+                        div {
+                            class: Css::MENU_GROUP,
+                            style: format!("max-height:{}px", either!(group.open, 35 * group.items.len(), 0)),
+                            for (i_index , item) in group.items.iter().enumerate() {
+                                if let link = item.link.clone() {
+                                    MenuItem {
+                                        onclick: move |evt: MouseEvent| {
+                                            evt.stop_propagation();
+                                            config.write().set_selected(g_index, i_index);
+                                            fn_link_follow(link.clone());
+                                        },
+                                        text: item.label.to_owned(),
+                                        selected: item.selected,
                                     }
                                 }
                             }

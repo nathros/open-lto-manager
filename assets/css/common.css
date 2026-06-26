@@ -1,7 +1,7 @@
 html {
 	font-family: "Lato", sans-serif;
 	scrollbar-width: thin;
-	scrollbar-color: #eaeaea transparent;
+	scrollbar-color: #7f7f7f transparent;
 }
 body {
 	margin-top: calc(var(--main-header-height) + var(--padding-m));
@@ -43,6 +43,9 @@ hr {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+}
+.align-left /* impl Css::FLEX_ALIGN_LEFT */ {
+	align-items: flex-start;
 }
 .no-gap /* impl Css::NO_GAP */ {
 	gap: unset;
@@ -111,4 +114,16 @@ hr {
 }
 #sna:hover + i {
 	opacity: 1;
+}
+#sandpit /* [trim] impl Css::ID_SAND */ {
+	width: stretch;
+	height: stretch;
+	position: fixed;
+	background-size: contain;
+	opacity: 0.5;
+	z-index: -1;
+	background-repeat: no-repeat;
+	background-position: bottom;
+	margin: 12rem;
+	margin-bottom: 0;
 }

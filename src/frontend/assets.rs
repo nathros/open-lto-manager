@@ -104,3 +104,4 @@ pub const _IMG_TAPE_PREVIEW_MASK: Asset = asset!(
     "/assets/img/tape-preview-mask.jxl",
     AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
 );
+pub const IMG_SANDPIT: Asset = asset!("/assets/img/sandpit.svg");

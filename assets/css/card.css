@@ -2,4 +2,5 @@
 	background-color: var(--fill);
 	box-shadow: var(--shadow-raised);
 	padding: var(--padding-m);
+	border-radius: var(--radius);
 }
