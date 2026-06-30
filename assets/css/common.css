@@ -1,5 +1,4 @@
 html {
-	font-family: "Lato", sans-serif;
 	scrollbar-width: thin;
 	scrollbar-color: #7f7f7f transparent;
 }
@@ -13,6 +12,10 @@ body {
 		background-color: #2d2d2d;
 	}
 }
+* {
+	font-family: "Lato", sans-serif;
+	color: var(--fg);
+}
 a {
 	all: unset;
 	cursor: pointer;
@@ -22,6 +25,9 @@ hr {
 	height: 1px;
 	border: 0;
 	background: var(--border-col);
+}
+dialog {
+	background-color: var(--fill);
 }
 .monospace {
 	font-family: "JetBrains Mono", monospace;
@@ -53,9 +59,16 @@ hr {
 .show /* impl Css::SHOW */ {
 	display: block;
 }
+.icon-list-item:has(+ .header-dropdown-content:popover-open),
 .selected /* impl Css::SELECTED */ {
 	box-shadow: inset 4px 0px 0px 0px var(--colour-accent);
 	background-color: hsl(from var(--colour-accent) h s calc(l + 40));
+}
+@container style(--darkmode: 1) {
+	.icon-list-item:has(+ .header-dropdown-content:popover-open),
+	.selected {
+		background-color: hsl(from var(--colour-accent) h s calc(l - 25));
+	}
 }
 .sm /* impl Css::SM */ {
 	width: 1rem;
@@ -64,19 +77,6 @@ hr {
 .md /* impl Css::MD */ {
 	width: 2rem;
 	height: 2rem;
-}
-.screen-fill /* impl Css::SCREEN_FILL */ {
-	display: none;
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background-color: transparent;
-	cursor: default;
-}
-.screen-fill.show {
-	display: block;
 }
 .bg /* impl Css::BG */ {
 	background-color: black;

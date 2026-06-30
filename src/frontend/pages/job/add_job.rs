@@ -9,11 +9,9 @@ use crate::{
             message::{Message, MessageDetails},
         },
         elements::button::Button,
+        id::Id,
         level::Level,
-        modules::{
-            modal::{MODAL_JOB_ID, Modal},
-            tab::Tab,
-        },
+        modules::{modal::Modal, tab::Tab},
         pages::job::backup_job_form::BackupJobForm,
     },
     shared::models::database::job::model_job::{JobType, RecordJob},
@@ -59,7 +57,11 @@ pub fn AddJob() -> Element {
     };
 
     rsx! {
-        Modal { id: MODAL_JOB_ID, level: Level::Error, message: modal_message }
+        Modal {
+            id: Id::ModalJob.as_str(),
+            level: Level::Error,
+            message: modal_message,
+        }
         Tab {
             tab_names: vec!["Options".to_string(), "Files".to_string(), "Destination".to_string()],
             tab_contents: vec![

@@ -1,3 +1,16 @@
 dialog {
 	background-color: white;
+	border-radius: var(--radius);
+}
+dialog.error {
+	border-color: var(--colour-error);
+}
+dialog.warning {
+	border-color: var(--colour-warning);
+}
+dialog.info {
+	border-color: var(--colour-primary);
+}
+dialog.success {
+	border-color: var(--colour-success);
 }

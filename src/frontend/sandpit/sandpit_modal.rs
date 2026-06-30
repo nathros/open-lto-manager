@@ -2,11 +2,9 @@ use dioxus::prelude::*;
 
 use crate::frontend::{
     elements::{button::Button, input::InputType},
+    id::Id,
     level::Level,
-    modules::modal::{
-        MODAL_SANDPIT_ERROR, MODAL_SANDPIT_INFO, MODAL_SANDPIT_SUCCESS, MODAL_SANDPIT_WARNING,
-        Modal,
-    },
+    modules::modal::Modal,
 };
 
 #[component]
@@ -19,22 +17,22 @@ pub fn SandpitModal() -> Element {
 
     rsx! {
         Modal {
-            id: MODAL_SANDPIT_ERROR,
+            id: Id::ModalSandpitError.as_str(),
             level: Level::Error,
             message: message_error,
         }
         Modal {
-            id: MODAL_SANDPIT_WARNING,
+            id: Id::ModalSandpitWarning.as_str(),
             level: Level::Warning,
             message: message_warning,
         }
         Modal {
-            id: MODAL_SANDPIT_INFO,
+            id: Id::ModalSandpitInfo.as_str(),
             level: Level::Info,
             message: message_info,
         }
         Modal {
-            id: MODAL_SANDPIT_SUCCESS,
+            id: Id::ModalSandpitSuccess.as_str(),
             level: Level::Success,
             message: message_success,
         }

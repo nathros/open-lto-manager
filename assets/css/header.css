@@ -1,6 +1,8 @@
 .main-header /* impl Css::MAIN_HEADER */ {
 	display: flex;
 	align-items: center;
+	gap: calc(var(--padding-s) / 2);
+	padding-right: calc(var(--padding-s) / 2);
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -15,6 +17,12 @@
 }
 .main-header > * {
 	margin: var(--padding-s);
+}
+.main-header button {
+	border: unset;
+	background-color: unset;
+	font-size: unset;
+	margin: 0;
 }
 .header-logo /* impl Css::MAIN_HEADER_LOGO */ {
 	background-image: url(/assets/logo.svg);
@@ -55,15 +63,18 @@
 .header-dropdown /* impl Css::HEADER_DROPDOWN */ {
 	position: relative;
 }
+.header-dropdown:popover-open {
+	background-color: red;
+}
 .header-dropdown:hover {
 	cursor: pointer;
 	box-shadow: var(--hover);
 }
 .header-dropdown-content /* impl Css::HEADER_DROPDOWN_CONTENT */ {
-	display: none;
-	position: absolute;
-	right: 0;
-	user-select: none;
+	position: fixed;
+	position-area: self-start;
+	margin: initial;
+	padding: initial;
 	padding-top: var(--padding-s);
 	padding-bottom: var(--padding-s);
 	background-color: var(--fill);
@@ -71,16 +82,13 @@
 	border-radius: var(--radius);
 	min-width: 14rem;
 	border: var(--border);
+	transform: translate(43px, 43px);
 	animation: float-down 250ms ease forwards;
 }
 .header-dropdown-content.nested /* impl Css::HEADER_DROPDOWN_NESTED */ {
-	right: 101%;
-	top: calc(var(--padding-s) * -1);
-}
-.header-dropdown.show > .header-dropdown-content {
-	display: flex;
-	flex-direction: column;
-	cursor: default;
+	transform: translate(-2px, -2.75rem);
+	position-area: bottom x-start;
+	animation: float-down-nested 250ms ease forwards;
 }
 .float-right /* impl Css::FLOAT_RIGHT */ {
 	margin-left: auto;
@@ -98,11 +106,21 @@
 @keyframes float-down {
 	0% {
 		opacity: 0;
-		transform: translateY(-10px);
+		transform: translate(43px, 33px);
 	}
 	100% {
 		opacity: 1;
-		transform: translateY(0);
+		transform: translate(43px, 43px);
+	}
+}
+@keyframes float-down-nested {
+	0% {
+		opacity: 0;
+		transform: translate(-2px, calc(-2.75rem - 10px));
+	}
+	100% {
+		opacity: 1;
+		transform: translate(-2px, -2.75rem);
 	}
 }
 @container style(--darkmode: 1) {
