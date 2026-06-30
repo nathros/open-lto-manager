@@ -7,7 +7,7 @@ body {
 	margin-left: calc(var(--main-aside-width) + var(--padding-m));
 	background-color: #f0f0f0;
 }
-@container style(--darkmode: 1) {
+@container style(--dark-mode: 1) {
 	body {
 		background-color: #2d2d2d;
 	}
@@ -56,15 +56,12 @@ dialog {
 .no-gap /* impl Css::NO_GAP */ {
 	gap: unset;
 }
-.show /* impl Css::SHOW */ {
-	display: block;
-}
 .icon-list-item:has(+ .header-dropdown-content:popover-open),
 .selected /* impl Css::SELECTED */ {
 	box-shadow: inset 4px 0px 0px 0px var(--colour-accent);
 	background-color: hsl(from var(--colour-accent) h s calc(l + 40));
 }
-@container style(--darkmode: 1) {
+@container style(--dark-mode: 1) {
 	.icon-list-item:has(+ .header-dropdown-content:popover-open),
 	.selected {
 		background-color: hsl(from var(--colour-accent) h s calc(l - 25));

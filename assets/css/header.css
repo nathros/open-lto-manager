@@ -123,7 +123,7 @@
 		transform: translate(-2px, -2.75rem);
 	}
 }
-@container style(--darkmode: 1) {
+@container style(--dark-mode: 1) {
 	.main-header {
 		background-color: rgba(31, 31, 31, 0.6);
 	}

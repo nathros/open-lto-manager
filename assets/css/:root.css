@@ -16,12 +16,12 @@
 	--colour-error: #ff4d4f;
 }
 :where(html) {
-	--darkmode: 0;
+	--dark-mode: 0;
 	color: var(--fg);
 }
 @media (prefers-color-scheme: light) {
 	html {
-		--darkmode: 0;
+		--dark-mode: 0;
 	}
 	:root {
 		--fill: white;
@@ -33,7 +33,7 @@
 }
 @media (prefers-color-scheme: dark) {
 	html {
-		--darkmode: 1;
+		--dark-mode: 1;
 	}
 	:root {
 		--fill: #333333;
@@ -47,7 +47,7 @@
 /*.colour-scheme-light  [trim] impl Css::COLOUR_SCHEME_LIGHT */
 /*.colour-scheme-dark   [trim] impl Css::COLOUR_SCHEME_DARK */
 html:has(#colour-scheme-light:checked) {
-	--darkmode: 0;
+	--dark-mode: 0;
 	--fill: white;
 	--bg: white;
 	--fg: black;
@@ -55,7 +55,7 @@ html:has(#colour-scheme-light:checked) {
 	--hover: inset 999px 999px 999px #00000010;
 }
 html:has(#colour-scheme-dark:checked) {
-	--darkmode: 1;
+	--dark-mode: 1;
 	--fill: #333333;
 	--bg: black;
 	--fg: white;

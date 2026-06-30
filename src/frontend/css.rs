@@ -33,11 +33,10 @@ impl Css {
     pub const FLEX_CENTRE: &str = "flex-centre "; // Defined in assets/css/common.css line 48
     pub const FLEX_ALIGN_LEFT: &str = "align-left "; // Defined in assets/css/common.css line 53
     pub const NO_GAP: &str = "no-gap "; // Defined in assets/css/common.css line 56
-    pub const SHOW: &str = "show "; // Defined in assets/css/common.css line 59
-    pub const SELECTED: &str = "selected "; // Defined in assets/css/common.css line 63
-    pub const SM: &str = "sm "; // Defined in assets/css/common.css line 73
-    pub const MD: &str = "md "; // Defined in assets/css/common.css line 77
-    pub const BG: &str = "bg "; // Defined in assets/css/common.css line 81
-    pub const ID_SNA: &str = "sna"; // Defined in assets/css/common.css line 96
-    pub const ID_SAND: &str = "sandpit"; // Defined in assets/css/common.css line 118
+    pub const SELECTED: &str = "selected "; // Defined in assets/css/common.css line 60
+    pub const SM: &str = "sm "; // Defined in assets/css/common.css line 70
+    pub const MD: &str = "md "; // Defined in assets/css/common.css line 74
+    pub const BG: &str = "bg "; // Defined in assets/css/common.css line 78
+    pub const ID_SNA: &str = "sna"; // Defined in assets/css/common.css line 93
+    pub const ID_SAND: &str = "sandpit"; // Defined in assets/css/common.css line 115
 }

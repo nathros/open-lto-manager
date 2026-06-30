@@ -2,7 +2,10 @@ use dioxus::prelude::*;
 
 use crate::{
     frontend::{
-        components::menu::{Menu, MenuConfig, MenuGroup, MenuItemConfig},
+        components::menu::{
+            component::Menu,
+            menu_config::{MenuConfig, MenuGroup, MenuItemConfig},
+        },
         icons::Icons,
     },
     route::Route,

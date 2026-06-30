@@ -1,5 +1,4 @@
 use dioxus::{fullstack::FullstackContext, prelude::*};
-use std::mem::discriminant;
 
 #[cfg(all(feature = "auto_login", debug_assertions))]
 use crate::backend::api::api_login::api_login_bypass;
@@ -16,12 +15,13 @@ use crate::{
         collections::message::{Message, MessageDetails},
         components::{
             colour_mode::ColourModeHidden,
-            menu::{Menu, MenuConfig, MenuGroup, MenuItemConfig},
+            menu::{component::Menu, menu_config::MenuConfig},
         },
         css::Css,
         elements::input::InputType,
         icons::Icons,
         id::Id,
+        js::js_hide_popover,
         level::Level,
         pages::login::login_user::LoginUser,
     },
@@ -31,8 +31,37 @@ use crate::{
     static_concat,
 };
 
-fn route_eq<T>(a: &T, b: &T) -> bool {
-    discriminant(a) == discriminant(b)
+fn error_handler(err: ErrorContext) -> Element {
+    let mut msg = MessageDetails::default();
+    if let Some(e) = err.error() {
+        let http_error = FullstackContext::commit_error_status(e);
+        match http_error.status {
+            StatusCode::NOT_FOUND => msg.text = "404 - Page not found".to_string(),
+            StatusCode::UNAUTHORIZED => {
+                msg.text = "401 - Unauthorized".to_string();
+                msg.level = Level::Warning;
+            }
+            StatusCode::INTERNAL_SERVER_ERROR => {
+                msg.text = "500 - Internal Server Error".to_string();
+            }
+            _ => msg.text = "An unknown error occurred".to_string(),
+        }
+    }
+    //let cloned_errors = err.clone(); // Clear on load
+    //use_effect(move || {
+    //    cloned_errors.clear_errors();
+    //    error!("clear");
+    //});
+    rsx! {
+        Message { details: msg }
+        p { "-- Refresh needed --" }
+        button {
+            onclick: move |_| {
+                err.clear_errors();
+            },
+            "Retry"
+        }
+    }
 }
 
 #[component]
@@ -54,39 +83,6 @@ pub fn Header() -> Element {
     }
 
     let route: Route = use_route();
-
-    let error_handler = move |err: ErrorContext| {
-        let mut msg = MessageDetails::default();
-        if let Some(e) = err.error() {
-            let http_error = FullstackContext::commit_error_status(e);
-            match http_error.status {
-                StatusCode::NOT_FOUND => msg.text = "404 - Page not found".to_string(),
-                StatusCode::UNAUTHORIZED => {
-                    msg.text = "401 - Unauthorized".to_string();
-                    msg.level = Level::Warning;
-                }
-                StatusCode::INTERNAL_SERVER_ERROR => {
-                    msg.text = "500 - Internal Server Error".to_string();
-                }
-                _ => msg.text = "An unknown error occurred".to_string(),
-            }
-        }
-        //let cloned_errors = err.clone(); // Clear on load
-        //use_effect(move || {
-        //    cloned_errors.clear_errors();
-        //    error!("clear");
-        //});
-        rsx! {
-            Message { details: msg }
-            p { "-- Refresh needed --" }
-            button {
-                onclick: move |_| {
-                    err.clear_errors();
-                },
-                "Retry"
-            }
-        }
-    };
 
     let change_theme = move |theme: ColourMode| async move {
         if let Some(mut user) = current_user() {
@@ -113,163 +109,7 @@ pub fn Header() -> Element {
         }
     };
 
-    let aside_config = use_signal(|| MenuConfig {
-        enable_search: true,
-        groups: vec![
-            MenuGroup {
-                icon: Icons::HOME.into(),
-                label: "Home".to_string(),
-                open: route_eq(&route, &Route::Home {}),
-                items: vec![MenuItemConfig {
-                    icon: "".to_string(),
-                    label: "Home".to_string(),
-                    link: Route::Home {}.to_string(),
-                    selected: route_eq(&route, &Route::Home {}),
-                }],
-            },
-            MenuGroup {
-                icon: Css::ICON_TAPE.into(),
-                label: "Library".to_string(),
-                open: route_eq(&route, &Route::Tape { id: (0) }),
-                items: vec![MenuItemConfig {
-                    icon: "".to_string(),
-                    label: "Add Tape".to_string(),
-                    link: Route::Tape { id: (0) }.to_string(),
-                    selected: route_eq(&route, &Route::Tape { id: (0) }),
-                }],
-            },
-            MenuGroup {
-                icon: Icons::LIST.into(),
-                label: "Jobs".to_string(),
-                open: route_eq(&route, &Route::AddJob {}),
-                items: vec![MenuItemConfig {
-                    icon: "".to_string(),
-                    label: "Add Job".to_string(),
-                    link: Route::AddJob {}.to_string(),
-                    selected: route_eq(&route, &Route::AddJob {}),
-                }],
-            },
-            MenuGroup {
-                icon: Icons::WARNING.into(),
-                label: "System".to_string(),
-                open: route_eq(&route, &Route::Sessions {})
-                    || route_eq(&route, &Route::ShowDevices {}),
-                items: vec![
-                    MenuItemConfig {
-                        icon: "".to_string(),
-                        label: "Show devices".to_string(),
-                        link: Route::ShowDevices {}.to_string(),
-                        selected: route_eq(&route, &Route::ShowDevices {}),
-                    },
-                    MenuItemConfig {
-                        icon: "".to_string(),
-                        label: "Login sessions".to_string(),
-                        link: Route::Sessions {}.to_string(),
-                        selected: route_eq(&route, &Route::Sessions {}),
-                    },
-                ],
-            },
-            #[cfg(debug_assertions)]
-            MenuGroup {
-                icon: Icons::BUG.into(),
-                label: "Debug".to_string(),
-                open: route_eq(&route, &Route::Test {})
-                    || route_eq(&route, &Route::Show {})
-                    || route_eq(&route, &Route::ShowDev {})
-                    || route_eq(&route, &Route::DBUser {})
-                    || route_eq(&route, &Route::DBType {})
-                    || route_eq(&route, &Route::DBFile {})
-                    || route_eq(&route, &Route::DBTape {})
-                    || route_eq(&route, &Route::DBJob {})
-                    || route_eq(&route, &Route::DBJobMetaData {})
-                    || route_eq(&route, &Route::ShowAppState {}),
-                items: vec![
-                    MenuItemConfig {
-                        icon: "".to_string(),
-                        label: "Test".to_string(),
-                        link: Route::Test {}.to_string(),
-                        selected: route_eq(&route, &Route::Test {}),
-                    },
-                    MenuItemConfig {
-                        icon: "".to_string(),
-                        label: "Show".to_string(),
-                        link: Route::Show {}.to_string(),
-                        selected: route_eq(&route, &Route::Show {}),
-                    },
-                    MenuItemConfig {
-                        icon: "".to_string(),
-                        label: "Dev".to_string(),
-                        link: Route::ShowDev {}.to_string(),
-                        selected: route_eq(&route, &Route::ShowDev {}),
-                    },
-                    MenuItemConfig {
-                        icon: "".to_string(),
-                        label: "User".to_string(),
-                        link: Route::DBUser {}.to_string(),
-                        selected: route_eq(&route, &Route::DBUser {}),
-                    },
-                    MenuItemConfig {
-                        icon: "".to_string(),
-                        label: "Type".to_string(),
-                        link: Route::DBType {}.to_string(),
-                        selected: route_eq(&route, &Route::DBType {}),
-                    },
-                    MenuItemConfig {
-                        icon: "".to_string(),
-                        label: "Tape".to_string(),
-                        link: Route::DBTape {}.to_string(),
-                        selected: route_eq(&route, &Route::DBTape {}),
-                    },
-                    MenuItemConfig {
-                        icon: "".to_string(),
-                        label: "File".to_string(),
-                        link: Route::DBFile {}.to_string(),
-                        selected: route_eq(&route, &Route::DBFile {}),
-                    },
-                    MenuItemConfig {
-                        icon: "".to_string(),
-                        label: "Job".to_string(),
-                        link: Route::DBJob {}.to_string(),
-                        selected: route_eq(&route, &Route::DBJob {}),
-                    },
-                    MenuItemConfig {
-                        icon: "".to_string(),
-                        label: "Job Metadata".to_string(),
-                        link: Route::DBJobMetaData {}.to_string(),
-                        selected: route_eq(&route, &Route::DBJobMetaData {}),
-                    },
-                    MenuItemConfig {
-                        icon: "".to_string(),
-                        label: "App State".to_string(),
-                        link: Route::ShowAppState {}.to_string(),
-                        selected: route_eq(&route, &Route::ShowAppState {}),
-                    },
-                ],
-            },
-            #[cfg(debug_assertions)]
-            MenuGroup {
-                icon: Icons::SANDPIT.into(),
-                label: "Sandpit".to_string(),
-                open: route_eq(&route, &Route::Sandpit {})
-                    || route_eq(&route, &Route::SandpitShowcase {}),
-                items: vec![
-                    MenuItemConfig {
-                        icon: "".to_string(),
-                        label: "Index".to_string(),
-                        link: Route::Sandpit {}.to_string(),
-                        selected: route_eq(&route, &Route::Sandpit {}),
-                    },
-                    MenuItemConfig {
-                        icon: "".to_string(),
-                        label: "Showcase".to_string(),
-                        link: Route::SandpitShowcase {}.to_string(),
-                        selected: route_eq(&route, &Route::SandpitShowcase {}),
-                    },
-                ],
-            },
-        ],
-    });
-
+    let aside_config = use_signal(|| MenuConfig::default_aside(&route));
     rsx! {
         if let user = current_user().unwrap_or_default()
             && let icon_theme = format!("{:?}", user.icon_theme).to_lowercase()
@@ -354,12 +194,15 @@ pub fn Header() -> Element {
                             Link {
                                 class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
                                 to: Route::DBUser {},
+                                onclick: move |_evt: Event<MouseData>| {
+                                    js_hide_popover(Id::HeaderUserMenu.as_str());
+                                },
                                 span { class: static_concat!(Css::ICON, Css::SM, Icons::USER) }
                                 span { "Account" }
                             }
 
                             button {
-                                class: [Css::ICON_LIST_ITEM, Css::FLEX_ROW].concat(),
+                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
                                 id: Id::HeaderAccentIcon.as_str(),
                                 "popovertarget": Id::HeaderAccentMenu.as_str(),
                                 span { class: static_concat!(Css::ICON, Css::SM, Icons::PALETTE) }
@@ -378,9 +221,8 @@ pub fn Header() -> Element {
                                         either!(user.accent_colour == ACCENT_STANDARD, Css::SELECTED, ""),
                                     ]
                                         .concat(),
-                                    onclick: move |evt: Event<MouseData>| async move {
+                                    onclick: move |_evt: Event<MouseData>| async move {
                                         change_accent(ACCENT_STANDARD.into()).await;
-                                        //close(evt);
                                     },
                                     span {
                                         style: static_concat!("background-color:", ACCENT_STANDARD),
@@ -395,9 +237,8 @@ pub fn Header() -> Element {
                                         either!(user.accent_colour == ACCENT_RED, Css::SELECTED, ""),
                                     ]
                                         .concat(),
-                                    onclick: move |evt: Event<MouseData>| async move {
+                                    onclick: move |_evt: Event<MouseData>| async move {
                                         change_accent(ACCENT_RED.into()).await;
-                                        //close(evt);
                                     },
                                     span {
                                         style: static_concat!("background-color:", ACCENT_RED),
@@ -412,9 +253,8 @@ pub fn Header() -> Element {
                                         either!(user.accent_colour == ACCENT_GREEN, Css::SELECTED, ""),
                                     ]
                                         .concat(),
-                                    onclick: move |evt: Event<MouseData>| async move {
+                                    onclick: move |_evt: Event<MouseData>| async move {
                                         change_accent(ACCENT_GREEN.into()).await;
-                                        //close(evt);
                                     },
                                     span {
                                         style: static_concat!("background-color:", ACCENT_GREEN),
@@ -429,9 +269,8 @@ pub fn Header() -> Element {
                                         either!(user.accent_colour == ACCENT_BLUE, Css::SELECTED, ""),
                                     ]
                                         .concat(),
-                                    onclick: move |evt: Event<MouseData>| async move {
+                                    onclick: move |_evt: Event<MouseData>| async move {
                                         change_accent(ACCENT_BLUE.into()).await;
-                                        //close(evt);
                                     },
                                     span {
                                         style: static_concat!("background-color:", ACCENT_BLUE),
@@ -454,9 +293,6 @@ pub fn Header() -> Element {
                                     ]
                                         .concat(),
                                     r#for: Css::ID_ACCENT_PICKER,
-                                    onclick: move |evt: Event<MouseData>| {
-                                        evt.stop_propagation();
-                                    },
                                     span { class: static_concat!(Css::ICON, Css::SM, Css::HEADER_COL, Css::RAINBOW) }
                                     span { "Custom" }
                                     input {
@@ -472,7 +308,7 @@ pub fn Header() -> Element {
                             }
 
                             button {
-                                class: [Css::ICON_LIST_ITEM, Css::FLEX_ROW].concat(),
+                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
                                 id: Id::HeaderIconIcon.as_str(),
                                 "popovertarget": Id::HeaderIconMenu.as_str(),
                                 span { class: static_concat!(Css::ICON, Css::SM, Icons::SANDPIT) }
@@ -491,9 +327,8 @@ pub fn Header() -> Element {
                                         either!(user.icon_theme == IconTheme::Tabler, Css::SELECTED, ""),
                                     ]
                                         .concat(),
-                                    onclick: move |evt: Event<MouseData>| async move {
+                                    onclick: move |_evt: Event<MouseData>| async move {
                                         change_icon(IconTheme::Tabler).await;
-                                        //close(evt);
                                     },
                                     span {
                                         style: format!("mask-image:url({}#sandpit)", ICONS_ASSET_TABLER),
@@ -508,9 +343,8 @@ pub fn Header() -> Element {
                                         either!(user.icon_theme == IconTheme::Remix, Css::SELECTED, ""),
                                     ]
                                         .concat(),
-                                    onclick: move |evt: Event<MouseData>| async move {
+                                    onclick: move |_evt: Event<MouseData>| async move {
                                         change_icon(IconTheme::Remix).await;
-                                        //close(evt);
                                     },
                                     span {
                                         style: format!("mask-image:url({}#sandpit)", ICONS_ASSET_REMIX),
@@ -525,9 +359,8 @@ pub fn Header() -> Element {
                                         either!(user.icon_theme == IconTheme::Iconoir, Css::SELECTED, ""),
                                     ]
                                         .concat(),
-                                    onclick: move |evt: Event<MouseData>| async move {
+                                    onclick: move |_evt: Event<MouseData>| async move {
                                         change_icon(IconTheme::Iconoir).await;
-                                        //close(evt);
                                     },
                                     span {
                                         style: format!("mask-image:url({}#sandpit)", ICONS_ASSET_ICONOIR),
@@ -542,9 +375,8 @@ pub fn Header() -> Element {
                                         either!(user.icon_theme == IconTheme::Sargam, Css::SELECTED, ""),
                                     ]
                                         .concat(),
-                                    onclick: move |evt: Event<MouseData>| async move {
+                                    onclick: move |_evt: Event<MouseData>| async move {
                                         change_icon(IconTheme::Sargam).await;
-                                        //close(evt);
                                     },
                                     span {
                                         style: format!("mask-image:url({}#sandpit)", ICONS_ASSET_SARGAM_LINE),
@@ -555,7 +387,7 @@ pub fn Header() -> Element {
                             }
 
                             button {
-                                class: [Css::ICON_LIST_ITEM, Css::FLEX_ROW].concat(),
+                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
                                 id: Id::HeaderThemeIcon.as_str(),
                                 "popovertarget": Id::HeaderThemeMenu.as_str(),
                                 span { class: static_concat!(Css::ICON, Css::SM, Icons::CONTRAST) }
@@ -574,9 +406,8 @@ pub fn Header() -> Element {
                                         either!(user.system_theme == ColourMode::System, Css::SELECTED, ""),
                                     ]
                                         .concat(),
-                                    onclick: move |evt: Event<MouseData>| async move {
+                                    onclick: move |_evt: Event<MouseData>| async move {
                                         change_theme(ColourMode::System).await;
-                                        //close(evt);
                                     },
                                     span { class: static_concat!(Css::ICON, Css::SM, Icons::SYSTEM) }
                                     span { "System" }
@@ -588,9 +419,8 @@ pub fn Header() -> Element {
                                         either!(user.system_theme == ColourMode::Light, Css::SELECTED, ""),
                                     ]
                                         .concat(),
-                                    onclick: move |evt: Event<MouseData>| async move {
+                                    onclick: move |_evt: Event<MouseData>| async move {
                                         change_theme(ColourMode::Light).await;
-                                        //close(evt);
                                     },
                                     span { class: static_concat!(Css::ICON, Css::SM, Icons::LIGHT) }
                                     span { "Light" }
@@ -602,9 +432,8 @@ pub fn Header() -> Element {
                                         either!(user.system_theme == ColourMode::Dark, Css::SELECTED, ""),
                                     ]
                                         .concat(),
-                                    onclick: move |evt: Event<MouseData>| async move {
+                                    onclick: move |_evt: Event<MouseData>| async move {
                                         change_theme(ColourMode::Dark).await;
-                                        //close(evt);
                                     },
                                     span { class: static_concat!(Css::ICON, Css::SM, Icons::DARK) }
                                     span { "Dark" }
