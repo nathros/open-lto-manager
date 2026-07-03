@@ -17,8 +17,6 @@ static XA: &str = "5.076";
 static XB: &str = "5.184";
 static XC: &str = "5.940";
 
-pub static BARCODE_VALID_CHARS: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -$%./+*";
-
 #[derive(Debug, PartialEq)]
 pub struct SegmentPair {
     pub width: &'static str, // Width of barcode segment
@@ -1239,7 +1237,9 @@ impl Code39Segment {
 
 #[cfg(test)]
 mod tests {
-    use super::{BARCODE_VALID_CHARS, CODE_39_BARCODE_SEGMENTS};
+    use crate::shared::models::database::tape::model_tape::BARCODE_VALID_CHARS;
+
+    use super::CODE_39_BARCODE_SEGMENTS;
 
     #[test]
     fn check() {

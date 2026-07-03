@@ -6,6 +6,9 @@ use rusqlite::{
     types::{FromSql, FromSqlResult, ToSqlOutput, ValueRef},
 };
 
+pub const BARCODE_VALID_CHARS: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -$%./+*";
+pub const BARCODE_LEN: usize = 6;
+
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct RecordTape {
     pub id: i64,

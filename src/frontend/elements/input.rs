@@ -67,6 +67,9 @@ pub struct InputProps {
     #[props(optional)]
     oninput: EventHandler<FormEvent>,
 
+    #[props(optional)]
+    validation: ReadSignal<Option<String>>,
+
     #[props(extends = input, extends = GlobalAttributes)]
     attributes: Vec<Attribute>,
 }
@@ -79,6 +82,9 @@ pub fn Input(props: InputProps) -> Element {
             style: props.style,
             oninput: props.oninput,
             ..props.attributes,
+        }
+        if let Some(e) = props.validation.as_ref() {
+            p { style: "color:red", "error: {e}" }
         }
     }
 }

@@ -13,7 +13,7 @@ fn route_eq<T>(a: &T, b: &T) -> bool {
 
 impl MenuConfig {
     pub fn default_aside(route: &Route) -> MenuConfig {
-        // FIXME swap between library and jobs, icon wobble
+        // FIXME swap between library and jobs, icon wobble when only 1 child item in both
         MenuConfig {
             enable_search: true,
             groups: vec![
@@ -32,12 +32,26 @@ impl MenuConfig {
                     icon: Css::ICON_TAPE.into(),
                     label: "Library".to_string(),
                     open: route_eq(route, &Route::Tape { id: (0) }),
-                    items: vec![MenuItemConfig {
-                        icon: "".to_string(),
-                        label: "Add Tape".to_string(),
-                        link: Route::Tape { id: (0) }.to_string(),
-                        selected: route_eq(route, &Route::Tape { id: (0) }),
-                    }],
+                    items: vec![
+                        MenuItemConfig {
+                            icon: "".to_string(),
+                            label: "View".to_string(),
+                            link: Route::ViewLibrary {}.to_string(),
+                            selected: route_eq(route, &Route::ViewLibrary {}),
+                        },
+                        MenuItemConfig {
+                            icon: "".to_string(),
+                            label: "Add Tape".to_string(),
+                            link: Route::Tape { id: (0) }.to_string(),
+                            selected: route_eq(route, &Route::Tape { id: (0) }),
+                        },
+                        MenuItemConfig {
+                            icon: "".to_string(),
+                            label: "Generate LTO Label".to_string(),
+                            link: Route::GenLabel {}.to_string(),
+                            selected: route_eq(route, &Route::GenLabel {}),
+                        },
+                    ],
                 },
                 MenuGroup {
                     icon: Icons::LIST.into(),
@@ -151,20 +165,45 @@ impl MenuConfig {
                 MenuGroup {
                     icon: Icons::SANDPIT.into(),
                     label: "Sandpit".to_string(),
-                    open: route_eq(route, &Route::Sandpit {})
-                        || route_eq(route, &Route::SandpitShowcase {}),
+                    open: route_eq(
+                        route,
+                        &Route::Sandpit {
+                            name: "".to_string(),
+                        },
+                    ) || route_eq(
+                        route,
+                        &Route::Sandpit {
+                            name: "showcase".to_string(),
+                        },
+                    ),
                     items: vec![
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "Index".to_string(),
-                            link: Route::Sandpit {}.to_string(),
-                            selected: route_eq(route, &Route::Sandpit {}),
+                            link: Route::Sandpit {
+                                name: "".to_string(),
+                            }
+                            .to_string(),
+                            selected: route_eq(
+                                route,
+                                &Route::Sandpit {
+                                    name: "".to_string(),
+                                },
+                            ),
                         },
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "Showcase".to_string(),
-                            link: Route::SandpitShowcase {}.to_string(),
-                            selected: route_eq(route, &Route::SandpitShowcase {}),
+                            link: Route::Sandpit {
+                                name: "showcase".to_string(),
+                            }
+                            .to_string(),
+                            selected: route_eq(
+                                route,
+                                &Route::Sandpit {
+                                    name: "showcase".to_string(),
+                                },
+                            ),
                         },
                     ],
                 },

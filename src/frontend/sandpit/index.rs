@@ -1,33 +1,37 @@
 use dioxus::prelude::*;
 
 use crate::{
-    frontend::{assets::IMG_SANDPIT, css::Css, elements::button::LinkButton},
+    frontend::{
+        assets::IMG_SANDPIT,
+        components::card::Card,
+        css::Css,
+        elements::button::Button,
+        sandpit::{
+            sandpit_button::SandpitButton, sandpit_menu::SandpitMenu,
+            sandpit_menu_item::SandpitMenuItem, sandpit_message::SandpitMessage,
+            sandpit_modal::SandpitModal, sandpit_tab::SandpitTab,
+        },
+    },
     route::Route,
     static_concat,
 };
 
 #[component]
-pub fn Sandpit() -> Element {
+pub fn Sandpit(name: String) -> Element {
     let all_items = [
         (
             "UI Elements",
             vec![
-                ("Button", Route::SandpitButton {}.to_string()),
-                ("Menu Item", Route::SandpitMenuItem {}.to_string()),
+                ("Button", SandpitButton()),
+                ("Menu Item", SandpitMenuItem()),
             ],
         ),
-        (
-            "UI Modules",
-            vec![("Modal", Route::SandpitMessage {}.to_string())],
-        ),
+        ("UI Modules", vec![("Modal", SandpitModal())]),
         (
             "UI Collections",
-            vec![("Message", Route::SandpitMessage {}.to_string())],
+            vec![("Message", SandpitMessage()), ("Tab", SandpitTab())],
         ),
-        (
-            "UI Components",
-            vec![("Menu", Route::SandpitMenu {}.to_string())],
-        ),
+        ("UI Components", vec![("Menu", SandpitMenu())]),
     ];
 
     rsx! {
@@ -37,33 +41,79 @@ pub fn Sandpit() -> Element {
                 style: format!("background-image:url({})", IMG_SANDPIT),
 
             }
-            h2 { "Sandpit: Dev Testing Area" }
-            div { class: Css::CARD,
-                b { "Showcase" }
-                br {}
-                br {}
-                div { class: Css::FLEX_ROW,
-                    LinkButton {
-                        primary: true,
-                        to: Route::SandpitShowcase {}.into(),
-                        text: "UI Showcase",
-                    }
-                }
-            }
-
-            div { class: Css::FLEX_ROW,
-                for (set_name , groups) in all_items {
+            match name.as_str() {
+                "" => rsx! {
+                    h2 { "Sandpit: Dev Testing Area" }
                     div { class: Css::CARD,
-                        b { "{set_name}" }
+                        b { "Showcase" }
                         br {}
                         br {}
                         div { class: Css::FLEX_ROW,
-                            for (name , link) in groups {
-                                LinkButton { to: link.into(), text: name }
+                            Button {
+                                primary: true,
+                                onclick: move |_| {
+                                    use_navigator()
+                                        .push(Route::Sandpit {
+                                            name: "showcase".to_string(),
+                                        });
+                                },
+                                text: "UI Showcase",
                             }
                         }
                     }
-                }
+
+                    div { class: Css::FLEX_ROW,
+                        for (set_name , groups) in all_items {
+                            div { class: Css::CARD,
+                                b { "{set_name}" }
+                                br {}
+                                br {}
+                                div { class: Css::FLEX_ROW,
+                                    for (name_group , _) in groups {
+                                        Button {
+                                            onclick: move |_| {
+                                                use_navigator()
+                                                    .push(Route::Sandpit {
+                                                        name: name_group.to_string(),
+                                                    });
+                                            },
+                                            text: name_group,
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                },
+
+                "showcase" => rsx! {
+                    for (_ , groups) in all_items {
+                        div { class: Css::FLEX_COL, style: "width:100%;align-items:unset;",
+                            for (name_group , component) in groups {
+                                Card { top_padding: false,
+                                    h3 { "{name_group}" }
+                                    div { {component} }
+                                }
+                            }
+                        }
+                    }
+                },
+
+                _ => rsx! {
+                    for (_ , groups) in all_items {
+                        for (name_group , component) in groups {
+                            if name_group == name {
+                                div { class: Css::FLEX_COL, style: "width:100%;align-items:unset;",
+                                    Card { top_padding: false,
+                                        h3 { "{name_group}" }
+                                        div { {component} }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
             }
         }
     }

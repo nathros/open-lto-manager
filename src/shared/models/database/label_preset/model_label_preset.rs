@@ -19,6 +19,8 @@ pub struct RecordLabelPreset {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(default)]
 pub struct LabelOptions {
+    pub prefix: String,
+    pub postfix: String,
     pub theme: LabelTheme,
     pub font: LabelFont,
     pub text_direction: LabelTextDirection,
@@ -38,6 +40,8 @@ pub struct LabelOptions {
 impl Default for LabelOptions {
     fn default() -> Self {
         Self {
+            prefix: "".to_string(),
+            postfix: "".to_string(),
             theme: LabelTheme::Standard,
             font: LabelFont::SansSerif,
             text_direction: LabelTextDirection::Normal,
@@ -190,6 +194,8 @@ mod tests {
         let expected = r##"
         Owned(
             Text("{
+                "prefix":"",
+                "postfix":"",
                 "theme":"Warm",
                 "font":"SansSerif",
                 "text_direction":"Normal",

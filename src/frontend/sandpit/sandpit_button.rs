@@ -1,9 +1,6 @@
 use dioxus::prelude::*;
 
-use crate::{
-    frontend::elements::button::{Button, LinkButton},
-    route::Route,
-};
+use crate::frontend::elements::button::{Button, LinkButton};
 
 #[component]
 pub fn SandpitButton() -> Element {
@@ -15,10 +12,7 @@ pub fn SandpitButton() -> Element {
             text: "[Standard] Test Button",
         }
         span { " " }
-        LinkButton {
-            to: Route::SandpitButton {}.into(),
-            text: "[Standard] Test Link Button",
-        }
+        LinkButton { to: "#".into(), text: "[Standard] Test Link Button" }
         span { " " }
         Button {
             primary: true,
@@ -30,7 +24,7 @@ pub fn SandpitButton() -> Element {
         span { " " }
         LinkButton {
             primary: true,
-            to: Route::SandpitButton {}.into(),
+            to: "#".into(),
             text: "[Standard] Test Link Button",
         }
     }

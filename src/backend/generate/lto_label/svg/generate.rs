@@ -2,15 +2,15 @@ use std::collections::HashSet;
 
 use crate::shared::{
     error::ErrorStr,
-    models::database::label_preset::model_label_preset::{
-        LabelOptions, LabelTextDirection, LabelTextOrientation,
+    models::database::{
+        label_preset::model_label_preset::{
+            LabelOptions, LabelTextDirection, LabelTextOrientation,
+        },
+        tape::model_tape::BARCODE_VALID_CHARS,
     },
 };
 
-use super::{
-    code_39::{BARCODE_VALID_CHARS, CODE_39_BARCODE_SEGMENTS},
-    svg_label::SvgLabel,
-};
+use super::{code_39::CODE_39_BARCODE_SEGMENTS, svg_label::SvgLabel};
 
 const TEXT_BOX_ID: &str = "t";
 const BACKGROUND_ID: &str = "b";

@@ -128,3 +128,14 @@
 		background-color: rgba(31, 31, 31, 0.6);
 	}
 }
+#h-base /* [trim] impl Css::HEADER_ANCHOR_BASE */ {
+	anchor-name: --header-anchor;
+	pointer-events: none;
+}
+.header-anchor-position /* impl Css::HEADER_ANCHOR_POSITION */ {
+	position: fixed;
+	position-anchor: --header-anchor;
+	right: anchor(right);
+	top: anchor(top);
+	z-index: 11; /* .main-header::z-index: + 1  */
+}

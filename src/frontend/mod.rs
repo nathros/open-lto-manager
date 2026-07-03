@@ -3,6 +3,7 @@ mod collections;
 pub mod components;
 mod css;
 mod elements;
+mod forms;
 mod icons;
 mod id;
 mod js;

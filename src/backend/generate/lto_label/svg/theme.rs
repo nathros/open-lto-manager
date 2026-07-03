@@ -161,9 +161,9 @@ mod tests {
 
     use enum_iterator::{all, cardinality};
 
-    use crate::backend::generate::lto_label::svg::{
-        code_39::BARCODE_VALID_CHARS,
-        theme::{CODE_39_BARCODE_THEMES, LabelTheme},
+    use crate::{
+        backend::generate::lto_label::svg::theme::{CODE_39_BARCODE_THEMES, LabelTheme},
+        shared::models::database::tape::model_tape::BARCODE_VALID_CHARS,
     };
 
     #[test]

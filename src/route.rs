@@ -11,16 +11,12 @@ use crate::frontend::{
         },
         home::Home,
         job::add_job::AddJob,
+        library::{generate_label::GenLabel, tape::Tape, view_library::ViewLibrary},
         login::login_user::LoginUser,
         show::Show,
-        tape::Tape,
         test::Test,
     },
-    sandpit::{
-        index::Sandpit, sandpit_button::SandpitButton, sandpit_menu::SandpitMenu,
-        sandpit_menu_item::SandpitMenuItem, sandpit_message::SandpitMessage,
-        sandpit_modal::SandpitModal, sandpit_showcase::SandpitShowcase,
-    },
+    sandpit::index::Sandpit,
 };
 
 #[derive(Debug, Clone, Routable, PartialEq)]
@@ -35,8 +31,12 @@ pub enum Route {
     #[route("/test")]
     Test {},
 
-    #[route("/tape/:id")]
+    #[route("/library/tape/:id")]
     Tape { id: i64 },
+    #[route("/library/view")]
+    ViewLibrary {},
+    #[route("/library/generate/label")]
+    GenLabel {},
 
     #[route("/jobs/")]
     AddJob {},
@@ -48,20 +48,8 @@ pub enum Route {
     #[route("/show-dev")]
     ShowDevices {},
 
-    #[route("/sandpit")]
-    Sandpit {},
-    #[route("/sandpit/showcase")]
-    SandpitShowcase {},
-    #[route("/sandpit/button")]
-    SandpitButton {},
-    #[route("/sandpit/modal")]
-    SandpitModal {},
-    #[route("/sandpit/message")]
-    SandpitMessage {},
-    #[route("/sandpit/menu")]
-    SandpitMenu {},
-    #[route("/sandpit/menu-item")]
-    SandpitMenuItem {},
+    #[route("/sandpit?:name")]
+    Sandpit { name: String },
 
     #[route("/db-type")]
     DBType {},

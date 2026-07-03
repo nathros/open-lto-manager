@@ -4,6 +4,7 @@ use super::css::Css;
 
 #[derive(Sequence)]
 pub enum Id {
+    HeaderBaseAnchor,
     HeaderNotificationIcon,
     HeaderNotificationMenu,
     HeaderInfoIcon,
@@ -29,6 +30,7 @@ pub enum Id {
 impl Id {
     pub const fn as_str(&self) -> &str {
         match self {
+            Id::HeaderBaseAnchor => Css::HEADER_ANCHOR_BASE,
             Id::HeaderNotificationIcon => "h-not_i",
             Id::HeaderNotificationMenu => "h-not_m",
             Id::HeaderInfoIcon => "h-info_i",

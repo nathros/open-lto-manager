@@ -123,6 +123,8 @@ pub fn Header() -> Element {
                     header { class: Css::MAIN_HEADER,
                         div { class: Css::MAIN_HEADER_LOGO, "{APP_NAME}" }
 
+                        button { id: Id::HeaderBaseAnchor.as_str() }
+
                         button {
                             class: Css::HEADER_DROPDOWN,
                             id: Id::HeaderNotificationIcon.as_str(),
@@ -153,6 +155,7 @@ pub fn Header() -> Element {
                             div {
                                 class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
                                 onclick: move |_evt: Event<MouseData>| async move {
+                                    js_hide_popover(Id::HeaderInfoMenu.as_str());
                                     let _ = document::eval("alert('Not ready yet');").await;
                                 },
                                 span { class: static_concat!(Css::ICON, Css::SM, Icons::BOOK) }
@@ -162,6 +165,9 @@ pub fn Header() -> Element {
                                 "target": "_blank",
                                 class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
                                 to: "https://github.com/nathros/open-lto-manager",
+                                onclick: move |_evt: Event<MouseData>| {
+                                    js_hide_popover(Id::HeaderInfoMenu.as_str());
+                                },
                                 span {
                                     style: format!("mask-image:url({}#github)", LOGO_ASSET),
                                     class: static_concat!(Css::ICON, Css::SM),
@@ -172,6 +178,9 @@ pub fn Header() -> Element {
                                 "target": "_blank",
                                 class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
                                 to: "https://github.com/nathros/open-lto-manager/issues",
+                                onclick: move |_evt: Event<MouseData>| {
+                                    js_hide_popover(Id::HeaderInfoMenu.as_str());
+                                },
                                 span { class: static_concat!(Css::ICON, Css::SM, Icons::BUG) }
                                 span { "Bug report" }
                             }
@@ -198,7 +207,7 @@ pub fn Header() -> Element {
                                     js_hide_popover(Id::HeaderUserMenu.as_str());
                                 },
                                 span { class: static_concat!(Css::ICON, Css::SM, Icons::USER) }
-                                span { "Account" }
+                                span { "Account" } // FIXME aside does not update
                             }
 
                             button {
@@ -467,5 +476,12 @@ pub fn Header() -> Element {
                 }
             }
         }
+    }
+}
+
+#[component]
+pub fn HeaderExtraIcons(children: Element) -> Element {
+    rsx! {
+        div { class: Css::HEADER_ANCHOR_POSITION, {children} }
     }
 }

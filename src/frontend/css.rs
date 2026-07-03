@@ -18,6 +18,8 @@ impl Css {
     pub const HEADER_COL: &str = "header-colour "; // Defined in assets/css/header.css line 96
     pub const RAINBOW: &str = "rainbow "; // Defined in assets/css/header.css line 99
     pub const ID_ACCENT_PICKER: &str = "accent-picker"; // Defined in assets/css/header.css line 102
+    pub const HEADER_ANCHOR_BASE: &str = "h-base"; // Defined in assets/css/header.css line 131
+    pub const HEADER_ANCHOR_POSITION: &str = "header-anchor-position "; // Defined in assets/css/header.css line 135
     pub const ICON_LIST_ITEM: &str = "icon-list-item "; // Defined in assets/css/icon-list.css line 1
     pub const ICON: &str = "icon "; // Defined in assets/css/icon.css line 1
     pub const MESSAGE: &str = "message "; // Defined in assets/css/message.css line 1

@@ -18,8 +18,8 @@ fn highlight_btn(show: bool) -> String {
 
 #[component]
 pub fn Tab(
-    tab_names: Vec<String>,
-    tab_contents: Vec<Element>,
+    labels: Vec<String>,
+    contents: Vec<Element>,
     #[props(extends = div, extends = GlobalAttributes)] attributes: Vec<Attribute>,
 ) -> Element {
     let mut selected_tab = use_signal(|| 0);
@@ -27,7 +27,7 @@ pub fn Tab(
     rsx! {
         div {..attributes,
             if let tab_index = selected_tab() {
-                for (index , name) in tab_names.iter().enumerate() {
+                for (index , name) in labels.iter().enumerate() {
                     button {
                         style: highlight_btn(tab_index == index),
                         onclick: move |_| {
@@ -38,7 +38,7 @@ pub fn Tab(
                 }
                 br {}
                 br {}
-                for (index , child) in tab_contents.iter().enumerate() {
+                for (index , child) in contents.iter().enumerate() {
                     div { style: show_tab(tab_index == index), {child} }
                 }
             }

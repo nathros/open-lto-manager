@@ -63,8 +63,8 @@ pub fn AddJob() -> Element {
             message: modal_message,
         }
         Tab {
-            tab_names: vec!["Options".to_string(), "Files".to_string(), "Destination".to_string()],
-            tab_contents: vec![
+            labels: vec!["Options".to_string(), "Files".to_string(), "Destination".to_string()],
+            contents: vec![
                 tab_options,
                 tab_files,
                 rsx! {
