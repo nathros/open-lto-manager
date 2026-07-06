@@ -6,7 +6,10 @@ use crate::{
         api_tape::{api_add_tape, api_get_tape},
         api_tape_type::list_type_type,
     },
-    frontend::collections::tape_preview::TapePreview,
+    frontend::{
+        collections::tape_preview::TapePreview, components::card::Card,
+        pages::library::tape_form::TapeForm,
+    },
     shared::models::database::{
         manufacturer::model_manufacturer::RecordManufacturer,
         tape::model_tape::{RecordTape, TapeFormat},
@@ -100,6 +103,11 @@ pub fn Tape(id: i64) -> Element {
     };
 
     rsx! {
+        Card {
+            TapeForm { id: 0 }
+        }
+        hr {}
+
         if tape().id == 0 {
             b { "New Tape" }
         } else {

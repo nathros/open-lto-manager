@@ -4,3 +4,9 @@
 	padding: var(--padding-m);
 	border-radius: var(--radius);
 }
+.v-divider /* impl Css::V_DIVIDER */ {
+	border-right: var(--border);
+	height: stretch;
+	margin-top: var(--padding-s);
+	margin-bottom: var(--padding-s);
+}

@@ -72,7 +72,6 @@
 }
 .header-dropdown-content /* impl Css::HEADER_DROPDOWN_CONTENT */ {
 	position: fixed;
-	position-area: self-start;
 	margin: initial;
 	padding: initial;
 	padding-top: var(--padding-s);
@@ -82,13 +81,13 @@
 	border-radius: var(--radius);
 	min-width: 14rem;
 	border: var(--border);
-	transform: translate(43px, 43px);
+	position-area: bottom span-left;
 	animation: float-down 250ms ease forwards;
 }
 .header-dropdown-content.nested /* impl Css::HEADER_DROPDOWN_NESTED */ {
-	transform: translate(-2px, -2.75rem);
-	position-area: bottom x-start;
-	animation: float-down-nested 250ms ease forwards;
+	right: calc(anchor(left) + 2px);
+	top: calc(anchor(top) - var(--padding-s, rem) - 1px);
+	animation: float-down 250ms ease forwards;
 }
 .float-right /* impl Css::FLOAT_RIGHT */ {
 	margin-left: auto;
@@ -106,21 +105,11 @@
 @keyframes float-down {
 	0% {
 		opacity: 0;
-		transform: translate(43px, 33px);
+		transform: translateY(-10px);
 	}
 	100% {
 		opacity: 1;
-		transform: translate(43px, 43px);
-	}
-}
-@keyframes float-down-nested {
-	0% {
-		opacity: 0;
-		transform: translate(-2px, calc(-2.75rem - 10px));
-	}
-	100% {
-		opacity: 1;
-		transform: translate(-2px, -2.75rem);
+		transform: translateY(0);
 	}
 }
 @container style(--dark-mode: 1) {

@@ -1,5 +1,11 @@
 use dioxus::prelude::*;
 
+use crate::{
+    either,
+    frontend::{css::Css, icons::Icons},
+    static_concat,
+};
+
 #[derive(PartialEq, Clone)]
 pub enum InputType {
     // Uncomment when needed
@@ -65,6 +71,9 @@ pub struct InputProps {
     style: String,
 
     #[props(optional)]
+    label: String,
+
+    #[props(optional)]
     oninput: EventHandler<FormEvent>,
 
     #[props(optional)]
@@ -77,14 +86,25 @@ pub struct InputProps {
 #[component]
 pub fn Input(props: InputProps) -> Element {
     rsx! {
-        input {
-            r#type: props.type_.to_string(),
-            style: props.style,
-            oninput: props.oninput,
-            ..props.attributes,
-        }
-        if let Some(e) = props.validation.as_ref() {
-            p { style: "color:red", "error: {e}" }
+        if let err = props.validation.as_ref().is_some() {
+            div { class: static_concat!(Css::INPUT_CONTAINER),
+                if !props.label.is_empty() {
+                    label { "{props.label}:" }
+                }
+                div {
+                    input {
+                        class: [Css::INPUT, either!(err, Icons::ERROR, "")].concat(),
+                        r#type: props.type_.to_string(),
+                        style: props.style,
+                        oninput: props.oninput,
+                        ..props.attributes,
+                    }
+                    div { class: Css::INPUT_MESSAGE,
+                        "{props.validation.read().clone().unwrap_or_default()}"
+                    }
+                    div { class: static_concat!(Css::INPUT_ERROR_ICON, Css::ICON, Icons::WARNING) }
+                }
+            }
         }
     }
 }

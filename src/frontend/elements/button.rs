@@ -13,6 +13,9 @@ pub struct ButtonProps {
     #[props(optional, default = false)]
     primary: bool,
 
+    #[props(optional, default = false)]
+    disabled: bool,
+
     #[props(optional)]
     onclick: EventHandler<MouseEvent>,
 
@@ -58,6 +61,7 @@ pub fn Button(props: ButtonProps) -> Element {
             class: either!(props.primary, static_concat!(Css::BTN, Css::BTN_PRI), Css::BTN),
             style: props.style,
             onclick: props.onclick,
+            disabled: props.disabled,
             ..props.attributes,
             "{props.text}"
         }
@@ -66,7 +70,6 @@ pub fn Button(props: ButtonProps) -> Element {
 
 #[component]
 pub fn LinkButton(props: LinkButtonProps) -> Element {
-    // FIXME has different size to Button, also pri/standard not the same size either
     rsx! {
         Link {
             class: either!(props.primary, static_concat!(Css::BTN, Css::BTN_PRI), Css::BTN),

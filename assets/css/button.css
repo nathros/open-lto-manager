@@ -28,3 +28,7 @@
 .btn.pri:active {
 	background-color: hsl(from var(--colour-accent) h s calc(l - 10));
 }
+.btn:disabled {
+	opacity: 0.2;
+	cursor: not-allowed;
+}

@@ -7,7 +7,7 @@ use crate::{
         css::Css,
         elements::button::Button,
         sandpit::{
-            sandpit_button::SandpitButton, sandpit_menu::SandpitMenu,
+            sandpit_button::SandpitButton, sandpit_input::SandpitInput, sandpit_menu::SandpitMenu,
             sandpit_menu_item::SandpitMenuItem, sandpit_message::SandpitMessage,
             sandpit_modal::SandpitModal, sandpit_tab::SandpitTab,
         },
@@ -24,6 +24,7 @@ pub fn Sandpit(name: String) -> Element {
             vec![
                 ("Button", SandpitButton()),
                 ("Menu Item", SandpitMenuItem()),
+                ("Input", SandpitInput()),
             ],
         ),
         ("UI Modules", vec![("Modal", SandpitModal())]),

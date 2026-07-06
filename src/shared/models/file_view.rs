@@ -43,8 +43,7 @@ impl FileView {
         new_dir: Vec<FileView>,
         index: usize,
     ) -> Option<&str> {
-        #[cfg(debug_assertions)]
-        FileView::println(main);
+        //FileView::println(main);
 
         let current_dir = main.get(index);
         if current_dir.is_none() {

@@ -1,9 +1,11 @@
 use num_traits::int::PrimInt;
+use std::fmt::Debug;
+use tracing::error;
 
 use super::validator::Validator;
 
-impl<D: PrimInt> Validator<D> {
-    pub fn with_min_number(mut self, num: usize) -> Self {
+impl<D: PrimInt + Debug> Validator<D> {
+    /*pub fn with_min_number(mut self, num: usize) -> Self {
         self.check_fn
             .push(Box::new(move |value: &D| -> Option<String> {
                 if let Some(number) = D::from(num)
@@ -14,9 +16,9 @@ impl<D: PrimInt> Validator<D> {
                 None
             }));
         self
-    }
+    }*/
 
-    /*pub fn with_min_number(mut self, num: D) -> Self {
+    pub fn with_min_number(mut self, num: D) -> Self {
         let number = num.to_i64().unwrap_or_else(|| {
             error!("Failed with_min_number: {:#?}", num);
             i64::MIN
@@ -31,7 +33,7 @@ impl<D: PrimInt> Validator<D> {
                 None
             }));
         self
-    }*/
+    }
 }
 
 #[cfg(test)]

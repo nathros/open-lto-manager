@@ -1,5 +1,6 @@
 pub mod index;
 pub mod sandpit_button;
+pub mod sandpit_input;
 pub mod sandpit_menu;
 pub mod sandpit_menu_item;
 pub mod sandpit_message;
