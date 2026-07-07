@@ -6,6 +6,7 @@
 	padding: var(--padding-s);
 	border-radius: var(--radius);
 	border: var(--border);
+	background-color: transparent;
 }
 .input /* impl Css::INPUT */,
 .select /* impl Css::SELECT */ {
@@ -81,4 +82,20 @@
 	100% {
 		transform: translate(0, 0);
 	}
+}
+.radio-pill-container /* impl Css::RADIO_PILL_CONTAINER */ {
+	display: flex;
+}
+.radio-pill-container input {
+	display: none;
+}
+.radio-pill-container label {
+	padding: var(--padding-s);
+	flex: 1;
+	text-align: center;
+	border-radius: var(--radius);
+	user-select: none;
+}
+.radio-pill-container > label:has(> input:checked) {
+	background-color: var(--colour-accent);
 }

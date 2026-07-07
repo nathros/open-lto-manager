@@ -23,10 +23,11 @@ impl Css {
     pub const ICON_LIST_ITEM: &str = "icon-list-item "; // Defined in assets/css/icon-list.css line 1
     pub const ICON: &str = "icon "; // Defined in assets/css/icon.css line 1
     pub const FORM_GRID: &str = "form-grid "; // Defined in assets/css/forms.css line 1
-    pub const INPUT: &str = "input "; // Defined in assets/css/forms.css line 10
-    pub const SELECT: &str = "select "; // Defined in assets/css/forms.css line 11
-    pub const INPUT_CONTAINER: &str = "input-container "; // Defined in assets/css/forms.css line 43
-    pub const INPUT_ERROR_ICON: &str = "input-error-icon "; // Defined in assets/css/forms.css line 59
+    pub const INPUT: &str = "input "; // Defined in assets/css/forms.css line 11
+    pub const SELECT: &str = "select "; // Defined in assets/css/forms.css line 12
+    pub const INPUT_CONTAINER: &str = "input-container "; // Defined in assets/css/forms.css line 44
+    pub const INPUT_ERROR_ICON: &str = "input-error-icon "; // Defined in assets/css/forms.css line 60
+    pub const RADIO_PILL_CONTAINER: &str = "radio-pill-container "; // Defined in assets/css/forms.css line 86
     pub const INPUT_MESSAGE: &str = "input-message "; // Defined in assets/css/input.css line 1
     pub const MESSAGE: &str = "message "; // Defined in assets/css/message.css line 1
     pub const CARD: &str = "card "; // Defined in assets/css/card.css line 1
@@ -46,6 +47,7 @@ impl Css {
     pub const SM: &str = "sm "; // Defined in assets/css/common.css line 70
     pub const MD: &str = "md "; // Defined in assets/css/common.css line 74
     pub const BG: &str = "bg "; // Defined in assets/css/common.css line 78
-    pub const ID_SNA: &str = "sna"; // Defined in assets/css/common.css line 93
-    pub const ID_SAND: &str = "sandpit"; // Defined in assets/css/common.css line 115
+    pub const HOVER: &str = "hover "; // Defined in assets/css/common.css line 93
+    pub const ID_SNA: &str = "sna"; // Defined in assets/css/common.css line 97
+    pub const ID_SAND: &str = "sandpit"; // Defined in assets/css/common.css line 119
 }

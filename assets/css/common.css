@@ -90,6 +90,10 @@ dialog {
 .bg.success {
 	background-color: var(--colour-success);
 }
+.hover:hover /* impl Css::HOVER */ {
+	cursor: pointer;
+	box-shadow: var(--hover);
+}
 #sna /* [trim] impl Css::ID_SNA */ {
 	position: relative;
 	cursor: pointer;

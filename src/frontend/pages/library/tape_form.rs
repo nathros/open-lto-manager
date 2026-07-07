@@ -3,6 +3,7 @@ use dioxus::prelude::*;
 use crate::{
     either,
     frontend::{
+        collections::radio_pill::RadioPill,
         css::Css,
         elements::{
             button::Button,
@@ -15,10 +16,10 @@ use crate::{
     shared::models::{
         database::{
             manufacturer::model_manufacturer::RecordManufacturer,
-            tape::model_tape::{BARCODE_LEN, BARCODE_VALID_CHARS, RecordTape},
+            tape::model_tape::{BARCODE_LEN, BARCODE_VALID_CHARS, RecordTape, TapeFormat},
             tape_type::model_tape_type::RecordTapeType,
         },
-        select_option::vec_into,
+        select_option::{SelectOption, vec_into},
     },
 };
 
@@ -63,6 +64,20 @@ pub fn TapeForm(
                         tape.write().manufacturer_id = evt.value().parse::<i64>().unwrap_or(0);
                     },
                 }
+                RadioPill {
+                    label: "Tape Format".to_string(),
+                    options: [TapeFormat::Tar, TapeFormat::LTFS]
+                        .map(|t| SelectOption {
+                            id: t.into(),
+                            label: format!("{:?}", t),
+                        })
+                        .to_vec(),
+                    callback: use_callback(move |id: i64| {
+                        tape.write().format = id.into();
+                    }),
+                    selected: tape().format.into(),
+                    name: "test",
+                }
                 Input {
                     type_: InputType::Text,
                     label: "Barcode".to_string(),
@@ -84,6 +99,7 @@ pub fn TapeForm(
                 }
                 p { "form_invalid: {form_invalid}" }
                 p { "len: {tape().barcode.len()}" }
+                p { "format: {tape().format:?}" }
 
                 hr {}
                 Button {
