@@ -87,7 +87,7 @@ pub struct InputProps {
 pub fn Input(props: InputProps) -> Element {
     rsx! {
         if let err = props.validation.as_ref().is_some() {
-            div { class: static_concat!(Css::INPUT_CONTAINER),
+            div { class: Css::INPUT_CONTAINER,
                 if !props.label.is_empty() {
                     label { "{props.label}:" }
                 }

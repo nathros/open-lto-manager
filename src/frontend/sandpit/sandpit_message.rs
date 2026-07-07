@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 
 use crate::frontend::{
     collections::message::{Message, MessageDetails},
-    elements::input::InputType,
+    elements::input::{Input, InputType},
     level::Level,
 };
 
@@ -11,12 +11,11 @@ pub fn SandpitMessage() -> Element {
     let mut message_input = use_signal(|| "Test message".to_string());
 
     rsx! {
-        input {
-            r#type: InputType::Text.to_string(),
+        Input {
+            type_: InputType::Text,
             oninput: move |evt: Event<FormData>| { message_input.set(evt.value()) },
             value: message_input(),
         }
-        br {}
         br {}
         Message {
             details: MessageDetails {

@@ -1,7 +1,10 @@
 use dioxus::prelude::*;
 
 use crate::frontend::{
-    elements::{button::Button, input::InputType},
+    elements::{
+        button::Button,
+        input::{Input, InputType},
+    },
     id::Id,
     level::Level,
     modules::modal::Modal,
@@ -37,12 +40,11 @@ pub fn SandpitModal() -> Element {
             message: message_success,
         }
 
-        input {
-            r#type: InputType::Text.to_string(),
+        Input {
+            type_: InputType::Text,
             oninput: move |evt: Event<FormData>| { message_input.set(evt.value()) },
             value: message_input(),
         }
-        br {}
         br {}
 
         Button {

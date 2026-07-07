@@ -2,7 +2,7 @@ use dioxus::{dioxus_core, fullstack::Loader, prelude::*};
 
 use crate::{
     backend::api::{
-        api_manufacturer::list_manu,
+        api_manufacturer::list_manufacturer,
         api_tape::{api_add_tape, api_get_tape},
         api_tape_type::list_type_type,
     },
@@ -22,7 +22,7 @@ pub fn Tape(id: i64) -> Element {
     let tape_loader: Loader<RecordTape> = use_loader(|| api_get_tape(0))?;
     let mut tape: Signal<RecordTape> = use_signal(|| tape_loader());
 
-    let manufactures: Loader<Vec<RecordManufacturer>> = use_loader(list_manu)?;
+    let manufactures: Loader<Vec<RecordManufacturer>> = use_loader(list_manufacturer)?;
     let types: Loader<Vec<RecordTapeType>> = use_loader(list_type_type)?;
 
     let current_designation = types()
@@ -104,7 +104,7 @@ pub fn Tape(id: i64) -> Element {
 
     rsx! {
         Card {
-            TapeForm { id: 0 }
+            TapeForm { id: 0, types: types(), manufacturers: manufactures() }
         }
         hr {}
 

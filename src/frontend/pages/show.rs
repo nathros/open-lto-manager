@@ -1,7 +1,7 @@
 use dioxus::{fullstack::Loader, prelude::*};
 
 use crate::{
-    backend::api::api_manufacturer::list_manu,
+    backend::api::api_manufacturer::list_manufacturer,
     shared::models::database::manufacturer::model_manufacturer::RecordManufacturer,
 };
 
@@ -11,7 +11,7 @@ pub fn Show() -> Element {
     //let mut tapes_list = use_loader(list_tapes)?;
     let mut bar = use_signal(|| "".to_string());
 
-    let manu_list: Loader<Vec<RecordManufacturer>> = use_loader(list_manu)?;
+    let manu_list: Loader<Vec<RecordManufacturer>> = use_loader(list_manufacturer)?;
 
     rsx! {
         p { "list" }

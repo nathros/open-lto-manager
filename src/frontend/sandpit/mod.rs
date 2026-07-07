@@ -1,8 +1,9 @@
 pub mod index;
-pub mod sandpit_button;
-pub mod sandpit_input;
-pub mod sandpit_menu;
-pub mod sandpit_menu_item;
-pub mod sandpit_message;
-pub mod sandpit_modal;
-pub mod sandpit_tab;
+mod sandpit_button;
+mod sandpit_input;
+mod sandpit_menu;
+mod sandpit_menu_item;
+mod sandpit_message;
+mod sandpit_modal;
+mod sandpit_select;
+mod sandpit_tab;

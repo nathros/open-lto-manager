@@ -9,7 +9,7 @@ use crate::{
         sandpit::{
             sandpit_button::SandpitButton, sandpit_input::SandpitInput, sandpit_menu::SandpitMenu,
             sandpit_menu_item::SandpitMenuItem, sandpit_message::SandpitMessage,
-            sandpit_modal::SandpitModal, sandpit_tab::SandpitTab,
+            sandpit_modal::SandpitModal, sandpit_select::SandpitSelect, sandpit_tab::SandpitTab,
         },
     },
     route::Route,
@@ -25,6 +25,7 @@ pub fn Sandpit(name: String) -> Element {
                 ("Button", SandpitButton()),
                 ("Menu Item", SandpitMenuItem()),
                 ("Input", SandpitInput()),
+                ("Select", SandpitSelect()),
             ],
         ),
         ("UI Modules", vec![("Modal", SandpitModal())]),
@@ -35,15 +36,29 @@ pub fn Sandpit(name: String) -> Element {
         ("UI Components", vec![("Menu", SandpitMenu())]),
     ];
 
-    rsx! {
-        div { class: static_concat!(Css::FLEX_COL, Css::FLEX_ALIGN_LEFT),
+    let style = "width:100%;align-items:unset";
+    let background = || {
+        rsx! {
             div {
                 id: Css::ID_SAND,
                 style: format!("background-image:url({})", IMG_SANDPIT),
-
             }
+        }
+    };
+    let showDemo = |name_group: &str, component: Result<VNode, RenderError>| {
+        rsx! {
+            Card { top_padding: false,
+                h3 { "{name_group}" }
+                div { {component} }
+            }
+        }
+    };
+
+    rsx! {
+        div { class: static_concat!(Css::FLEX_COL, Css::FLEX_ALIGN_LEFT),
             match name.as_str() {
                 "" => rsx! {
+                    {background()}
                     h2 { "Sandpit: Dev Testing Area" }
                     div { class: Css::CARD,
                         b { "Showcase" }
@@ -90,27 +105,20 @@ pub fn Sandpit(name: String) -> Element {
 
                 "showcase" => rsx! {
                     for (_ , groups) in all_items {
-                        div { class: Css::FLEX_COL, style: "width:100%;align-items:unset;",
+                        div { class: Css::FLEX_COL, style,
                             for (name_group , component) in groups {
-                                Card { top_padding: false,
-                                    h3 { "{name_group}" }
-                                    div { {component} }
-                                }
+                                {showDemo(name_group, component)}
                             }
                         }
                     }
                 },
 
                 _ => rsx! {
+                    {background()}
                     for (_ , groups) in all_items {
                         for (name_group , component) in groups {
                             if name_group == name {
-                                div { class: Css::FLEX_COL, style: "width:100%;align-items:unset;",
-                                    Card { top_padding: false,
-                                        h3 { "{name_group}" }
-                                        div { {component} }
-                                    }
-                                }
+                                div { class: Css::FLEX_COL, style, {showDemo(name_group, component)} }
                             }
                         }
                     }

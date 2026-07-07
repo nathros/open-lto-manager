@@ -7,7 +7,6 @@ impl Css {
     pub const COLOUR_SCHEME: &str = "colour-scheme"; // Defined in assets/css/:root.css line 46
     pub const COLOUR_SCHEME_LIGHT: &str = "colour-scheme-light"; // Defined in assets/css/:root.css line 47
     pub const COLOUR_SCHEME_DARK: &str = "colour-scheme-dark"; // Defined in assets/css/:root.css line 48
-    pub const FORM_GRID: &str = "form-grid "; // Defined in assets/css/forms.css line 1
     pub const MAIN_HEADER: &str = "main-header "; // Defined in assets/css/header.css line 1
     pub const MAIN_HEADER_LOGO: &str = "header-logo "; // Defined in assets/css/header.css line 27
     pub const MAIN_ASIDE: &str = "main-aside "; // Defined in assets/css/header.css line 39
@@ -23,10 +22,12 @@ impl Css {
     pub const HEADER_ANCHOR_POSITION: &str = "header-anchor-position "; // Defined in assets/css/header.css line 124
     pub const ICON_LIST_ITEM: &str = "icon-list-item "; // Defined in assets/css/icon-list.css line 1
     pub const ICON: &str = "icon "; // Defined in assets/css/icon.css line 1
-    pub const INPUT: &str = "input "; // Defined in assets/css/input.css line 1
-    pub const INPUT_CONTAINER: &str = "input-container "; // Defined in assets/css/input.css line 34
-    pub const INPUT_MESSAGE: &str = "input-message "; // Defined in assets/css/input.css line 42
-    pub const INPUT_ERROR_ICON: &str = "input-error-icon "; // Defined in assets/css/input.css line 59
+    pub const FORM_GRID: &str = "form-grid "; // Defined in assets/css/forms.css line 1
+    pub const INPUT: &str = "input "; // Defined in assets/css/forms.css line 10
+    pub const SELECT: &str = "select "; // Defined in assets/css/forms.css line 11
+    pub const INPUT_CONTAINER: &str = "input-container "; // Defined in assets/css/forms.css line 43
+    pub const INPUT_ERROR_ICON: &str = "input-error-icon "; // Defined in assets/css/forms.css line 59
+    pub const INPUT_MESSAGE: &str = "input-message "; // Defined in assets/css/input.css line 1
     pub const MESSAGE: &str = "message "; // Defined in assets/css/message.css line 1
     pub const CARD: &str = "card "; // Defined in assets/css/card.css line 1
     pub const V_DIVIDER: &str = "v-divider "; // Defined in assets/css/card.css line 7

@@ -41,11 +41,11 @@ pub const CSS_ASSETS: [Asset; 1] = [asset!(
 pub const CSS_ASSETS: [Asset; 18] = [
     asset!("/assets/css/:root.css"),
     asset!("/assets/font/font.css"),
-    asset!("/assets/css/forms.css"),
     asset!("/assets/css/header.css"),
     asset!("/assets/css/icon-list.css"),
     asset!("/assets/css/icon.css"),
     asset!("/assets/css/icons.css"),
+    asset!("/assets/css/forms.css"),
     asset!("/assets/css/input.css"),
     asset!("/assets/css/message.css"),
     asset!("/assets/css/modal.css"),

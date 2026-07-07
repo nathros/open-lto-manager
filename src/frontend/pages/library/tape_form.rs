@@ -7,15 +7,27 @@ use crate::{
         elements::{
             button::Button,
             input::{Input, InputType},
+            select::Select,
             vertical_divider::VerticalDivider,
         },
         forms::validator::{TValidator, Validator},
     },
-    shared::models::database::tape::model_tape::{BARCODE_LEN, BARCODE_VALID_CHARS, RecordTape},
+    shared::models::{
+        database::{
+            manufacturer::model_manufacturer::RecordManufacturer,
+            tape::model_tape::{BARCODE_LEN, BARCODE_VALID_CHARS, RecordTape},
+            tape_type::model_tape_type::RecordTapeType,
+        },
+        select_option::vec_into,
+    },
 };
 
 #[component]
-pub fn TapeForm(id: i64) -> Element {
+pub fn TapeForm(
+    id: i64,
+    types: Vec<RecordTapeType>,
+    manufacturers: Vec<RecordManufacturer>,
+) -> Element {
     let mut tape: Signal<RecordTape> = use_signal(|| RecordTape::default());
 
     let barcode_validator = Validator::<String>::create()
@@ -33,6 +45,24 @@ pub fn TapeForm(id: i64) -> Element {
     rsx! {
         div { class: Css::FLEX_ROW,
             form { class: Css::FORM_GRID,
+                Select {
+                    label: "Tape Type".to_string(),
+                    required: true,
+                    options: vec_into(types),
+                    selected: tape().tape_type_id,
+                    onchange: move |evt: Event<FormData>| {
+                        tape.write().tape_type_id = evt.value().parse::<i64>().unwrap_or(0);
+                    },
+                }
+                Select {
+                    label: "Manufacturers".to_string(),
+                    required: true,
+                    options: vec_into(manufacturers),
+                    selected: tape().manufacturer_id,
+                    onchange: move |evt: Event<FormData>| {
+                        tape.write().manufacturer_id = evt.value().parse::<i64>().unwrap_or(0);
+                    },
+                }
                 Input {
                     type_: InputType::Text,
                     label: "Barcode".to_string(),
@@ -42,6 +72,15 @@ pub fn TapeForm(id: i64) -> Element {
                     validation: barcode_err,
                     value: tape().barcode,
                     maxlength: BARCODE_LEN,
+                }
+                Input {
+                    type_: InputType::Text,
+                    label: "Serial Number".to_string(),
+                    oninput: move |evt: Event<FormData>| {
+                        tape.write().serial = evt.value();
+                    },
+                    value: tape().serial,
+                    maxlength: 24,
                 }
                 p { "form_invalid: {form_invalid}" }
                 p { "len: {tape().barcode.len()}" }

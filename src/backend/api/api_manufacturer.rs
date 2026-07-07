@@ -3,7 +3,7 @@ use dioxus::prelude::*;
 use crate::shared::models::database::manufacturer::model_manufacturer::RecordManufacturer;
 
 #[get("/api/manufacturer", _auth: crate::backend::auth::SessionId)]
-pub async fn list_manu() -> Result<Vec<RecordManufacturer>> {
+pub async fn list_manufacturer() -> Result<Vec<RecordManufacturer>> {
     use crate::backend::database::{
         db::DB, tables::manufacturer::table_manufacturer::TableManufacturer,
     };
