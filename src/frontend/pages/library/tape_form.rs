@@ -40,7 +40,7 @@ pub fn TapeForm(
         // Validate form
         barcode_err.set(barcode_validator.validate(&tape().barcode));
 
-        barcode_err().is_some()
+        barcode_err().is_some() || tape().tape_type_id == 0 || tape().manufacturer_id == 0
     });
 
     rsx! {
@@ -99,7 +99,6 @@ pub fn TapeForm(
                 }
                 p { "form_invalid: {form_invalid}" }
                 p { "len: {tape().barcode.len()}" }
-                p { "format: {tape().format:?}" }
 
                 hr {}
                 Button {

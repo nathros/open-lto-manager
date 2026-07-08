@@ -82,8 +82,6 @@ pub fn Header() -> Element {
         }
     }
 
-    let route: Route = use_route();
-
     let change_theme = move |theme: ColourMode| async move {
         if let Some(mut user) = current_user() {
             user.system_theme = theme;
@@ -109,7 +107,15 @@ pub fn Header() -> Element {
         }
     };
 
-    let aside_config = use_signal(|| MenuConfig::default_aside(&route));
+    let route = use_route::<Route>();
+    let route_str = route.to_string();
+    let mut last_route_str = use_signal(|| route.to_string());
+    let mut aside_config = use_signal(|| MenuConfig::default_aside(&route));
+    if last_route_str() != route_str {
+        last_route_str.set(route_str.clone());
+        aside_config.set(MenuConfig::default_aside(&route)); // TODO fix Menu is rendered twice on route change
+    }
+
     rsx! {
         if let user = current_user().unwrap_or_default()
             && let icon_theme = format!("{:?}", user.icon_theme).to_lowercase()
@@ -118,7 +124,7 @@ pub fn Header() -> Element {
                 ColourModeHidden { theme: user.system_theme }
                 if current_user().is_some() {
                     aside { class: Css::MAIN_ASIDE,
-                        Menu { config: aside_config }
+                        Menu { config: aside_config, current_route: route_str }
                     }
                     header { class: Css::MAIN_HEADER,
                         div { class: Css::MAIN_HEADER_LOGO, "{APP_NAME}" }
@@ -207,7 +213,7 @@ pub fn Header() -> Element {
                                     js_hide_popover(Id::HeaderUserMenu.as_str());
                                 },
                                 span { class: static_concat!(Css::ICON, Css::SM, Icons::USER) }
-                                span { "Account" } // FIXME aside does not update
+                                span { "Account" }
                             }
 
                             button {

@@ -18,7 +18,7 @@ use crate::{
 use super::menu_config::MenuConfig;
 
 #[component]
-pub fn Menu(config: Signal<MenuConfig>) -> Element {
+pub fn Menu(config: Signal<MenuConfig>, current_route: String) -> Element {
     let mut filter: Signal<String> = use_signal(|| "".to_string());
 
     rsx! {
@@ -49,16 +49,15 @@ pub fn Menu(config: Signal<MenuConfig>) -> Element {
                         div {
                             class: Css::MENU_GROUP,
                             style: format!("max-height:{}px", either!(group.open, 35 * group.items.len(), 0)),
-                            for (i_index , item) in group.items.iter().enumerate() {
+                            for item in group.items.iter() {
                                 if let link = item.link.clone() {
                                     MenuItem {
                                         onclick: move |evt: MouseEvent| {
                                             evt.stop_propagation();
-                                            config.write().set_selected(g_index, i_index);
                                             fn_link_follow(link.clone());
                                         },
                                         text: item.label.to_owned(),
-                                        selected: item.selected,
+                                        selected: item.link == current_route,
                                     }
                                 }
                             }
@@ -66,17 +65,16 @@ pub fn Menu(config: Signal<MenuConfig>) -> Element {
                     }
                 } else {
                     if let mut count = 0 {
-                        for (g_index , group) in c.groups.iter().enumerate() {
-                            for (i_index , item) in group.items.iter().enumerate() {
+                        for group in c.groups.iter() {
+                            for item in group.items.iter() {
                                 if let link = item.link.clone() && item.label.to_lowercase().contains(&filter()) {
                                     MenuItem {
                                         onclick: move |evt: MouseEvent| {
                                             evt.stop_propagation();
-                                            config.write().set_selected(g_index, i_index);
                                             fn_link_follow(link.clone());
                                         },
                                         text: item.label.to_owned(),
-                                        selected: item.selected,
+                                        selected: item.link == current_route,
                                     }
                                     {
                                         count += 1;

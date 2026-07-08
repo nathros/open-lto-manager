@@ -24,7 +24,6 @@ pub fn SandpitMenu() -> Element {
                     icon: "".to_string(),
                     label: "inner 1.1".to_string(),
                     link: Route::Home {}.to_string(),
-                    selected: false,
                 }],
             },
             MenuGroup {
@@ -36,13 +35,11 @@ pub fn SandpitMenu() -> Element {
                         icon: "".to_string(),
                         label: "inner 2.1".to_string(),
                         link: Route::Home {}.to_string(),
-                        selected: false,
                     },
                     MenuItemConfig {
                         icon: "".to_string(),
                         label: "inner 2.2".to_string(),
                         link: Route::Home {}.to_string(),
-                        selected: false,
                     },
                 ],
             },
@@ -51,7 +48,7 @@ pub fn SandpitMenu() -> Element {
 
     rsx! {
         div { style: "width: 15rem",
-            Menu { config }
+            Menu { config, current_route: "".to_string() }
         }
     }
 }

@@ -25,31 +25,29 @@ impl MenuConfig {
                         icon: "".to_string(),
                         label: "Home".to_string(),
                         link: Route::Home {}.to_string(),
-                        selected: route_eq(route, &Route::Home {}),
                     }],
                 },
                 MenuGroup {
                     icon: Css::ICON_TAPE.into(),
                     label: "Library".to_string(),
-                    open: route_eq(route, &Route::Tape { id: (0) }),
+                    open: route_eq(route, &Route::Tape { id: (0) })
+                        || route_eq(route, &Route::ViewLibrary {})
+                        || route_eq(route, &Route::GenLabel {}),
                     items: vec![
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "View".to_string(),
                             link: Route::ViewLibrary {}.to_string(),
-                            selected: route_eq(route, &Route::ViewLibrary {}),
                         },
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "Add Tape".to_string(),
                             link: Route::Tape { id: (0) }.to_string(),
-                            selected: route_eq(route, &Route::Tape { id: (0) }),
                         },
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "Generate LTO Label".to_string(),
                             link: Route::GenLabel {}.to_string(),
-                            selected: route_eq(route, &Route::GenLabel {}),
                         },
                     ],
                 },
@@ -61,7 +59,6 @@ impl MenuConfig {
                         icon: "".to_string(),
                         label: "Add Job".to_string(),
                         link: Route::AddJob {}.to_string(),
-                        selected: route_eq(route, &Route::AddJob {}),
                     }],
                 },
                 MenuGroup {
@@ -74,13 +71,11 @@ impl MenuConfig {
                             icon: "".to_string(),
                             label: "Show devices".to_string(),
                             link: Route::ShowDevices {}.to_string(),
-                            selected: route_eq(route, &Route::ShowDevices {}),
                         },
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "Login sessions".to_string(),
                             link: Route::Sessions {}.to_string(),
-                            selected: route_eq(route, &Route::Sessions {}),
                         },
                     ],
                 },
@@ -103,61 +98,51 @@ impl MenuConfig {
                             icon: "".to_string(),
                             label: "Test".to_string(),
                             link: Route::Test {}.to_string(),
-                            selected: route_eq(route, &Route::Test {}),
                         },
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "Show".to_string(),
                             link: Route::Show {}.to_string(),
-                            selected: route_eq(route, &Route::Show {}),
                         },
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "Dev".to_string(),
                             link: Route::ShowDev {}.to_string(),
-                            selected: route_eq(route, &Route::ShowDev {}),
                         },
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "User".to_string(),
                             link: Route::DBUser {}.to_string(),
-                            selected: route_eq(route, &Route::DBUser {}),
                         },
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "Type".to_string(),
                             link: Route::DBType {}.to_string(),
-                            selected: route_eq(route, &Route::DBType {}),
                         },
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "Tape".to_string(),
                             link: Route::DBTape {}.to_string(),
-                            selected: route_eq(route, &Route::DBTape {}),
                         },
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "File".to_string(),
                             link: Route::DBFile {}.to_string(),
-                            selected: route_eq(route, &Route::DBFile {}),
                         },
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "Job".to_string(),
                             link: Route::DBJob {}.to_string(),
-                            selected: route_eq(route, &Route::DBJob {}),
                         },
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "Job Metadata".to_string(),
                             link: Route::DBJobMetaData {}.to_string(),
-                            selected: route_eq(route, &Route::DBJobMetaData {}),
                         },
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "App State".to_string(),
                             link: Route::ShowAppState {}.to_string(),
-                            selected: route_eq(route, &Route::ShowAppState {}),
                         },
                     ],
                 },
@@ -184,12 +169,6 @@ impl MenuConfig {
                                 name: "".to_string(),
                             }
                             .to_string(),
-                            selected: route_eq(
-                                route,
-                                &Route::Sandpit {
-                                    name: "".to_string(),
-                                },
-                            ),
                         },
                         MenuItemConfig {
                             icon: "".to_string(),
@@ -198,12 +177,6 @@ impl MenuConfig {
                                 name: "showcase".to_string(),
                             }
                             .to_string(),
-                            selected: route_eq(
-                                route,
-                                &Route::Sandpit {
-                                    name: "showcase".to_string(),
-                                },
-                            ),
                         },
                     ],
                 },

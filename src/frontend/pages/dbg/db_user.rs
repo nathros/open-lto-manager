@@ -7,6 +7,7 @@ use crate::{
 
 #[component]
 pub fn DBUser() -> Element {
+    info!("Render");
     rsx! {
         SuspenseBoundary {
             fallback: |_suspense_context: SuspenseContext| {

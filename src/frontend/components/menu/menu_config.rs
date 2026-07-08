@@ -5,7 +5,7 @@ pub struct MenuItemConfig {
     pub icon: String,
     pub label: String,
     pub link: String,
-    pub selected: bool,
+    //pub selected: bool,
 }
 
 #[derive(Props, PartialEq, Clone)]
@@ -34,18 +34,6 @@ impl MenuConfig {
         self.groups.iter_mut().for_each(|g| g.open = false);
         if let Some(group) = self.groups.get_mut(index) {
             group.open = !original;
-        }
-    }
-    pub fn set_selected(&mut self, index_group: usize, index_item: usize) {
-        // Reset current selected
-        self.groups
-            .iter_mut()
-            .for_each(|g| g.items.iter_mut().for_each(|i| i.selected = false));
-
-        if let Some(group) = self.groups.get_mut(index_group)
-            && let Some(item) = group.items.get_mut(index_item)
-        {
-            item.selected = true;
         }
     }
 }
