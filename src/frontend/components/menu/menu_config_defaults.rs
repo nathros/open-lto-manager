@@ -1,5 +1,3 @@
-use std::mem::discriminant;
-
 use crate::{
     frontend::{css::Css, icons::Icons},
     route::Route,
@@ -7,33 +5,27 @@ use crate::{
 
 use super::menu_config::{MenuConfig, MenuGroup, MenuItemConfig};
 
-fn route_eq<T>(a: &T, b: &T) -> bool {
-    discriminant(a) == discriminant(b)
-}
-
 impl MenuConfig {
-    pub fn default_aside(route: &Route) -> MenuConfig {
+    pub fn default_aside(current_route: &String) -> MenuConfig {
         // FIXME swap between library and jobs, icon wobble when only 1 child item in both
         MenuConfig {
             enable_search: true,
             groups: vec![
-                MenuGroup {
-                    icon: Icons::HOME.into(),
-                    label: "Home".to_string(),
-                    open: route_eq(route, &Route::Home {}),
-                    items: vec![MenuItemConfig {
+                MenuGroup::new(
+                    current_route,
+                    Icons::HOME.into(),
+                    "Home".to_string(),
+                    vec![MenuItemConfig {
                         icon: "".to_string(),
                         label: "Home".to_string(),
                         link: Route::Home {}.to_string(),
                     }],
-                },
-                MenuGroup {
-                    icon: Css::ICON_TAPE.into(),
-                    label: "Library".to_string(),
-                    open: route_eq(route, &Route::Tape { id: (0) })
-                        || route_eq(route, &Route::ViewLibrary {})
-                        || route_eq(route, &Route::GenLabel {}),
-                    items: vec![
+                ),
+                MenuGroup::new(
+                    current_route,
+                    Css::ICON_TAPE.into(),
+                    "Library".to_string(),
+                    vec![
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "View".to_string(),
@@ -50,23 +42,22 @@ impl MenuConfig {
                             link: Route::GenLabel {}.to_string(),
                         },
                     ],
-                },
-                MenuGroup {
-                    icon: Icons::LIST.into(),
-                    label: "Jobs".to_string(),
-                    open: route_eq(route, &Route::AddJob {}),
-                    items: vec![MenuItemConfig {
+                ),
+                MenuGroup::new(
+                    current_route,
+                    Icons::LIST.into(),
+                    "Jobs".to_string(),
+                    vec![MenuItemConfig {
                         icon: "".to_string(),
                         label: "Add Job".to_string(),
                         link: Route::AddJob {}.to_string(),
                     }],
-                },
-                MenuGroup {
-                    icon: Icons::WARNING.into(),
-                    label: "System".to_string(),
-                    open: route_eq(route, &Route::Sessions {})
-                        || route_eq(route, &Route::ShowDevices {}),
-                    items: vec![
+                ),
+                MenuGroup::new(
+                    current_route,
+                    Icons::WARNING.into(),
+                    "System".to_string(),
+                    vec![
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "Show devices".to_string(),
@@ -77,23 +68,19 @@ impl MenuConfig {
                             label: "Login sessions".to_string(),
                             link: Route::Sessions {}.to_string(),
                         },
+                        MenuItemConfig {
+                            icon: "".to_string(),
+                            label: "Diagnostics".to_string(),
+                            link: Route::Diagnostics {}.to_string(),
+                        },
                     ],
-                },
+                ),
                 #[cfg(debug_assertions)]
-                MenuGroup {
-                    icon: Icons::BUG.into(),
-                    label: "Debug".to_string(),
-                    open: route_eq(route, &Route::Test {})
-                        || route_eq(route, &Route::Show {})
-                        || route_eq(route, &Route::ShowDev {})
-                        || route_eq(route, &Route::DBUser {})
-                        || route_eq(route, &Route::DBType {})
-                        || route_eq(route, &Route::DBFile {})
-                        || route_eq(route, &Route::DBTape {})
-                        || route_eq(route, &Route::DBJob {})
-                        || route_eq(route, &Route::DBJobMetaData {})
-                        || route_eq(route, &Route::ShowAppState {}),
-                    items: vec![
+                MenuGroup::new(
+                    current_route,
+                    Icons::BUG.into(),
+                    "Debug".to_string(),
+                    vec![
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "Test".to_string(),
@@ -139,29 +126,14 @@ impl MenuConfig {
                             label: "Job Metadata".to_string(),
                             link: Route::DBJobMetaData {}.to_string(),
                         },
-                        MenuItemConfig {
-                            icon: "".to_string(),
-                            label: "App State".to_string(),
-                            link: Route::ShowAppState {}.to_string(),
-                        },
                     ],
-                },
+                ),
                 #[cfg(debug_assertions)]
-                MenuGroup {
-                    icon: Icons::SANDPIT.into(),
-                    label: "Sandpit".to_string(),
-                    open: route_eq(
-                        route,
-                        &Route::Sandpit {
-                            name: "".to_string(),
-                        },
-                    ) || route_eq(
-                        route,
-                        &Route::Sandpit {
-                            name: "showcase".to_string(),
-                        },
-                    ),
-                    items: vec![
+                MenuGroup::new(
+                    current_route,
+                    Icons::SANDPIT.into(),
+                    "Sandpit".to_string(),
+                    vec![
                         MenuItemConfig {
                             icon: "".to_string(),
                             label: "Index".to_string(),
@@ -179,7 +151,7 @@ impl MenuConfig {
                             .to_string(),
                         },
                     ],
-                },
+                ),
             ],
         }
     }

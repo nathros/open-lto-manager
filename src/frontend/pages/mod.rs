@@ -5,5 +5,6 @@ pub mod job;
 pub mod library;
 pub mod login;
 pub mod show;
+pub mod system;
 pub mod test;
 pub mod user;

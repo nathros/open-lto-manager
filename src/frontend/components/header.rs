@@ -110,10 +110,10 @@ pub fn Header() -> Element {
     let route = use_route::<Route>();
     let route_str = route.to_string();
     let mut last_route_str = use_signal(|| route.to_string());
-    let mut aside_config = use_signal(|| MenuConfig::default_aside(&route));
+    let mut aside_config = use_signal(|| MenuConfig::default_aside(&route_str));
     if last_route_str() != route_str {
         last_route_str.set(route_str.clone());
-        aside_config.set(MenuConfig::default_aside(&route)); // TODO fix Menu is rendered twice on route change
+        aside_config.set(MenuConfig::default_aside(&route_str)); // TODO fix Menu is rendered twice on route change
     }
 
     rsx! {

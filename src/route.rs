@@ -5,15 +5,15 @@ use crate::frontend::{
     pages::{
         admin::sessions::Sessions,
         dbg::{
-            db_app_state::ShowAppState, db_dev::ShowDev, db_file::DBFile, db_job::DBJob,
-            db_job_metadata::DBJobMetaData, db_tape::DBTape, db_type::DBType, db_user::DBUser,
-            show_devices::ShowDevices,
+            db_dev::ShowDev, db_file::DBFile, db_job::DBJob, db_job_metadata::DBJobMetaData,
+            db_tape::DBTape, db_type::DBType, db_user::DBUser, show_devices::ShowDevices,
         },
         home::Home,
         job::add_job::AddJob,
         library::{generate_label::GenLabel, tape::Tape, view_library::ViewLibrary},
         login::login_user::LoginUser,
         show::Show,
+        system::diagnostics::Diagnostics,
         test::Test,
     },
     sandpit::index::Sandpit,
@@ -44,6 +44,9 @@ pub enum Route {
     #[route("/admin/sessions")]
     Sessions {},
 
+    #[route("/system/diagnostics")]
+    Diagnostics {},
+
     // Debug only
     #[route("/show-dev")]
     ShowDevices {},
@@ -63,8 +66,7 @@ pub enum Route {
     DBFile {},
     #[route("/db-tape")]
     DBTape {},
-    #[route("/db-state")]
-    ShowAppState {},
+
     #[route("/dev")]
     ShowDev {},
     #[end_layout]

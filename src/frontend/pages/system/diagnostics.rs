@@ -1,15 +1,15 @@
 use dioxus::prelude::*;
 
-use crate::backend::api::api_init::app_state;
+use crate::{backend::api::api_init::app_state, frontend::components::card::Card};
 
 #[component]
-pub fn ShowAppState() -> Element {
+pub fn Diagnostics() -> Element {
     rsx! {
         SuspenseBoundary {
             fallback: |_suspense_context: SuspenseContext| {
                 rsx! {}
             },
-            Inner {}
+            Card { Inner {} }
         }
     }
 }
@@ -76,6 +76,5 @@ fn Inner() -> Element {
             span { "{err}" }
             br {}
         }
-
     }
 }

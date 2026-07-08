@@ -22,6 +22,22 @@ pub struct MenuConfig {
     pub groups: Vec<MenuGroup>,
 }
 
+impl MenuGroup {
+    pub fn new(
+        current_route: &String,
+        icon: String,
+        label: String,
+        items: Vec<MenuItemConfig>,
+    ) -> MenuGroup {
+        MenuGroup {
+            icon,
+            label,
+            open: items.iter().find(|i| i.link == *current_route).is_some(),
+            items,
+        }
+    }
+}
+
 impl MenuConfig {
     pub fn toggle_group(&mut self, index: usize) {
         let original = {
