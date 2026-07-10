@@ -76,7 +76,7 @@ pub fn GenLabel() -> Element {
         Input {
             type_: InputType::Text,
             oninput: move |evt: Event<FormData>| {
-                number_val.set(evt.value().parse::<i32>().unwrap_or(0));
+                number_val.set(evt.value().parse::<i32>().unwrap_or_default());
             },
             value: number_val,
             validation: number_error,

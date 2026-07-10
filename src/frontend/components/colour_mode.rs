@@ -31,7 +31,6 @@ pub fn ColourModeHidden(theme: ColourMode) -> Element {
                     checked: theme == ColourMode::System,
                 }
             }
-
         }
     }
 }

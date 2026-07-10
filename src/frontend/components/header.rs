@@ -14,7 +14,7 @@ use crate::{
         },
         collections::message::{Message, MessageDetails},
         components::{
-            colour_mode::ColourModeHidden,
+            main_body::MainBody,
             menu::{component::Menu, menu_config::MenuConfig},
         },
         css::Css,
@@ -117,11 +117,8 @@ pub fn Header() -> Element {
     }
 
     rsx! {
-        if let user = current_user().unwrap_or_default()
-            && let icon_theme = format!("{:?}", user.icon_theme).to_lowercase()
-        {
-            div { style: "--icon-theme:{icon_theme}; --colour-accent:{user.accent_colour}",
-                ColourModeHidden { theme: user.system_theme }
+        if let user = current_user().unwrap_or_default() {
+            MainBody { user: user.clone(),
                 if current_user().is_some() {
                     aside { class: Css::MAIN_ASIDE,
                         Menu { config: aside_config, current_route: route_str }

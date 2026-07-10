@@ -104,6 +104,17 @@ pub enum IconTheme {
     Sargam = 3,
 }
 
+impl IconTheme {
+    pub const fn as_str(&self) -> &str {
+        match self {
+            IconTheme::Tabler => "tabler",
+            IconTheme::Remix => "remix",
+            IconTheme::Iconoir => "iconoir",
+            IconTheme::Sargam => "sargam",
+        }
+    }
+}
+
 impl From<i64> for IconTheme {
     fn from(value: i64) -> Self {
         match value {

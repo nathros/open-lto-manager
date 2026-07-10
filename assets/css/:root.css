@@ -1,10 +1,12 @@
 :root {
 	--padding-s: 0.5rem;
 	--padding-m: 1rem;
+	--padding-l: 2rem;
 	--main-header-height: 3rem;
 	--main-aside-width: 14rem;
 	--radius: 6px;
 	--border: 1px solid var(--border-col);
+	--animate-fast: 150ms;
 
 	--shadow-overlay: 0px 8px 12px #1e1f2126, 0px 0px 1px #1e1f214f;
 	--shadow-raised: 0px 1px 1px #1e1f2140, 0px 0px 1px #1e1f214f;

@@ -4,9 +4,9 @@
 pub struct Css; // CSS class names
 
 impl Css {
-    pub const COLOUR_SCHEME: &str = "colour-scheme"; // Defined in assets/css/:root.css line 46
-    pub const COLOUR_SCHEME_LIGHT: &str = "colour-scheme-light"; // Defined in assets/css/:root.css line 47
-    pub const COLOUR_SCHEME_DARK: &str = "colour-scheme-dark"; // Defined in assets/css/:root.css line 48
+    pub const COLOUR_SCHEME: &str = "colour-scheme"; // Defined in assets/css/:root.css line 48
+    pub const COLOUR_SCHEME_LIGHT: &str = "colour-scheme-light"; // Defined in assets/css/:root.css line 49
+    pub const COLOUR_SCHEME_DARK: &str = "colour-scheme-dark"; // Defined in assets/css/:root.css line 50
     pub const MAIN_HEADER: &str = "main-header "; // Defined in assets/css/header.css line 1
     pub const MAIN_HEADER_LOGO: &str = "header-logo "; // Defined in assets/css/header.css line 27
     pub const MAIN_ASIDE: &str = "main-aside "; // Defined in assets/css/header.css line 39
@@ -20,6 +20,8 @@ impl Css {
     pub const ID_ACCENT_PICKER: &str = "accent-picker"; // Defined in assets/css/header.css line 101
     pub const HEADER_ANCHOR_BASE: &str = "h-base"; // Defined in assets/css/header.css line 120
     pub const HEADER_ANCHOR_POSITION: &str = "header-anchor-position "; // Defined in assets/css/header.css line 124
+    pub const ACCORDION_CONTAINER: &str = "accordion-container "; // Defined in assets/css/accordion.css line 1
+    pub const ACTIVE: &str = "active "; // Defined in assets/css/accordion.css line 23
     pub const ICON_LIST_ITEM: &str = "icon-list-item "; // Defined in assets/css/icon-list.css line 1
     pub const ICON: &str = "icon "; // Defined in assets/css/icon.css line 1
     pub const FORM_GRID: &str = "form-grid "; // Defined in assets/css/forms.css line 1
@@ -32,22 +34,26 @@ impl Css {
     pub const MESSAGE: &str = "message "; // Defined in assets/css/message.css line 1
     pub const CARD: &str = "card "; // Defined in assets/css/card.css line 1
     pub const V_DIVIDER: &str = "v-divider "; // Defined in assets/css/card.css line 7
+    pub const CARD_OVERVIEW: &str = "card-overview "; // Defined in assets/css/card.css line 13
+    pub const CARD_OVERVIEW_STATUS: &str = "card-overview-status "; // Defined in assets/css/card.css line 32
     pub const BTN: &str = "btn "; // Defined in assets/css/button.css line 1
     pub const BTN_PRI: &str = "pri "; // Defined in assets/css/button.css line 19
     pub const LOGIN_CONTAINER: &str = "login-container "; // Defined in assets/css/login.css line 1
     pub const MENU_CONTAINER: &str = "menu-container "; // Defined in assets/css/menu.css line 1
     pub const MENU_GROUP: &str = "menu-group "; // Defined in assets/css/menu.css line 9
     pub const ICON_TAPE: &str = "tape "; // Defined in assets/css/menu.css line 21
-    pub const FLEX_ROW: &str = "flex-row "; // Defined in assets/css/common.css line 36
-    pub const FLEX_COL: &str = "flex-col "; // Defined in assets/css/common.css line 39
-    pub const FLEX_CENTRE: &str = "flex-centre "; // Defined in assets/css/common.css line 48
-    pub const FLEX_ALIGN_LEFT: &str = "align-left "; // Defined in assets/css/common.css line 53
-    pub const NO_GAP: &str = "no-gap "; // Defined in assets/css/common.css line 56
-    pub const SELECTED: &str = "selected "; // Defined in assets/css/common.css line 60
-    pub const SM: &str = "sm "; // Defined in assets/css/common.css line 70
-    pub const MD: &str = "md "; // Defined in assets/css/common.css line 74
-    pub const BG: &str = "bg "; // Defined in assets/css/common.css line 78
-    pub const HOVER: &str = "hover "; // Defined in assets/css/common.css line 93
-    pub const ID_SNA: &str = "sna"; // Defined in assets/css/common.css line 97
-    pub const ID_SAND: &str = "sandpit"; // Defined in assets/css/common.css line 119
+    pub const REVERT: &str = "revert "; // Defined in assets/css/common.css line 38
+    pub const FLEX_ROW: &str = "flex-row "; // Defined in assets/css/common.css line 53
+    pub const FLEX_COL: &str = "flex-col "; // Defined in assets/css/common.css line 56
+    pub const FLEX_CENTRE: &str = "flex-centre "; // Defined in assets/css/common.css line 65
+    pub const FLEX_ALIGN_LEFT: &str = "align-left "; // Defined in assets/css/common.css line 70
+    pub const NO_GAP: &str = "no-gap "; // Defined in assets/css/common.css line 73
+    pub const SELECTED: &str = "selected "; // Defined in assets/css/common.css line 77
+    pub const SM: &str = "sm "; // Defined in assets/css/common.css line 87
+    pub const MD: &str = "md "; // Defined in assets/css/common.css line 91
+    pub const BG: &str = "bg "; // Defined in assets/css/common.css line 95
+    pub const COL: &str = "col "; // Defined in assets/css/common.css line 110
+    pub const HOVER: &str = "hover "; // Defined in assets/css/common.css line 125
+    pub const ID_SNA: &str = "sna"; // Defined in assets/css/common.css line 129
+    pub const ID_SAND: &str = "sandpit"; // Defined in assets/css/common.css line 151
 }

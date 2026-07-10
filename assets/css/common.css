@@ -5,6 +5,7 @@ html {
 body {
 	margin-top: calc(var(--main-header-height) + var(--padding-m));
 	margin-left: calc(var(--main-aside-width) + var(--padding-m));
+	margin-right: var(--padding-m);
 	background-color: #f0f0f0;
 }
 @container style(--dark-mode: 1) {
@@ -25,6 +26,22 @@ hr {
 	height: 1px;
 	border: 0;
 	background: var(--border-col);
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin: unset;
+}
+h1.revert, /* impl Css::REVERT */
+h2.revert,
+h3.revert,
+h4.revert,
+h5.revert,
+h6.revert {
+	margin: revert;
 }
 dialog {
 	background-color: var(--fill);
@@ -89,6 +106,21 @@ dialog {
 }
 .bg.success {
 	background-color: var(--colour-success);
+}
+.col /* impl Css::COL */ {
+	color: var(--fb);
+}
+.col.error * {
+	color: var(--colour-error);
+}
+.col.warning * {
+	color: var(--colour-warning);
+}
+.col.info * {
+	color: var(--colour-primary);
+}
+.col.success * {
+	color: var(--colour-success);
 }
 .hover:hover /* impl Css::HOVER */ {
 	cursor: pointer;

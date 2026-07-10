@@ -1,0 +1,29 @@
+.accordion-container * /* impl Css::ACCORDION_CONTAINER */ {
+	overflow: hidden;
+}
+.accordion-container {
+	outline: var(--border);
+	border-radius: var(--radius);
+}
+.accordion-container > div:first-child {
+	display: flex;
+	align-items: center;
+	padding: var(--padding-s);
+	gap: var(--padding-s);
+	user-select: none;
+}
+.accordion-container > div:last-child {
+	display: grid;
+	grid-template-rows: 0fr;
+	overflow: hidden;
+	transition: grid-template-rows var(--animate-fast);
+	padding-left: var(--padding-s);
+	padding-right: var(--padding-s);
+}
+.accordion-container.active /* impl Css::ACTIVE */
+> div:last-child {
+	grid-template-rows: 1fr;
+}
+.accordion-container.active > div > span:first-child {
+	transform: rotate(90deg);
+}

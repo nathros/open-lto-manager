@@ -5,11 +5,16 @@ use crate::{
         assets::IMG_SANDPIT,
         components::card::Card,
         css::Css,
-        elements::button::Button,
+        elements::{
+            button::Button,
+            heading::{H2, H3},
+        },
         sandpit::{
-            sandpit_button::SandpitButton, sandpit_input::SandpitInput, sandpit_menu::SandpitMenu,
+            sandpit_accordion::SandpitAccordion, sandpit_button::SandpitButton,
+            sandpit_input::SandpitInput, sandpit_menu::SandpitMenu,
             sandpit_menu_item::SandpitMenuItem, sandpit_message::SandpitMessage,
-            sandpit_modal::SandpitModal, sandpit_select::SandpitSelect, sandpit_tab::SandpitTab,
+            sandpit_modal::SandpitModal, sandpit_radio_pill::SandpitRadioPill,
+            sandpit_select::SandpitSelect, sandpit_tab::SandpitTab,
         },
     },
     route::Route,
@@ -28,10 +33,20 @@ pub fn Sandpit(name: String) -> Element {
                 ("Select", SandpitSelect()),
             ],
         ),
-        ("UI Modules", vec![("Modal", SandpitModal())]),
+        (
+            "UI Modules",
+            vec![
+                ("Accordion", SandpitAccordion()),
+                ("Modal", SandpitModal()),
+                ("Tab", SandpitTab()),
+            ],
+        ),
         (
             "UI Collections",
-            vec![("Message", SandpitMessage()), ("Tab", SandpitTab())],
+            vec![
+                ("Message", SandpitMessage()),
+                ("Radio Pill", SandpitRadioPill()),
+            ],
         ),
         ("UI Components", vec![("Menu", SandpitMenu())]),
     ];
@@ -48,7 +63,7 @@ pub fn Sandpit(name: String) -> Element {
     let showDemo = |name_group: &str, component: Result<VNode, RenderError>| {
         rsx! {
             Card { top_padding: false,
-                h3 { "{name_group}" }
+                H3 { margin: true, "{name_group}" }
                 div { {component} }
             }
         }
@@ -59,7 +74,7 @@ pub fn Sandpit(name: String) -> Element {
             match name.as_str() {
                 "" => rsx! {
                     {background()}
-                    h2 { "Sandpit: Dev Testing Area" }
+                    H2 { margin: true, "Sandpit: Dev Testing Area" }
                     div { class: Css::CARD,
                         b { "Showcase" }
                         br {}

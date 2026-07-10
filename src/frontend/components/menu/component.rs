@@ -48,6 +48,7 @@ pub fn Menu(config: Signal<MenuConfig>, current_route: String) -> Element {
                         }
                         div {
                             class: Css::MENU_GROUP,
+                            // TODO Could use calc-size but not supported in FireFox, height of each element is known
                             style: format!("max-height:{}px", either!(group.open, 35 * group.items.len(), 0)),
                             for item in group.items.iter() {
                                 if let link = item.link.clone() {

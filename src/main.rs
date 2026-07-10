@@ -2,7 +2,10 @@
 //#![deny(warnings)] // Do not allow warnings
 
 use dioxus::prelude::*;
-use frontend::assets::{CSS_ASSETS, FAVICON, JS_ASSETS};
+use frontend::{
+    assets::{CSS_ASSETS, FAVICON, JS_ASSETS},
+    pages::system::diagnostics::DiagnosticsFallback,
+};
 
 mod backend;
 #[allow(clippy::redundant_closure, irrefutable_let_patterns)]
@@ -51,11 +54,7 @@ fn App() -> Element {
         }
 
         if app_state().critical_error {
-            p { "Failed to start app" }
-            for error_message in app_state().error_list.clone() {
-                p { style: "color:red", "{error_message}" }
-            }
-            p { " -- show logs -- // TODO " }
+            DiagnosticsFallback {}
         } else {
             Router::<Route> {}
         }

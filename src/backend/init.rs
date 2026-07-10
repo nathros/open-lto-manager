@@ -1,6 +1,6 @@
 use std::{sync::LazyLock, vec};
 use tokio::runtime::Runtime;
-use tracing::{error, info};
+use tracing::{error, info, warn};
 
 use crate::{
     backend::{database::db::create_database, logging::LOG_LAYERS},
@@ -10,6 +10,8 @@ use crate::{
 use super::system::shell::shell_command_blocking::shell_command_output_blocking;
 
 pub static APP_STATE: LazyLock<AppState> = LazyLock::new(init_backend);
+const GROUP_ANY: &str = "tape";
+const GROUP_ARCH: &str = "storage";
 
 // Check command exists
 fn check_command(command: &str) -> (bool, Option<String>) {
@@ -117,14 +119,30 @@ fn get_current_ltfs_version() -> Option<String> {
     }
 }
 
+fn get_need_system_group(platform: &str) -> String {
+    // Most distros use the tape group, Arch uses storage
+    // https://wiki.archlinux.org/title/Users_and_groups
+    match platform.to_lowercase().find("arch").is_some() {
+        true => GROUP_ARCH.to_string(),
+        false => GROUP_ANY.to_string(),
+    }
+}
+
 fn init_backend() -> AppState {
     let mut error_list = vec![];
+    let mut pass_count = 0;
+    let mut warn_count = 0;
+    let mut err_count = 0;
+    let platform = whoami::platform().to_string();
+
+    let group = get_need_system_group(&platform);
 
     let log_error = match LOG_LAYERS.as_ref() {
         Ok(_log_file_layer) => false,
         Err(error) => {
             error!("Init [logging] error: {}", error);
             error_list.push(error.clone());
+            err_count += 1;
             true
         }
     };
@@ -134,68 +152,101 @@ fn init_backend() -> AppState {
     if let Some(error) = database_result.as_ref().err() {
         error!("Init [database] error: {}", error);
         error_list.push(error.clone());
+        err_count += 1;
     } else {
         info!("Init [database] success");
     }
 
-    let (user_name, user_name_error) = match whoami::username() {
-        Ok(name) => (name, None),
-        Err(e) => ("unknown".to_string(), Some(format!("{}", e))),
+    let user_name = match whoami::username() {
+        Ok(name) => Some(name),
+        Err(e) => {
+            error_list.push(format!("{}", e));
+            err_count += 1;
+            None
+        }
     };
 
-    let part_tape_group = match uzers::get_user_by_name(&user_name) {
-        Some(current_user) => {
-            if let Some(groups) = current_user.groups() {
-                groups.iter().any(|g| g.name() == "tape")
-            } else {
-                false
+    let user_part_of_group = match user_name.as_deref() {
+        Some(found_user) => match uzers::get_user_by_name(found_user) {
+            Some(current_user) => {
+                if let Some(groups) = current_user.groups() {
+                    groups.iter().any(|g| *g.name() == *group)
+                } else {
+                    false
+                }
             }
-        }
+            None => false,
+        },
         None => false,
     };
-    if part_tape_group {
-        info!("Init [groups] user '{}' found in 'tape' group", user_name);
+
+    if let Some(found_user) = user_name.as_deref() {
+        if user_part_of_group {
+            info!("Init [groups] user '{}' found in 'tape' group", found_user);
+        } else {
+            warn!(
+                "Init [groups] user '{}', not found in 'tape' group",
+                found_user
+            );
+            warn_count += 1;
+        }
     } else {
-        error!(
-            "Init [groups] user '{}', not found in 'tape' group",
-            user_name
-        );
+        error!("Init [user] Unable to find current user");
+        error_list.push("Unable to find current user".to_string());
+        err_count += 1;
     }
 
     let (ltfs_installed, ltfs_error) = check_command("ltfs");
+    if ltfs_installed {
+        pass_count += 1;
+    } else {
+        warn_count += 1;
+    }
+    if ltfs_error.is_some() {
+        warn_count += 1;
+    }
+
     let (mt_installed, mt_error) = check_command("mt");
     let ltfs_version = get_current_ltfs_version();
     let ltfs_version_latest = get_latest_ltfs_version();
-    let latest_is_newer = if let Some(current) = ltfs_version.as_ref()
+    let ltfs_latest_is_newer = if let Some(current) = ltfs_version.as_ref()
         && let Some(latest) = ltfs_version_latest.as_ref()
     {
         latest > current
     } else {
         false
     };
+    if ltfs_latest_is_newer {
+        warn_count += 1;
+    }
 
     AppState {
         user_name,
-        user_name_error,
-        part_tape_group,
+        group,
+        user_part_of_group,
         ltfs_installed,
         ltfs_version,
         ltfs_version_latest,
-        latest_is_newer,
+        ltfs_latest_is_newer,
         ltfs_error,
         mt_installed,
         mt_error,
-        platform: whoami::platform().to_string(),
+        platform,
         cpu_arch: whoami::cpu_arch().to_string(),
         distro: whoami::distro().unwrap_or("unknown".to_string()),
         critical_error: log_error || database_result.is_err(),
         error_list,
+        pass_count,
+        warn_count,
+        err_count,
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::backend::init::get_latest_ltfs_version;
+    use crate::backend::init::{
+        GROUP_ANY, GROUP_ARCH, get_latest_ltfs_version, get_need_system_group,
+    };
 
     #[test]
     fn latest_ltfs() {
@@ -227,5 +278,12 @@ mod tests {
             }
         }
         assert!(prev_was_num, "Should end with number");
+    }
+
+    #[test]
+    fn check_platform_group() {
+        assert_eq!(get_need_system_group(""), GROUP_ANY);
+        assert_eq!(get_need_system_group("Debian"), GROUP_ANY);
+        assert_eq!(get_need_system_group("Arch Linux"), GROUP_ARCH);
     }
 }

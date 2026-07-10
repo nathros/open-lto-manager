@@ -11,7 +11,7 @@
 	flex-direction: column;
 	width: stretch;
 	transition-property: max-height;
-	transition-duration: 0.15s;
+	transition-duration: var(--animate-fast);
 	transform-origin: top;
 	overflow-y: clip;
 }

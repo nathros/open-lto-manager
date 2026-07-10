@@ -52,7 +52,7 @@ pub fn TapeForm(
                     options: vec_into(types),
                     selected: tape().tape_type_id,
                     onchange: move |evt: Event<FormData>| {
-                        tape.write().tape_type_id = evt.value().parse::<i64>().unwrap_or(0);
+                        tape.write().tape_type_id = evt.value().parse::<i64>().unwrap_or_default();
                     },
                 }
                 Select {
@@ -61,7 +61,7 @@ pub fn TapeForm(
                     options: vec_into(manufacturers),
                     selected: tape().manufacturer_id,
                     onchange: move |evt: Event<FormData>| {
-                        tape.write().manufacturer_id = evt.value().parse::<i64>().unwrap_or(0);
+                        tape.write().manufacturer_id = evt.value().parse::<i64>().unwrap_or_default();
                     },
                 }
                 RadioPill {
