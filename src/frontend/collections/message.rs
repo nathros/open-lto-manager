@@ -1,6 +1,9 @@
 use dioxus::prelude::*;
 
-use crate::frontend::{css::Css, level::Level};
+use crate::{
+    either,
+    frontend::{css::Css, level::Level},
+};
 
 #[derive(Clone, PartialEq, Eq)]
 pub struct MessageDetails {
@@ -18,10 +21,21 @@ impl Default for MessageDetails {
 }
 
 #[component]
-pub fn Message(details: MessageDetails) -> Element {
+pub fn Message(
+    details: MessageDetails,
+    #[props(optional, default = false)] small: bool,
+) -> Element {
     rsx! {
         if !details.text.is_empty() {
-            div { class: [Css::FLEX_ROW, Css::MESSAGE, details.level.to_class()].concat(),
+            div {
+                class: [
+                    Css::FLEX_ROW,
+                    Css::FLEX_ALIGN_CENTRE,
+                    Css::MESSAGE,
+                    either!(small, Css::SM, ""),
+                    details.level.to_class(),
+                ]
+                    .concat(),
                 div { class: [Css::ICON, Css::BG, details.level.to_class()].concat() }
                 span { "{details.text}" }
             }

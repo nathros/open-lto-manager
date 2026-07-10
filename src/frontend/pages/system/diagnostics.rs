@@ -5,7 +5,10 @@ use crate::{
     either,
     frontend::{
         assets::APP_NAME,
-        collections::code_block::CodeBlock,
+        collections::{
+            code_block::CodeBlock,
+            message::{Message, MessageDetails},
+        },
         components::{
             card::{Card, CardOverview, CardOverviewStatus},
             main_body::MainBody,
@@ -16,6 +19,7 @@ use crate::{
             icon::Icon,
         },
         icons::Icons,
+        level::Level,
         modules::accordion::AccordionExtended,
     },
     shared::models::{app_state::AppState, database::user::model_user::RecordUserConfig},
@@ -79,7 +83,7 @@ fn Inner() -> Element {
             if let Some(usr) = app_state().user_name {
                 Card { top_padding: false,
                     H2 { margin: true, "Checklist" }
-                    div { class: static_concat!(Css::FLEX_COL, Css::FLEX_ALIGN_LEFT),
+                    div { class: Css::FLEX_COL,
                         AccordionExtended {
                             header: rsx! {
                                 Icon {
@@ -109,7 +113,13 @@ fn Inner() -> Element {
                                     language: "Fix issue:",
                                     code: format!("sudo usermod -a -G {} {}", app_state().group, usr),
                                 }
-                                p { "Login and out needed to take effect" }
+                                Message {
+                                    small: true,
+                                    details: MessageDetails {
+                                        level: Level::Info,
+                                        text: "Logout/in and app restart needed to take effect".to_string(),
+                                    },
+                                }
                             }
                         }
                         AccordionExtended {
@@ -130,14 +140,23 @@ fn Inner() -> Element {
                         }
                         if let Some(ltfs_v) = app_state().ltfs_version
                             && let Some(ltfs_l) = app_state().ltfs_version_latest
-                            && app_state().ltfs_latest_is_newer
                         {
-                            AccordionExtended {
-                                header: rsx! {
-                                    Icon { icon: Icons::WARNING, size: Css::MD }
-                                    span { "Newer LTFS driver is avilable" }
-                                },
-                                p { "Current version: {ltfs_v}, latest version: {ltfs_l}" }
+                            if app_state().ltfs_latest_is_newer {
+                                AccordionExtended {
+                                    header: rsx! {
+                                        Icon { icon: Icons::WARNING, size: Css::MD }
+                                        span { "Newer LTFS driver is avilable" }
+                                    },
+                                    p { "Current version: {ltfs_v}, latest version: {ltfs_l}" }
+                                }
+                            } else {
+                                AccordionExtended {
+                                    header: rsx! {
+                                        Icon { icon: Icons::SUCCESS, size: Css::MD }
+                                        span { "Using latest LTFS driver" }
+                                    },
+                                    p { "Using current latest version: {ltfs_v}" }
+                                }
                             }
                         }
                     }

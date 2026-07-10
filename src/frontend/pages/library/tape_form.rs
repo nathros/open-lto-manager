@@ -3,7 +3,7 @@ use dioxus::prelude::*;
 use crate::{
     either,
     frontend::{
-        collections::radio_pill::RadioPill,
+        collections::{radio_pill::RadioPill, tape_preview::TapePreview},
         css::Css,
         elements::{
             button::Button,
@@ -49,7 +49,7 @@ pub fn TapeForm(
                 Select {
                     label: "Tape Type".to_string(),
                     required: true,
-                    options: vec_into(types),
+                    options: vec_into(types.clone()),
                     selected: tape().tape_type_id,
                     onchange: move |evt: Event<FormData>| {
                         tape.write().tape_type_id = evt.value().parse::<i64>().unwrap_or_default();
@@ -58,7 +58,7 @@ pub fn TapeForm(
                 Select {
                     label: "Manufacturers".to_string(),
                     required: true,
-                    options: vec_into(manufacturers),
+                    options: vec_into(manufacturers.clone()),
                     selected: tape().manufacturer_id,
                     onchange: move |evt: Event<FormData>| {
                         tape.write().manufacturer_id = evt.value().parse::<i64>().unwrap_or_default();
@@ -110,6 +110,13 @@ pub fn TapeForm(
             VerticalDivider {}
             div {
                 // Preview
+                TapePreview {
+                    preview: tape(),
+                    manufacturers,
+                    tapes_list: types,
+                    designation: "".to_string(),
+                    size: "30",
+                }
             }
         }
     }

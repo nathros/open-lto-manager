@@ -9,15 +9,24 @@ use crate::frontend::{
 #[component]
 pub fn SandpitMessage() -> Element {
     let mut message_input = use_signal(|| "Test message".to_string());
+    let mut small = use_signal(|| false);
 
     rsx! {
         Input {
             type_: InputType::Text,
+            label: "Message text".to_string(),
             oninput: move |evt: Event<FormData>| { message_input.set(evt.value()) },
             value: message_input(),
         }
+        Input {
+            type_: InputType::Checkbox,
+            label: "Message size small".to_string(),
+            oninput: move |evt: Event<FormData>| { small.set(evt.checked()) },
+            value: small(),
+        }
         br {}
         Message {
+            small: small(),
             details: MessageDetails {
                 level: Level::Error,
                 text: message_input(),
@@ -25,6 +34,7 @@ pub fn SandpitMessage() -> Element {
         }
         br {}
         Message {
+            small: small(),
             details: MessageDetails {
                 level: Level::Warning,
                 text: message_input(),
@@ -32,6 +42,7 @@ pub fn SandpitMessage() -> Element {
         }
         br {}
         Message {
+            small: small(),
             details: MessageDetails {
                 level: Level::Info,
                 text: message_input(),
@@ -39,6 +50,7 @@ pub fn SandpitMessage() -> Element {
         }
         br {}
         Message {
+            small: small(),
             details: MessageDetails {
                 level: Level::Success,
                 text: message_input(),

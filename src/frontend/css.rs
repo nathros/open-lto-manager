@@ -24,6 +24,8 @@ impl Css {
     pub const ACTIVE: &str = "active "; // Defined in assets/css/accordion.css line 23
     pub const ICON_LIST_ITEM: &str = "icon-list-item "; // Defined in assets/css/icon-list.css line 1
     pub const ICON: &str = "icon "; // Defined in assets/css/icon.css line 1
+    pub const SM: &str = "sm "; // Defined in assets/css/icon.css line 7
+    pub const MD: &str = "md "; // Defined in assets/css/icon.css line 11
     pub const FORM_GRID: &str = "form-grid "; // Defined in assets/css/forms.css line 1
     pub const INPUT: &str = "input "; // Defined in assets/css/forms.css line 11
     pub const SELECT: &str = "select "; // Defined in assets/css/forms.css line 12
@@ -45,15 +47,14 @@ impl Css {
     pub const REVERT: &str = "revert "; // Defined in assets/css/common.css line 38
     pub const FLEX_ROW: &str = "flex-row "; // Defined in assets/css/common.css line 53
     pub const FLEX_COL: &str = "flex-col "; // Defined in assets/css/common.css line 56
-    pub const FLEX_CENTRE: &str = "flex-centre "; // Defined in assets/css/common.css line 65
-    pub const FLEX_ALIGN_LEFT: &str = "align-left "; // Defined in assets/css/common.css line 70
-    pub const NO_GAP: &str = "no-gap "; // Defined in assets/css/common.css line 73
-    pub const SELECTED: &str = "selected "; // Defined in assets/css/common.css line 77
-    pub const SM: &str = "sm "; // Defined in assets/css/common.css line 87
-    pub const MD: &str = "md "; // Defined in assets/css/common.css line 91
-    pub const BG: &str = "bg "; // Defined in assets/css/common.css line 95
-    pub const COL: &str = "col "; // Defined in assets/css/common.css line 110
-    pub const HOVER: &str = "hover "; // Defined in assets/css/common.css line 125
-    pub const ID_SNA: &str = "sna"; // Defined in assets/css/common.css line 129
-    pub const ID_SAND: &str = "sandpit"; // Defined in assets/css/common.css line 151
+    pub const FLEX_CENTRE: &str = "flex-centre "; // Defined in assets/css/common.css line 64
+    pub const FLEX_ALIGN_LEFT: &str = "align-left "; // Defined in assets/css/common.css line 69
+    pub const FLEX_ALIGN_CENTRE: &str = "align-centre "; // Defined in assets/css/common.css line 72
+    pub const NO_GAP: &str = "no-gap "; // Defined in assets/css/common.css line 75
+    pub const SELECTED: &str = "selected "; // Defined in assets/css/common.css line 79
+    pub const BG: &str = "bg "; // Defined in assets/css/common.css line 89
+    pub const COL: &str = "col "; // Defined in assets/css/common.css line 104
+    pub const HOVER: &str = "hover "; // Defined in assets/css/common.css line 119
+    pub const ID_SNA: &str = "sna"; // Defined in assets/css/common.css line 123
+    pub const ID_SAND: &str = "sandpit"; // Defined in assets/css/common.css line 145
 }

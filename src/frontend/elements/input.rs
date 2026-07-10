@@ -10,7 +10,7 @@ use crate::{
 pub enum InputType {
     // Uncomment when needed
     //button,
-    //checkbox,
+    Checkbox,
     Colour,
     //date,
     //datetimelocal,
@@ -37,7 +37,7 @@ impl InputType {
     pub const fn to_string(&self) -> &str {
         match self {
             //InputType::button => "button",
-            //InputType::checkbox => "checkbox",
+            InputType::Checkbox => "checkbox",
             InputType::Colour => "color",
             //InputType::date => "date",
             //InputType::datetimelocal => "datetime-local",

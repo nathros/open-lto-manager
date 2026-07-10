@@ -28,7 +28,7 @@ pub fn LoginUser(#[props(default)] success_signal: Callback) -> Element {
         div { class: static_concat!(Css::LOGIN_CONTAINER, Css::FLEX_CENTRE),
             section {
                 div {
-                    div { class: Css::FLEX_COL,
+                    div { class: static_concat!(Css::FLEX_COL, Css::FLEX_ALIGN_CENTRE),
                         img { src: FAVICON }
                         h3 { "{APP_NAME}" }
                     }

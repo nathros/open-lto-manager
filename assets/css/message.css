@@ -5,6 +5,9 @@
 	padding: var(--padding-m);
 	background-color: white;
 }
+.message.sm {
+	padding: var(--padding-s);
+}
 .message.error {
 	border-color: var(--colour-error);
 	background-color: rgba(from var(--colour-error) r g b / 20%);

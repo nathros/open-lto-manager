@@ -4,3 +4,11 @@
 	height: 2rem;
 	background-color: var(--fg);
 }
+.icon.sm /* impl Css::SM */ {
+	width: 1rem;
+	height: 1rem;
+}
+.icon.md /* impl Css::MD */ {
+	width: 2rem;
+	height: 2rem;
+}

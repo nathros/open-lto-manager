@@ -84,16 +84,20 @@ pub fn Menu(config: Signal<MenuConfig>, current_route: String) -> Element {
                             }
                         }
                         if count == 0 {
-                            p { "No results" }
-                            div { class: static_concat!(Css::FLEX_CENTRE, Css::MD),
-                                img {
-                                    id: Css::ID_SNA,
-                                    src: format!("{}#sna", LOGO_ASSET),
-                                    onclick: move |_: MouseEvent| {
-                                        js_system_canvas();
-                                    },
+                            div { class: static_concat!(Css::FLEX_CENTRE, Css::FLEX_COL),
+                                p { "No results" }
+                                div {
+                                    class: static_concat!(Css::FLEX_CENTRE, Css::ICON, Css::MD),
+                                    style: "background-color:unset",
+                                    img {
+                                        id: Css::ID_SNA,
+                                        src: format!("{}#sna", LOGO_ASSET),
+                                        onclick: move |_: MouseEvent| {
+                                            js_system_canvas();
+                                        },
+                                    }
+                                    i { "{MSG}" }
                                 }
-                                i { "{MSG}" }
                             }
                         }
                     }

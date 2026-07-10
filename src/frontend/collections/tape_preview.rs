@@ -74,6 +74,7 @@ pub fn TapePreview(
     // Styles in: tape-preview.css
     rsx! {
         div {
+            style: format!("--tape-prev-size:{}rem", size), // TODO fallback for FireFox does not support attr CSS5, https://caniuse.com/?search=Attr
             class: format!("tape-preview {}", main_class),
             "data-preview-size": size,
 
