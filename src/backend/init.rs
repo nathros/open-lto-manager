@@ -1,4 +1,4 @@
-use std::{sync::LazyLock, vec};
+use std::{fs, sync::LazyLock, vec};
 use tokio::runtime::Runtime;
 use tracing::{error, info, warn};
 
@@ -119,10 +119,31 @@ fn get_current_ltfs_version() -> Option<String> {
     }
 }
 
-fn get_need_system_group(platform: &str) -> String {
-    // Most distros use the tape group, Arch uses storage
+fn get_os_release_id_like(path: &str) -> Option<String> {
+    // Look in /etc/os_release for key value pair
+    // ID_LIKE={value}
+    if let Ok(file_as_str) = fs::read_to_string(path) {
+        for key_value in file_as_str.split("\n") {
+            let mut itr = key_value.split("=");
+            if let Some(key) = itr.next()
+                && key == "ID_LIKE"
+                && let Some(value) = itr.next()
+            {
+                info!("Init [os] {} found ID_LIKE={}", path, value);
+                return Some(value.to_string());
+            }
+        }
+    }
+    warn!("Init [os] {} failed to find ID_LIKE", path);
+    None
+}
+
+fn get_needed_system_group(os_release_path: &str, fallback_name: &String) -> String {
+    // Most distros use the tape group, Arch(+derivatives) uses storage
     // https://wiki.archlinux.org/title/Users_and_groups
-    match platform.to_lowercase().find("arch").is_some() {
+    let os_release_id_like = get_os_release_id_like(os_release_path);
+    let os_details = os_release_id_like.as_ref().unwrap_or(fallback_name);
+    match os_details.to_lowercase().find("arch").is_some() {
         true => GROUP_ARCH.to_string(),
         false => GROUP_ANY.to_string(),
     }
@@ -133,9 +154,6 @@ fn init_backend() -> AppState {
     let mut pass_count = 0;
     let mut warn_count = 0;
     let mut err_count = 0;
-    let platform = whoami::platform().to_string();
-
-    let group = get_need_system_group(&platform);
 
     let log_error = match LOG_LAYERS.as_ref() {
         Ok(_log_file_layer) => false,
@@ -156,6 +174,10 @@ fn init_backend() -> AppState {
     } else {
         info!("Init [database] success");
     }
+
+    let distro = whoami::distro().unwrap_or("unknown".to_string());
+    let group = get_needed_system_group("/etc/os-release", &distro);
+    info!("Init [os] OS: {}", distro);
 
     let user_name = match whoami::username() {
         Ok(name) => Some(name),
@@ -231,9 +253,9 @@ fn init_backend() -> AppState {
         ltfs_error,
         mt_installed,
         mt_error,
-        platform,
+        platform: whoami::platform().to_string(),
         cpu_arch: whoami::cpu_arch().to_string(),
-        distro: whoami::distro().unwrap_or("unknown".to_string()),
+        distro,
         critical_error: log_error || database_result.is_err(),
         error_list,
         pass_count,
@@ -244,8 +266,12 @@ fn init_backend() -> AppState {
 
 #[cfg(test)]
 mod tests {
+    use std::fs;
+
+    use tempdir::TempDir;
+
     use crate::backend::init::{
-        GROUP_ANY, GROUP_ARCH, get_latest_ltfs_version, get_need_system_group,
+        GROUP_ANY, GROUP_ARCH, get_latest_ltfs_version, get_needed_system_group,
     };
 
     #[test]
@@ -282,8 +308,64 @@ mod tests {
 
     #[test]
     fn check_platform_group() {
-        assert_eq!(get_need_system_group(""), GROUP_ANY);
-        assert_eq!(get_need_system_group("Debian"), GROUP_ANY);
-        assert_eq!(get_need_system_group("Arch Linux"), GROUP_ARCH);
+        let catchy_os_release = r#"NAME="CachyOS Linux"
+PRETTY_NAME="CachyOS"
+ID=cachyos
+ID_LIKE=arch
+BUILD_ID=rolling
+VERSION_ID=20260705.0.552420
+ANSI_COLOR="38;2;23;147;209"
+HOME_URL="https://cachyos.org/"
+DOCUMENTATION_URL="https://wiki.cachyos.org/"
+SUPPORT_URL="https://discuss.cachyos.org/"
+BUG_REPORT_URL="https://github.com/cachyos"
+PRIVACY_POLICY_URL="https://terms.archlinux.org/docs/privacy-policy/"
+LOGO=cachyos"#;
+
+        let arch_os_release = r#"NAME="Arch Linux"
+PRETTY_NAME="Arch Linux"
+ID=arch
+BUILD_ID=rolling
+VERSION_ID=20260222.0.493200
+ANSI_COLOR="38;2;23;147;209"
+HOME_URL="https://archlinux.org/"
+DOCUMENTATION_URL="https://wiki.archlinux.org/"
+SUPPORT_URL="https://bbs.archlinux.org/"
+BUG_REPORT_URL="https://gitlab.archlinux.org/groups/archlinux/-/issues"
+PRIVACY_POLICY_URL="https://terms.archlinux.org/docs/privacy-policy/"
+LOGO=archlinux-logo"#;
+
+        let ubuntu_os_release = r#"PRETTY_NAME="Ubuntu 26.04 LTS"
+NAME="Ubuntu"
+VERSION_ID="26.04"
+VERSION="26.04 LTS (Resolute Raccoon)"
+VERSION_CODENAME=resolute
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=resolute
+LOGO=ubuntu-logo"#;
+
+        let test_data = [
+            (catchy_os_release, "CachyOS Linux".to_string(), GROUP_ARCH),
+            (arch_os_release, "Arch Linux".to_string(), GROUP_ARCH),
+            (ubuntu_os_release, "Ubuntu 26.04 LTS".to_string(), GROUP_ANY),
+        ];
+
+        let tmp_dir = TempDir::new("os_release").unwrap();
+        for (index, (os_release_content, os_name, expected_result)) in test_data.iter().enumerate()
+        {
+            let tmp_file_path = tmp_dir.path().join(format!("{}", index));
+            // Write temporary file 'os_release'
+            fs::write(&tmp_file_path, os_release_content).unwrap();
+            let tmp_file_path_str = tmp_file_path.into_os_string().into_string().unwrap();
+
+            let result = get_needed_system_group(tmp_file_path_str.as_str(), os_name);
+            assert_eq!(result.as_str(), *expected_result);
+        }
+        tmp_dir.close().unwrap(); // Clear tmp dir
     }
 }
