@@ -100,7 +100,8 @@ install_as_debian () {
 	sudo rm -rf $LTFS_DIR
 	sudo git clone $LTFS_SOURCE
 	cd $LTFS_DIR
-	sudo git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
+	git submodule update --init --recursive
+	sudo git checkout $(git describe --tags $(git rev-list --tags --max-count=1)) # Get latest tagged version
 
 	install_icu
 

@@ -16,7 +16,7 @@
 </div>
 
 ## Dependencies
-For LTFS support you will need LTO-5 or newer and have a LTFS driver installed, [OpenLTFS](https://github.com/LinearTapeFileSystem/ltfs) is recommended, others are [HPE LTFS](https://github.com/nix-community/hpe-ltfs) or [IBM LTFS](https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Tape%20drivers%20and%20software&product=ibm/Storage_Tape/Long+Term+File+System+LTFS&release=2.4&platform=Linux&function=all).
+For LTFS support you will need LTO-5 or newer and have a LTFS driver installed, [OpenLTFS](https://github.com/LinearTapeFileSystem/ltfs) is recommended, others are [HPE LTFS](https://support.hpe.com/connect/s/softwaredetails?language=en_US&collectionId=MTX-882b042a6fc04042&tab=releaseNotes) or [IBM LTFS](https://www.ibm.com/support/fixcentral/swg/selectFixes?parent=Tape%20drivers%20and%20software&product=ibm/Storage_Tape/Long+Term+File+System+LTFS&release=2.4&platform=Linux&function=all).
 Tar support will need `mt` installed. For most distributions access to tape devices `/dev/nst[x]` and `/dev/st[x]` the user will need to be part of the `tape` group (for Arch this is `storage`).
 
 ## Install

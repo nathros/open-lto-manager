@@ -4,7 +4,7 @@ use tracing::{error, info, warn};
 
 use crate::{
     backend::{database::db::create_database, logging::LOG_LAYERS},
-    shared::models::app_state::AppState,
+    shared::models::app_state::{AppState, LTFSProvider},
 };
 
 use super::system::shell::shell_command_blocking::shell_command_output_blocking;
@@ -86,37 +86,62 @@ fn get_latest_ltfs_version() -> Option<String> {
     }
 }
 
-fn get_current_ltfs_version() -> Option<String> {
+fn get_current_ltfs_version() -> (Option<String>, Option<String>, LTFSProvider) {
     match shell_command_output_blocking("ltfs", vec!["--version"]) {
-        Ok((_stdout, stderr)) => {
-            if let Some(ver) = stderr.first() {
-                let find = "version ";
-                return match ver.find("version ") {
-                    Some(mut start_index) => {
-                        let end_index = ver.find(" (").unwrap_or(ver.len());
-                        start_index += find.len(); // Skip "version "
-                        if start_index < end_index {
-                            let result = &ver[start_index..end_index];
-                            info!("Init [ltfs-current]: {}", result);
-                            return Some(result.to_string());
-                        }
-                        error!("Init [ltfs-current]: {}", ver);
-                        None
-                    }
-                    None => {
-                        error!("Init [ltfs-current]: {}", ver);
-                        None
-                    }
-                };
-            }
-            error!("Init [ltfs-current]: Failed to find ");
-            None
-        }
+        Ok((stdout, stderr)) => process_ltfs_output(stdout, stderr),
         Err(e) => {
             error!("Init [ltfs-current]: {}", e);
-            None
+            (None, None, LTFSProvider::OTHER)
         }
     }
+}
+
+fn process_ltfs_output(
+    stdout: Vec<String>,
+    stderr: Vec<String>,
+) -> (Option<String>, Option<String>, LTFSProvider) {
+    let mut version = None;
+    let mut spec = None;
+    let mut provider = LTFSProvider::OTHER;
+
+    let search_version = "version ";
+
+    [stderr, stdout].iter().for_each(|output| {
+        output.iter().for_each(|line| {
+            // Version number is between 'version' and '('
+            if let Some(bracket_index) = line.find(" (")
+                && let Some(version_index) = line.find(search_version)
+                && bracket_index > version_index
+            {
+                let result = &line[version_index + search_version.len()..bracket_index];
+                info!("Init [ltfs-current-version]: {}", result);
+                version = Some(result.to_string());
+
+                if line.find("(Prelim)").is_some() {
+                    provider = LTFSProvider::OpenLTFS;
+                    info!("Init [ltfs-current-provider]: {:?}", LTFSProvider::OpenLTFS);
+                } else if line.find("StoreOpen").is_some() {
+                    provider = LTFSProvider::HP;
+                    info!("Init [ltfs-current-provider]: {:?}", LTFSProvider::HP);
+                } else if line.starts_with("LTFS version") && line.ends_with(").") {
+                    provider = LTFSProvider::IBM;
+                    info!("Init [ltfs-current-provider]: {:?}", LTFSProvider::IBM);
+                }
+            } else if line.find("Specification").is_some()
+                && let Some(version_index) = line.find(search_version)
+            {
+                let result = &line[version_index + search_version.len()..line.len()];
+                info!("Init [ltfs-current-spec]: {}", result);
+                let mut result_string = result.to_string();
+                if result_string.chars().last().unwrap_or(' ') == '.' {
+                    result_string.pop();
+                }
+                spec = Some(result_string);
+            }
+        })
+    });
+
+    (version, spec, provider)
 }
 
 fn get_os_release_id_like(path: &str) -> Option<String> {
@@ -229,8 +254,12 @@ fn init_backend() -> AppState {
     }
 
     let (mt_installed, mt_error) = check_command("mt");
-    let ltfs_version = get_current_ltfs_version();
-    let ltfs_version_latest = get_latest_ltfs_version();
+    let (ltfs_version, ltfs_specification, ltfs_provider) = get_current_ltfs_version();
+    let ltfs_version_latest = if ltfs_provider == LTFSProvider::OpenLTFS {
+        get_latest_ltfs_version()
+    } else {
+        None
+    };
     let ltfs_latest_is_newer = if let Some(current) = ltfs_version.as_ref()
         && let Some(latest) = ltfs_version_latest.as_ref()
     {
@@ -247,6 +276,8 @@ fn init_backend() -> AppState {
         group,
         user_part_of_group,
         ltfs_installed,
+        ltfs_provider,
+        ltfs_specification,
         ltfs_version,
         ltfs_version_latest,
         ltfs_latest_is_newer,
@@ -270,8 +301,12 @@ mod tests {
 
     use tempdir::TempDir;
 
-    use crate::backend::init::{
-        GROUP_ANY, GROUP_ARCH, get_latest_ltfs_version, get_needed_system_group,
+    use crate::{
+        backend::init::{
+            GROUP_ANY, GROUP_ARCH, get_latest_ltfs_version, get_needed_system_group,
+            process_ltfs_output,
+        },
+        shared::models::app_state::LTFSProvider,
     };
 
     #[test]
@@ -304,6 +339,40 @@ mod tests {
             }
         }
         assert!(prev_was_num, "Should end with number");
+    }
+
+    #[test]
+    fn ltfs_provider() {
+        // Output from: ltfs --version
+        let open_stdout = vec![];
+        let open_stderr = vec![
+            "LTFS version 2.4.5.1 (Prelim).".to_string(),
+            "LTFS Format Specification version 2.4.0.".to_string(),
+        ];
+        let (version, spec, provider) = process_ltfs_output(open_stdout, open_stderr);
+        assert_eq!(version.unwrap(), "2.4.5.1".to_string());
+        assert_eq!(spec.unwrap(), "2.4.0".to_string());
+        assert_eq!(provider, LTFSProvider::OpenLTFS);
+
+        let ibm_stdout = vec![];
+        let ibm_stderr = vec![
+            "LTFS version 2.4.8.4 (10522).".to_string(),
+            "LTFS Format Specification version 2.4.0.".to_string(),
+        ];
+        let (version, spec, provider) = process_ltfs_output(ibm_stdout, ibm_stderr);
+        assert_eq!(version.unwrap(), "2.4.8.4".to_string());
+        assert_eq!(spec.unwrap(), "2.4.0".to_string());
+        assert_eq!(provider, LTFSProvider::IBM);
+
+        let hp_stdout = vec![
+            "HPE StoreOpen Software version 3.6.0 (build 91)".to_string(),
+            "LTFS Format Specification version 2.4.0".to_string(),
+        ];
+        let hp_stderr = vec![];
+        let (version, spec, provider) = process_ltfs_output(hp_stdout, hp_stderr);
+        assert_eq!(version.unwrap(), "3.6.0".to_string());
+        assert_eq!(spec.unwrap(), "2.4.0".to_string());
+        assert_eq!(provider, LTFSProvider::HP);
     }
 
     #[test]
