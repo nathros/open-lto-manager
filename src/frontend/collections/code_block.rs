@@ -1,21 +1,24 @@
 use dioxus::prelude::*;
 
+use crate::frontend::{css::Css, js::js_copy_to_clipboard};
+
 #[component]
-pub fn CodeBlock(
-    #[props(optional)] language: Option<&'static str>,
-    #[props(optional)] header: Option<&'static str>,
-    code: String,
-) -> Element {
-    // TODO styles
+pub fn CodeBlock(#[props(optional)] header: Option<&'static str>, code: String) -> Element {
     rsx! {
-        div { style: "background-color:grey",
-            if let Some(lan) = language {
-                span { "{lan}" }
+        div { class: Css::CODE_BLOCK,
+            div {
+                if let Some(head) = header {
+                    span { "{head}" }
+                }
+                button {
+                    onclick: {
+                        move |_| {
+                            js_copy_to_clipboard(code.as_str());
+                        }
+                    },
+                }
             }
-            if let Some(head) = header {
-                span { "{head}" }
-            }
-            pre { {code} }
+            pre { {code.clone()} }
         }
     }
 }

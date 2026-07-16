@@ -1,0 +1,30 @@
+.code-block /* impl Css::CODE_BLOCK */ {
+	border-radius: var(--radius);
+	padding: var(--padding-s);
+	background-color: black;
+}
+.code-block * {
+	color: grey;
+}
+.code-block > div > span {
+	color: white;
+	font-weight: bold;
+}
+.code-block button {
+	all: unset;
+	float: right;
+}
+.code-block button:hover {
+	cursor: pointer;
+	color: white;
+}
+.code-block button:after {
+	content: "Copy";
+	display: block;
+}
+.code-block button:focus:after,
+.code-block button:active:after {
+	content: "Copied";
+	display: block;
+	color: var(--colour-success);
+}

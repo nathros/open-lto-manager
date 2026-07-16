@@ -22,7 +22,10 @@ use crate::{
         level::Level,
         modules::accordion::AccordionExtended,
     },
-    shared::models::{app_state::AppState, database::user::model_user::RecordUserConfig},
+    shared::models::{
+        app_state::{AppState, LTFSProvider},
+        database::user::model_user::RecordUserConfig,
+    },
     static_concat,
 };
 
@@ -41,6 +44,7 @@ pub fn Diagnostics() -> Element {
 #[component]
 fn Inner() -> Element {
     let app_state = use_loader(app_state)?;
+    const FIX_ALL_CMD: &str = "bash <(curl -L https://raw.githubusercontent.com/nathros/open-lto-manager/main/scripts/deps-install.sh)";
 
     rsx! {
         CardOverview { title: "Overview".to_string(),
@@ -93,32 +97,46 @@ fn Inner() -> Element {
                                 span {
                                     "System user: "
                                     b { "'{usr}'" }
-                                    span { style: "text-decoration: underline", {either!(app_state().user_part_of_group, "", " not")} }
+                                    {either!(app_state().user_part_of_group, "", " not")}
                                     " found in group: "
                                     b { "'{app_state().group}'" }
                                 }
                             },
-                            div {
-                                p {
+                            div { class: Css::FLEX_COL,
+                                span {
                                     "In order to access tape devices {APP_NAME} needs access to the following devices:"
                                 }
-                                H4 { "/dev/st{{X}} and /dev/nst{{X}}" }
-                                p {
-                                    "Permissions to these resources as part of the '{app_state().group}' user group"
+                                H4 {
+                                    div { class: static_concat!(Css::FLEX_ROW, Css::FLEX_CENTRE),
+                                        span { "/dev/nst[x]" }
+                                        span { "/dev/st[x]" }
+                                    }
                                 }
-                                p {
-                                    "Make sure the os user: '{usr}' is part of the '{app_state().group}'"
+                                span {
+                                    "Permissions to these resources are part of the "
+                                    b { "'{app_state().group}'" }
+                                    " user group"
+                                    if !app_state().user_part_of_group {
+                                        ", make sure the system user "
+                                        b { "'{usr}'" }
+                                        " is part of this group."
+                                    } else {
+                                        "."
+                                    }
                                 }
-                                CodeBlock {
-                                    language: "Fix issue:",
-                                    code: format!("sudo usermod -a -G {} {}", app_state().group, usr),
-                                }
-                                Message {
-                                    small: true,
-                                    details: MessageDetails {
-                                        level: Level::Info,
-                                        text: "Logout/in and app restart needed to take effect".to_string(),
-                                    },
+                                if !app_state().user_part_of_group {
+                                    CodeBlock {
+                                        header: "Fix specific issue:",
+                                        code: format!("sudo usermod -a -G {} {}", app_state().group, usr),
+                                    }
+                                    Message {
+                                        small: true,
+                                        details: MessageDetails {
+                                            level: Level::Info,
+                                            text: "Making changes to groups requires Logout/in and app restart is needed to take effect"
+                                                .to_string(),
+                                        },
+                                    }
                                 }
                             }
                         }
@@ -130,32 +148,78 @@ fn Inner() -> Element {
                                 }
                                 span {
                                     "LTFS driver "
-                                    span { style: "text-decoration: underline", {either!(app_state().ltfs_installed, "", " not")} }
+                                    {either!(app_state().ltfs_installed, "", " not")}
                                     " found"
                                 }
                             },
-                            p {
-                                "Without a valid driver LTFS operations will not be available, tar fallback can be used"
+                            div { class: Css::FLEX_COL,
+                                span {
+                                    "Without a valid driver LTFS operations will not be available, tar fallback can be used. Install a LTFS driver or use the provided script to install one for you."
+                                }
+                                CodeBlock {
+                                    header: "Proposed fix:",
+                                    code: FIX_ALL_CMD.to_string(),
+                                }
+                                Message {
+                                    small: true,
+                                    details: MessageDetails {
+                                        level: Level::Info,
+                                        text: "App restart is needed to take effect".to_string(),
+                                    },
+                                }
                             }
                         }
-                        if let Some(ltfs_v) = app_state().ltfs_version
-                            && let Some(ltfs_l) = app_state().ltfs_version_latest
+                        if app_state().ltfs_installed
+                            && let is_open_ltfs = app_state().ltfs_provider == LTFSProvider::OpenLTFS
                         {
-                            if app_state().ltfs_latest_is_newer {
-                                AccordionExtended {
-                                    header: rsx! {
-                                        Icon { icon: Icons::WARNING, size: Css::MD }
-                                        span { "Newer LTFS driver is avilable" }
-                                    },
-                                    p { "Current version: {ltfs_v}, latest version: {ltfs_l}" }
+                            AccordionExtended {
+                                header: rsx! {
+                                    Icon { icon: either!(is_open_ltfs, Icons::SUCCESS, Icons::INFO), size: Css::MD }
+                                    span { "Detected LTFS is from provider: {app_state().ltfs_provider:?}" }
+                                },
+                                div {
+                                    p {
+                                        "The "
+                                        a {
+                                            target: "_blank",
+                                            href: "https://github.com/LinearTapeFileSystem/ltfs",
+                                            "OpenLTFS"
+                                        }
+                                        " driver is recommended as this is the only one tested/developed against, however LTFS from other providers should work as expected."
+                                    }
                                 }
-                            } else {
-                                AccordionExtended {
-                                    header: rsx! {
-                                        Icon { icon: Icons::SUCCESS, size: Css::MD }
-                                        span { "Using latest LTFS driver" }
-                                    },
-                                    p { "Using current latest version: {ltfs_v}" }
+                            }
+                            if is_open_ltfs && let Some(ltfs_v) = app_state().ltfs_version
+                                && let Some(ltfs_l) = app_state().ltfs_version_latest
+                            {
+                                if app_state().ltfs_latest_is_newer {
+                                    AccordionExtended {
+                                        header: rsx! {
+                                            Icon { icon: Icons::WARNING, size: Css::MD }
+                                            span { "Newer OpenLTFS driver is available" }
+                                        },
+                                        div {
+                                            p {
+                                                "Current version is: "
+                                                b { {ltfs_v} }
+                                                " the latest available version is: "
+                                                b { {ltfs_l} }
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    AccordionExtended {
+                                        header: rsx! {
+                                            Icon { icon: Icons::SUCCESS, size: Css::MD }
+                                            span { "Using latest OpenLTFS driver" }
+                                        },
+                                        div {
+                                            p {
+                                                "Using the latest version available: "
+                                                b { {ltfs_v} }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -171,10 +235,16 @@ fn Inner() -> Element {
 #[component]
 fn LiveEdit(app_state: Loader<AppState>) -> Element {
     let style = "label{width:9rem}";
+    const PROVIDERS: [LTFSProvider; 4] = [
+        LTFSProvider::OpenLTFS,
+        LTFSProvider::HP,
+        LTFSProvider::IBM,
+        LTFSProvider::Unknown,
+    ];
     rsx! {
-        Card {
+        Card { top_padding: false,
             style { dangerous_inner_html: style }
-            H2 { "Debug Editor" }
+            H2 { margin: true, "Debug Editor" }
             div { class: Css::FLEX_ROW, style: "align-items:normal",
                 div { class: static_concat!(Css::FLEX_COL, Css::FLEX_ALIGN_LEFT),
                     div { class: Css::FLEX_ROW,
@@ -252,6 +322,45 @@ fn LiveEdit(app_state: Loader<AppState>) -> Element {
                             checked: app_state().ltfs_latest_is_newer,
                             oninput: move |evt: Event<FormData>| {
                                 app_state.write().ltfs_latest_is_newer = evt.checked();
+                            },
+                        }
+                    }
+                    div { class: Css::FLEX_ROW,
+                        label { "ltfs_provider:" }
+                        select {
+                            onchange: move |evt: Event<FormData>| {
+                                PROVIDERS
+                                    .iter()
+                                    .for_each(|p| {
+                                        if format!("{:?}", p) == evt.value() {
+                                            app_state.write().ltfs_provider = p.clone();
+                                        }
+                                    });
+                            },
+                            for option in PROVIDERS
+                                .iter()
+                                .map(|p| {
+                                    let name = format!("{:?}", p);
+                                    let is_selected = app_state().ltfs_provider == *p;
+                                    rsx! {
+                                        option { value: name, selected: is_selected, "{name}" }
+                                    }
+                                })
+                            {
+                                {option}
+                            }
+                        }
+                    }
+                    div { class: Css::FLEX_ROW,
+                        label { "ltfs_specification:" }
+                        input {
+                            value: app_state().ltfs_specification,
+                            oninput: move |evt: Event<FormData>| {
+                                if evt.value().is_empty() {
+                                    app_state.write().ltfs_specification = None;
+                                } else {
+                                    app_state.write().ltfs_specification = Some(evt.value());
+                                }
                             },
                         }
                     }

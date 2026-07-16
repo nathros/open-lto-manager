@@ -20,6 +20,7 @@ body {
 a {
 	all: unset;
 	cursor: pointer;
+	text-decoration: underline;
 }
 hr {
 	width: 100%;

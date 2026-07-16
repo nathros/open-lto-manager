@@ -91,7 +91,7 @@ fn get_current_ltfs_version() -> (Option<String>, Option<String>, LTFSProvider) 
         Ok((stdout, stderr)) => process_ltfs_output(stdout, stderr),
         Err(e) => {
             error!("Init [ltfs-current]: {}", e);
-            (None, None, LTFSProvider::OTHER)
+            (None, None, LTFSProvider::Unknown)
         }
     }
 }
@@ -102,7 +102,7 @@ fn process_ltfs_output(
 ) -> (Option<String>, Option<String>, LTFSProvider) {
     let mut version = None;
     let mut spec = None;
-    let mut provider = LTFSProvider::OTHER;
+    let mut provider = LTFSProvider::Unknown;
 
     let search_version = "version ";
 
@@ -289,7 +289,7 @@ fn init_backend() -> AppState {
         distro,
         critical_error: log_error || database_result.is_err(),
         error_list,
-        pass_count,
+        pass_count, // TODO check these 3 are correct
         warn_count,
         err_count,
     }

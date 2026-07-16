@@ -4,8 +4,9 @@ use dioxus::fullstack::serde::{Deserialize, Serialize};
 pub enum LTFSProvider {
     OpenLTFS,
     HP,
+    #[allow(clippy::upper_case_acronyms)]
     IBM,
-    OTHER,
+    Unknown,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
