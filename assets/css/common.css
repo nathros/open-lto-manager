@@ -20,7 +20,6 @@ body {
 a {
 	all: unset;
 	cursor: pointer;
-	text-decoration: underline;
 }
 hr {
 	width: 100%;
@@ -46,6 +45,9 @@ h6.revert {
 }
 dialog {
 	background-color: var(--fill);
+}
+.link /* impl Css::LINK */ {
+	text-decoration: underline;
 }
 .monospace {
 	font-family: "JetBrains Mono", monospace;

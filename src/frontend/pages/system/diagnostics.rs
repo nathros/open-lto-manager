@@ -17,6 +17,7 @@ use crate::{
         elements::{
             heading::{H2, H4},
             icon::Icon,
+            link::InlineLink,
         },
         icons::Icons,
         level::Level,
@@ -180,10 +181,10 @@ fn Inner() -> Element {
                                 div {
                                     p {
                                         "The "
-                                        a {
+                                        InlineLink {
                                             target: "_blank",
                                             href: "https://github.com/LinearTapeFileSystem/ltfs",
-                                            "OpenLTFS"
+                                            label: "OpenLTFS",
                                         }
                                         " driver is recommended as this is the only one tested/developed against, however LTFS from other providers should work as expected."
                                     }
