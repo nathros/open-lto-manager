@@ -27,4 +27,4 @@ function show() {
 echo -e "${GREEN}This is a list of FIXMEs and TODOs found in the codebase${RESET}"
 show "FIXME"
 show "TODO"
-echo -e "${YELLOW}Idealy these lists should be empty, especially the FIXMEs${RESET}"
+echo -e "${YELLOW}Ideally these lists should be empty, especially the FIXMEs${RESET}"

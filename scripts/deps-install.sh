@@ -10,6 +10,13 @@ GROUP=tape
 GROUP_CHANGED=false
 USR=$(whoami)
 
+UNATTENDED=false
+
+IN_DOCKER=true
+if [ ! -f /.dockerenv ]; then
+	IN_DOCKER=false
+fi
+
 err_msg () {
 	echo "This script only supports: Debian(+varients)"
 	echo "Options:"
@@ -19,13 +26,13 @@ err_msg () {
 
 ask_buggy_ifs () {
 	echo "*****************************************************************************************"
-	echo "* Are you using any of the following controllers:                                       *"
-	echo "* ATTO      ExpressSAS H6xx                                                             *"
-	echo "* HighPoint RocketRAID 27xx                                                             *"
-	echo "* Any USB SAS converter                                                                 *"
-	echo "*                                                                                       *"
-	echo "* These have a firmware issue which need ltfs configure flag to work around             *"
-	echo "* See: $LTFS_SOURCE/wiki/HBA-info                       *"
+	echo "Are you using any of the following controllers:"
+	echo "ATTO       ExpressSAS H6xx"
+	echo "HighPoint  RocketRAID 27xx"
+	echo "Any        USB SAS converter"
+	echo ""
+	echo "These have a firmware issue which need LTFS configure --enable-buggy-ifs flag to work"
+	echo "See: $LTFS_SOURCE/wiki/HBA-info"
 	echo "*****************************************************************************************"
 	while true ; do
 		read -p 'y/n: ' answer
@@ -73,7 +80,9 @@ EOL
 install_as_debian () {
 	# Adapted from: https://github.com/LinearTapeFileSystem/Debian12-Build
 
-	ask_buggy_ifs
+	if [ "$UNATTENDED" = false ]; then
+		ask_buggy_ifs
+	fi
 
 	LTFS="build-essential git pkg-config automake autoconf libtool libfuse-dev fuse uuid-dev libxml2-dev libsnmp-dev libicu-dev icu-devtools"
 	MT="mt-st"
@@ -81,15 +90,19 @@ install_as_debian () {
 	ICU_PATH="/usr/bin/icu-config"
 
 	echo "********************************************************************************************"
-	echo "* The following actions will be performed:                                                 *"
-	echo "* 1) Packages to be installed: ${PACKAGES:0:56}    *"
-	echo "*    ${PACKAGES:57}       *"
-	echo "* 2) Add user '$USR' to group '$GROUP'                                                     *"
-	echo "* 3) Install icu-config to $ICU_PATH                                             *"
-	echo "*    This is deprecated in Debian: $LTFS_SOURCE/issues/153 *"
-	echo "* 4) Compile and install LTFS to $LTFS_DIR                                                 *"
-	echo "*    LTFS source: $LTFS_SOURCE                             *"
+	echo "The following actions will be performed:"
+	echo " 1) Packages to be installed: ${PACKAGES}"
+	echo " 2) Add user '$USR' to group '$GROUP'"
+	echo " 3) Install icu-config to $ICU_PATH"
+	echo "    This is deprecated in Debian: $LTFS_SOURCE/issues/153"
+	echo " 4) Compile and install LTFS to $LTFS_DIR"
+	echo "    LTFS source: $LTFS_SOURCE"
 	echo "********************************************************************************************"
+
+	if [ "$IN_DOCKER" = true ]; then
+		export DEBIAN_FRONTEND=noninteractive
+		apt update && apt install -y sudo
+	fi
 
 	check_groups
 
@@ -117,13 +130,26 @@ install_as_debian () {
 }
 
 # Main
-
-if [ $# -eq 0 ]; then
-	echo "No OS specified will try to detect"
-else
-	OS=$1
-	echo "OS $OS has been manually"
-fi
+while getopts 'o:uh' OPT; do
+	case "$OPT" in
+		o)
+			OS="$OPTARG"
+			;;
+		u)
+			UNATTENDED=true
+			;;
+		?|h)
+			echo "Usage: $(basename $0) [-h] [-u] [-o os-name]"
+			echo "[-h]            This menu"
+			echo "[-u]            Unattended install"
+			echo "[-o os-name]    Set script operating system name eg: debian"
+			echo "                Each OS has subtle different environment differences"
+			echo "                Supported: Debian+(derivatives), Arch"
+			exit 1
+			;;
+	esac
+done
+shift "$(($OPTIND -1))"
 
 if [ -z "$OS" ]; then
 	if [ ! -f /etc/os-release ]; then
@@ -138,7 +164,7 @@ fi
 OS=${OS,,} # Lowercase
 
 if [[ $OS == *"debian"* ]]; then
-	echo "Found Debian or (Debian derivative)"
+	echo "Process as Debian or (Debian derivative)"
 	install_as_debian
 else
 	echo "Unable to determine supported OS from: $OS"
@@ -147,7 +173,9 @@ else
 fi
 
 echo
-echo "== INSTALL COMPLETE== "
+echo "=========================="
+echo "==== INSTALL COMPLETE ===="
+echo "=========================="
 if [ "$GROUP_CHANGED" = true ] ; then
 	echo "Group has been changed, you need to logout and login for this to take effect"
 fi

@@ -177,7 +177,7 @@ pub fn create_database(db_path: String) -> Result<rusqlite::Connection, String> 
     }
 }
 
-pub fn database_enable_fk_constraints(db: &Connection) -> Result<usize, rusqlite::Error> {
+fn database_enable_fk_constraints(db: &Connection) -> Result<usize, rusqlite::Error> {
     db.execute("PRAGMA foreign_keys = ON", [])
 }
 
