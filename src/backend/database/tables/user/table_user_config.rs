@@ -100,9 +100,12 @@ impl TableUser<RecordUserConfig> {
 #[cfg(test)]
 pub mod tests {
     use crate::{
-        backend::database::tables::{
-            table::{RecordRead, RecordUpdate},
-            user::table_user::{TableUser, tests::create_table},
+        backend::database::{
+            db::tests::create_test_database,
+            tables::{
+                table::{RecordRead, RecordUpdate},
+                user::table_user::{TableUser, tests::create_table},
+            },
         },
         shared::models::database::user::{
             model_user::RecordUserConfig, model_user_sensitive::RecordUser,
@@ -124,7 +127,7 @@ pub mod tests {
 
     #[test]
     fn suite() {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        let conn = create_test_database();
         create_table(&conn);
 
         // Get first found user from complete record

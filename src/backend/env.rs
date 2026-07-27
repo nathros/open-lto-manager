@@ -17,8 +17,8 @@ pub fn get_database_path() -> String {
         .unwrap_or(format!("{}/database", get_data_dir()))
 }
 
-pub fn get_database_file() -> String {
-    format!("{}/database.db", get_database_path())
+pub fn get_database_file(path: &String) -> String {
+    format!("{}/database.db", path)
 }
 
 pub fn get_logging_path() -> String {

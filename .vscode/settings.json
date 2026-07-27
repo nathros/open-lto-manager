@@ -1,63 +1,66 @@
 {
-    "[rust]": {
-        "editor.rulers": [120],
-        "editor.defaultFormatter": "rust-lang.rust-analyzer",
-        "editor.formatOnSave": true,
-    },
-    "[javascript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode",
-      "editor.formatOnSave": true,
-      "prettier.useTabs": true
-    },
-    "[css]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode",
-      "editor.formatOnSave": true,
-      "prettier.useTabs": true,
-    },
-    "rust-analyzer.check.command": "clippy",
-    "workbench.editor.wrapTabs": true,
-    "emeraldwalk.runonsave": {
-        "commands": [
-          {
-            "match": "\\.css$",
-            "cmd": "${workspaceRoot}/external/generate-css-const.sh",
-          },
-        ],
+  "chat.disableAIFeatures": true,
+  "[rust]": {
+    "editor.rulers": [
+      120
+    ],
+    "editor.defaultFormatter": "rust-lang.rust-analyzer",
+    "editor.formatOnSave": true,
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "prettier.useTabs": true
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "prettier.useTabs": true,
+  },
+  "rust-analyzer.check.command": "clippy",
+  "workbench.editor.wrapTabs": true,
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        "match": "\\.css$",
+        "cmd": "${workspaceRoot}/external/generate-css-const.sh",
       },
-    "cSpell.words": [
-      "chrono",
-      "clippy",
-      "deserialise",
-      "dioxus",
-      "distro",
-      "fontdb",
-      "Greyscale",
-      "Iconoir",
-      "Imation",
-      "Initialise",
-      "Inkscape",
-      "krilla",
-      "LTFS",
-      "Maxell",
-      "onchange",
-      "onclick",
-      "oninput",
-      "Reloadable",
-      "repr",
-      "reqwest",
-      "rfind",
-      "Routable",
-      "rowid",
-      "rusqlite",
-      "rustfmt",
-      "Sargam",
-      "serde",
-      "STFS",
-      "stylesheet",
-      "tabler",
-      "Tandberg",
-      "ultrium",
-      "uninitialised",
-      "uzers"
-    ]
+    ],
+  },
+  "cSpell.words": [
+    "chrono",
+    "clippy",
+    "deserialise",
+    "dioxus",
+    "distro",
+    "fontdb",
+    "Greyscale",
+    "Iconoir",
+    "Imation",
+    "Initialise",
+    "Inkscape",
+    "krilla",
+    "LTFS",
+    "Maxell",
+    "onchange",
+    "onclick",
+    "oninput",
+    "Reloadable",
+    "repr",
+    "reqwest",
+    "rfind",
+    "Routable",
+    "rowid",
+    "rusqlite",
+    "rustfmt",
+    "Sargam",
+    "serde",
+    "STFS",
+    "stylesheet",
+    "tabler",
+    "Tandberg",
+    "ultrium",
+    "uninitialised",
+    "uzers"
+  ]
 }

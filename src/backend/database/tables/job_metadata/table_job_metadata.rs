@@ -179,8 +179,12 @@ impl TableJobMetadata<RecordJobMetadata> {
 #[cfg(test)]
 mod tests {
     use crate::{
-        backend::database::tables::{
-            job::table_job, job_metadata::table_job_metadata::TableJobMetadata, table::TableCreate,
+        backend::database::{
+            db::tests::create_test_database,
+            tables::{
+                job::table_job, job_metadata::table_job_metadata::TableJobMetadata,
+                table::TableCreate,
+            },
         },
         shared::models::database::job_metadata::model_job_metadata::RecordJobMetadata,
     };
@@ -205,7 +209,7 @@ mod tests {
 
     #[test]
     fn suite() {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        let conn = create_test_database();
         create_table(&conn);
     }
 }

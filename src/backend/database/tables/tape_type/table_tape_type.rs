@@ -446,9 +446,12 @@ impl TableTapeType<RecordTapeType> {
 #[cfg(test)]
 pub mod tests {
     use crate::{
-        backend::database::tables::{
-            table::{RecordUpdate, TableCreate},
-            tape_type::table_tape_type::TableTapeType,
+        backend::database::{
+            db::tests::create_test_database,
+            tables::{
+                table::{RecordUpdate, TableCreate},
+                tape_type::table_tape_type::TableTapeType,
+            },
         },
         shared::models::database::tape_type::model_tape_type::RecordTapeType,
     };
@@ -495,7 +498,7 @@ pub mod tests {
 
     #[test]
     fn suite() {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        let conn = create_test_database();
         create_table(&conn);
         update(&conn);
     }

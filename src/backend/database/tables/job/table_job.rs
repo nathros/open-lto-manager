@@ -175,8 +175,9 @@ impl TableJob<RecordJob> {
 #[cfg(test)]
 pub mod tests {
     use crate::{
-        backend::database::tables::{
-            job::table_job::TableJob, table::TableCreate, user::table_user,
+        backend::database::{
+            db::tests::create_test_database,
+            tables::{job::table_job::TableJob, table::TableCreate, user::table_user},
         },
         shared::models::database::job::model_job::RecordJob,
     };
@@ -201,7 +202,7 @@ pub mod tests {
 
     #[test]
     fn suite() {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        let conn = create_test_database();
         create_table(&conn);
     }
 }

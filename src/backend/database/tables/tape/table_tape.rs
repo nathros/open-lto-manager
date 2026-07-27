@@ -229,11 +229,14 @@ pub mod tests {
     use chrono::Local;
 
     use crate::{
-        backend::database::tables::{
-            manufacturer::{self, table_manufacturer::TableManufacturer},
-            table::{RecordDelete, RecordInsert, RecordRead, RecordUpdate, TableCreate},
-            tape::table_tape::TableTape,
-            tape_type::{self, table_tape_type::TableTapeType},
+        backend::database::{
+            db::tests::create_test_database,
+            tables::{
+                manufacturer::{self, table_manufacturer::TableManufacturer},
+                table::{RecordDelete, RecordInsert, RecordRead, RecordUpdate, TableCreate},
+                tape::table_tape::TableTape,
+                tape_type::{self, table_tape_type::TableTapeType},
+            },
         },
         shared::models::database::tape::model_tape::{
             EncryptionType, HardwareEncryptionType, RecordTape, SoftwareEncryptionType, TapeFormat,
@@ -339,7 +342,7 @@ pub mod tests {
 
     #[test]
     fn suite() {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        let conn = create_test_database();
         create_table(&conn);
         let new_id = insert(&conn);
         update(&conn, new_id);

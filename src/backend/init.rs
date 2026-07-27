@@ -3,7 +3,7 @@ use tokio::runtime::Runtime;
 use tracing::{error, info, warn};
 
 use crate::{
-    backend::{database::db::create_database, logging::LOG_LAYERS},
+    backend::{database::db::create_database, env::get_database_path, logging::LOG_LAYERS},
     shared::models::app_state::{AppState, LTFSProvider},
 };
 
@@ -191,7 +191,7 @@ fn init_backend() -> AppState {
     };
     info!("App init");
 
-    let database_result = create_database();
+    let database_result = create_database(get_database_path());
     if let Some(error) = database_result.as_ref().err() {
         error!("Init [database] error: {}", error);
         error_list.push(error.clone());

@@ -208,10 +208,13 @@ impl TableFile<RecordFile> {
 
 #[cfg(test)]
 mod tests {
-    use crate::backend::database::tables::{file::table_file::TableFile, table::TableCreate, tape};
+    use crate::backend::database::{
+        db::tests::create_test_database,
+        tables::{file::table_file::TableFile, table::TableCreate, tape},
+    };
 
     fn create_table() -> rusqlite::Connection {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        let conn = create_test_database();
         // TableFile depends on TableManufacturer, TableTapeType and TableTape, so these must be created first
         tape::table_tape::tests::create_table(&conn); // This creates TableManufacturer and TableTapeType
 

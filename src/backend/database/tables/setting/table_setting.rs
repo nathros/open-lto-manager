@@ -159,9 +159,12 @@ impl Table<RecordVersion, RecordVersion> for TableVersion {
 #[cfg(test)]
 mod tests {
     use crate::{
-        backend::database::tables::{
-            setting::table_setting::TableSetting,
-            table::{RecordInsert, RecordUpdate, TableCreate},
+        backend::database::{
+            db::tests::create_test_database,
+            tables::{
+                setting::table_setting::TableSetting,
+                table::{RecordInsert, RecordUpdate, TableCreate},
+            },
         },
         shared::models::database::setting::{
             model_setting::{RecordMisc, SettingsKey},
@@ -186,7 +189,7 @@ mod tests {
 
     #[test]
     fn suite() {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        let conn = create_test_database();
         create_table(&conn);
 
         let mut test_record = RecordMisc::<SettingTableVersion> {

@@ -129,10 +129,13 @@ impl TableLabelPreset<RecordLabelPreset> {
 #[cfg(test)]
 mod tests {
     use crate::{
-        backend::database::tables::{
-            label_preset::table_label_preset::TableLabelPreset,
-            table::{RecordDelete, RecordInsert, RecordUpdate, TableCreate},
-            user::{self, table_user::TableUser},
+        backend::database::{
+            db::tests::create_test_database,
+            tables::{
+                label_preset::table_label_preset::TableLabelPreset,
+                table::{RecordDelete, RecordInsert, RecordUpdate, TableCreate},
+                user::{self, table_user::TableUser},
+            },
         },
         shared::models::database::{
             label_preset::model_label_preset::{LabelOptions, RecordLabelPreset},
@@ -140,34 +143,34 @@ mod tests {
         },
     };
 
-    fn create(conn: &rusqlite::Connection) {
+    fn create() -> rusqlite::Connection {
+        let conn = create_test_database();
         // TableLabelPreset depends on TableUser, so this must be created first
-        user::table_user::tests::create_table(conn);
+        user::table_user::tests::create_table(&conn);
 
         assert!(
             !conn.table_exists(None, "label_preset").unwrap(),
             "New table should be empty"
         );
         assert!(
-            TableLabelPreset::create_table(conn).is_ok(),
+            TableLabelPreset::create_table(&conn).is_ok(),
             "Failed to create table"
         );
         assert!(
             conn.table_exists(None, "label_preset").unwrap(),
             "create_table() reported Ok but table does not exist"
         );
+        conn
     }
 
     #[test]
     fn create_table() {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
-        create(&conn);
+        create();
     }
 
     #[test]
     fn insert_and_update() {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
-        create(&conn);
+        let conn = create();
         let users = TableUser::<RecordUserConfig>::get_all(&conn).unwrap();
         let user = users.first().unwrap(); // User used for this test
 
@@ -200,8 +203,7 @@ mod tests {
 
     #[test]
     fn delete() {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
-        create(&conn);
+        let conn = create();
         let users = TableUser::<RecordUserConfig>::get_all(&conn).unwrap();
         let user = users.first().unwrap(); // User used for this test
         assert!(

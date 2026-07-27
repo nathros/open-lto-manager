@@ -244,9 +244,12 @@ pub mod tests {
     use chrono::Local;
 
     use crate::{
-        backend::database::tables::{
-            table::{RecordInsert, RecordRead, TableCreate},
-            user::table_user::TableUser,
+        backend::database::{
+            db::tests::create_test_database,
+            tables::{
+                table::{RecordInsert, RecordRead, TableCreate},
+                user::table_user::TableUser,
+            },
         },
         shared::models::database::user::{
             model_user::{ColourMode, FileTheme, IconTheme},
@@ -318,7 +321,7 @@ pub mod tests {
 
     #[test]
     fn suite() {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        let conn = create_test_database();
         create_table(&conn);
         insert(&conn);
         get(&conn);

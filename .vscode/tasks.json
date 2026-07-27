@@ -1,134 +1,134 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Check::Env",
-            "type": "shell",
-            "command": "bash dev.env.check.sh",
-            "icon": {
-                "id": "debug-console", // https://code.visualstudio.com/api/references/icons-in-labels
-                "color": "terminal.ansiCyan"
-            },
-            "group": "test",
-            "problemMatcher": [],
-        },
-        {
-            "label": "Check::Tasks",
-            "type": "shell",
-            "command": "bash dev.tasks.check.sh",
-            "icon": {
-                "id": "debug-console",
-                "color": "terminal.ansiCyan"
-            },
-            "group": "test",
-            "problemMatcher": [],
-        },
-        {
-            "label": "Build::Clean",
-            "type": "shell",
-            "command": "rm -rf target/",
-            "icon": {
-                "id": "trash",
-                "color": "terminal.ansiWhite"
-            },
-            "group": "build",
-            "problemMatcher": [],
-        },
-        {
-            "label": "Build::Debug",
-            "type": "shell",
-            "command": "dx build",
-            "icon": {
-                "id": "gear",
-                "color": "terminal.ansiGreen"
-            },
-            "group": "build",
-            "problemMatcher": [],
-        },
-        {
-            "label": "Build::Release",
-            "type": "shell", // Remove public dir as previous release build files will not be removed
-            "command": "rm -rf target/dx/openltomanager/release/web/public/ && dx build --web --release --debug-symbols=false",
-            "icon": {
-                "id": "gear",
-                "color": "terminal.ansiGreen"
-            },
-            "group": "build",
-            "problemMatcher": [],
-        },
-        {
-            "label": "Serve::localhost",
-            "type": "shell",
-            "command": "dx serve",
-            "icon": {
-                "id": "run",
-                "color": "terminal.ansiYellow"
-            },
-            "options": {
-                "env": {
-                    "DIOXUS_DEVSERVER_IP": "127.0.0.1",
-                    "CONSOLE_LOG": "ON"
-                }
-            },
-            "group": "test",
-            "problemMatcher": [],
-        },
-        {
-            "label": "Serve::0.0.0.0",
-            "type": "shell",
-            "command": "dx serve --addr 0.0.0.0",
-            "icon": {
-                "id": "run",
-                "color": "terminal.ansiYellow"
-            },
-            "options": {
-                "env": {
-                    "DIOXUS_DEVSERVER_IP": "0.0.0.0",
-                    "CONSOLE_LOG": "ON"
-                }
-            },
-            "group": "test",
-            "problemMatcher": [],
-        },
-        {
-            "label": "Run Release::0.0.0.0",
-            "type": "shell",
-            "command": "./server",
-            "options": {
-                "cwd": "${workspaceRoot}/target/dx/openltomanager/release/web",
-                "env": {
-                    "IP": "0.0.0.0",
-                    "CONSOLE_LOG": "ON"
-                }
-            },
-            "icon": {
-                "id": "run",
-                "color": "terminal.ansiYellow"
-            },
-            "group": "test",
-            "problemMatcher": [],
-        },
-        {
-            "label": "Test::rust",
-            "type": "shell",
-            "command": "cargo test -- --show-output",
-            "icon": {
-                "id": "bug",
-                "color": "terminal.ansiBlue"
-            },
-            "group": "test",
-            "problemMatcher": [],
-        },
-        {
-            "label": "Test::dx",
-            "type": "shell",
-            "command": "dx check",
-            "icon": {
-                "id": "bug",
-                "color": "terminal.ansiBlue"
-            },
-            "group": "test",
-            "problemMatcher": [],
-        },
-    ]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Check::Env",
+      "type": "shell",
+      "command": "bash dev.env.check.sh",
+      "icon": {
+        "id": "debug-console", // https://code.visualstudio.com/api/references/icons-in-labels
+        "color": "terminal.ansiCyan"
+      },
+      "group": "test",
+      "problemMatcher": [],
+    },
+    {
+      "label": "Check::Tasks",
+      "type": "shell",
+      "command": "bash dev.tasks.check.sh",
+      "icon": {
+        "id": "debug-console",
+        "color": "terminal.ansiCyan"
+      },
+      "group": "test",
+      "problemMatcher": [],
+    },
+    {
+      "label": "Build::Clean",
+      "type": "shell",
+      "command": "rm -rf target/",
+      "icon": {
+        "id": "trash",
+        "color": "terminal.ansiWhite"
+      },
+      "group": "build",
+      "problemMatcher": [],
+    },
+    {
+      "label": "Build::Debug",
+      "type": "shell",
+      "command": "dx build",
+      "icon": {
+        "id": "gear",
+        "color": "terminal.ansiGreen"
+      },
+      "group": "build",
+      "problemMatcher": [],
+    },
+    {
+      "label": "Build::Release",
+      "type": "shell", // Remove public dir as previous release build files will not be removed
+      "command": "rm -rf target/dx/openltomanager/release/web/public/ && dx build --web --release --debug-symbols=false",
+      "icon": {
+        "id": "gear",
+        "color": "terminal.ansiGreen"
+      },
+      "group": "build",
+      "problemMatcher": [],
+    },
+    {
+      "label": "Serve::localhost",
+      "type": "shell",
+      "command": "dx serve",
+      "icon": {
+        "id": "run",
+        "color": "terminal.ansiYellow"
+      },
+      "options": {
+        "env": {
+          "DIOXUS_DEVSERVER_IP": "127.0.0.1",
+          "CONSOLE_LOG": "ON"
+        }
+      },
+      "group": "test",
+      "problemMatcher": [],
+    },
+    {
+      "label": "Serve::0.0.0.0",
+      "type": "shell",
+      "command": "dx serve --addr 0.0.0.0",
+      "icon": {
+        "id": "run",
+        "color": "terminal.ansiYellow"
+      },
+      "options": {
+        "env": {
+          "DIOXUS_DEVSERVER_IP": "0.0.0.0",
+          "CONSOLE_LOG": "ON"
+        }
+      },
+      "group": "test",
+      "problemMatcher": [],
+    },
+    {
+      "label": "Run Release::0.0.0.0",
+      "type": "shell",
+      "command": "./server",
+      "options": {
+        "cwd": "${workspaceRoot}/target/dx/openltomanager/release/web",
+        "env": {
+          "IP": "0.0.0.0",
+          "CONSOLE_LOG": "ON"
+        }
+      },
+      "icon": {
+        "id": "run",
+        "color": "terminal.ansiYellow"
+      },
+      "group": "test",
+      "problemMatcher": [],
+    },
+    {
+      "label": "Test::rust",
+      "type": "shell",
+      "command": "cargo test -- --show-output",
+      "icon": {
+        "id": "bug",
+        "color": "terminal.ansiBlue"
+      },
+      "group": "test",
+      "problemMatcher": [],
+    },
+    {
+      "label": "Test::dx",
+      "type": "shell",
+      "command": "dx check",
+      "icon": {
+        "id": "bug",
+        "color": "terminal.ansiBlue"
+      },
+      "group": "test",
+      "problemMatcher": [],
+    },
+  ]
 }

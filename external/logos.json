@@ -40,6 +40,12 @@
 		"quantum": {
 			"all": "quantum.svg"
 		},
+		"reel-invert": {
+			"all": "reel-invert.svg"
+		},
+		"reel-std": {
+			"all": "reel-std.svg"
+		},
 		"sna": {
 			"all": "sna.svg"
 		},

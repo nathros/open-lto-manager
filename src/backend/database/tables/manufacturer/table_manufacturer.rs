@@ -136,9 +136,12 @@ impl TableManufacturer<RecordManufacturer> {
 #[cfg(test)]
 pub mod tests {
     use crate::{
-        backend::database::tables::{
-            manufacturer::table_manufacturer::TableManufacturer,
-            table::{RecordDelete, RecordInsert, RecordUpdate, TableCreate},
+        backend::database::{
+            db::tests::create_test_database,
+            tables::{
+                manufacturer::table_manufacturer::TableManufacturer,
+                table::{RecordDelete, RecordInsert, RecordUpdate, TableCreate},
+            },
         },
         shared::models::database::manufacturer::model_manufacturer::RecordManufacturer,
     };
@@ -160,13 +163,13 @@ pub mod tests {
 
     #[test]
     fn create() {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        let conn = create_test_database();
         create_table(&conn);
     }
 
     #[test]
     fn insert() {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        let conn = create_test_database();
         create_table(&conn);
         let all_records_current = TableManufacturer::get_all(&conn).unwrap();
         let new_manufacturer_name = "NewName".to_string();
@@ -200,7 +203,7 @@ pub mod tests {
 
     #[test]
     fn update() {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        let conn = create_test_database();
         create_table(&conn);
         let all_records_result = TableManufacturer::get_all(&conn);
         assert!(
@@ -232,7 +235,7 @@ pub mod tests {
 
     #[test]
     fn delete() {
-        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        let conn = create_test_database();
         create_table(&conn);
         let all_records_result = TableManufacturer::get_all(&conn);
         assert!(

@@ -144,9 +144,7 @@ fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, Str
     Ok(conn)
 }
 
-pub fn create_database() -> Result<rusqlite::Connection, String> {
-    let mut db_path = get_database_path();
-
+pub fn create_database(db_path: String) -> Result<rusqlite::Connection, String> {
     match std::fs::create_dir_all(&db_path) {
         Ok(_) => {}
         Err(e) => {
@@ -155,10 +153,10 @@ pub fn create_database() -> Result<rusqlite::Connection, String> {
             }
         }
     }
-    db_path = get_database_file();
+    let db_file = get_database_file(&db_path);
     static FIRST_RUN: Mutex<bool> = Mutex::new(true);
 
-    match rusqlite::Connection::open(&db_path) {
+    match rusqlite::Connection::open(&db_file) {
         Ok(conn) => match FIRST_RUN.try_lock() {
             Ok(mut guard) => {
                 info!(
@@ -167,7 +165,7 @@ pub fn create_database() -> Result<rusqlite::Connection, String> {
                 );
                 if *guard {
                     *guard = false;
-                    info!("Open database at path: {}", db_path);
+                    info!("Open database at path: {}", db_file);
                     database_init(conn)
                 } else {
                     Ok(conn)
@@ -179,12 +177,59 @@ pub fn create_database() -> Result<rusqlite::Connection, String> {
     }
 }
 
+pub fn database_enable_fk_constraints(db: &Connection) -> Result<usize, rusqlite::Error> {
+    db.execute("PRAGMA foreign_keys = ON", [])
+}
+
 pub fn backup_database(db: &Connection, path: String) -> Result<usize, rusqlite::Error> {
     db.execute("VACUUM main INTO ?1", params![path])
 }
 
 thread_local! {
     pub static DB: LazyLock<rusqlite::Connection> = LazyLock::new(|| {
-        create_database().expect("Attempt to open uninitialised database") // In separate function as rustfmt does not work inside this closure
+        let db = create_database(get_database_path()).expect("Attempt to open uninitialised database"); // In separate function as rustfmt does not work inside this closure
+        if database_enable_fk_constraints(&db).expect("Attempt to enable connection foreign key constraints") != 0 {
+            unreachable!("Connection foreign key constraints should return 0");
+        }
+        db
     });
+}
+
+#[cfg(test)]
+pub mod tests {
+    use tempdir::TempDir;
+
+    use crate::backend::database::db::{create_database, database_enable_fk_constraints};
+
+    pub fn create_test_database() -> rusqlite::Connection {
+        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        assert_eq!(database_enable_fk_constraints(&conn).unwrap(), 0);
+        conn
+    }
+
+    fn check_foreign_keys_constraints(db: &rusqlite::Connection) {
+        assert_eq!(
+            db.pragma_query_value(None, "foreign_keys", |row| {
+                let foreign_keys_enabled: isize = row.get(0).unwrap();
+                Ok(foreign_keys_enabled)
+            })
+            .unwrap(),
+            1, // Enabled
+            "Expected foreign keys constraints to be enabled"
+        );
+    }
+
+    #[test]
+    fn create_database_temp_memory() {
+        let db = create_test_database();
+        check_foreign_keys_constraints(&db);
+    }
+
+    #[test]
+    fn create_database_file() {
+        let tmp_dir = TempDir::new("database_file").unwrap();
+        let path = tmp_dir.path().display().to_string();
+        let db = create_database(path).unwrap();
+        check_foreign_keys_constraints(&db);
+    }
 }
