@@ -139,7 +139,7 @@ pub fn Header() -> Element {
                             "anchor": Id::HeaderNotificationIcon.as_str(),
                             class: Css::HEADER_DROPDOWN_CONTENT,
                             popover: "auto",
-                            div { class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
+                            div { class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE),
                                 "..."
                             }
                         }
@@ -156,7 +156,7 @@ pub fn Header() -> Element {
                             class: Css::HEADER_DROPDOWN_CONTENT,
                             popover: "auto",
                             div {
-                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
+                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE),
                                 onclick: move |_evt: Event<MouseData>| async move {
                                     js_hide_popover(Id::HeaderInfoMenu.as_str());
                                     let _ = document::eval("alert('Not ready yet');").await;
@@ -166,7 +166,7 @@ pub fn Header() -> Element {
                             }
                             Link {
                                 "target": "_blank",
-                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
+                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE),
                                 to: "https://github.com/nathros/open-lto-manager",
                                 onclick: move |_evt: Event<MouseData>| {
                                     js_hide_popover(Id::HeaderInfoMenu.as_str());
@@ -179,7 +179,7 @@ pub fn Header() -> Element {
                             }
                             Link {
                                 "target": "_blank",
-                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
+                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE),
                                 to: "https://github.com/nathros/open-lto-manager/issues",
                                 onclick: move |_evt: Event<MouseData>| {
                                     js_hide_popover(Id::HeaderInfoMenu.as_str());
@@ -204,7 +204,7 @@ pub fn Header() -> Element {
                                 "{user.username}"
                             }
                             Link {
-                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
+                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE),
                                 to: Route::DBUser {},
                                 onclick: move |_evt: Event<MouseData>| {
                                     js_hide_popover(Id::HeaderUserMenu.as_str());
@@ -214,7 +214,7 @@ pub fn Header() -> Element {
                             }
 
                             button {
-                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
+                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE),
                                 id: Id::HeaderAccentIcon.as_str(),
                                 "popovertarget": Id::HeaderAccentMenu.as_str(),
                                 span { class: static_concat!(Css::ICON, Css::SM, Icons::PALETTE) }
@@ -230,6 +230,7 @@ pub fn Header() -> Element {
                                     class: [
                                         Css::ICON_LIST_ITEM,
                                         Css::FLEX_ROW,
+                                        Css::FLEX_ALIGN_CENTRE,
                                         either!(user.accent_colour == ACCENT_STANDARD, Css::SELECTED, ""),
                                     ]
                                         .concat(),
@@ -246,6 +247,7 @@ pub fn Header() -> Element {
                                     class: [
                                         Css::ICON_LIST_ITEM,
                                         Css::FLEX_ROW,
+                                        Css::FLEX_ALIGN_CENTRE,
                                         either!(user.accent_colour == ACCENT_RED, Css::SELECTED, ""),
                                     ]
                                         .concat(),
@@ -262,6 +264,7 @@ pub fn Header() -> Element {
                                     class: [
                                         Css::ICON_LIST_ITEM,
                                         Css::FLEX_ROW,
+                                        Css::FLEX_ALIGN_CENTRE,
                                         either!(user.accent_colour == ACCENT_GREEN, Css::SELECTED, ""),
                                     ]
                                         .concat(),
@@ -278,6 +281,7 @@ pub fn Header() -> Element {
                                     class: [
                                         Css::ICON_LIST_ITEM,
                                         Css::FLEX_ROW,
+                                        Css::FLEX_ALIGN_CENTRE,
                                         either!(user.accent_colour == ACCENT_BLUE, Css::SELECTED, ""),
                                     ]
                                         .concat(),
@@ -294,12 +298,10 @@ pub fn Header() -> Element {
                                     class: [
                                         Css::ICON_LIST_ITEM,
                                         Css::FLEX_ROW,
+                                        Css::FLEX_ALIGN_CENTRE,
                                         either!(
-                                            user.accent_colour == ACCENT_STANDARD ||
-                                            user.accent_colour == ACCENT_RED ||
-                                            user.accent_colour == ACCENT_GREEN ||
-                                            user.accent_colour == ACCENT_BLUE,
-                                            "",
+                                            user.accent_colour == ACCENT_STANDARD || user.accent_colour == ACCENT_RED ||
+                                            user.accent_colour == ACCENT_GREEN || user.accent_colour == ACCENT_BLUE, "",
                                             Css::SELECTED
                                         ),
                                     ]
@@ -320,7 +322,7 @@ pub fn Header() -> Element {
                             }
 
                             button {
-                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
+                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE),
                                 id: Id::HeaderIconIcon.as_str(),
                                 "popovertarget": Id::HeaderIconMenu.as_str(),
                                 span { class: static_concat!(Css::ICON, Css::SM, Icons::SANDPIT) }
@@ -336,6 +338,7 @@ pub fn Header() -> Element {
                                     class: [
                                         Css::ICON_LIST_ITEM,
                                         Css::FLEX_ROW,
+                                        Css::FLEX_ALIGN_CENTRE,
                                         either!(user.icon_theme == IconTheme::Tabler, Css::SELECTED, ""),
                                     ]
                                         .concat(),
@@ -352,6 +355,7 @@ pub fn Header() -> Element {
                                     class: [
                                         Css::ICON_LIST_ITEM,
                                         Css::FLEX_ROW,
+                                        Css::FLEX_ALIGN_CENTRE,
                                         either!(user.icon_theme == IconTheme::Remix, Css::SELECTED, ""),
                                     ]
                                         .concat(),
@@ -368,6 +372,7 @@ pub fn Header() -> Element {
                                     class: [
                                         Css::ICON_LIST_ITEM,
                                         Css::FLEX_ROW,
+                                        Css::FLEX_ALIGN_CENTRE,
                                         either!(user.icon_theme == IconTheme::Iconoir, Css::SELECTED, ""),
                                     ]
                                         .concat(),
@@ -384,6 +389,7 @@ pub fn Header() -> Element {
                                     class: [
                                         Css::ICON_LIST_ITEM,
                                         Css::FLEX_ROW,
+                                        Css::FLEX_ALIGN_CENTRE,
                                         either!(user.icon_theme == IconTheme::Sargam, Css::SELECTED, ""),
                                     ]
                                         .concat(),
@@ -399,7 +405,7 @@ pub fn Header() -> Element {
                             }
 
                             button {
-                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
+                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE),
                                 id: Id::HeaderThemeIcon.as_str(),
                                 "popovertarget": Id::HeaderThemeMenu.as_str(),
                                 span { class: static_concat!(Css::ICON, Css::SM, Icons::CONTRAST) }
@@ -415,6 +421,7 @@ pub fn Header() -> Element {
                                     class: [
                                         Css::ICON_LIST_ITEM,
                                         Css::FLEX_ROW,
+                                        Css::FLEX_ALIGN_CENTRE,
                                         either!(user.system_theme == ColourMode::System, Css::SELECTED, ""),
                                     ]
                                         .concat(),
@@ -428,6 +435,7 @@ pub fn Header() -> Element {
                                     class: [
                                         Css::ICON_LIST_ITEM,
                                         Css::FLEX_ROW,
+                                        Css::FLEX_ALIGN_CENTRE,
                                         either!(user.system_theme == ColourMode::Light, Css::SELECTED, ""),
                                     ]
                                         .concat(),
@@ -441,6 +449,7 @@ pub fn Header() -> Element {
                                     class: [
                                         Css::ICON_LIST_ITEM,
                                         Css::FLEX_ROW,
+                                        Css::FLEX_ALIGN_CENTRE,
                                         either!(user.system_theme == ColourMode::Dark, Css::SELECTED, ""),
                                     ]
                                         .concat(),
@@ -455,7 +464,7 @@ pub fn Header() -> Element {
                             hr {}
 
                             Link {
-                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW),
+                                class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE),
                                 onclick: |_| async {
                                     let _ = api_logout().await;
                                 },
@@ -464,7 +473,6 @@ pub fn Header() -> Element {
                                 span { "Log out" }
                             }
                         }
-
                     }
 
                     ErrorBoundary { handle_error: error_handler, Outlet::<Route> {} }

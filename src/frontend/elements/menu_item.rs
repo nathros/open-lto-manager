@@ -34,7 +34,12 @@ pub struct MenuItemProps {
 pub fn MenuItem(props: MenuItemProps) -> Element {
     rsx! {
         div {
-            class: [Css::ICON_LIST_ITEM, Css::FLEX_ROW, either!(props.selected, Css::SELECTED, "")]
+            class: [
+                Css::ICON_LIST_ITEM,
+                Css::FLEX_ROW,
+                Css::FLEX_ALIGN_CENTRE,
+                either!(props.selected, Css::SELECTED, ""),
+            ]
                 .concat(),
             onclick: props.onclick,
             if !props.icon.is_empty() {

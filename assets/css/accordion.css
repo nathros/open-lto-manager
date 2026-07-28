@@ -24,7 +24,7 @@
 > div:last-child {
 	grid-template-rows: 1fr;
 }
-.accordion-container.active > div:last-child > .flex-col {
+.accordion-container.active > div:last-child .flex-col {
 	margin-top: var(--padding-s);
 	margin-bottom: var(--padding-s);
 }

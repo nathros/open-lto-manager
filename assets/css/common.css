@@ -83,6 +83,9 @@ dialog {
 	box-shadow: inset 4px 0px 0px 0px var(--colour-accent);
 	background-color: hsl(from var(--colour-accent) h s calc(l + 40));
 }
+.icon-list-item:has(+ .header-dropdown-content:popover-open) > .float-right {
+	transform: scale(-1, -1);
+}
 @container style(--dark-mode: 1) {
 	.icon-list-item:has(+ .header-dropdown-content:popover-open),
 	.selected {

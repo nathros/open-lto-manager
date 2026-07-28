@@ -46,6 +46,7 @@ fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, Str
                     Err(e) => return Err(format!("Failed to set table version {}", e)),
                 }
             } else {
+                // TODO could use: PRAGMA user_version
                 match TableSetting::<RecordMisc<SettingTableVersion>>::get(&conn) {
                     Ok(v) => current_database_version = v.data,
                     Err(e) => return Err(format!("Failed to get table version {}", e)),
@@ -166,6 +167,9 @@ pub fn create_database(db_path: String) -> Result<rusqlite::Connection, String> 
                 if *guard {
                     *guard = false;
                     info!("Open database at path: {}", db_file);
+                    if enable_fk_constraints(&conn).expect("Foreign key constraints") != 0 {
+                        unreachable!("Set foreign key constraints should return 0");
+                    }
                     database_init(conn)
                 } else {
                     Ok(conn)
@@ -177,7 +181,7 @@ pub fn create_database(db_path: String) -> Result<rusqlite::Connection, String> 
     }
 }
 
-fn database_enable_fk_constraints(db: &Connection) -> Result<usize, rusqlite::Error> {
+fn enable_fk_constraints(db: &Connection) -> Result<usize, rusqlite::Error> {
     db.execute("PRAGMA foreign_keys = ON", [])
 }
 
@@ -187,11 +191,7 @@ pub fn backup_database(db: &Connection, path: String) -> Result<usize, rusqlite:
 
 thread_local! {
     pub static DB: LazyLock<rusqlite::Connection> = LazyLock::new(|| {
-        let db = create_database(get_database_path()).expect("Attempt to open uninitialised database"); // In separate function as rustfmt does not work inside this closure
-        if database_enable_fk_constraints(&db).expect("Attempt to enable connection foreign key constraints") != 0 {
-            unreachable!("Connection foreign key constraints should return 0");
-        }
-        db
+        create_database(get_database_path()).expect("Attempt to open uninitialised database") // In separate function as rustfmt does not work inside this closure
     });
 }
 
@@ -199,11 +199,11 @@ thread_local! {
 pub mod tests {
     use tempdir::TempDir;
 
-    use crate::backend::database::db::{create_database, database_enable_fk_constraints};
+    use crate::backend::database::db::{create_database, enable_fk_constraints};
 
     pub fn create_test_database() -> rusqlite::Connection {
         let conn = rusqlite::Connection::open_in_memory().unwrap();
-        assert_eq!(database_enable_fk_constraints(&conn).unwrap(), 0);
+        assert_eq!(enable_fk_constraints(&conn).unwrap(), 0);
         conn
     }
 
