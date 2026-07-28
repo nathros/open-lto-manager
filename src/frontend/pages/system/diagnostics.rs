@@ -148,7 +148,7 @@ fn Inner() -> Element {
                                         small: true,
                                         details: MessageDetails {
                                             level: Level::Info,
-                                            text: "Making changes to groups requires Logout/in and app restart is needed to take effect"
+                                            text: "Making changes to groups requires logout/in and app restart is needed to take effect"
                                                 .to_string(),
                                         },
                                     }

@@ -19,4 +19,6 @@ docker run -v $MOUNT -it --rm ubuntu:26.04 $INSTALLER
 
 docker run -v $MOUNT -it --rm archlinux:base-20260719.0.558177 $INSTALLER
 
+docker run -v $MOUNT -it --rm ghcr.io/void-linux/void-glibc-full:20260701r1 /bin/sh -c "xbps-install -Suy && xbps-install -y bash && $INSTALLER"
+
 #docker run -v $(pwd)/scripts:/scripts --rm -it --entrypoint bash debian:buster

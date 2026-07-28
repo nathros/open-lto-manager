@@ -418,10 +418,22 @@ PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-poli
 UBUNTU_CODENAME=resolute
 LOGO=ubuntu-logo"#;
 
+        let void_os_release = r#"NAME="Void"
+ID="void"
+PRETTY_NAME="Void Linux"
+HOME_URL="https://voidlinux.org/"
+DOCUMENTATION_URL="https://docs.voidlinux.org/"
+LOGO="void-logo"
+ANSI_COLOR="0;38;2;71;128;97"
+
+DISTRIB_ID="void"
+"#;
+
         let test_data = [
             (catchy_os_release, "CachyOS Linux".to_string(), GROUP_ARCH),
             (arch_os_release, "Arch Linux".to_string(), GROUP_ARCH),
             (ubuntu_os_release, "Ubuntu 26.04 LTS".to_string(), GROUP_ANY),
+            (void_os_release, "Void Linux".to_string(), GROUP_ANY),
         ];
 
         let tmp_dir = TempDir::new("os_release").unwrap();

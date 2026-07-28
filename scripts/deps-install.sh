@@ -11,7 +11,7 @@ GROUP_CHANGED=false
 USR=$(whoami)
 ICU_PATH="/usr/bin/icu-config"
 UNATTENDED=false
-SUPPORTED="Debian+(derivatives,Ubuntu), Arch"
+SUPPORTED="Debian+(derivatives,Ubuntu), Arch, Void"
 
 IN_DOCKER=true
 if [ ! -f /.dockerenv ]; then
@@ -103,9 +103,6 @@ build_ltfs () {
 
 install_as_debian () {
 	# Adapted from: https://github.com/LinearTapeFileSystem/Debian12-Build
-
-	ask_buggy_ifs
-
 	LTFS="build-essential git pkg-config automake autoconf libtool libfuse-dev fuse uuid-dev libxml2-dev libsnmp-dev libicu-dev icu-devtools"
 	MT="mt-st"
 	PACKAGES="$LTFS $MT"
@@ -124,8 +121,8 @@ install_as_debian () {
 		export DEBIAN_FRONTEND=noninteractive
 	fi
 
+	ask_buggy_ifs
 	apt update && apt install -y $PACKAGES
-
 	check_groups
 	checkout_ltfs
 	install_icu
@@ -133,7 +130,6 @@ install_as_debian () {
 }
 
 install_as_arch () {
-	ask_buggy_ifs
 	PACKAGES="base-devel git make automake autoconf libtool fuse net-snmp"
 
 	echo "********************************************************************************************"
@@ -144,8 +140,31 @@ install_as_arch () {
 	echo "    LTFS source: $LTFS_SOURCE"
 	echo "********************************************************************************************"
 
+	ask_buggy_ifs
 	pacman -Sy
 	pacman -Syu --noconfirm $PACKAGES
+
+	check_groups
+	export CFLAGS="$CFLAGS -Wno-error=declaration-after-statement"
+	checkout_ltfs
+	build_ltfs
+}
+
+install_as_void () {
+	# https://github.com/void-linux/void-packages/pull/50845/changes
+	PACKAGES="base-devel git make automake autoconf libtool pkg-config icu fuse-devel libuuid-devel libxml2-devel icu icu-devel net-snmp-devel pciutils-devel pcre-devel libsensors-devel libnl3-devel python3-pyxattr"
+
+	echo "********************************************************************************************"
+	echo "The following actions will be performed:"
+	echo " 1) Packages to be installed: ${PACKAGES}"
+	echo " 2) Add user '$USR' to group '$GROUP'"
+	echo " 3) Compile and install LTFS to $LTFS_DIR"
+	echo "    LTFS source: $LTFS_SOURCE"
+	echo "********************************************************************************************"
+
+	ask_buggy_ifs
+	xbps-install -Suy
+	xbps-install -y $PACKAGES
 
 	check_groups
 	export CFLAGS="$CFLAGS -Wno-error=declaration-after-statement"
@@ -194,6 +213,9 @@ elif [[ $OS == *"arch"* ]]; then
 	echo "Process as Arch or (Arch derivative)"
 	GROUP=storage
 	install_as_arch
+elif [[ $OS == *"void"* ]]; then
+	echo "Process as Void Linux"
+	install_as_void
 else
 	echo "Unable to determine supported OS from: $OS"
 	err_msg
