@@ -11,7 +11,7 @@ GROUP_CHANGED=false
 USR=$(whoami)
 ICU_PATH="/usr/bin/icu-config"
 UNATTENDED=false
-SUPPORTED="Debian+(derivatives,Ubuntu), Arch, Void"
+SUPPORTED="Debian+(derivatives,Ubuntu), Arch, Fedora, RHEL, CentOS Stream and Void"
 
 IN_DOCKER=true
 if [ ! -f /.dockerenv ]; then
@@ -20,8 +20,12 @@ fi
 
 err_msg () {
 	echo "This script only supports: $SUPPORTED"
-	echo "Options:"
-	echo " Try manual install see: $LTFS_SOURCE"
+	echo "Option 1"
+	echo "	Run this script with one of the supported OSs above: $(basename "$0") -o {option}"
+	echo "	Or if all required packages are already installed"
+	echo "	Run this script with: $(basename "$0") -o generic"
+	echo "Option 2"
+	echo "	Try manual install see: $LTFS_SOURCE"
 }
 
 ask_buggy_ifs () {
@@ -96,6 +100,12 @@ build_ltfs () {
 	else
 		./configure
 	fi
+
+	if [[ $1 == *"rhel"* ]]; then
+		# https://github.com/LinearTapeFileSystem/ltfs/issues/394
+		sed -i 's/,-Wp/ -Wp/g' src/libltfs/Makefile ./conf/Makefile ./init.d/Makefile ./man/Makefile ./messages/Makefile ./src/iosched/Makefile ./src/kmi/Makefile ./src/libltfs/Makefile ./src/tape_drivers/freebsd/cam/Makefile ./src/tape_drivers/generic/file/Makefile ./src/tape_drivers/generic/itdtimg/Makefile ./src/tape_drivers/linux/lin_tape/Makefile ./src/tape_drivers/linux/sg/Makefile ./src/tape_drivers/netbsd/scsipi-ibmtape/Makefile ./src/tape_drivers/osx/iokit/Makefile ./src/utils/Makefile ./src/Makefile ./Makefile
+	fi
+
 	make -j$(nproc)
 	make install -j$(nproc)
 	ldconfig -v
@@ -109,7 +119,7 @@ install_as_debian () {
 
 	echo "********************************************************************************************"
 	echo "The following actions will be performed"
-	echo " 1) Packages to be installed: ${PACKAGES}"
+	echo " 1) Packages to be installed: $PACKAGES"
 	echo " 2) Add user '$USR' to group '$GROUP'"
 	echo " 3) Install icu-config to $ICU_PATH"
 	echo "    This is deprecated in Debian: $LTFS_SOURCE/issues/153"
@@ -134,7 +144,7 @@ install_as_arch () {
 
 	echo "********************************************************************************************"
 	echo "The following actions will be performed:"
-	echo " 1) Packages to be installed: ${PACKAGES}"
+	echo " 1) Packages to be installed: $PACKAGES"
 	echo " 2) Add user '$USR' to group '$GROUP'"
 	echo " 3) Compile and install LTFS to $LTFS_DIR"
 	echo "    LTFS source: $LTFS_SOURCE"
@@ -156,7 +166,7 @@ install_as_void () {
 
 	echo "********************************************************************************************"
 	echo "The following actions will be performed:"
-	echo " 1) Packages to be installed: ${PACKAGES}"
+	echo " 1) Packages to be installed: $PACKAGES"
 	echo " 2) Add user '$USR' to group '$GROUP'"
 	echo " 3) Compile and install LTFS to $LTFS_DIR"
 	echo "    LTFS source: $LTFS_SOURCE"
@@ -166,6 +176,40 @@ install_as_void () {
 	xbps-install -Suy
 	xbps-install -y $PACKAGES
 
+	check_groups
+	export CFLAGS="$CFLAGS -Wno-error=declaration-after-statement"
+	checkout_ltfs
+	build_ltfs
+}
+
+install_as_rhel () {
+	PACKAGES="git automake autoconf libtool make icu libicu-devel libxml2-devel libuuid-devel fuse-devel net-snmp-devel python3"
+
+	echo "********************************************************************************************"
+	echo "The following actions will be performed:"
+	echo " 1) Packages to be installed: $PACKAGES"
+	echo " 2) Add user '$USR' to group '$GROUP'"
+	echo " 3) Compile and install LTFS to $LTFS_DIR"
+	echo "    LTFS source: $LTFS_SOURCE"
+	echo "********************************************************************************************"
+
+	ask_buggy_ifs
+
+	if [[ $(cat /etc/os-release | grep PRETTY) != *"fedora"* ]]; then
+		dnf config-manager --set-enabled crb
+	fi
+
+	yum -y update
+	yum -y install $PACKAGES
+
+	check_groups
+	export CFLAGS="$CFLAGS -Wno-error=declaration-after-statement"
+	checkout_ltfs
+	build_ltfs "rhel"
+}
+
+install_as_generic () {
+	ask_buggy_ifs
 	check_groups
 	export CFLAGS="$CFLAGS -Wno-error=declaration-after-statement"
 	checkout_ltfs
@@ -216,6 +260,11 @@ elif [[ $OS == *"arch"* ]]; then
 elif [[ $OS == *"void"* ]]; then
 	echo "Process as Void Linux"
 	install_as_void
+elif [[ $OS == *"fedora"* || $OS == *"centos"* || $OS == *"rhel"* ]]; then
+	echo "Process as RHEL or derivative"
+	install_as_rhel
+elif [[ $OS == *"generic"* ]]; then
+	install_as_generic
 else
 	echo "Unable to determine supported OS from: $OS"
 	err_msg

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 cd "$(dirname "$0")"
 cd ..
 
@@ -21,4 +22,8 @@ docker run -v $MOUNT -it --rm archlinux:base-20260719.0.558177 $INSTALLER
 
 docker run -v $MOUNT -it --rm ghcr.io/void-linux/void-glibc-full:20260701r1 /bin/sh -c "xbps-install -Suy && xbps-install -y bash && $INSTALLER"
 
-#docker run -v $(pwd)/scripts:/scripts --rm -it --entrypoint bash debian:buster
+docker run -v $MOUNT -it --rm dokken/centos-stream-9:latest $INSTALLER
+docker run -v $MOUNT -it --rm dokken/centos-stream-10:latest $INSTALLER
+docker run -v $MOUNT -it --rm fedora:44 $INSTALLER
+
+#docker run -v $(pwd)/scripts:/scripts --rm -it --entrypoint bash dokken/centos-stream-9:latest

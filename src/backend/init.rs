@@ -429,11 +429,30 @@ ANSI_COLOR="0;38;2;71;128;97"
 DISTRIB_ID="void"
 "#;
 
+        let centos_8_os_release = r#"NAME="CentOS Stream"
+VERSION="8"
+ID="centos"
+ID_LIKE="rhel fedora"
+VERSION_ID="8"
+PLATFORM_ID="platform:el8"
+PRETTY_NAME="CentOS Stream 8"
+ANSI_COLOR="0;31"
+CPE_NAME="cpe:/o:centos:centos:8"
+HOME_URL="https://centos.org/"
+BUG_REPORT_URL="https://bugzilla.redhat.com/"
+REDHAT_SUPPORT_PRODUCT="Red Hat Enterprise Linux 8"
+REDHAT_SUPPORT_PRODUCT_VERSION="CentOS Stream""#;
+
         let test_data = [
             (catchy_os_release, "CachyOS Linux".to_string(), GROUP_ARCH),
             (arch_os_release, "Arch Linux".to_string(), GROUP_ARCH),
             (ubuntu_os_release, "Ubuntu 26.04 LTS".to_string(), GROUP_ANY),
             (void_os_release, "Void Linux".to_string(), GROUP_ANY),
+            (
+                centos_8_os_release,
+                "CentOS Stream 8".to_string(),
+                GROUP_ANY,
+            ),
         ];
 
         let tmp_dir = TempDir::new("os_release").unwrap();
