@@ -28,7 +28,7 @@ bash <(curl -L https://raw.githubusercontent.com/nathros/open-lto-manager/main/s
 <!--
 ### Recommended dependencies
 ```shell
-bash <(curl -L https://raw.githubusercontent.com/nathros/open-lto-manager/main/scripts/release-install.sh)
+sudo bash <(curl -L https://raw.githubusercontent.com/nathros/open-lto-manager/main/scripts/release-install.sh)
 ```
 -->
 <!--### Manual install-->

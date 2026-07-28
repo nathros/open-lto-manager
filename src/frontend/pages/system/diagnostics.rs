@@ -45,7 +45,19 @@ pub fn Diagnostics() -> Element {
 #[component]
 fn Inner() -> Element {
     let app_state = use_loader(app_state)?;
-    const FIX_ALL_CMD: &str = "bash <(curl -L https://raw.githubusercontent.com/nathros/open-lto-manager/main/scripts/deps-install.sh)";
+    const FIX_ALL_CMD: &str = "sudo bash <(curl -L https://raw.githubusercontent.com/nathros/open-lto-manager/main/scripts/deps-install.sh)";
+
+    let ltfs_note = rsx! {
+        p {
+            "The "
+            InlineLink {
+                target: "_blank",
+                href: "https://github.com/LinearTapeFileSystem/ltfs",
+                label: "OpenLTFS",
+            }
+            " driver is recommended as this is the only one tested/developed against, however LTFS from other providers should work as expected."
+        }
+    };
 
     rsx! {
         CardOverview { title: "Overview".to_string(),
@@ -105,7 +117,9 @@ fn Inner() -> Element {
                             },
                             div { class: Css::FLEX_COL,
                                 span {
-                                    "In order to access tape devices {APP_NAME} needs access to the following devices:"
+                                    "In order to access tape devices "
+                                    b { {APP_NAME} }
+                                    " needs access to the following devices:"
                                 }
                                 H4 {
                                     div { class: static_concat!(Css::FLEX_ROW, Css::FLEX_CENTRE),
@@ -127,7 +141,7 @@ fn Inner() -> Element {
                                 }
                                 if !app_state().user_part_of_group {
                                     CodeBlock {
-                                        header: "Fix specific issue:",
+                                        header: "Fix issue:",
                                         code: format!("sudo usermod -a -G {} {}", app_state().group, usr),
                                     }
                                     Message {
@@ -153,20 +167,28 @@ fn Inner() -> Element {
                                     " found"
                                 }
                             },
-                            div { class: Css::FLEX_COL,
-                                span {
-                                    "Without a valid driver LTFS operations will not be available, tar fallback can be used. Install a LTFS driver or use the provided script to install one for you."
+                            div {
+                                p {
+                                    "Without a valid driver LTFS operations will not be available, tar fallback can be used."
                                 }
-                                CodeBlock {
-                                    header: "Proposed fix:",
-                                    code: FIX_ALL_CMD.to_string(),
-                                }
-                                Message {
-                                    small: true,
-                                    details: MessageDetails {
-                                        level: Level::Info,
-                                        text: "App restart is needed to take effect".to_string(),
-                                    },
+                                if !app_state().ltfs_installed {
+                                    div { class: Css::FLEX_COL,
+                                        {ltfs_note.clone()}
+                                        span {
+                                            "Install a LTFS driver or use the provided script to install one for you."
+                                        }
+                                        CodeBlock {
+                                            header: "Proposed fix:",
+                                            code: FIX_ALL_CMD.to_string(),
+                                        }
+                                        Message {
+                                            small: true,
+                                            details: MessageDetails {
+                                                level: Level::Info,
+                                                text: "App restart is needed to take effect".to_string(),
+                                            },
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -178,17 +200,7 @@ fn Inner() -> Element {
                                     Icon { icon: either!(is_open_ltfs, Icons::SUCCESS, Icons::INFO), size: Css::MD }
                                     span { "Detected LTFS is from provider: {app_state().ltfs_provider:?}" }
                                 },
-                                div {
-                                    p {
-                                        "The "
-                                        InlineLink {
-                                            target: "_blank",
-                                            href: "https://github.com/LinearTapeFileSystem/ltfs",
-                                            label: "OpenLTFS",
-                                        }
-                                        " driver is recommended as this is the only one tested/developed against, however LTFS from other providers should work as expected."
-                                    }
-                                }
+                                div { {ltfs_note} }
                             }
                             if is_open_ltfs && let Some(ltfs_v) = app_state().ltfs_version
                                 && let Some(ltfs_l) = app_state().ltfs_version_latest

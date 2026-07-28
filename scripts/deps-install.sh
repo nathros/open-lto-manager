@@ -9,8 +9,9 @@ BUGGY_IFS=false
 GROUP=tape
 GROUP_CHANGED=false
 USR=$(whoami)
-
+ICU_PATH="/usr/bin/icu-config"
 UNATTENDED=false
+SUPPORTED="Debian+(derivatives,Ubuntu), Arch"
 
 IN_DOCKER=true
 if [ ! -f /.dockerenv ]; then
@@ -18,13 +19,15 @@ if [ ! -f /.dockerenv ]; then
 fi
 
 err_msg () {
-	echo "This script only supports: Debian(+varients)"
+	echo "This script only supports: $SUPPORTED"
 	echo "Options:"
-	echo "* Pass OS name as first parameter"
-	echo "* Try manual install see: $LTFS_SOURCE"
+	echo " Try manual install see: $LTFS_SOURCE"
 }
 
 ask_buggy_ifs () {
+	if [ "$UNATTENDED" = true ]; then
+		return 0
+	fi
 	echo "*****************************************************************************************"
 	echo "Are you using any of the following controllers:"
 	echo "ATTO       ExpressSAS H6xx"
@@ -53,13 +56,13 @@ ask_buggy_ifs () {
 check_groups () {
 	CURRENT_GROUPS=$(groups $USR)
 	if [[ $CURRENT_GROUPS != *"$GROUP"* ]]; then
-		sudo usermod -a -G $GROUP $USR
+		usermod -a -G $GROUP $USR
 		GROUP_CHANGED=true
 	fi
 }
 
 install_icu () {
-	sudo tee $ICU_PATH >/dev/null <<EOL
+	tee $ICU_PATH >/dev/null <<EOL
 #!/bin/sh
 
 opts=\$1
@@ -74,23 +77,41 @@ case \$opts in
 esac
 EOL
 
-	sudo chmod +x $ICU_PATH
+	chmod +x $ICU_PATH
+}
+
+checkout_ltfs () {
+	cd $BASE_DIR
+	rm -rf $LTFS_DIR
+	git clone $LTFS_SOURCE
+	cd $LTFS_DIR
+	git submodule update --init --recursive
+	git checkout $(git describe --tags $(git rev-list --tags --max-count=1)) # Get latest tagged version
+}
+
+build_ltfs () {
+	./autogen.sh
+	if [ "$BUGGY_IFS" = true ] ; then
+		./configure --enable-buggy-ifs
+	else
+		./configure
+	fi
+	make -j$(nproc)
+	make install -j$(nproc)
+	ldconfig -v
 }
 
 install_as_debian () {
 	# Adapted from: https://github.com/LinearTapeFileSystem/Debian12-Build
 
-	if [ "$UNATTENDED" = false ]; then
-		ask_buggy_ifs
-	fi
+	ask_buggy_ifs
 
 	LTFS="build-essential git pkg-config automake autoconf libtool libfuse-dev fuse uuid-dev libxml2-dev libsnmp-dev libicu-dev icu-devtools"
 	MT="mt-st"
 	PACKAGES="$LTFS $MT"
-	ICU_PATH="/usr/bin/icu-config"
 
 	echo "********************************************************************************************"
-	echo "The following actions will be performed:"
+	echo "The following actions will be performed"
 	echo " 1) Packages to be installed: ${PACKAGES}"
 	echo " 2) Add user '$USR' to group '$GROUP'"
 	echo " 3) Install icu-config to $ICU_PATH"
@@ -101,32 +122,35 @@ install_as_debian () {
 
 	if [ "$IN_DOCKER" = true ]; then
 		export DEBIAN_FRONTEND=noninteractive
-		apt update && apt install -y sudo
 	fi
+
+	apt update && apt install -y $PACKAGES
 
 	check_groups
-
-	# LTFS
-	sudo apt update && apt install -y $PACKAGES
-
-	cd $BASE_DIR
-	sudo rm -rf $LTFS_DIR
-	sudo git clone $LTFS_SOURCE
-	cd $LTFS_DIR
-	git submodule update --init --recursive
-	sudo git checkout $(git describe --tags $(git rev-list --tags --max-count=1)) # Get latest tagged version
-
+	checkout_ltfs
 	install_icu
+	build_ltfs
+}
 
-	sudo ./autogen.sh
-	if [ "$BUGGY_IFS" = true ] ; then
-		sudo ./configure --enable-buggy-ifs
-	else
-		sudo ./configure
-	fi
-	sudo make
-	sudo make install
-	sudo ldconfig -v
+install_as_arch () {
+	ask_buggy_ifs
+	PACKAGES="base-devel git make automake autoconf libtool fuse net-snmp"
+
+	echo "********************************************************************************************"
+	echo "The following actions will be performed:"
+	echo " 1) Packages to be installed: ${PACKAGES}"
+	echo " 2) Add user '$USR' to group '$GROUP'"
+	echo " 3) Compile and install LTFS to $LTFS_DIR"
+	echo "    LTFS source: $LTFS_SOURCE"
+	echo "********************************************************************************************"
+
+	pacman -Sy
+	pacman -Syu --noconfirm $PACKAGES
+
+	check_groups
+	export CFLAGS="$CFLAGS -Wno-error=declaration-after-statement"
+	checkout_ltfs
+	build_ltfs
 }
 
 # Main
@@ -144,7 +168,7 @@ while getopts 'o:uh' OPT; do
 			echo "[-u]            Unattended install"
 			echo "[-o os-name]    Set script operating system name eg: debian"
 			echo "                Each OS has subtle different environment differences"
-			echo "                Supported: Debian+(derivatives), Arch"
+			echo "                Supported: $SUPPORTED"
 			exit 1
 			;;
 	esac
@@ -163,9 +187,13 @@ fi
 
 OS=${OS,,} # Lowercase
 
-if [[ $OS == *"debian"* ]]; then
+if [[ $OS == *"debian"* || $OS == *"ubuntu"* ]]; then
 	echo "Process as Debian or (Debian derivative)"
 	install_as_debian
+elif [[ $OS == *"arch"* ]]; then
+	echo "Process as Arch or (Arch derivative)"
+	GROUP=storage
+	install_as_arch
 else
 	echo "Unable to determine supported OS from: $OS"
 	err_msg
@@ -179,10 +207,10 @@ echo "=========================="
 if [ "$GROUP_CHANGED" = true ] ; then
 	echo "Group has been changed, you need to logout and login for this to take effect"
 fi
-echo "Installed LTFS at: $LTFS_DIR"
+echo "Installed LTFS to: $LTFS_DIR"
 echo
-echo "Check installed mt version:"
-mt --version
-echo
+#echo "Check installed mt version:"
+#mt --version
+#echo
 echo "Check installed LTFS version:"
 ltfs --version
