@@ -8,15 +8,63 @@ LTFS_SOURCE=https://github.com/LinearTapeFileSystem/ltfs
 BUGGY_IFS=false
 GROUP=tape
 GROUP_CHANGED=false
-USR=$(whoami)
 ICU_PATH="/usr/bin/icu-config"
 UNATTENDED=false
-SUPPORTED="Debian+(derivatives,Ubuntu), Arch, Fedora, RHEL, CentOS Stream and Void"
-
+SUPPORTED="Debian+(derivatives,Ubuntu), Arch, Fedora, RHEL, Rocky, CentOS Stream, OpenSUSE and Void"
 IN_DOCKER=true
 if [ ! -f /.dockerenv ]; then
 	IN_DOCKER=false
 fi
+if [ -z "$SUDO_USER" ]; then
+	USR=$(whoami)
+else
+	USR=$SUDO_USER
+fi
+
+y_n_exit () {
+	if [ "$UNATTENDED" = true ]; then
+		return 0
+	fi
+	while true ; do
+		read -p 'y/n: ' answer
+		case "${answer}" in
+			[yY]|[yY][eE][sS])
+			break
+			;;
+
+			[nN]|[nN][oO])
+			exit 0
+			break
+			;;
+		esac
+	done
+}
+
+do_msg () {
+	echo "********************************************************************************************"
+	echo "The following actions will be performed:"
+	echo " 1) Packages to be installed: $PACKAGES"
+	echo " 2) Add user '$USR' to group '$GROUP'"
+	echo " 3) Compile and install LTFS to $LTFS_DIR"
+	echo "    LTFS source: $LTFS_SOURCE"
+	echo "********************************************************************************************"
+	echo "Continue?"
+	y_n_exit
+}
+
+do_msg_debian () {
+	echo "********************************************************************************************"
+	echo "The following actions will be performed:"
+	echo " 1) Packages to be installed: $PACKAGES"
+	echo " 2) Add user '$USR' to group '$GROUP'"
+	echo " 3) Install icu-config to $ICU_PATH"
+	echo "    This is deprecated in Debian: $LTFS_SOURCE/issues/153"
+	echo " 4) Compile and install LTFS to $LTFS_DIR"
+	echo "    LTFS source: $LTFS_SOURCE"
+	echo "********************************************************************************************"
+	echo "Continue?"
+	y_n_exit
+}
 
 err_msg () {
 	echo "This script only supports: $SUPPORTED"
@@ -58,10 +106,14 @@ ask_buggy_ifs () {
 }
 
 check_groups () {
-	CURRENT_GROUPS=$(groups $USR)
-	if [[ $CURRENT_GROUPS != *"$GROUP"* ]]; then
-		usermod -a -G $GROUP $USR
-		GROUP_CHANGED=true
+	if [[ $(cat /etc/group | grep "${GROUP}:") != *"$GROUP"* ]]; then
+		echo "Failed to find system group: $GROUP"
+	else
+		CURRENT_GROUPS=$(groups $USR)
+		if [[ $CURRENT_GROUPS != *"$GROUP"* ]]; then
+			usermod -a -G $GROUP $USR
+			GROUP_CHANGED=true
+		fi
 	fi
 }
 
@@ -94,6 +146,11 @@ checkout_ltfs () {
 }
 
 build_ltfs () {
+	if [[ $1 == *"flag"* ]]; then
+		# https://github.com/LinearTapeFileSystem/ltfs/issues/571#issuecomment-4046698663
+		export CFLAGS="$CFLAGS -Wno-error=declaration-after-statement"
+	fi
+
 	./autogen.sh
 	if [ "$BUGGY_IFS" = true ] ; then
 		./configure --enable-buggy-ifs
@@ -102,8 +159,9 @@ build_ltfs () {
 	fi
 
 	if [[ $1 == *"rhel"* ]]; then
-		# https://github.com/LinearTapeFileSystem/ltfs/issues/394
-		sed -i 's/,-Wp/ -Wp/g' src/libltfs/Makefile ./conf/Makefile ./init.d/Makefile ./man/Makefile ./messages/Makefile ./src/iosched/Makefile ./src/kmi/Makefile ./src/libltfs/Makefile ./src/tape_drivers/freebsd/cam/Makefile ./src/tape_drivers/generic/file/Makefile ./src/tape_drivers/generic/itdtimg/Makefile ./src/tape_drivers/linux/lin_tape/Makefile ./src/tape_drivers/linux/sg/Makefile ./src/tape_drivers/netbsd/scsipi-ibmtape/Makefile ./src/tape_drivers/osx/iokit/Makefile ./src/utils/Makefile ./src/Makefile ./Makefile
+		# https://github.com/LinearTapeFileSystem/ltfs/issues/394#issuecomment-2082624342
+		#sed -i 's/,-Wp/ -Wp/g' src/libltfs/Makefile ./conf/Makefile ./init.d/Makefile ./man/Makefile ./messages/Makefile ./src/iosched/Makefile ./src/kmi/Makefile ./src/libltfs/Makefile ./src/tape_drivers/freebsd/cam/Makefile ./src/tape_drivers/generic/file/Makefile ./src/tape_drivers/generic/itdtimg/Makefile ./src/tape_drivers/linux/lin_tape/Makefile ./src/tape_drivers/linux/sg/Makefile ./src/tape_drivers/netbsd/scsipi-ibmtape/Makefile ./src/tape_drivers/osx/iokit/Makefile ./src/utils/Makefile ./src/Makefile ./Makefile
+		find . -type f -name 'Makefile' -exec sed -i 's/,-Wp/ -Wp/g' {} \;
 	fi
 
 	make -j$(nproc)
@@ -117,15 +175,7 @@ install_as_debian () {
 	MT="mt-st"
 	PACKAGES="$LTFS $MT"
 
-	echo "********************************************************************************************"
-	echo "The following actions will be performed"
-	echo " 1) Packages to be installed: $PACKAGES"
-	echo " 2) Add user '$USR' to group '$GROUP'"
-	echo " 3) Install icu-config to $ICU_PATH"
-	echo "    This is deprecated in Debian: $LTFS_SOURCE/issues/153"
-	echo " 4) Compile and install LTFS to $LTFS_DIR"
-	echo "    LTFS source: $LTFS_SOURCE"
-	echo "********************************************************************************************"
+	do_msg_debian
 
 	if [ "$IN_DOCKER" = true ]; then
 		export DEBIAN_FRONTEND=noninteractive
@@ -141,61 +191,54 @@ install_as_debian () {
 
 install_as_arch () {
 	PACKAGES="base-devel git make automake autoconf libtool fuse net-snmp"
-
-	echo "********************************************************************************************"
-	echo "The following actions will be performed:"
-	echo " 1) Packages to be installed: $PACKAGES"
-	echo " 2) Add user '$USR' to group '$GROUP'"
-	echo " 3) Compile and install LTFS to $LTFS_DIR"
-	echo "    LTFS source: $LTFS_SOURCE"
-	echo "********************************************************************************************"
-
+	do_msg
 	ask_buggy_ifs
 	pacman -Sy
 	pacman -Syu --noconfirm $PACKAGES
 
 	check_groups
-	export CFLAGS="$CFLAGS -Wno-error=declaration-after-statement"
 	checkout_ltfs
-	build_ltfs
+	build_ltfs "flag"
 }
 
 install_as_void () {
 	# https://github.com/void-linux/void-packages/pull/50845/changes
 	PACKAGES="base-devel git make automake autoconf libtool pkg-config icu fuse-devel libuuid-devel libxml2-devel icu icu-devel net-snmp-devel pciutils-devel pcre-devel libsensors-devel libnl3-devel python3-pyxattr"
 
-	echo "********************************************************************************************"
-	echo "The following actions will be performed:"
-	echo " 1) Packages to be installed: $PACKAGES"
-	echo " 2) Add user '$USR' to group '$GROUP'"
-	echo " 3) Compile and install LTFS to $LTFS_DIR"
-	echo "    LTFS source: $LTFS_SOURCE"
-	echo "********************************************************************************************"
-
+	do_msg
 	ask_buggy_ifs
 	xbps-install -Suy
 	xbps-install -y $PACKAGES
 
 	check_groups
-	export CFLAGS="$CFLAGS -Wno-error=declaration-after-statement"
+	checkout_ltfs
+	build_ltfs "flag"
+}
+
+install_as_suse () {
+	PACKAGES="gcc git make automake autoconf libtool icu fuse-devel libuuid-devel libxml2-devel icu libicu-devel net-snmp-devel pciutils-devel pcre-devel libnl3-devel"
+
+	do_msg
+	ask_buggy_ifs
+	zypper update -y
+	zypper install -y $PACKAGES
+
+	check_groups
 	checkout_ltfs
 	build_ltfs
 }
 
 install_as_rhel () {
 	PACKAGES="git automake autoconf libtool make icu libicu-devel libxml2-devel libuuid-devel fuse-devel net-snmp-devel python3"
-
-	echo "********************************************************************************************"
-	echo "The following actions will be performed:"
-	echo " 1) Packages to be installed: $PACKAGES"
-	echo " 2) Add user '$USR' to group '$GROUP'"
-	echo " 3) Compile and install LTFS to $LTFS_DIR"
-	echo "    LTFS source: $LTFS_SOURCE"
-	echo "********************************************************************************************"
-
+	do_msg
 	ask_buggy_ifs
 
-	if [[ $(cat /etc/os-release | grep PRETTY) != *"fedora"* ]]; then
+	local NAME=$(cat /etc/os-release | grep PRETTY | tr '[:upper:]' '[:lower:]')
+	if [[ $NAME != *"fedora"* && $NAME != *"rocky"* ]]; then
+		dnf config-manager --set-enabled crb
+	fi
+	if [[ $NAME == *"rocky"* ]]; then
+		yum -y install dnf-plugins-core
 		dnf config-manager --set-enabled crb
 	fi
 
@@ -203,17 +246,15 @@ install_as_rhel () {
 	yum -y install $PACKAGES
 
 	check_groups
-	export CFLAGS="$CFLAGS -Wno-error=declaration-after-statement"
 	checkout_ltfs
-	build_ltfs "rhel"
+	build_ltfs "rhel flag"
 }
 
 install_as_generic () {
 	ask_buggy_ifs
 	check_groups
-	export CFLAGS="$CFLAGS -Wno-error=declaration-after-statement"
 	checkout_ltfs
-	build_ltfs
+	build_ltfs "flag"
 }
 
 # Main
@@ -260,7 +301,10 @@ elif [[ $OS == *"arch"* ]]; then
 elif [[ $OS == *"void"* ]]; then
 	echo "Process as Void Linux"
 	install_as_void
-elif [[ $OS == *"fedora"* || $OS == *"centos"* || $OS == *"rhel"* ]]; then
+elif [[ $OS == *"suse"* ]]; then
+	echo "Process as openSUSE"
+	install_as_suse
+elif [[ $OS == *"fedora"* || $OS == *"centos"* || $OS == *"red hat"* || $OS == *"rhel"* ]]; then
 	echo "Process as RHEL or derivative"
 	install_as_rhel
 elif [[ $OS == *"generic"* ]]; then
@@ -276,7 +320,7 @@ echo "=========================="
 echo "==== INSTALL COMPLETE ===="
 echo "=========================="
 if [ "$GROUP_CHANGED" = true ] ; then
-	echo "Group has been changed, you need to logout and login for this to take effect"
+	echo "Group has been changed for user: $USR, logout and login for this to take effect"
 fi
 echo "Installed LTFS to: $LTFS_DIR"
 echo

@@ -25,5 +25,8 @@ docker run -v $MOUNT -it --rm ghcr.io/void-linux/void-glibc-full:20260701r1 /bin
 docker run -v $MOUNT -it --rm dokken/centos-stream-9:latest $INSTALLER
 docker run -v $MOUNT -it --rm dokken/centos-stream-10:latest $INSTALLER
 docker run -v $MOUNT -it --rm fedora:44 $INSTALLER
+docker run -v $MOUNT -it --rm rockylinux:9.3 $INSTALLER
 
-#docker run -v $(pwd)/scripts:/scripts --rm -it --entrypoint bash dokken/centos-stream-9:latest
+docker run -v $MOUNT -it --rm opensuse/leap $INSTALLER
+
+#docker run -v $(pwd)/scripts:/scripts --rm -it --entrypoint bash rockylinux:9.3
