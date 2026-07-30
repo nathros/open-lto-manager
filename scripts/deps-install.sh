@@ -169,6 +169,19 @@ build_ltfs () {
 	ldconfig -v
 }
 
+remove_ltfs () {
+	if [ -d $LTFS_DIR ]; then
+		cd $LTFS_DIR
+		make uninstall
+		cd --
+		rm -rf $LTFS_DIR
+		echo "Uninstalled LTFS from $LTFS_DIR"
+	else
+		echo "Unable to find LTFS dir: $LTFS_DIR"
+		exit 1
+	fi
+}
+
 install_as_debian () {
 	# Adapted from: https://github.com/LinearTapeFileSystem/Debian12-Build
 	LTFS="build-essential git pkg-config automake autoconf libtool libfuse-dev fuse uuid-dev libxml2-dev libsnmp-dev libicu-dev icu-devtools"
@@ -258,18 +271,27 @@ install_as_generic () {
 }
 
 # Main
-while getopts 'o:uh' OPT; do
+while getopts 'o:p:ruh' OPT; do
 	case "$OPT" in
 		o)
 			OS="$OPTARG"
 			;;
+		p)
+			BASE_DIR="$OPTARG"
+			LTFS_DIR="$BASE_DIR/ltfs"
+			;;
 		u)
 			UNATTENDED=true
+			;;
+		r)
+			REMOVE=true
 			;;
 		?|h)
 			echo "Usage: $(basename $0) [-h] [-u] [-o os-name]"
 			echo "[-h]            This menu"
 			echo "[-u]            Unattended install"
+			echo "[-r]            Remove LTFS"
+			echo "[-p path]       LTFS download and build path, default: $LTFS_DIR"
 			echo "[-o os-name]    Set script operating system name eg: debian"
 			echo "                Each OS has subtle different environment differences"
 			echo "                Supported: $SUPPORTED"
@@ -278,6 +300,11 @@ while getopts 'o:uh' OPT; do
 	esac
 done
 shift "$(($OPTIND -1))"
+
+if [ "$REMOVE" = true ] ; then
+	remove_ltfs
+	exit 0
+fi
 
 if [ -z "$OS" ]; then
 	if [ ! -f /etc/os-release ]; then
