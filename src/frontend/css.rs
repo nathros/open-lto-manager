@@ -29,9 +29,9 @@ impl Css {
     pub const FORM_GRID: &str = "form-grid "; // Defined in assets/css/forms.css line 1
     pub const INPUT: &str = "input "; // Defined in assets/css/forms.css line 11
     pub const SELECT: &str = "select "; // Defined in assets/css/forms.css line 12
-    pub const INPUT_CONTAINER: &str = "input-container "; // Defined in assets/css/forms.css line 44
-    pub const INPUT_ERROR_ICON: &str = "input-error-icon "; // Defined in assets/css/forms.css line 60
-    pub const RADIO_PILL_CONTAINER: &str = "radio-pill-container "; // Defined in assets/css/forms.css line 86
+    pub const INPUT_CONTAINER: &str = "input-container "; // Defined in assets/css/forms.css line 48
+    pub const INPUT_ERROR_ICON: &str = "input-error-icon "; // Defined in assets/css/forms.css line 64
+    pub const RADIO_PILL_CONTAINER: &str = "radio-pill-container "; // Defined in assets/css/forms.css line 90
     pub const INPUT_MESSAGE: &str = "input-message "; // Defined in assets/css/input.css line 1
     pub const MESSAGE: &str = "message "; // Defined in assets/css/message.css line 1
     pub const CARD: &str = "card "; // Defined in assets/css/card.css line 1
@@ -53,10 +53,11 @@ impl Css {
     pub const FLEX_ALIGN_LEFT: &str = "align-left "; // Defined in assets/css/common.css line 72
     pub const FLEX_ALIGN_CENTRE: &str = "align-centre "; // Defined in assets/css/common.css line 75
     pub const NO_GAP: &str = "no-gap "; // Defined in assets/css/common.css line 78
-    pub const SELECTED: &str = "selected "; // Defined in assets/css/common.css line 82
-    pub const BG: &str = "bg "; // Defined in assets/css/common.css line 95
-    pub const COL: &str = "col "; // Defined in assets/css/common.css line 110
-    pub const HOVER: &str = "hover "; // Defined in assets/css/common.css line 125
-    pub const ID_SNA: &str = "sna"; // Defined in assets/css/common.css line 129
-    pub const ID_SAND: &str = "sandpit"; // Defined in assets/css/common.css line 151
+    pub const GAP_S: &str = "gap "; // Defined in assets/css/common.css line 81
+    pub const SELECTED: &str = "selected "; // Defined in assets/css/common.css line 85
+    pub const BG: &str = "bg "; // Defined in assets/css/common.css line 98
+    pub const COL: &str = "col "; // Defined in assets/css/common.css line 113
+    pub const HOVER: &str = "hover "; // Defined in assets/css/common.css line 128
+    pub const ID_SNA: &str = "sna"; // Defined in assets/css/common.css line 132
+    pub const ID_SAND: &str = "sandpit"; // Defined in assets/css/common.css line 154
 }

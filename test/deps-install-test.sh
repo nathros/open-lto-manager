@@ -31,4 +31,6 @@ docker run -v $MOUNT -it --rm rockylinux/rockylinux:10 /bin/bash -c "$INSTALLER 
 
 docker run -v $MOUNT -it --rm opensuse/leap /bin/bash -c "$INSTALLER && $REMOVE"
 
-#docker run -v $(pwd)/scripts:/scripts --rm -it --entrypoint bash rockylinux:9.3
+#docker run -v $MOUNT -it --rm aclemons/slackware:15.0 /bin/bash -c "$INSTALLER && $REMOVE"
+
+#docker run -v $(pwd)/scripts:/scripts --rm -it --entrypoint bash aclemons/slackware:15.0

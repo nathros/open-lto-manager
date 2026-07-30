@@ -81,6 +81,9 @@ pub struct InputProps {
 
     #[props(extends = input, extends = GlobalAttributes)]
     attributes: Vec<Attribute>,
+
+    #[props(optional)]
+    meta: String,
 }
 
 #[component]
@@ -103,6 +106,43 @@ pub fn Input(props: InputProps) -> Element {
                         "{props.validation.read().clone().unwrap_or_default()}"
                     }
                     div { class: static_concat!(Css::INPUT_ERROR_ICON, Css::ICON, Icons::WARNING) }
+                }
+            }
+        }
+    }
+}
+
+#[component]
+pub fn InputBarcode(props: InputProps) -> Element {
+    rsx! {
+        if let err = props.validation.as_ref().is_some() {
+            div { class: Css::INPUT_CONTAINER,
+                if !props.label.is_empty() {
+                    label { "{props.label}:" }
+                }
+                div { class: Css::GAP_S, style: "display:flex",
+                    div { style: "position:relative;flex:1",
+                        input {
+                            class: [Css::INPUT, either!(err, Icons::ERROR, "")].concat(),
+                            r#type: props.type_.to_string(),
+                            style: props.style,
+                            oninput: props.oninput,
+                            ..props.attributes,
+                        }
+                        div { class: Css::INPUT_MESSAGE,
+                            "{props.validation.read().clone().unwrap_or_default()}"
+                        }
+                        div { class: static_concat!(Css::INPUT_ERROR_ICON, Css::ICON, Icons::WARNING) }
+                    }
+                    div {
+                        input {
+                            class: Css::INPUT,
+                            style: "width:1rem",
+                            r#type: props.type_.to_string(),
+                            readonly: true,
+                            value: props.meta,
+                        }
+                    }
                 }
             }
         }

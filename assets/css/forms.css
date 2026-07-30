@@ -41,6 +41,10 @@
 	opacity: 0.2;
 	cursor: not-allowed;
 }
+.input[readonly]:read-only {
+	cursor: default;
+	pointer-events: none;
+}
 .input-container /* impl Css::INPUT_CONTAINER */ {
 	display: flex;
 	flex-direction: column;

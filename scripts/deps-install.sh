@@ -214,6 +214,25 @@ install_as_arch () {
 	build_ltfs "flag"
 }
 
+install_as_slackware () {
+	# Incomplete, no easy dependency resolution for Slackware
+	PACKAGES="nghttp2 brotli sasl ca-certificates perl git guile gc make m4 gcc automake autoconf libtool fuse net-snmp"
+	do_msg
+	ask_buggy_ifs
+
+	cp /etc/slackpkg/slackpkg.conf /etc/slackpkg/slackpkg.conf.bak
+	echo BATCH=on >> /etc/slackpkg/slackpkg.conf
+	echo DEFAULT_ANSWER=y >> /etc/slackpkg/slackpkg.conf
+	slackpkg update
+	slackpkg install $PACKAGES
+	update-ca-certificates -f
+	mv /etc/slackpkg/slackpkg.conf.bak /etc/slackpkg/slackpkg.conf
+
+	check_groups
+	checkout_ltfs
+	build_ltfs "flag"
+}
+
 install_as_void () {
 	# https://github.com/void-linux/void-packages/pull/50845/changes
 	PACKAGES="base-devel git make automake autoconf libtool pkg-config icu fuse-devel libuuid-devel libxml2-devel icu icu-devel net-snmp-devel pciutils-devel pcre-devel libsensors-devel libnl3-devel python3-pyxattr"

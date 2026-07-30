@@ -7,7 +7,7 @@ use crate::{
         css::Css,
         elements::{
             button::Button,
-            input::{Input, InputType},
+            input::{Input, InputBarcode, InputType},
             select::Select,
             vertical_divider::VerticalDivider,
         },
@@ -36,6 +36,27 @@ pub fn TapeForm(
         .with_expected_length(BARCODE_LEN);
     let mut barcode_err = use_signal(move || None);
 
+    let check_types = types.clone();
+    let get_selected_type = move |id: i64| {
+        check_types
+            .iter()
+            .find(|t| t.id == id)
+            .cloned()
+            .unwrap_or_default()
+    };
+    let selected_type = get_selected_type(tape().tape_type_id);
+
+    let current_designation = types
+        .iter()
+        .find(|p| p.id == tape().tape_type_id)
+        .unwrap_or(&RecordTapeType::default())
+        .clone();
+    let barcode_designation = if tape().worm {
+        current_designation.id_worm.clone()
+    } else {
+        current_designation.id_reg.clone()
+    };
+
     let form_invalid = use_memo(move || {
         // Validate form
         barcode_err.set(barcode_validator.validate(&tape().barcode));
@@ -46,13 +67,22 @@ pub fn TapeForm(
     rsx! {
         div { class: Css::FLEX_ROW,
             form { class: Css::FORM_GRID,
+
                 Select {
                     label: "Tape Type".to_string(),
                     required: true,
                     options: vec_into(types.clone()),
                     selected: tape().tape_type_id,
                     onchange: move |evt: Event<FormData>| {
-                        tape.write().tape_type_id = evt.value().parse::<i64>().unwrap_or_default();
+                        let selected_index = evt.value().parse::<i64>().unwrap_or_default();
+                        tape.write().tape_type_id = selected_index;
+                        let selected_type = get_selected_type(selected_index);
+                        if !selected_type.supports_worm {
+                            tape.write().worm = false;
+                        }
+                        if !selected_type.supports_ltfs {
+                            tape.write().format = TapeFormat::Tar;
+                        }
                     },
                 }
                 Select {
@@ -66,19 +96,21 @@ pub fn TapeForm(
                 }
                 RadioPill {
                     label: "Tape Format".to_string(),
-                    options: [TapeFormat::Tar, TapeFormat::LTFS]
+                    options: selected_type
+                        .get_supported_format()
+                        .into_iter()
                         .map(|t| SelectOption {
                             id: t.into(),
                             label: format!("{:?}", t),
                         })
-                        .to_vec(),
+                        .collect(),
                     callback: use_callback(move |id: i64| {
                         tape.write().format = id.into();
                     }),
                     selected: tape().format.into(),
                     name: "test",
                 }
-                Input {
+                InputBarcode {
                     type_: InputType::Text,
                     label: "Barcode".to_string(),
                     oninput: move |evt: Event<FormData>| {
@@ -87,6 +119,7 @@ pub fn TapeForm(
                     validation: barcode_err,
                     value: tape().barcode,
                     maxlength: BARCODE_LEN,
+                    meta: barcode_designation.clone(),
                 }
                 Input {
                     type_: InputType::Text,
@@ -97,8 +130,26 @@ pub fn TapeForm(
                     value: tape().serial,
                     maxlength: 24,
                 }
+                Input {
+                    type_: InputType::Checkbox,
+                    label: "WORM".to_string(),
+                    oninput: move |evt: Event<FormData>| {
+                        tape.write().worm = evt.value() == "true";
+                    },
+                    checked: tape().worm,
+                    disabled: !selected_type.supports_worm,
+                }
+                Input {
+                    type_: InputType::Checkbox,
+                    label: "Compression Enabled".to_string(),
+                    oninput: move |evt: Event<FormData>| {
+                        tape.write().compressed = evt.value() == "true";
+                    },
+                    checked: tape().compressed,
+                }
                 p { "form_invalid: {form_invalid}" }
                 p { "len: {tape().barcode.len()}" }
+                p { "Debug: {tape():?}" }
 
                 hr {}
                 Button {
@@ -114,7 +165,7 @@ pub fn TapeForm(
                     preview: tape(),
                     manufacturers,
                     tapes_list: types,
-                    designation: "".to_string(),
+                    designation: barcode_designation,
                     size: "30",
                 }
             }

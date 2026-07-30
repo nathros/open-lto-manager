@@ -1,5 +1,7 @@
 use dioxus::fullstack::serde::{Deserialize, Serialize};
 
+use crate::shared::models::database::tape::model_tape::TapeFormat;
+
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct RecordTapeType {
     pub id: i64,
@@ -15,6 +17,16 @@ pub struct RecordTapeType {
     pub supports_worm: bool,
     pub supports_encryption: bool,
     pub supports_ltfs: bool,
+}
+
+impl RecordTapeType {
+    pub fn get_supported_format(&self) -> Vec<TapeFormat> {
+        let mut supports = vec![TapeFormat::Tar];
+        if self.supports_ltfs {
+            supports.push(TapeFormat::LTFS);
+        }
+        supports
+    }
 }
 
 impl Default for RecordTapeType {

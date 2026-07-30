@@ -78,6 +78,9 @@ dialog {
 .no-gap /* impl Css::NO_GAP */ {
 	gap: unset;
 }
+.gap /* impl Css::GAP_S */ {
+	gap: var(--padding-s);
+}
 .icon-list-item:has(+ .header-dropdown-content:popover-open),
 .selected /* impl Css::SELECTED */ {
 	box-shadow: inset 4px 0px 0px 0px var(--colour-accent);
