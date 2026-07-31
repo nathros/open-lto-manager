@@ -1,0 +1,10 @@
+.debug-float /* impl Css::DEBUG_FLOAT */ {
+	position: absolute;
+	z-index: 32;
+}
+.debug-menu /* impl Css::DEBUG_MENU */ {
+	padding: var(--padding-m);
+}
+div:has(> .debug-menu) {
+	background-color: rgba(from var(--fill) r g b / 75%);
+}

@@ -14,6 +14,7 @@ use crate::{
         },
         collections::message::{Message, MessageDetails},
         components::{
+            header::header_icon::HeaderIcon,
             main_body::MainBody,
             menu::{component::Menu, menu_config::MenuConfig},
         },
@@ -25,8 +26,11 @@ use crate::{
         level::Level,
         pages::login::login_user::LoginUser,
     },
-    shared::models::database::user::model_user::{
-        ACCENT_BLUE, ACCENT_GREEN, ACCENT_RED, ACCENT_STANDARD, ColourMode, IconTheme,
+    shared::{
+        href::Href,
+        models::database::user::model_user::{
+            ACCENT_BLUE, ACCENT_GREEN, ACCENT_RED, ACCENT_STANDARD, ColourMode, IconTheme,
+        },
     },
     static_concat,
 };
@@ -126,35 +130,21 @@ pub fn Header() -> Element {
                     header { class: Css::MAIN_HEADER,
                         div { class: Css::MAIN_HEADER_LOGO, "{APP_NAME}" }
 
-                        button { id: Id::HeaderBaseAnchor.as_str() }
+                        button { id: Id::HeaderBaseAnchor.as_str() } // Anchor for more Icons if needed
 
-                        button {
-                            class: Css::HEADER_DROPDOWN,
-                            id: Id::HeaderNotificationIcon.as_str(),
-                            "popovertarget": Id::HeaderNotificationMenu.as_str(),
-                            span { class: static_concat!(Css::ICON, Icons::NOTIFICATION) }
-                        }
-                        div {
-                            id: Id::HeaderNotificationMenu.as_str(),
-                            "anchor": Id::HeaderNotificationIcon.as_str(),
-                            class: Css::HEADER_DROPDOWN_CONTENT,
-                            popover: "auto",
+                        HeaderIcon {
+                            button_id: Id::HeaderInfoIcon.as_str(),
+                            menu_id: Id::HeaderNotificationIcon.as_str(),
+                            icon: Icons::NOTIFICATION,
                             div { class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE),
                                 "..."
                             }
                         }
 
-                        button {
-                            class: Css::HEADER_DROPDOWN,
-                            id: Id::HeaderInfoIcon.as_str(),
-                            "popovertarget": Id::HeaderInfoMenu.as_str(),
-                            span { class: static_concat!(Css::ICON, Icons::INFO) }
-                        }
-                        div {
-                            id: Id::HeaderInfoMenu.as_str(),
-                            "anchor": Id::HeaderInfoIcon.as_str(),
-                            class: Css::HEADER_DROPDOWN_CONTENT,
-                            popover: "auto",
+                        HeaderIcon {
+                            button_id: Id::HeaderInfoIcon.as_str(),
+                            menu_id: Id::HeaderInfoMenu.as_str(),
+                            icon: Icons::INFO,
                             div {
                                 class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE),
                                 onclick: move |_evt: Event<MouseData>| async move {
@@ -167,7 +157,7 @@ pub fn Header() -> Element {
                             Link {
                                 "target": "_blank",
                                 class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE),
-                                to: "https://github.com/nathros/open-lto-manager",
+                                to: Href::GITHUB,
                                 onclick: move |_evt: Event<MouseData>| {
                                     js_hide_popover(Id::HeaderInfoMenu.as_str());
                                 },
@@ -180,7 +170,7 @@ pub fn Header() -> Element {
                             Link {
                                 "target": "_blank",
                                 class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE),
-                                to: "https://github.com/nathros/open-lto-manager/issues",
+                                to: Href::GITHUB_REPORT,
                                 onclick: move |_evt: Event<MouseData>| {
                                     js_hide_popover(Id::HeaderInfoMenu.as_str());
                                 },
@@ -189,17 +179,10 @@ pub fn Header() -> Element {
                             }
                         }
 
-                        button {
-                            class: Css::HEADER_DROPDOWN,
-                            id: Id::HeaderUserIcon.as_str(),
-                            "popovertarget": Id::HeaderUserMenu.as_str(),
-                            span { class: static_concat!(Css::ICON, Icons::USER) }
-                        }
-                        div {
-                            id: Id::HeaderUserMenu.as_str(),
-                            "anchor": Id::HeaderUserIcon.as_str(),
-                            class: Css::HEADER_DROPDOWN_CONTENT,
-                            popover: "auto",
+                        HeaderIcon {
+                            button_id: Id::HeaderUserIcon.as_str(),
+                            menu_id: Id::HeaderUserMenu.as_str(),
+                            icon: Icons::USER,
                             div { class: static_concat!(Css::ICON_LIST_ITEM, Css::HEADER_USER),
                                 "{user.username}"
                             }
@@ -487,12 +470,5 @@ pub fn Header() -> Element {
                 }
             }
         }
-    }
-}
-
-#[component]
-pub fn HeaderExtraIcons(children: Element) -> Element {
-    rsx! {
-        div { class: Css::HEADER_ANCHOR_POSITION, {children} }
     }
 }

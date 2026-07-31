@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
 use crate::frontend::{
-    components::header::Header,
+    components::header::header_base::Header,
     pages::{
         admin::sessions::Sessions,
         dbg::{

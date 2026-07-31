@@ -28,3 +28,6 @@
 	display: block;
 	color: var(--colour-success);
 }
+.code-block pre {
+	white-space: pre-wrap;
+}

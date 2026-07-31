@@ -20,7 +20,8 @@
 .main-header > * {
 	margin: var(--padding-s);
 }
-.main-header button {
+.main-header button,
+.header-anchor-position > button {
 	border: unset;
 	background-color: unset;
 	font-size: unset;
@@ -124,6 +125,6 @@
 	position: fixed;
 	position-anchor: --header-anchor;
 	right: anchor(right);
-	top: anchor(top);
+	top: calc(anchor(top) - var(--padding-m));
 	z-index: 11; /* .main-header::z-index: + 1  */
 }

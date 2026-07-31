@@ -4,7 +4,10 @@ use tracing::{error, info, warn};
 
 use crate::{
     backend::{database::db::create_database, env::get_database_path, logging::LOG_LAYERS},
-    shared::models::app_state::{AppState, LTFSProvider},
+    shared::{
+        href::Href,
+        models::app_state::{AppState, LTFSProvider},
+    },
 };
 
 use super::system::shell::shell_command_blocking::shell_command_output_blocking;
@@ -49,7 +52,7 @@ fn get_latest_ltfs_version() -> Option<String> {
             // Will redirect to latest tag:
             // Example: https://github.com/LinearTapeFileSystem/ltfs/releases/tag/v2.4.8.2-10520
             // Get substring between pipes |                                     >|-------|<
-            match reqwest::get("https://github.com/LinearTapeFileSystem/ltfs/releases/latest").await // FIXME check timeout
+            match reqwest::get(Href::OPEN_LTFS_LATEST).await // FIXME check timeout
             {
                 Ok(response) => {
                     let url = response.url().to_string(); // Redirected URL

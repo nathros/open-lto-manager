@@ -3,11 +3,12 @@ use dioxus::prelude::*;
 use crate::frontend::collections::floating_debug::FloatingDebug;
 
 #[component]
-pub fn Test() -> Element {
+pub fn SandpitFloating() -> Element {
     rsx! {
         FloatingDebug {
-            p { "aaa" }
+            p { "Hold left click and drag to move" }
+            hr {}
+            p { "beta" }
         }
-        textarea {}
     }
 }

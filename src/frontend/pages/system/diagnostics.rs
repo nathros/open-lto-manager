@@ -23,9 +23,12 @@ use crate::{
         level::Level,
         modules::accordion::AccordionExtended,
     },
-    shared::models::{
-        app_state::{AppState, LTFSProvider},
-        database::user::model_user::RecordUserConfig,
+    shared::{
+        href::Href,
+        models::{
+            app_state::{AppState, LTFSProvider},
+            database::user::model_user::RecordUserConfig,
+        },
     },
     static_concat,
 };
@@ -50,11 +53,7 @@ fn Inner() -> Element {
     let ltfs_note = rsx! {
         p {
             "The "
-            InlineLink {
-                target: "_blank",
-                href: "https://github.com/LinearTapeFileSystem/ltfs",
-                label: "OpenLTFS",
-            }
+            InlineLink { target: "_blank", href: Href::OPEN_LTFS, label: "OpenLTFS" }
             " driver is recommended as this is the only one tested/developed against, however LTFS from other providers should work as expected."
         }
     };
@@ -239,14 +238,18 @@ fn Inner() -> Element {
                     }
                 }
             }
-            LiveEdit { app_state }
+            DebugLiveEdit { app_state }
         }
     }
 }
 
 #[cfg(debug_assertions)]
 #[component]
-fn LiveEdit(app_state: Loader<AppState>) -> Element {
+fn DebugLiveEdit(app_state: Loader<AppState>) -> Element {
+    use crate::frontend::components::header::{
+        header_extra::HeaderExtraIcons, header_icon::HeaderIcon,
+    };
+
     let style = "label{width:9rem}";
     const PROVIDERS: [LTFSProvider; 4] = [
         LTFSProvider::OpenLTFS,
@@ -255,224 +258,233 @@ fn LiveEdit(app_state: Loader<AppState>) -> Element {
         LTFSProvider::Unknown,
     ];
     rsx! {
-        Card { top_padding: false,
-            style { dangerous_inner_html: style }
-            H2 { margin: true, "Debug Editor" }
-            div { class: Css::FLEX_ROW, style: "align-items:normal",
-                div { class: static_concat!(Css::FLEX_COL, Css::FLEX_ALIGN_LEFT),
-                    div { class: Css::FLEX_ROW,
-                        label { "user_name:" }
-                        input {
-                            value: app_state().user_name,
-                            oninput: move |evt: Event<FormData>| {
-                                if evt.value().is_empty() {
-                                    app_state.write().user_name = None;
-                                } else {
-                                    app_state.write().user_name = Some(evt.value());
-                                }
-                            },
-                        }
-                    }
-                    div { class: Css::FLEX_ROW,
-                        label { "group:" }
-                        input {
-                            value: app_state().group,
-                            oninput: move |evt: Event<FormData>| {
-                                app_state.write().group = evt.value();
-                            },
-                        }
-                    }
-                    div { class: Css::FLEX_ROW,
-                        label { "user_part_of_group:" }
-                        input {
-                            r#type: "checkbox",
-                            checked: app_state().user_part_of_group,
-                            oninput: move |evt: Event<FormData>| {
-                                app_state.write().user_part_of_group = evt.checked();
-                            },
-                        }
-                    }
-                    div { class: Css::FLEX_ROW,
-                        label { "ltfs_installed:" }
-                        input {
-                            r#type: "checkbox",
-                            checked: app_state().ltfs_installed,
-                            oninput: move |evt: Event<FormData>| {
-                                app_state.write().ltfs_installed = evt.checked();
-                            },
-                        }
-                    }
-                    div { class: Css::FLEX_ROW,
-                        label { "ltfs_version:" }
-                        input {
-                            value: app_state().ltfs_version,
-                            oninput: move |evt: Event<FormData>| {
-                                if evt.value().is_empty() {
-                                    app_state.write().ltfs_version = None;
-                                } else {
-                                    app_state.write().ltfs_version = Some(evt.value());
-                                }
-                            },
-                        }
-                    }
-                    div { class: Css::FLEX_ROW,
-                        label { "ltfs_version_latest:" }
-                        input {
-                            value: app_state().ltfs_version_latest,
-                            oninput: move |evt: Event<FormData>| {
-                                if evt.value().is_empty() {
-                                    app_state.write().ltfs_version_latest = None;
-                                } else {
-                                    app_state.write().ltfs_version_latest = Some(evt.value());
-                                }
-                            },
-                        }
-                    }
-                    div { class: Css::FLEX_ROW,
-                        label { "ltfs_latest_is_newer:" }
-                        input {
-                            r#type: "checkbox",
-                            checked: app_state().ltfs_latest_is_newer,
-                            oninput: move |evt: Event<FormData>| {
-                                app_state.write().ltfs_latest_is_newer = evt.checked();
-                            },
-                        }
-                    }
-                    div { class: Css::FLEX_ROW,
-                        label { "ltfs_provider:" }
-                        select {
-                            onchange: move |evt: Event<FormData>| {
-                                PROVIDERS
-                                    .iter()
-                                    .for_each(|p| {
-                                        if format!("{:?}", p) == evt.value() {
-                                            app_state.write().ltfs_provider = p.clone();
+        HeaderExtraIcons {
+            HeaderIcon { button_id: "dbg_btn", menu_id: "dbg_menu", icon: Icons::BUG,
+                div { class: Css::DEBUG_MENU,
+                    style { dangerous_inner_html: style }
+                    H2 { margin: false, "Debug Editor" }
+                    hr {}
+                    div { class: Css::FLEX_ROW, style: "align-items:normal",
+                        div { class: static_concat!(Css::FLEX_COL, Css::FLEX_ALIGN_LEFT),
+                            div { class: Css::FLEX_ROW,
+                                label { "user_name:" }
+                                input {
+                                    value: app_state().user_name,
+                                    oninput: move |evt: Event<FormData>| {
+                                        if evt.value().is_empty() {
+                                            app_state.write().user_name = None;
+                                        } else {
+                                            app_state.write().user_name = Some(evt.value());
                                         }
-                                    });
-                            },
-                            for option in PROVIDERS
-                                .iter()
-                                .map(|p| {
-                                    let name = format!("{:?}", p);
-                                    let is_selected = app_state().ltfs_provider == *p;
-                                    rsx! {
-                                        option { value: name, selected: is_selected, "{name}" }
+                                    },
+                                }
+                            }
+                            div { class: Css::FLEX_ROW,
+                                label { "group:" }
+                                input {
+                                    value: app_state().group,
+                                    oninput: move |evt: Event<FormData>| {
+                                        app_state.write().group = evt.value();
+                                    },
+                                }
+                            }
+                            div { class: Css::FLEX_ROW,
+                                label { "user_part_of_group:" }
+                                input {
+                                    r#type: "checkbox",
+                                    checked: app_state().user_part_of_group,
+                                    oninput: move |evt: Event<FormData>| {
+                                        app_state.write().user_part_of_group = evt.checked();
+                                    },
+                                }
+                            }
+                            div { class: Css::FLEX_ROW,
+                                label { "ltfs_installed:" }
+                                input {
+                                    r#type: "checkbox",
+                                    checked: app_state().ltfs_installed,
+                                    oninput: move |evt: Event<FormData>| {
+                                        app_state.write().ltfs_installed = evt.checked();
+                                    },
+                                }
+                            }
+                            div { class: Css::FLEX_ROW,
+                                label { "ltfs_version:" }
+                                input {
+                                    value: app_state().ltfs_version,
+                                    oninput: move |evt: Event<FormData>| {
+                                        if evt.value().is_empty() {
+                                            app_state.write().ltfs_version = None;
+                                        } else {
+                                            app_state.write().ltfs_version = Some(evt.value());
+                                        }
+                                    },
+                                }
+                            }
+                            div { class: Css::FLEX_ROW,
+                                label { "ltfs_version_latest:" }
+                                input {
+                                    value: app_state().ltfs_version_latest,
+                                    oninput: move |evt: Event<FormData>| {
+                                        if evt.value().is_empty() {
+                                            app_state.write().ltfs_version_latest = None;
+                                        } else {
+                                            app_state.write().ltfs_version_latest = Some(evt.value());
+                                        }
+                                    },
+                                }
+                            }
+                            div { class: Css::FLEX_ROW,
+                                label { "ltfs_latest_is_newer:" }
+                                input {
+                                    r#type: "checkbox",
+                                    checked: app_state().ltfs_latest_is_newer,
+                                    oninput: move |evt: Event<FormData>| {
+                                        app_state.write().ltfs_latest_is_newer = evt.checked();
+                                    },
+                                }
+                            }
+                            div { class: Css::FLEX_ROW,
+                                label { "ltfs_provider:" }
+                                select {
+                                    onchange: move |evt: Event<FormData>| {
+                                        PROVIDERS
+                                            .iter()
+                                            .for_each(|p| {
+                                                if format!("{:?}", p) == evt.value() {
+                                                    app_state.write().ltfs_provider = p.clone();
+                                                }
+                                            });
+                                    },
+                                    for option in PROVIDERS
+                                        .iter()
+                                        .map(|p| {
+                                            let name = format!("{:?}", p);
+                                            let is_selected = app_state().ltfs_provider == *p;
+                                            rsx! {
+                                                option { value: name, selected: is_selected, "{name}" }
+                                            }
+                                        })
+                                    {
+                                        {option}
                                     }
-                                })
-                            {
-                                {option}
+                                }
+                            }
+                            div { class: Css::FLEX_ROW,
+                                label { "ltfs_specification:" }
+                                input {
+                                    value: app_state().ltfs_specification,
+                                    oninput: move |evt: Event<FormData>| {
+                                        if evt.value().is_empty() {
+                                            app_state.write().ltfs_specification = None;
+                                        } else {
+                                            app_state.write().ltfs_specification = Some(evt.value());
+                                        }
+                                    },
+                                }
+                            }
+                            div { class: Css::FLEX_ROW,
+                                label { "ltfs_error:" }
+                                input {
+                                    value: app_state().ltfs_error,
+                                    oninput: move |evt: Event<FormData>| {
+                                        if evt.value().is_empty() {
+                                            app_state.write().ltfs_error = None;
+                                        } else {
+                                            app_state.write().ltfs_error = Some(evt.value());
+                                        }
+                                    },
+                                }
+                            }
+                        }
+                        div { class: static_concat!(Css::FLEX_COL, Css::FLEX_ALIGN_LEFT),
+                            div { class: Css::FLEX_ROW,
+                                label { "platform:" }
+                                input {
+                                    value: app_state().platform,
+                                    oninput: move |evt: Event<FormData>| {
+                                        app_state.write().platform = evt.value();
+                                    },
+                                }
+                            }
+                            div { class: Css::FLEX_ROW,
+                                label { "distro:" }
+                                input {
+                                    value: app_state().distro,
+                                    oninput: move |evt: Event<FormData>| {
+                                        app_state.write().distro = evt.value();
+                                    },
+                                }
+                            }
+                            div { class: Css::FLEX_ROW,
+                                label { "cpu_arch:" }
+                                input {
+                                    value: app_state().cpu_arch,
+                                    oninput: move |evt: Event<FormData>| {
+                                        app_state.write().cpu_arch = evt.value();
+                                    },
+                                }
+                            }
+                            div { class: Css::FLEX_ROW,
+                                label { "critical_error:" }
+                                input {
+                                    r#type: "checkbox",
+                                    checked: app_state().critical_error,
+                                    oninput: move |evt: Event<FormData>| {
+                                        app_state.write().critical_error = evt.checked();
+                                    },
+                                }
+                            }
+                            div { class: Css::FLEX_ROW,
+                                label { "error_list:" }
+                                input {
+                                    value: app_state().error_list.join(","),
+                                    placeholder: "Example: err1,err2,err3",
+                                    oninput: move |evt: Event<FormData>| {
+                                        app_state.write().error_list.clear();
+                                        evt.value()
+                                            .split(",")
+                                            .for_each(|f| {
+                                                app_state.write().error_list.push(f.to_string());
+                                            });
+                                    },
+                                }
+                            }
+                            div { class: Css::FLEX_ROW,
+                                label { "pass_count:" }
+                                input {
+                                    r#type: "number",
+                                    value: app_state().pass_count,
+                                    oninput: move |evt: Event<FormData>| {
+                                        app_state.write().pass_count = evt.parsed::<i32>().unwrap_or(0);
+                                    },
+                                }
+                            }
+                            div { class: Css::FLEX_ROW,
+                                label { "warn_count:" }
+                                input {
+                                    r#type: "number",
+                                    value: app_state().warn_count,
+                                    oninput: move |evt: Event<FormData>| {
+                                        app_state.write().warn_count = evt.parsed::<i32>().unwrap_or(0);
+                                    },
+                                }
+                            }
+                            div { class: Css::FLEX_ROW,
+                                label { "err_count:" }
+                                input {
+                                    r#type: "number",
+                                    value: app_state().err_count,
+                                    oninput: move |evt: Event<FormData>| {
+                                        app_state.write().err_count = evt.parsed::<i32>().unwrap_or(0);
+                                    },
+                                }
                             }
                         }
                     }
-                    div { class: Css::FLEX_ROW,
-                        label { "ltfs_specification:" }
-                        input {
-                            value: app_state().ltfs_specification,
-                            oninput: move |evt: Event<FormData>| {
-                                if evt.value().is_empty() {
-                                    app_state.write().ltfs_specification = None;
-                                } else {
-                                    app_state.write().ltfs_specification = Some(evt.value());
-                                }
-                            },
-                        }
-                    }
-                    div { class: Css::FLEX_ROW,
-                        label { "ltfs_error:" }
-                        input {
-                            value: app_state().ltfs_error,
-                            oninput: move |evt: Event<FormData>| {
-                                if evt.value().is_empty() {
-                                    app_state.write().ltfs_error = None;
-                                } else {
-                                    app_state.write().ltfs_error = Some(evt.value());
-                                }
-                            },
-                        }
-                    }
-                }
-                div { class: static_concat!(Css::FLEX_COL, Css::FLEX_ALIGN_LEFT),
-                    div { class: Css::FLEX_ROW,
-                        label { "platform:" }
-                        input {
-                            value: app_state().platform,
-                            oninput: move |evt: Event<FormData>| {
-                                app_state.write().platform = evt.value();
-                            },
-                        }
-                    }
-                    div { class: Css::FLEX_ROW,
-                        label { "distro:" }
-                        input {
-                            value: app_state().distro,
-                            oninput: move |evt: Event<FormData>| {
-                                app_state.write().distro = evt.value();
-                            },
-                        }
-                    }
-                    div { class: Css::FLEX_ROW,
-                        label { "cpu_arch:" }
-                        input {
-                            value: app_state().cpu_arch,
-                            oninput: move |evt: Event<FormData>| {
-                                app_state.write().cpu_arch = evt.value();
-                            },
-                        }
-                    }
-                    div { class: Css::FLEX_ROW,
-                        label { "critical_error:" }
-                        input {
-                            r#type: "checkbox",
-                            checked: app_state().critical_error,
-                            oninput: move |evt: Event<FormData>| {
-                                app_state.write().critical_error = evt.checked();
-                            },
-                        }
-                    }
-                    div { class: Css::FLEX_ROW,
-                        label { "error_list:" }
-                        input {
-                            value: app_state().error_list.join(","),
-                            placeholder: "Example: err1,err2,err3",
-                            oninput: move |evt: Event<FormData>| {
-                                app_state.write().error_list.clear();
-                                evt.value()
-                                    .split(",")
-                                    .for_each(|f| {
-                                        app_state.write().error_list.push(f.to_string());
-                                    });
-                            },
-                        }
-                    }
-                    div { class: Css::FLEX_ROW,
-                        label { "pass_count:" }
-                        input {
-                            r#type: "number",
-                            value: app_state().pass_count,
-                            oninput: move |evt: Event<FormData>| {
-                                app_state.write().pass_count = evt.parsed::<i32>().unwrap_or(0);
-                            },
-                        }
-                    }
-                    div { class: Css::FLEX_ROW,
-                        label { "warn_count:" }
-                        input {
-                            r#type: "number",
-                            value: app_state().warn_count,
-                            oninput: move |evt: Event<FormData>| {
-                                app_state.write().warn_count = evt.parsed::<i32>().unwrap_or(0);
-                            },
-                        }
-                    }
-                    div { class: Css::FLEX_ROW,
-                        label { "err_count:" }
-                        input {
-                            r#type: "number",
-                            value: app_state().err_count,
-                            oninput: move |evt: Event<FormData>| {
-                                app_state.write().err_count = evt.parsed::<i32>().unwrap_or(0);
-                            },
-                        }
+                    hr {}
+                    div { style: "width:683px",
+                        CodeBlock { code: format!("{:?}", app_state()) }
                     }
                 }
             }
@@ -482,7 +494,7 @@ fn LiveEdit(app_state: Loader<AppState>) -> Element {
 
 #[cfg(not(debug_assertions))]
 #[component]
-fn LiveEdit(app_state: Loader<AppState>) -> Element {
+fn DebugLiveEdit(app_state: Loader<AppState>) -> Element {
     rsx! {} // Nothing for release build
 }
 
@@ -490,11 +502,11 @@ fn LiveEdit(app_state: Loader<AppState>) -> Element {
 pub fn DiagnosticsFallback() -> Element {
     let reset = // TODO cleanup
         "body{margin:0;margin-left:var(--padding-m);margin-top:3rem}.card-overview{margin-right:0}";
-    let banner = "margin:0;position:fixed;left:0;top:0;right:0;text-align:center;z-index:1;background-color:red;color:white";
+    let banner = "margin:0;padding:0.5rem;position:fixed;left:0;top:0;right:0;text-align:center;z-index:1;background-color:red;color:white";
 
     rsx! {
         style { dangerous_inner_html: reset }
-        h1 { class: Css::REVERT, style: banner, "Failed to start App" }
+        h1 { class: Css::REVERT, style: banner, "Failed to start Application" }
         MainBody { user: RecordUserConfig::default(), Diagnostics {} }
     }
 }

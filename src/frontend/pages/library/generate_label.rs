@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 
 use crate::{
     frontend::{
-        components::{card::Card, header::HeaderExtraIcons},
+        components::{card::Card, header::header_extra::HeaderExtraIcons},
         css::Css,
         elements::input::{Input, InputType},
         forms::validator::{TValidator, Validator},
