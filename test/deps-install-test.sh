@@ -4,11 +4,11 @@ set -e
 cd "$(dirname "$0")"
 cd ..
 
-# Test deps-install.sh in different environments
+# Test scripts/deps-install.sh in different environments
 
 MOUNT=$(pwd)/scripts:/scripts
-INSTALLER="/scripts/deps-install.sh -u"                             # Unattended install and remove
-REMOVE="/scripts/deps-install.sh -r"                                # Uninstall LTFS
+INSTALLER="/scripts/deps-install.sh -u"                             # Unattended install for LTFS + other dependencies
+REMOVE="/scripts/deps-install.sh -r"                                # Uninstall
 APT_ARCHIVE="sed -i -e 's/deb\./archive\./g' /etc/apt/sources.list" # Change [deb.debian.org] to [archive.debian.org]
 
 docker run -v $MOUNT -it --rm debian:10 /bin/bash -c "$APT_ARCHIVE && $INSTALLER && $REMOVE"

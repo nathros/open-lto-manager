@@ -1,6 +1,7 @@
 #[non_exhaustive]
 pub struct Href;
 
+#[allow(unused)]
 impl Href {
     pub const GITHUB: &str = "https://github.com/nathros/open-lto-manager";
     pub const GITHUB_REPORT: &str = "https://github.com/nathros/open-lto-manager/issues";

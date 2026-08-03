@@ -24,7 +24,7 @@ Tar support will need `mt` installed. For most distributions access to tape devi
 ```shell
 sudo bash <(curl -L https://raw.githubusercontent.com/nathros/open-lto-manager/main/scripts/deps-install.sh)
 ```
-##### This compiles and installs OpenLTFS, supported OS: Debian and Ubuntu
+##### This compiles and installs OpenLTFS, supported OS: Debian, Ubuntu, Arch, Fedora, RHEL, Rocky, CentOS Stream, OpenSUSE and Void +(derivatives of these).
 <!--
 ### Recommended dependencies
 ```shell

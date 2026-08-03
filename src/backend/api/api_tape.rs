@@ -54,3 +54,23 @@ pub async fn api_del_tape(id: i64) -> Result<bool> {
         Err(e) => Err(e)?,
     })
 }
+
+#[get("/api/tape/check/barcode/{barcode}")]
+pub async fn api_tape_barcode_exists(barcode: String) -> Result<bool> {
+    use crate::backend::database::{db::DB, tables::tape::table_tape::TableTape};
+
+    DB.with(|db| match TableTape::barcode_exists(db, barcode) {
+        Ok(found) => Ok(found),
+        Err(e) => Err(e)?,
+    })
+}
+
+#[get("/api/tape/check/serial/{serial}")]
+pub async fn api_tape_serial_exists(serial: String) -> Result<bool> {
+    use crate::backend::database::{db::DB, tables::tape::table_tape::TableTape};
+
+    DB.with(|db| match TableTape::serial_exists(db, serial) {
+        Ok(found) => Ok(found),
+        Err(e) => Err(e)?,
+    })
+}

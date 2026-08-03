@@ -66,7 +66,7 @@ fn Inner() -> Element {
                         td { "{rec.manufacturer_id}" }
                         td { "{rec.tape_type_id}" }
                         td { "{rec.barcode}" }
-                        td { "{rec.serial}" }
+                        td { "{rec.serial:?}" }
                         td { "{rec.format:?}" }
                         td { "{rec.worm}" }
                         td { "{rec.encryption_type:?}" }

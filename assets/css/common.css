@@ -49,7 +49,7 @@ dialog {
 .link /* impl Css::LINK */ {
 	text-decoration: underline;
 }
-.monospace {
+.monospace /* impl Css::MONOSPACE */ {
 	font-family: "JetBrains Mono", monospace;
 	font-size: small;
 }
@@ -78,7 +78,7 @@ dialog {
 .no-gap /* impl Css::NO_GAP */ {
 	gap: unset;
 }
-.gap /* impl Css::GAP_S */ {
+.gap-s /* impl Css::GAP_S */ {
 	gap: var(--padding-s);
 }
 .icon-list-item:has(+ .header-dropdown-content:popover-open),

@@ -5,7 +5,7 @@ use std::{
 
 use crate::shared::error::ErrorStr;
 
-// Only for short lived commands
+// Only use for short lived commands
 pub fn shell_command_output_blocking(
     command: &str,
     args: Vec<&str>,

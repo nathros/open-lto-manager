@@ -146,30 +146,27 @@ fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, Str
 }
 
 pub fn create_database(db_path: String) -> Result<rusqlite::Connection, String> {
-    match std::fs::create_dir_all(&db_path) {
-        Ok(_) => {}
-        Err(e) => {
-            if e.kind() != ErrorKind::AlreadyExists {
-                return Err(format!("Failed to create database dir: {}", e));
-            }
-        }
+    if let Err(e) = std::fs::create_dir_all(&db_path)
+        && e.kind() != ErrorKind::AlreadyExists
+    {
+        return Err(format!("Failed to create database dir: {}", e));
     }
     let db_file = get_database_file(&db_path);
     static FIRST_RUN: Mutex<bool> = Mutex::new(true);
 
     match rusqlite::Connection::open(&db_file) {
-        Ok(conn) => match FIRST_RUN.try_lock() {
+        Ok(conn) => match FIRST_RUN.lock() {
             Ok(mut guard) => {
                 info!(
                     "New database connection from thread: {:?}",
                     std::thread::current().id()
                 );
+                if enable_fk_constraints(&conn).expect("Foreign key constraints") != 0 {
+                    unreachable!("Set foreign key constraints should return 0");
+                }
                 if *guard {
                     *guard = false;
                     info!("Open database at path: {}", db_file);
-                    if enable_fk_constraints(&conn).expect("Foreign key constraints") != 0 {
-                        unreachable!("Set foreign key constraints should return 0");
-                    }
                     database_init(conn)
                 } else {
                     Ok(conn)

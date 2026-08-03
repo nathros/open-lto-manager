@@ -1,5 +1,6 @@
 .form-grid /* impl Css::FORM_GRID */ {
 	display: grid;
+	gap: var(--padding-m);
 }
 .select,
 .input {

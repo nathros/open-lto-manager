@@ -18,6 +18,7 @@ use crate::{
         },
         env::get_database_path,
     },
+    either,
     shared::models::database::{
         file::model_file::RecordFile,
         tape::model_tape::{
@@ -75,7 +76,11 @@ pub fn dev_database_backup(dir: String) -> bool {
                 tmp["manufacturer_id"] = Value::Number(t.manufacturer_id.into());
                 tmp["tape_type_id"] = Value::Number(t.tape_type_id.into());
                 tmp["barcode"] = Value::String(t.barcode);
-                tmp["serial"] = Value::String(t.serial);
+                tmp["serial"] = either!(
+                    t.serial.is_some(),
+                    Value::String(t.serial.unwrap_or_default()),
+                    Value::Null
+                );
                 tmp["format"] = Value::Number((t.format as i64).into());
                 tmp["worm"] = Value::Bool(t.worm);
                 tmp["encryption_type"] = Value::Number((t.encryption_type as i64).into());
@@ -195,13 +200,7 @@ pub fn dev_database_restore(dir: String) -> Option<bool> {
                                 }
                             },
 
-                            serial: match value["serial"].as_str() {
-                                Some(i) => i.to_string(),
-                                None => {
-                                    error!("Tape failure serial");
-                                    return None;
-                                }
-                            },
+                            serial: value["serial"].as_str().map(|i| i.to_string()),
 
                             format: match value["format"].as_number() {
                                 Some(i) => TapeFormat::from(i.as_i64()?),

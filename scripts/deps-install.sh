@@ -10,7 +10,7 @@ GROUP=tape
 GROUP_CHANGED=false
 ICU_PATH="/usr/bin/icu-config"
 UNATTENDED=false
-SUPPORTED="Debian+(derivatives,Ubuntu), Arch, Fedora, RHEL, Rocky, CentOS Stream, OpenSUSE and Void"
+SUPPORTED="Debian, Ubuntu, Arch, Fedora, RHEL, Rocky, CentOS Stream, OpenSUSE and Void +(derivatives of these)."
 IN_DOCKER=true
 if [ ! -f /.dockerenv ]; then
 	IN_DOCKER=false

@@ -13,6 +13,7 @@ pub enum LTFSProvider {
 pub struct AppState {
     pub user_name: Option<String>,   // Current username the app is run as
     pub group: String,               // Expected group user to belong to
+    pub group_found_on_system: bool, // Is the expected group found on system
     pub user_part_of_group: bool, // Most OSs need user added to 'tape' group to access drives, is the user part of this group
     pub ltfs_installed: bool,     // Is ltfs command available
     pub ltfs_provider: LTFSProvider, // Where is the LTFS driver from, like OpenLTFS or HP

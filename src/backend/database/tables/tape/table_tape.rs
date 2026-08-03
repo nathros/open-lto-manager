@@ -84,7 +84,6 @@ impl RecordInsert<RecordTape> for TableTape<RecordTape> {
     fn insert(db: &Connection, record: &RecordTape) -> Result<i64, rusqlite::Error> {
         db.execute(
             "INSERT INTO tape (
-                    id,
                     manufacturer_id,
                     tape_type_id,
                     barcode,
@@ -111,10 +110,8 @@ impl RecordInsert<RecordTape> for TableTape<RecordTape> {
                     ?10,
                     ?11,
                     ?12,
-                    ?13,
-                    ?14);",
+                    ?13);",
             params![
-                record.id,
                 record.manufacturer_id,
                 record.tape_type_id,
                 record.barcode,
@@ -222,11 +219,37 @@ impl TableTape<RecordTape> {
         .query_map([], |row| TableTape::fill(row, 0))?
         .collect::<Result<Vec<RecordTape>, rusqlite::Error>>()
     }
+
+    pub fn barcode_exists(db: &Connection, barcode: String) -> Result<bool, rusqlite::Error> {
+        let count: i64 = db.query_row(
+            "SELECT COUNT(barcode)
+                    FROM tape
+                    WHERE barcode = ?1;",
+            params![barcode],
+            |row| row.get(0),
+        )?;
+        Ok(count > 0)
+    }
+
+    pub fn serial_exists(db: &Connection, serial: String) -> Result<bool, rusqlite::Error> {
+        let count: i64 = db.query_row(
+            "SELECT COUNT(serial)
+                    FROM tape
+                    WHERE serial = ?1;",
+            params![serial],
+            |row| row.get(0),
+        )?;
+        Ok(count > 0)
+    }
 }
 
 #[cfg(test)]
 pub mod tests {
     use chrono::Local;
+    const TEST_BARCODE: &str = "test barcode";
+    const NEW_BARCODE: &str = "test barcode changed";
+    const TEST_SERIAL: &str = "test serial";
+    const NEW_SERIAL: &str = "test serial changed";
 
     use crate::{
         backend::database::{
@@ -269,8 +292,8 @@ pub mod tests {
             id: 0,
             manufacturer_id: manufacturers.get(manufacturers.len() / 2).unwrap().id,
             tape_type_id: types.get(types.len() / 2).unwrap().id,
-            barcode: "test barcode".to_string(),
-            serial: "test serial".to_string(),
+            barcode: TEST_BARCODE.to_string(),
+            serial: Some(TEST_SERIAL.to_string()),
             format: TapeFormat::Tar,
             worm: false,
             encryption_type: EncryptionType::Software,
@@ -296,8 +319,8 @@ pub mod tests {
             id: test_tape.id,
             manufacturer_id: test_tape.manufacturer_id + 1,
             tape_type_id: test_tape.tape_type_id + 1,
-            barcode: format!("Added: {}", test_tape.barcode),
-            serial: format!("Added: {}", test_tape.serial),
+            barcode: NEW_BARCODE.to_string(),
+            serial: Some(NEW_SERIAL.to_string()),
             format: match test_tape.format {
                 TapeFormat::Tar => TapeFormat::LTFS,
                 TapeFormat::LTFS => TapeFormat::Tar,
@@ -340,12 +363,37 @@ pub mod tests {
         );
     }
 
+    fn check_duplicate_barcode(db: &rusqlite::Connection, barcode: String, expected: bool) {
+        assert_eq!(TableTape::barcode_exists(db, barcode).unwrap(), expected);
+    }
+
+    fn check_duplicate_serial(db: &rusqlite::Connection, serial: String, expected: bool) {
+        assert_eq!(TableTape::serial_exists(db, serial).unwrap(), expected);
+    }
+
     #[test]
     fn suite() {
         let conn = create_test_database();
         create_table(&conn);
+        check_duplicate_barcode(&conn, TEST_BARCODE.to_string(), false);
+        check_duplicate_serial(&conn, TEST_SERIAL.to_string(), false);
+
         let new_id = insert(&conn);
+        check_duplicate_barcode(&conn, TEST_BARCODE.to_string(), true);
+        check_duplicate_serial(&conn, TEST_SERIAL.to_string(), true);
+        check_duplicate_barcode(&conn, NEW_BARCODE.to_string(), false);
+        check_duplicate_serial(&conn, NEW_SERIAL.to_string(), false);
+
         update(&conn, new_id);
+        check_duplicate_barcode(&conn, TEST_BARCODE.to_string(), false);
+        check_duplicate_serial(&conn, TEST_SERIAL.to_string(), false);
+        check_duplicate_barcode(&conn, NEW_BARCODE.to_string(), true);
+        check_duplicate_serial(&conn, NEW_SERIAL.to_string(), true);
+
         delete(&conn, new_id);
+        check_duplicate_barcode(&conn, TEST_BARCODE.to_string(), false);
+        check_duplicate_serial(&conn, TEST_SERIAL.to_string(), false);
+        check_duplicate_barcode(&conn, NEW_BARCODE.to_string(), false);
+        check_duplicate_serial(&conn, NEW_SERIAL.to_string(), false);
     }
 }

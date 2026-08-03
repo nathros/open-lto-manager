@@ -24,6 +24,7 @@ use crate::{
         modules::accordion::AccordionExtended,
     },
     shared::{
+        r#const::Const,
         href::Href,
         models::{
             app_state::{AppState, LTFSProvider},
@@ -100,6 +101,27 @@ fn Inner() -> Element {
                 Card { top_padding: false,
                     H2 { margin: true, "Checklist" }
                     div { class: Css::FLEX_COL,
+                        if !app_state().group_found_on_system {
+                            AccordionExtended {
+                                header: rsx! {
+                                    Icon { icon: Icons::ERROR, size: Css::MD }
+                                    span {
+                                        "System group: "
+                                        b { "'{app_state().group}'" }
+                                        " not found on system"
+                                    }
+                                },
+                                div {
+                                    p {
+                                        "This is expected to exist in order to access tape devices. Does "
+                                        b { "'{app_state().user_name.unwrap_or_default()}'" }
+                                        " have read access to: "
+                                        span { class: Css::MONOSPACE, "{Const::OS_GROUPS_FILE}" }
+                                        "?"
+                                    }
+                                }
+                            }
+                        }
                         AccordionExtended {
                             header: rsx! {
                                 Icon {
@@ -250,7 +272,7 @@ fn DebugLiveEdit(app_state: Loader<AppState>) -> Element {
         header_extra::HeaderExtraIcons, header_icon::HeaderIcon,
     };
 
-    let style = "label{width:9rem}";
+    let style = "label{width:10rem}";
     const PROVIDERS: [LTFSProvider; 4] = [
         LTFSProvider::OpenLTFS,
         LTFSProvider::HP,
@@ -285,6 +307,16 @@ fn DebugLiveEdit(app_state: Loader<AppState>) -> Element {
                                     value: app_state().group,
                                     oninput: move |evt: Event<FormData>| {
                                         app_state.write().group = evt.value();
+                                    },
+                                }
+                            }
+                            div { class: Css::FLEX_ROW,
+                                label { "group_found_on_system:" }
+                                input {
+                                    r#type: "checkbox",
+                                    checked: app_state().group_found_on_system,
+                                    oninput: move |evt: Event<FormData>| {
+                                        app_state.write().group_found_on_system = evt.checked();
                                     },
                                 }
                             }
@@ -483,7 +515,7 @@ fn DebugLiveEdit(app_state: Loader<AppState>) -> Element {
                         }
                     }
                     hr {}
-                    div { style: "width:683px",
+                    div { style: "width:715px",
                         CodeBlock { code: format!("{:?}", app_state()) }
                     }
                 }

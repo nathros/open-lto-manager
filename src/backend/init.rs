@@ -5,6 +5,7 @@ use tracing::{error, info, warn};
 use crate::{
     backend::{database::db::create_database, env::get_database_path, logging::LOG_LAYERS},
     shared::{
+        r#const::Const,
         href::Href,
         models::app_state::{AppState, LTFSProvider},
     },
@@ -13,8 +14,6 @@ use crate::{
 use super::system::shell::shell_command_blocking::shell_command_output_blocking;
 
 pub static APP_STATE: LazyLock<AppState> = LazyLock::new(init_backend);
-const GROUP_ANY: &str = "tape";
-const GROUP_ARCH: &str = "storage";
 
 // Check command exists
 fn check_command(command: &str) -> (bool, Option<String>) {
@@ -99,6 +98,29 @@ fn get_current_ltfs_version() -> (Option<String>, Option<String>, LTFSProvider) 
     }
 }
 
+fn does_group_exist_on_system(group_file: &str, group: &String) -> Option<bool> {
+    match shell_command_output_blocking("cat", vec![group_file]) {
+        Ok((stdout, stderr)) => {
+            stderr
+                .iter()
+                .for_each(|f| error!("Init [groups] find cat: {}", f));
+            if stderr.is_empty() {
+                let search_group = format!("{}:", group);
+                if stdout.iter().find(|g| g.contains(&search_group)).is_none() {
+                    error!("Init [groups] group not present on system: {}", group);
+                } else {
+                    return Some(true);
+                }
+            }
+            return Some(false);
+        }
+        Err(e) => {
+            error!("Init [groups] find: {}", e);
+        }
+    }
+    None
+}
+
 fn process_ltfs_output(
     stdout: Vec<String>,
     stderr: Vec<String>,
@@ -172,8 +194,8 @@ fn get_needed_system_group(os_release_path: &str, fallback_name: &String) -> Str
     let os_release_id_like = get_os_release_id_like(os_release_path);
     let os_details = os_release_id_like.as_ref().unwrap_or(fallback_name);
     match os_details.to_lowercase().find("arch").is_some() {
-        true => GROUP_ARCH.to_string(),
-        false => GROUP_ANY.to_string(),
+        true => Const::GROUP_ARCH.to_string(),
+        false => Const::GROUP_ANY.to_string(),
     }
 }
 
@@ -204,7 +226,7 @@ fn init_backend() -> AppState {
     }
 
     let distro = whoami::distro().unwrap_or("unknown".to_string());
-    let group = get_needed_system_group("/etc/os-release", &distro);
+    let group = get_needed_system_group(Const::OS_RELEASE_FILE, &distro);
     info!("Init [os] OS: {}", distro);
 
     let user_name = match whoami::username() {
@@ -216,6 +238,8 @@ fn init_backend() -> AppState {
         }
     };
 
+    let group_found_on_system =
+        does_group_exist_on_system(Const::OS_GROUPS_FILE, &group).unwrap_or_default();
     let user_part_of_group = match user_name.as_deref() {
         Some(found_user) => match uzers::get_user_by_name(found_user) {
             Some(current_user) => {
@@ -232,11 +256,14 @@ fn init_backend() -> AppState {
 
     if let Some(found_user) = user_name.as_deref() {
         if user_part_of_group {
-            info!("Init [groups] user '{}' found in 'tape' group", found_user);
+            info!(
+                "Init [groups] user '{}' found in '{}' group",
+                found_user, group
+            );
         } else {
             warn!(
-                "Init [groups] user '{}', not found in 'tape' group",
-                found_user
+                "Init [groups] user '{}', not found in '{}' group",
+                found_user, group
             );
             warn_count += 1;
         }
@@ -277,6 +304,7 @@ fn init_backend() -> AppState {
     AppState {
         user_name,
         group,
+        group_found_on_system,
         user_part_of_group,
         ltfs_installed,
         ltfs_provider,
@@ -306,10 +334,10 @@ mod tests {
 
     use crate::{
         backend::init::{
-            GROUP_ANY, GROUP_ARCH, get_latest_ltfs_version, get_needed_system_group,
+            does_group_exist_on_system, get_latest_ltfs_version, get_needed_system_group,
             process_ltfs_output,
         },
-        shared::models::app_state::LTFSProvider,
+        shared::{r#const::Const, models::app_state::LTFSProvider},
     };
 
     #[test]
@@ -379,7 +407,47 @@ mod tests {
     }
 
     #[test]
-    fn check_platform_group() {
+    fn check_platform_existing_group() {
+        let test_file_exists = r#"proxy:x:13:
+kmem:x:15:
+dialout:x:20:user
+fax:x:21:
+voice:x:22:
+cdrom:x:24:user
+floppy:x:25:user
+tape:x:26:user,root
+sudo:x:27:user
+audio:x:29:user,pulse
+dip:x:30:user
+www-data:x:33:
+backup:x:34:
+operator:x:37:
+list:x:38:"#;
+
+        let test_file_not_exists = r#"proxy:x:13:
+list:x:38:"#;
+
+        let test_data = [
+            (test_file_exists, Some(true)),
+            (test_file_not_exists, Some(false)),
+        ];
+
+        let tmp_dir = TempDir::new("check_platform_existing_group").unwrap();
+        for (index, (groups_file_content, exists)) in test_data.iter().enumerate() {
+            let tmp_file_path = tmp_dir.path().join(format!("{}", index));
+            fs::write(&tmp_file_path, groups_file_content).unwrap();
+            let tmp_file_path_str = tmp_file_path.into_os_string().into_string().unwrap();
+
+            let result = does_group_exist_on_system(
+                tmp_file_path_str.as_str(),
+                &Const::GROUP_ANY.to_string(),
+            );
+            assert_eq!(result, *exists);
+        }
+    }
+
+    #[test]
+    fn check_platform_expected_group() {
         let catchy_os_release = r#"NAME="CachyOS Linux"
 PRETTY_NAME="CachyOS"
 ID=cachyos
@@ -447,18 +515,26 @@ REDHAT_SUPPORT_PRODUCT="Red Hat Enterprise Linux 8"
 REDHAT_SUPPORT_PRODUCT_VERSION="CentOS Stream""#;
 
         let test_data = [
-            (catchy_os_release, "CachyOS Linux".to_string(), GROUP_ARCH),
-            (arch_os_release, "Arch Linux".to_string(), GROUP_ARCH),
-            (ubuntu_os_release, "Ubuntu 26.04 LTS".to_string(), GROUP_ANY),
-            (void_os_release, "Void Linux".to_string(), GROUP_ANY),
+            (
+                catchy_os_release,
+                "CachyOS Linux".to_string(),
+                Const::GROUP_ARCH,
+            ),
+            (arch_os_release, "Arch Linux".to_string(), Const::GROUP_ARCH),
+            (
+                ubuntu_os_release,
+                "Ubuntu 26.04 LTS".to_string(),
+                Const::GROUP_ANY,
+            ),
+            (void_os_release, "Void Linux".to_string(), Const::GROUP_ANY),
             (
                 centos_8_os_release,
                 "CentOS Stream 8".to_string(),
-                GROUP_ANY,
+                Const::GROUP_ANY,
             ),
         ];
 
-        let tmp_dir = TempDir::new("os_release").unwrap();
+        let tmp_dir = TempDir::new("check_platform_expected_group").unwrap();
         for (index, (os_release_content, os_name, expected_result)) in test_data.iter().enumerate()
         {
             let tmp_file_path = tmp_dir.path().join(format!("{}", index));

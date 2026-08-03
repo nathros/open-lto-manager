@@ -137,7 +137,7 @@ pub fn InputBarcode(props: InputProps) -> Element {
                     div {
                         input {
                             class: Css::INPUT,
-                            style: "width:1rem",
+                            style: "text-align:center;width:1.25rem", // field-sizing:content
                             r#type: props.type_.to_string(),
                             readonly: true,
                             value: props.meta,
