@@ -261,8 +261,12 @@ pub mod tests {
                 tape_type::{self, table_tape_type::TableTapeType},
             },
         },
-        shared::models::database::tape::model_tape::{
-            EncryptionType, HardwareEncryptionType, RecordTape, SoftwareEncryptionType, TapeFormat,
+        shared::models::database::{
+            tape::model_tape::{
+                EncryptionType, HardwareEncryptionType, RecordTape, SoftwareEncryptionType,
+                TapeFormat,
+            },
+            tape_type::model_tape_type::RecordTapeType,
         },
     };
 
@@ -287,7 +291,7 @@ pub mod tests {
 
     fn insert(db: &rusqlite::Connection) -> i64 {
         let manufacturers = TableManufacturer::get_all(db).unwrap();
-        let types = TableTapeType::get_all(db).unwrap();
+        let types = TableTapeType::<RecordTapeType>::get_all(db).unwrap();
         let mut new_tape = RecordTape {
             id: 0,
             manufacturer_id: manufacturers.get(manufacturers.len() / 2).unwrap().id,

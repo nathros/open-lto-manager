@@ -11,7 +11,7 @@ use usvg::{Options, Tree};
 
 use super::{page::PDFPageType, position::PDFLabelPosition};
 
-pub fn generate_lto_label_pdf(labels_str: Vec<String>, page_type: PDFPageType) {
+pub fn generate_lto_label_pdf(labels_str: Vec<String>, page_type: PDFPageType) -> Vec<u8> {
     let mut fontdb = Database::new(); // Reusable font database from system
     fontdb.load_system_fonts();
     let opts = Options {
@@ -63,9 +63,13 @@ pub fn generate_lto_label_pdf(labels_str: Vec<String>, page_type: PDFPageType) {
     // Finish document
     surface.finish();
     page.finish();
-    if let Ok(pdf) = document.finish()
+    document.finish().unwrap_or_default()
+
+    /*if let Ok(pdf) = document.finish()
         && let Ok(path) = std::path::absolute("test.pdf")
     {
         let _ = std::fs::write(path, &pdf);
+        return pdf;
     }
+    vec![]*/
 }

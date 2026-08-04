@@ -1,88 +1,148 @@
 use dioxus::prelude::*;
 
 use crate::{
+    backend::api::{
+        api_generate_lto_label::generate_pdf_label, api_tape_type::list_type_type_labels,
+    },
     frontend::{
-        components::{card::Card, header::header_extra::HeaderExtraIcons},
+        components::card::Card,
         css::Css,
-        elements::input::{Input, InputType},
+        elements::{
+            input::{Input, InputType},
+            select::Select,
+        },
         forms::validator::{TValidator, Validator},
         modules::tab::Tab,
     },
-    shared::models::database::{
-        label_preset::model_label_preset::LabelOptions,
-        tape::model_tape::{BARCODE_LEN, BARCODE_VALID_CHARS},
+    shared::{
+        r#const::Const,
+        models::{
+            database::label_preset::model_label_preset::LabelOptions, select_option::vec_into,
+        },
     },
 };
+
+const QUANTITY_MIN: usize = 0;
+const QUANTITY_MAX: usize = 500;
+const START_INDEX_MIN: usize = 0;
+const START_INDEX_MAX: usize = 999999;
 
 #[component]
 pub fn GenLabel() -> Element {
     let mut options = use_signal(|| LabelOptions::default());
+    let pdf_b64 = use_loader(move || generate_pdf_label(options()))?;
 
-    let mut form_valid = use_signal(|| true);
+    let types = use_loader(list_type_type_labels)?;
+
+    let mut selected_type = use_signal(move || {
+        if let Some(find) = types().first() {
+            options.write().designation = find.designation.clone();
+            find.id
+        } else {
+            0
+        }
+    });
+
+    let mut form_valid: Signal<bool> = use_signal(|| true);
 
     let (mut postfix_error, mut prefix_error, p_validator) = (
         use_signal(|| None),
         use_signal(|| None),
         Validator::<String>::create()
-            .with_max_length(BARCODE_LEN)
-            .with_only_allowed_chars(BARCODE_VALID_CHARS),
+            .with_max_length(Const::CODE_39_LTO_USABLE_LEN)
+            .with_only_allowed_chars(Const::BARCODE_VALID_CHARS),
     );
-
-    let (mut number_error, mut number_val, n_validator) = (
+    let (mut quantity_error, n_validator) = (
         use_signal(|| None),
-        use_signal(|| 555_i32),
-        Validator::<i32>::create().with_min_number(50),
+        Validator::<usize>::create()
+            .with_min_number(QUANTITY_MIN)
+            .with_max_number(QUANTITY_MAX),
+    );
+    let (mut start_index_error, i_validator) = (
+        use_signal(|| None),
+        Validator::<usize>::create()
+            .with_min_number(START_INDEX_MIN)
+            .with_max_number(START_INDEX_MAX),
     );
 
     use_memo(move || {
         let tmp = options();
         prefix_error.set(p_validator.validate(&tmp.prefix));
         postfix_error.set(p_validator.validate(&tmp.postfix));
-        number_error.set(n_validator.validate(&number_val()));
+        quantity_error.set(n_validator.validate(&tmp.quantity));
+        start_index_error.set(i_validator.validate(&tmp.start_index));
 
-        if tmp.postfix.len() + tmp.postfix.len() > BARCODE_LEN {
-            let msg = "Prefix and postfix length must be less than 6".to_string();
+        if tmp.postfix.len() + tmp.postfix.len() > Const::CODE_39_LTO_USABLE_LEN {
+            let msg = format!(
+                "Prefix and postfix length must be less than {}",
+                Const::CODE_39_LTO_USABLE_LEN
+            );
             prefix_error.set(Some(msg.clone()));
             postfix_error.set(Some(msg));
         }
 
-        form_valid.set(
-            !(prefix_error().is_some() || postfix_error().is_some() || number_error().is_some()),
-        );
+        let valid: bool = !(prefix_error().is_some()
+            || postfix_error().is_some()
+            || quantity_error().is_some()
+            || start_index_error().is_some());
+        form_valid.set(valid);
     });
 
     let label_tab = rsx! {
-        span { "prefix " }
-        Input {
-            type_: InputType::Text,
-            oninput: move |evt: Event<FormData>| {
-                options.write().prefix = evt.value().to_uppercase();
-            },
-            value: options().prefix,
-            validation: prefix_error,
+        form { class: Css::FORM_GRID,
+            Select {
+                label: "Tape Type".to_string(),
+                options: vec_into(types()),
+                selected: selected_type(),
+                onchange: move |evt: Event<FormData>| {
+                    let index = evt.value().parse::<i64>().unwrap_or_default();
+                    selected_type.set(index);
+                    if let Some(t) = types().get(index as usize) {
+                        options.write().designation = t.designation.clone();
+                    }
+                },
+            }
+            Input {
+                type_: InputType::Text,
+                label: "Prefix".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().prefix = evt.value().to_uppercase();
+                },
+                value: options().prefix,
+                validation: prefix_error,
+            }
+            Input {
+                type_: InputType::Text,
+                label: "Postfix".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().postfix = evt.value().to_uppercase();
+                },
+                value: options().postfix,
+                validation: postfix_error,
+            }
+            Input {
+                type_: InputType::Number,
+                label: "Quantity".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().quantity = evt.value().parse().unwrap_or_default();
+                },
+                min: QUANTITY_MIN,
+                max: QUANTITY_MAX,
+                value: options().quantity,
+                validation: quantity_error,
+            }
+            Input {
+                type_: InputType::Number,
+                label: "Start Index".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().start_index = evt.value().parse().unwrap_or_default();
+                },
+                min: START_INDEX_MIN,
+                max: START_INDEX_MAX,
+                value: options().start_index,
+                validation: start_index_error,
+            }
         }
-        hr {}
-        span { "postfix " }
-        Input {
-            type_: InputType::Text,
-            oninput: move |evt: Event<FormData>| {
-                options.write().postfix = evt.value().to_uppercase();
-            },
-            value: options().postfix,
-            validation: postfix_error,
-        }
-        hr {}
-        span { "number " }
-        Input {
-            type_: InputType::Text,
-            oninput: move |evt: Event<FormData>| {
-                number_val.set(evt.value().parse::<i32>().unwrap_or_default());
-            },
-            value: number_val,
-            validation: number_error,
-        }
-        p { "form valid {form_valid}" }
-
     };
 
     let page_tab = rsx! {
@@ -90,9 +150,6 @@ pub fn GenLabel() -> Element {
     };
 
     rsx! {
-        HeaderExtraIcons {
-            button { "added" }
-        }
         div { class: Css::FLEX_ROW,
             Card {
                 Tab {
@@ -101,9 +158,39 @@ pub fn GenLabel() -> Element {
                 }
                 hr {}
             }
-            Card { top_padding: false,
-                h3 { "Preview" }
+            Card {
+                div { class: Css::PDF_PREVIEW,
+                    embed { r#type: "application/pdf", src: pdf_b64 }
+                }
+            }
+        }
+        Debug { options, form_valid: form_valid() }
+    }
+}
+
+#[cfg(debug_assertions)]
+#[component]
+fn Debug(options: Signal<LabelOptions>, form_valid: bool) -> Element {
+    use crate::frontend::{
+        components::header::{header_extra::HeaderExtraIcons, header_icon::HeaderIcon},
+        icons::Icons,
+    };
+    rsx! {
+        HeaderExtraIcons {
+            HeaderIcon { button_id: "dbg_btn", menu_id: "dbg_menu", icon: Icons::BUG,
+                div { class: Css::DEBUG_MENU, style: "width:20rem",
+                    h2 { "Debug" }
+                    p { "{options():?}" }
+                    hr {}
+                    p { "form_valid: {form_valid}" }
+                }
             }
         }
     }
+}
+
+#[cfg(not(debug_assertions))]
+#[component]
+fn Debug(options: Signal<LabelOptions>, form_valid: bool) -> Element {
+    rsx! {}
 }

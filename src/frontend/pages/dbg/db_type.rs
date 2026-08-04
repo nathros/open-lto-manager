@@ -26,6 +26,7 @@ fn Table(children: Element) -> Element {
             tr {
                 th { "id" }
                 th { "generation" }
+                th { "description" }
                 th { "id_reg" }
                 th { "id_worm" }
                 th { "native_capacity" }
@@ -51,6 +52,7 @@ fn Inner() -> Element {
             tr {
                 td { "{rec.id}" }
                 td { "{rec.generation}" }
+                td { "{rec.description}" }
                 td { "{rec.id_reg}" }
                 td { "{rec.id_worm}" }
                 td { "{rec.native_capacity}" }

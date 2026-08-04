@@ -19,13 +19,16 @@ use crate::{
         forms::validator::{TValidator, Validator},
         level::Level,
     },
-    shared::models::{
-        database::{
-            manufacturer::model_manufacturer::RecordManufacturer,
-            tape::model_tape::{BARCODE_LEN, BARCODE_VALID_CHARS, RecordTape, TapeFormat},
-            tape_type::model_tape_type::RecordTapeType,
+    shared::{
+        r#const::Const,
+        models::{
+            database::{
+                manufacturer::model_manufacturer::RecordManufacturer,
+                tape::model_tape::{RecordTape, TapeFormat},
+                tape_type::model_tape_type::RecordTapeType,
+            },
+            select_option::{SelectOption, vec_into},
         },
-        select_option::{SelectOption, vec_into},
     },
 };
 
@@ -64,12 +67,12 @@ pub fn TapeForm(
 
     let form_invalid = use_resource(move || async move {
         let barcode_validator = Validator::<String>::create()
-            .with_only_allowed_chars(BARCODE_VALID_CHARS)
-            .with_expected_length(BARCODE_LEN);
+            .with_only_allowed_chars(Const::BARCODE_VALID_CHARS)
+            .with_expected_length(Const::CODE_39_LTO_USABLE_LEN);
 
         // Validate form
         barcode_err.set(barcode_validator.validate(&tape().barcode));
-        if tape().barcode.len() == BARCODE_LEN {
+        if tape().barcode.len() == Const::CODE_39_LTO_USABLE_LEN {
             match api_tape_barcode_exists(tape().barcode).await {
                 Ok(exists) => {
                     if exists {
@@ -176,7 +179,7 @@ pub fn TapeForm(
                     },
                     validation: barcode_err,
                     value: tape().barcode,
-                    maxlength: BARCODE_LEN,
+                    maxlength: Const::CODE_39_LTO_USABLE_LEN,
                     meta: barcode_designation.clone(),
                 }
                 Input {

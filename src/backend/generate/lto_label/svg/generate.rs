@@ -1,12 +1,10 @@
 use std::collections::HashSet;
 
 use crate::shared::{
+    r#const::Const,
     error::ErrorStr,
-    models::database::{
-        label_preset::model_label_preset::{
-            LabelOptions, LabelTextDirection, LabelTextOrientation,
-        },
-        tape::model_tape::BARCODE_VALID_CHARS,
+    models::database::label_preset::model_label_preset::{
+        LabelOptions, LabelTextDirection, LabelTextOrientation,
     },
 };
 
@@ -25,8 +23,7 @@ pub fn generate_lto_label_svg(
         (0..(8 - barcode.len())).map(|_| " ").collect::<String>() // Pad empty with space
     );
 
-    const BARCODE_LEN: usize = 10;
-    if barcode.len() != BARCODE_LEN {
+    if barcode.len() != Const::CODE_39_BARCODE_LEN {
         return Err("Barcode not correct length".to_string());
     }
 
@@ -35,7 +32,7 @@ pub fn generate_lto_label_svg(
 
     let mut unique_characters: HashSet<char> = HashSet::new();
     for char in barcode.chars() {
-        if !BARCODE_VALID_CHARS.contains(char) {
+        if !Const::BARCODE_VALID_CHARS.contains(char) {
             return Err(format!("Invalid character: {}", char));
         }
         unique_characters.insert(char);
@@ -80,7 +77,7 @@ pub fn generate_lto_label_svg(
     }
 
     let shift_x = 6.588 * options.barcode_scale;
-    let total_barcode_width = shift_x * BARCODE_LEN as f64; // Extra space needed per segment
+    let total_barcode_width = shift_x * Const::CODE_39_BARCODE_LEN as f64; // Extra space needed per segment
 
     let mut translate_x = options.width - 2_f64; // Total usable space
     translate_x -= total_barcode_width; // Calculate free space

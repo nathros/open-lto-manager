@@ -41,6 +41,7 @@ impl Css {
     pub const CODE_BLOCK: &str = "code-block "; // Defined in assets/css/code-block.css line 1
     pub const BTN: &str = "btn "; // Defined in assets/css/button.css line 1
     pub const BTN_PRI: &str = "pri "; // Defined in assets/css/button.css line 19
+    pub const PDF_PREVIEW: &str = "pdf-preview "; // Defined in assets/css/library.css line 1
     pub const LOGIN_CONTAINER: &str = "login-container "; // Defined in assets/css/login.css line 1
     pub const MENU_CONTAINER: &str = "menu-container "; // Defined in assets/css/menu.css line 1
     pub const MENU_GROUP: &str = "menu-group "; // Defined in assets/css/menu.css line 9

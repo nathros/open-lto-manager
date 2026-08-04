@@ -163,7 +163,7 @@ mod tests {
 
     use crate::{
         backend::generate::lto_label::svg::theme::{CODE_39_BARCODE_THEMES, LabelTheme},
-        shared::models::database::tape::model_tape::BARCODE_VALID_CHARS,
+        shared::r#const::Const,
     };
 
     #[test]
@@ -183,11 +183,11 @@ mod tests {
             if let Some(check_theme) = check_theme {
                 assert_eq!(
                     check_theme.len(),
-                    BARCODE_VALID_CHARS.len(),
+                    Const::BARCODE_VALID_CHARS.len(),
                     "Theme should have same length as supported characters list"
                 );
 
-                for char in BARCODE_VALID_CHARS.chars() {
+                for char in Const::BARCODE_VALID_CHARS.chars() {
                     assert!(
                         check_theme.get(&char).is_some(),
                         "Theme is missing character"

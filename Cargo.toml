@@ -75,7 +75,7 @@ allow-unwrap-in-tests = "allow"
 
 # https://dioxuslabs.com/learn/0.5/cookbook/optimizing/#build-configuration
 [profile.release]
-opt-level = "z"
+opt-level = 3
 debug = false
 lto = true
 codegen-units = 1

@@ -6,7 +6,7 @@ use crate::{
     backend::database::tables::table::{
         RecordDelete, RecordFill, RecordInsert, RecordRead, RecordUpdate, TableCreate, TableUpdate,
     },
-    shared::models::database::tape_type::model_tape_type::RecordTapeType,
+    shared::models::database::tape_type::model_tape_type::{RecordTapeType, RecordTapeTypeLabel},
 };
 
 pub struct TableTapeType<T = RecordTapeType> {
@@ -443,6 +443,47 @@ impl TableTapeType<RecordTapeType> {
     }
 }
 
+impl TableTapeType<RecordTapeTypeLabel> {
+    pub fn get_all(db: &Connection) -> Result<Vec<RecordTapeTypeLabel>, rusqlite::Error> {
+        let mut results = vec![];
+        let mut id = 0;
+        let _ = db
+            .prepare(
+                "SELECT
+                    description,
+                    id_reg,
+                    id_worm
+                FROM tape_type
+                ORDER BY id",
+            )?
+            .query_map([], |row| {
+                results.push(RecordTapeTypeLabel {
+                    id,
+                    description: row.get(0)?,
+                    designation: row.get(1)?,
+                });
+                let worm_designation: String = row.get(2)?;
+                if !worm_designation.is_empty() {
+                    id += 1;
+                    results.push(RecordTapeTypeLabel {
+                        id,
+                        description: format!("{} WORM", row.get::<usize, String>(0)?),
+                        designation: worm_designation,
+                    });
+                }
+                id += 1;
+                Ok(0) // Dummy, TODO find better way
+            })?
+            .count();
+        results.push(RecordTapeTypeLabel {
+            id,
+            description: "Cleaning Cartridge".to_string(),
+            designation: "CU".to_string(),
+        });
+        Ok(results)
+    }
+}
+
 #[cfg(test)]
 pub mod tests {
     use crate::{
@@ -474,7 +515,7 @@ pub mod tests {
     }
 
     fn update(db: &rusqlite::Connection) {
-        let all_records_result = TableTapeType::get_all(db);
+        let all_records_result = TableTapeType::<RecordTapeType>::get_all(db);
         assert!(
             all_records_result.is_ok(),
             "Failed to get all TapeType records"
@@ -492,7 +533,7 @@ pub mod tests {
             "Failed to update record"
         );
 
-        let all_records_updated = TableTapeType::get_all(db).unwrap();
+        let all_records_updated = TableTapeType::<RecordTapeType>::get_all(db).unwrap();
         assert_eq!(update_record, *all_records_updated.get(test_index).unwrap());
     }
 

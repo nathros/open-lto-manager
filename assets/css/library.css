@@ -1,0 +1,11 @@
+.pdf-preview /* impl Css::PDF_PREVIEW */ {
+	height: calc(100vh - var(--main-header-height) - var(--padding-m) * 4);
+}
+.pdf-preview embed {
+	width: 100%;
+	height: 100%;
+	border-radius: var(--radius);
+}
+.card:has(.pdf-preview) {
+	flex: 1;
+}

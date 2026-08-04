@@ -8,7 +8,7 @@ pub fn SandpitFloating() -> Element {
         FloatingDebug {
             p { "Hold left click and drag to move" }
             hr {}
-            p { "beta" }
+            p { "beta - move slowly" }
         }
     }
 }

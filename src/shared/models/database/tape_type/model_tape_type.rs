@@ -48,3 +48,10 @@ impl Default for RecordTapeType {
         }
     }
 }
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Default)]
+pub struct RecordTapeTypeLabel {
+    pub id: i64,
+    pub description: String,
+    pub designation: String,
+}

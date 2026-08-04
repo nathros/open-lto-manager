@@ -1,5 +1,7 @@
 use dioxus::fullstack::serde::{Deserialize, Serialize};
 
+use crate::shared::models::database::tape_type::model_tape_type::RecordTapeTypeLabel;
+
 use super::database::{
     manufacturer::model_manufacturer::RecordManufacturer,
     tape_type::model_tape_type::RecordTapeType,
@@ -22,6 +24,15 @@ impl From<RecordManufacturer> for SelectOption {
 
 impl From<RecordTapeType> for SelectOption {
     fn from(value: RecordTapeType) -> Self {
+        SelectOption {
+            id: value.id,
+            label: value.description,
+        }
+    }
+}
+
+impl From<RecordTapeTypeLabel> for SelectOption {
+    fn from(value: RecordTapeTypeLabel) -> Self {
         SelectOption {
             id: value.id,
             label: value.description,

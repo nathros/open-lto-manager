@@ -19,6 +19,9 @@ pub struct RecordLabelPreset {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 #[serde(default)]
 pub struct LabelOptions {
+    pub start_index: usize,
+    pub quantity: usize,
+    pub designation: String,
     pub prefix: String,
     pub postfix: String,
     pub theme: LabelTheme,
@@ -40,6 +43,9 @@ pub struct LabelOptions {
 impl Default for LabelOptions {
     fn default() -> Self {
         Self {
+            start_index: 0,
+            quantity: 5,
+            designation: "".to_string(),
             prefix: "".to_string(),
             postfix: "".to_string(),
             theme: LabelTheme::Standard,
@@ -194,6 +200,9 @@ mod tests {
         let expected = r##"
         Owned(
             Text("{
+                "start_index":0,
+                "quantity":5,
+                "designation":"",
                 "prefix":"",
                 "postfix":"",
                 "theme":"Warm",

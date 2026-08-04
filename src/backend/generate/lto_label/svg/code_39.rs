@@ -1237,13 +1237,14 @@ impl Code39Segment {
 
 #[cfg(test)]
 mod tests {
-    use crate::shared::models::database::tape::model_tape::BARCODE_VALID_CHARS;
+
+    use crate::shared::r#const::Const;
 
     use super::CODE_39_BARCODE_SEGMENTS;
 
     #[test]
     fn check() {
-        for char in BARCODE_VALID_CHARS.chars() {
+        for char in Const::BARCODE_VALID_CHARS.chars() {
             assert!(
                 CODE_39_BARCODE_SEGMENTS.get(&char).is_some(),
                 "Missing character"
@@ -1251,9 +1252,9 @@ mod tests {
         }
 
         // Check for duplicate values
-        for (index, char) in BARCODE_VALID_CHARS.chars().enumerate() {
+        for (index, char) in Const::BARCODE_VALID_CHARS.chars().enumerate() {
             let segment = CODE_39_BARCODE_SEGMENTS.get(&char).unwrap();
-            for check_char in BARCODE_VALID_CHARS.chars().skip(index + 1) {
+            for check_char in Const::BARCODE_VALID_CHARS.chars().skip(index + 1) {
                 let check_segment = CODE_39_BARCODE_SEGMENTS.get(&check_char).unwrap();
                 // println!("Check {} {}", char, check_char);
                 assert_ne!(segment, check_segment, "Duplicate found");
@@ -1261,7 +1262,7 @@ mod tests {
         }
 
         assert_eq!(
-            BARCODE_VALID_CHARS.len(),
+            Const::BARCODE_VALID_CHARS.len(),
             44,
             "Code 39 barcode supports 44 characters" // Check do not have any extras
         );
