@@ -5,6 +5,7 @@ use rusqlite::{
     ToSql, ffi,
     types::{FromSql, FromSqlError, FromSqlResult, ToSqlOutput, ValueRef},
 };
+use std::fmt;
 #[cfg(feature = "server")]
 use std::fmt::{Display, Formatter, Result};
 
@@ -38,6 +39,17 @@ pub struct LabelOptions {
     pub text_box_width: f64,
     pub text_box_height: f64,
     pub background_colour: Option<String>,
+    pub page: PDFPageType,
+}
+
+impl fmt::Display for LabelOptions {
+    // this is the function signature the fmt::distplay trait is looking for.
+    // https://doc.rust-lang.org/std/fmt/trait.Display.html
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // use write! macro just like println! macro, but output gets writen to
+        // the formatter struct.
+        write!(f, "{:?}", self)
+    }
 }
 
 impl Default for LabelOptions {
@@ -62,6 +74,7 @@ impl Default for LabelOptions {
             text_box_width: 10.0_f64,
             text_box_height: 5.8_f64,
             background_colour: Some("#FFF".to_string()),
+            page: PDFPageType::A4,
         }
     }
 }
@@ -144,6 +157,13 @@ pub enum LabelTextOrientation {
     Rotate270 = 3,
 }
 
+#[repr(i64)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Hash, Sequence, Clone, Copy)]
+pub enum PDFPageType {
+    A4,
+    Letter,
+}
+
 #[cfg(test)]
 mod tests {
     use rusqlite::{
@@ -218,7 +238,8 @@ mod tests {
                 "barcode_scale":1.0,
                 "text_box_width":10.0,
                 "text_box_height":5.8,
-                "background_colour":"#FFF"
+                "background_colour":"#FFF",
+                "page":"A4"
             }")
         )"##
         .to_string()

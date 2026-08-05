@@ -1,12 +1,6 @@
 use std::{collections::HashMap, sync::LazyLock};
 
-use enum_iterator::Sequence;
-
-#[derive(Debug, PartialEq, Eq, Hash, Sequence)]
-pub enum PDFPageType {
-    A4,
-    Letter,
-}
+use crate::shared::models::database::label_preset::model_label_preset::PDFPageType;
 
 pub struct PDFPageConfig {
     pub width: f32,  // As PostScript point

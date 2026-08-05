@@ -7,9 +7,32 @@ use krilla::{
     page::PageSettings,
 };
 use krilla_svg::{SurfaceExt, SvgSettings};
+use tracing::error;
 use usvg::{Options, Tree};
 
-use super::{page::PDFPageType, position::PDFLabelPosition};
+use crate::{
+    backend::generate::lto_label::svg::generate::generate_lto_label_svg,
+    shared::models::database::label_preset::model_label_preset::{LabelOptions, PDFPageType},
+};
+
+use super::position::PDFLabelPosition;
+
+pub fn generate_lto_label_pdf_options(options: LabelOptions) -> Vec<u8> {
+    let barcodes: Vec<String> = options.generate_barcodes();
+
+    let mut svg: Vec<String> = vec![];
+    for barcode in barcodes {
+        match generate_lto_label_svg(barcode, options.clone()) {
+            Ok(s) => {
+                svg.push(s);
+            }
+            Err(e) => {
+                error!("Failed to generate single label {}", e)
+            }
+        }
+    }
+    generate_lto_label_pdf(svg, options.page)
+}
 
 pub fn generate_lto_label_pdf(labels_str: Vec<String>, page_type: PDFPageType) -> Vec<u8> {
     let mut fontdb = Database::new(); // Reusable font database from system

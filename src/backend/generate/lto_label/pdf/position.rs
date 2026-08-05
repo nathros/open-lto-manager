@@ -54,7 +54,7 @@ mod tests {
 
     use enum_iterator::all;
 
-    use crate::backend::generate::lto_label::pdf::page::PDFPageType;
+    use crate::shared::models::database::label_preset::model_label_preset::PDFPageType;
 
     use super::PDFLabelPosition;
 

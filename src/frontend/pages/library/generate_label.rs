@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+use serde_json::json;
 
 use crate::{
     backend::api::{
@@ -8,10 +9,12 @@ use crate::{
         components::card::Card,
         css::Css,
         elements::{
+            button::Button,
             input::{Input, InputType},
             select::Select,
         },
         forms::validator::{TValidator, Validator},
+        js::js_download_file,
         modules::tab::Tab,
     },
     shared::{
@@ -89,6 +92,17 @@ pub fn GenLabel() -> Element {
     });
 
     let label_tab = rsx! {
+        Button {
+            text: "Download".to_string(),
+            primary: true,
+            onclick: move |_| async move {
+                js_download_file(
+                    "/api/generate/label/lto/pdf/blob",
+                    "pdf",
+                    json!({ "options" : options() }),
+                );
+            },
+        }
         form { class: Css::FORM_GRID,
             Select {
                 label: "Tape Type".to_string(),
