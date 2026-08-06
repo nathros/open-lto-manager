@@ -14,3 +14,5 @@ pub mod api_sessions;
 pub mod api_tape;
 pub mod api_tape_type;
 pub mod api_user;
+#[cfg(feature = "server")]
+mod response;

@@ -39,16 +39,14 @@ function downloadFile(url, method, contentType, ext, body) {
 			if (!response.ok) {
 				throw new Error(`Response status: ${response.status}`);
 			}
+			let cd = response.headers.get("Content-Disposition");
+			if (!cd) {
+				throw new Error(`Missing 'Content-Disposition' header`);
+			}
 			response.blob().then((blob) => {
-				const url = window.URL.createObjectURL(blob);
 				const link = document.createElement("a");
-				link.href = url;
-				let cd = response.headers.get("Content-Disposition");
-				if (cd) {
-					link.setAttribute("download", cd.split('"')[1]);
-				} else {
-					link.setAttribute("download", `file.${ext}`);
-				}
+				link.href = window.URL.createObjectURL(blob);
+				link.setAttribute("download", cd.split('"')[1]);
 				document.body.appendChild(link);
 				link.click();
 				document.body.removeChild(link);

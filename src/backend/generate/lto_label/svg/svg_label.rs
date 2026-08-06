@@ -8,10 +8,15 @@ type GroupFn = Box<dyn FnMut(i32, &mut SvgLabel)>;
 
 impl SvgLabel {
     pub fn new(options: &LabelOptions) -> Self {
+        let view_box = if options.include_view_box {
+            format!("viewBox=\"0 0 {} {}\" ", options.width, options.height)
+        } else {
+            "".to_string()
+        };
         Self {
             buffer: format!(
-                "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{}mm\" height=\"{}mm\" viewBox=\"0 0 {} {}\" preserveAspectRatio=\"none\" font-family=\"{}\">\n",
-                options.width, options.height, options.width, options.height, options.font
+                "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{}mm\" height=\"{}mm\" {}preserveAspectRatio=\"none\" font-family=\"{}\">\n",
+                options.width, options.height, view_box, options.font
             ),
         }
     }

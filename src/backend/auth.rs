@@ -25,7 +25,6 @@ pub const SESSION_KEY: &str = "session";
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct SessionId(pub String); // Used to validate sessions
 
-#[non_exhaustive]
 #[derive(Clone)]
 pub struct Session {
     pub user_id: i64,

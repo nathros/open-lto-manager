@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80.5mm" height="18.5mm" viewBox="0 0 80.5 18.5" preserveAspectRatio="none" font-family="sans-serif">
+	<defs>
+		<svg id="42" width="6.588mm" height="11.7mm">
+			<rect width="0.432" height="11.7" x="0.216" />
+			<rect width="0.432" height="11.7" x="1.836" />
+			<rect width="1.188" height="11.7" x="2.700" />
+			<rect width="1.188" height="11.7" x="4.320" />
+			<rect width="0.432" height="11.7" x="5.940" />
+		</svg>
+		<svg id="65" width="6.588mm" height="11.7mm">
+			<rect width="1.188" height="11.7" x="0.216" />
+			<rect width="0.432" height="11.7" x="1.836" />
+			<rect width="0.432" height="11.7" x="2.700" />
+			<rect width="0.432" height="11.7" x="4.320" />
+			<rect width="1.188" height="11.7" x="5.184" />
+		</svg>
+		<svg id="66" width="6.588mm" height="11.7mm">
+			<rect width="0.432" height="11.7" x="0.216" />
+			<rect width="1.188" height="11.7" x="1.080" />
+			<rect width="0.432" height="11.7" x="2.700" />
+			<rect width="0.432" height="11.7" x="4.320" />
+			<rect width="1.188" height="11.7" x="5.184" />
+		</svg>
+		<svg id="67" width="6.588mm" height="11.7mm">
+			<rect width="1.188" height="11.7" x="0.216" />
+			<rect width="1.188" height="11.7" x="1.836" />
+			<rect width="0.432" height="11.7" x="3.456" />
+			<rect width="0.432" height="11.7" x="5.076" />
+			<rect width="0.432" height="11.7" x="5.940" />
+		</svg>
+		<svg id="68" width="6.588mm" height="11.7mm">
+			<rect width="0.432" height="11.7" x="0.216" />
+			<rect width="0.432" height="11.7" x="1.080" />
+			<rect width="1.188" height="11.7" x="1.944" />
+			<rect width="0.432" height="11.7" x="4.320" />
+			<rect width="1.188" height="11.7" x="5.184" />
+		</svg>
+		<svg id="69" width="6.588mm" height="11.7mm">
+			<rect width="1.188" height="11.7" x="0.216" />
+			<rect width="0.432" height="11.7" x="1.836" />
+			<rect width="1.188" height="11.7" x="2.700" />
+			<rect width="0.432" height="11.7" x="5.076" />
+			<rect width="0.432" height="11.7" x="5.940" />
+		</svg>
+		<svg id="70" width="6.588mm" height="11.7mm">
+			<rect width="0.432" height="11.7" x="0.216" />
+			<rect width="1.188" height="11.7" x="1.080" />
+			<rect width="1.188" height="11.7" x="2.700" />
+			<rect width="0.432" height="11.7" x="5.076" />
+			<rect width="0.432" height="11.7" x="5.940" />
+		</svg>
+		<svg id="88" width="6.588mm" height="11.7mm">
+			<rect width="0.432" height="11.7" x="0.216" />
+			<rect width="0.432" height="11.7" x="1.836" />
+			<rect width="1.188" height="11.7" x="2.700" />
+			<rect width="0.432" height="11.7" x="4.320" />
+			<rect width="1.188" height="11.7" x="5.184" />
+		</svg>
+		<rect id="t" width="10" height="5.8" x="0" y="0" rx="0" ry="0" stroke="#000" stroke-width="0.035" />
+		<rect id="b" width="78.5" height="16.5" x="1" y="1" rx="1" ry="1" />
+	</defs>
+	<use href="#b" fill="#FFF"/>
+	<use href="#42" transform="translate(7.310 5.8) scale(1)"/>
+	<use href="#65" transform="translate(13.898 5.8) scale(1)"/>
+	<use href="#66" transform="translate(20.486 5.8) scale(1)"/>
+	<use href="#67" transform="translate(27.074 5.8) scale(1)"/>
+	<use href="#68" transform="translate(33.662 5.8) scale(1)"/>
+	<use href="#69" transform="translate(40.250 5.8) scale(1)"/>
+	<use href="#70" transform="translate(46.838 5.8) scale(1)"/>
+	<use href="#88" transform="translate(53.426 5.8) scale(1)"/>
+	<use href="#88" transform="translate(60.014 5.8) scale(1)"/>
+	<use href="#42" transform="translate(66.602 5.8) scale(1)"/>
+	<g transform="translate(5.250 1)">
+		<use href="#t" fill="#707070" />
+		<text x="5" y="3.4" dominant-baseline="middle" text-anchor="middle" transform="rotate(0 5 3.4)" font-size="5">A</text>
+	</g>
+	<g transform="translate(15.250 1)">
+		<use href="#t" fill="#E1E1E1" />
+		<text x="5" y="3.4" dominant-baseline="middle" text-anchor="middle" transform="rotate(0 5 3.4)" font-size="5">B</text>
+	</g>
+	<g transform="translate(25.250 1)">
+		<use href="#t" fill="#BEBEBE" />
+		<text x="5" y="3.4" dominant-baseline="middle" text-anchor="middle" transform="rotate(0 5 3.4)" font-size="5">C</text>
+	</g>
+	<g transform="translate(35.250 1)">
+		<use href="#t" fill="#A6A6A6" />
+		<text x="5" y="3.4" dominant-baseline="middle" text-anchor="middle" transform="rotate(0 5 3.4)" font-size="5">D</text>
+	</g>
+	<g transform="translate(45.250 1)">
+		<use href="#t" fill="#B5B5B5" />
+		<text x="5" y="3.4" dominant-baseline="middle" text-anchor="middle" transform="rotate(0 5 3.4)" font-size="5">E</text>
+	</g>
+	<g transform="translate(55.250 1)">
+		<use href="#t" fill="#969696" />
+		<text x="5" y="3.4" dominant-baseline="middle" text-anchor="middle" transform="rotate(0 5 3.4)" font-size="5">F</text>
+	</g>
+	<g transform="translate(65.250 1)">
+		<use href="#t" fill="#FFF" />
+		<text x="5" y="3.4" dominant-baseline="middle" text-anchor="middle" transform="rotate(0 5 3.4)" font-size="4">XX</text>
+	</g>
+	<use href="#b" fill="none" stroke="#000" stroke-width="0.035"/>
+</svg>

@@ -130,5 +130,16 @@
       "group": "test",
       "problemMatcher": [],
     },
+    {
+      "label": "Cargo::fix",
+      "type": "shell",
+      "command": "cargo fix",
+      "icon": {
+        "id": "zap",
+        "color": "terminal.ansiBlue"
+      },
+      "group": "test",
+      "problemMatcher": [],
+    },
   ]
 }

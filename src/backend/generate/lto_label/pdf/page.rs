@@ -3,17 +3,19 @@ use std::{collections::HashMap, sync::LazyLock};
 use crate::shared::models::database::label_preset::model_label_preset::PDFPageType;
 
 pub struct PDFPageConfig {
-    pub width: f32,  // As PostScript point
-    pub height: f32, // As PostScript point
+    pub width_pt: f32,  // As unit
+    pub height_pt: f32, // As unit
+    pub width_mm: f32,  // As unit
+    pub height_mm: f32, // As unit
 
     pub count_label: usize,  // Number of labels for a page
     pub count_column: usize, // Number of columns for a page
 
-    pub start_x: f32, // Start X position for row
-    pub start_y: f32, // Start Y position for page
+    pub start_x: f32, // Start X position for row in mm
+    pub start_y: f32, // Start Y position for page in mm
 
-    pub increment_x: f32, // Add this to start_x to move to next column
-    pub increment_y: f32, // Add this to start_y to move to next row
+    pub increment_x: f32, // Add this to start_x to move to next column in mm
+    pub increment_y: f32, // Add this to start_y to move to next row in mm
 }
 
 impl PDFPageType {
@@ -34,27 +36,31 @@ pub static PDF_PAGE_DIMENSIONS: LazyLock<HashMap<PDFPageType, PDFPageConfig>> =
             (
                 PDFPageType::A4,
                 PDFPageConfig {
-                    width: 595.0,  // 210mm
-                    height: 842.0, // 297mm
+                    width_pt: 595.0,
+                    height_pt: 842.0,
+                    width_mm: 210.0,
+                    height_mm: 297.0,
                     count_label: 32,
                     count_column: 2,
-                    start_x: 69.3,
+                    start_x: 25.0,
                     start_y: 3.4,
-                    increment_x: 228.2, // 80.5mm
-                    increment_y: 52.5,  // 18.5mm
+                    increment_x: 80.5,
+                    increment_y: 18.5,
                 },
             ),
             (
                 PDFPageType::Letter,
                 PDFPageConfig {
-                    width: 612.0,  // 215.9mm
-                    height: 792.0, // 279.4mm
+                    width_pt: 612.0,
+                    height_pt: 792.0,
+                    width_mm: 215.9,
+                    height_mm: 279.4,
                     count_label: 30,
                     count_column: 2,
-                    start_x: 0.0,
-                    start_y: 0.0,
-                    increment_x: 228.2, // 80.5mm
-                    increment_y: 52.5,  // 18.5mm
+                    start_x: 25.0,
+                    start_y: 3.4,
+                    increment_x: 80.5,
+                    increment_y: 18.5,
                 },
             ),
         ])

@@ -147,7 +147,7 @@ pub fn TapeForm(
                     },
                 }
                 Select {
-                    label: "Manufacturers".to_string(),
+                    label: "Manufacturer".to_string(),
                     required: true,
                     options: vec_into(manufacturers.clone()),
                     selected: tape().manufacturer_id,

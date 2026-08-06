@@ -40,13 +40,14 @@ pub struct LabelOptions {
     pub text_box_height: f64,
     pub background_colour: Option<String>,
     pub page: PDFPageType,
+    pub include_view_box: bool,
 }
 
 impl fmt::Display for LabelOptions {
-    // this is the function signature the fmt::distplay trait is looking for.
+    // this is the function signature the fmt::display trait is looking for.
     // https://doc.rust-lang.org/std/fmt/trait.Display.html
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // use write! macro just like println! macro, but output gets writen to
+        // use write! macro just like println! macro, but output gets written to
         // the formatter struct.
         write!(f, "{:?}", self)
     }
@@ -75,6 +76,7 @@ impl Default for LabelOptions {
             text_box_height: 5.8_f64,
             background_colour: Some("#FFF".to_string()),
             page: PDFPageType::A4,
+            include_view_box: false,
         }
     }
 }
@@ -83,6 +85,7 @@ impl LabelOptions {
     pub fn default_preview() -> LabelOptions {
         LabelOptions {
             radius_outer: 1.0,
+            include_view_box: true,
             ..Default::default()
         }
     }
@@ -160,8 +163,8 @@ pub enum LabelTextOrientation {
 #[repr(i64)]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Hash, Sequence, Clone, Copy)]
 pub enum PDFPageType {
-    A4,
-    Letter,
+    A4 = 0,
+    Letter = 1,
 }
 
 #[cfg(test)]
@@ -239,7 +242,8 @@ mod tests {
                 "text_box_width":10.0,
                 "text_box_height":5.8,
                 "background_colour":"#FFF",
-                "page":"A4"
+                "page":"A4",
+                "include_view_box":false
             }")
         )"##
         .to_string()

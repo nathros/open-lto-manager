@@ -1,4 +1,4 @@
-use super::page::PDFPageConfig;
+use crate::backend::generate::lto_label::pdf::page::PDFPageConfig;
 
 pub struct PDFLabelPosition<'life> {
     pub x: f32,

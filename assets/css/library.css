@@ -1,11 +1,15 @@
 .pdf-preview /* impl Css::PDF_PREVIEW */ {
 	height: calc(100vh - var(--main-header-height) - var(--padding-m) * 4);
-}
-.pdf-preview embed {
-	width: 100%;
-	height: 100%;
-	border-radius: var(--radius);
+	overflow: scroll;
 }
 .card:has(.pdf-preview) {
 	flex: 1;
+}
+.pdf-preview > div {
+	border: solid var(--padding-s) gray;
+	background-color: gray;
+	text-align: center;
+}
+.pdf-preview > div > svg {
+	background-color: white;
 }

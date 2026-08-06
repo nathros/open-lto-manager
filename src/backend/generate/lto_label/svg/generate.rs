@@ -1,10 +1,15 @@
-use std::collections::HashSet;
+use std::collections::BTreeSet;
 
-use crate::shared::{
-    r#const::Const,
-    error::ErrorStr,
-    models::database::label_preset::model_label_preset::{
-        LabelOptions, LabelTextDirection, LabelTextOrientation,
+use tracing::error;
+
+use crate::{
+    backend::generate::lto_label::svg::{position::PDFLabelPosition, svg_page::SvgPage},
+    shared::{
+        r#const::Const,
+        error::ErrorStr,
+        models::database::label_preset::model_label_preset::{
+            LabelOptions, LabelTextDirection, LabelTextOrientation,
+        },
     },
 };
 
@@ -13,9 +18,9 @@ use super::{code_39::CODE_39_BARCODE_SEGMENTS, svg_label::SvgLabel};
 const TEXT_BOX_ID: &str = "t";
 const BACKGROUND_ID: &str = "b";
 
-pub fn generate_lto_label_svg(
+pub fn generate_lto_label_svg_single(
     mut barcode: String,
-    options: LabelOptions,
+    options: LabelOptions, // TODO as reference
 ) -> Result<String, ErrorStr> {
     barcode = format!(
         "*{}{}*",
@@ -30,7 +35,7 @@ pub fn generate_lto_label_svg(
     let mut svg = SvgLabel::new(&options);
     //svg.append_line(0, format!("<!--{}-->", barcode).as_str());
 
-    let mut unique_characters: HashSet<char> = HashSet::new();
+    let mut unique_characters: BTreeSet<char> = BTreeSet::new(); // Maintain insertion order
     for char in barcode.chars() {
         if !Const::BARCODE_VALID_CHARS.contains(char) {
             return Err(format!("Invalid character: {}", char));
@@ -157,6 +162,46 @@ pub fn generate_lto_label_svg(
     Ok(result)
 }
 
+fn generate_lto_label_svg_multiple(options: &LabelOptions) -> Vec<String> {
+    let barcodes: Vec<String> = options.generate_barcodes();
+
+    let mut svg: Vec<String> = vec![];
+    for barcode in barcodes {
+        match generate_lto_label_svg_single(barcode, options.clone()) {
+            Ok(s) => {
+                svg.push(s);
+            }
+            Err(e) => {
+                error!("Failed to generate label {}", e)
+            }
+        }
+    }
+    svg
+}
+
+pub fn generate_lto_label_svg_pages(options: &LabelOptions) -> Vec<String> {
+    let mut result: Vec<String> = vec![];
+    let page_config = options.page.get_config();
+
+    let svg_labels_str = generate_lto_label_svg_multiple(options);
+
+    let mut svg_page = SvgPage::new(page_config);
+    let mut position = PDFLabelPosition::new(page_config);
+
+    for (index, label) in svg_labels_str.iter().enumerate() {
+        svg_page.add_label(label.as_str(), position.x, position.y);
+
+        // Advance position and create new page if returns true, do not create new page for last label
+        if position.next() && index + 1 != svg_labels_str.len() {
+            result.push(svg_page.result());
+            svg_page = SvgPage::new(page_config); // Move to next page
+        }
+    }
+    result.push(svg_page.result());
+
+    result
+}
+
 fn barcode_text(
     svg: &mut SvgLabel,
     options: &LabelOptions,
@@ -194,4 +239,56 @@ fn barcode_text(
         .as_str(),
     );
     svg.append_line(1, "</g>");
+}
+
+#[cfg(test)]
+pub mod tests {
+    use crate::{
+        backend::generate::lto_label::svg::generate::generate_lto_label_svg_single,
+        shared::models::database::label_preset::model_label_preset::{LabelOptions, LabelTheme},
+    };
+
+    pub fn test_file(test: &str) -> String {
+        std::fs::read_to_string(format!("test/labels/{}", test)).unwrap()
+    }
+
+    #[test]
+    fn single_svg_generate() {
+        let test_data = [
+            (
+                "single/default_preview.svg",
+                "ABCDEFXX",
+                LabelOptions {
+                    ..LabelOptions::default_preview()
+                },
+            ),
+            (
+                "single/default_preview-no_viewbox.svg",
+                "ABCDEFXX",
+                LabelOptions {
+                    include_view_box: false,
+                    ..LabelOptions::default_preview()
+                },
+            ),
+            (
+                "single/default_preview-theme_greyscale.svg",
+                "ABCDEFXX",
+                LabelOptions {
+                    theme: LabelTheme::Greyscale,
+                    ..LabelOptions::default_preview()
+                },
+            ),
+        ];
+
+        test_data
+            .iter()
+            .for_each(|(test_file_path, barcode, options)| {
+                let svg_str =
+                    generate_lto_label_svg_single(barcode.to_string(), options.clone()).unwrap();
+
+                //std::fs::write(test_file_path.replace("/", ".").as_str(), &svg_str);
+
+                assert_eq!(test_file(test_file_path), svg_str);
+            });
+    }
 }

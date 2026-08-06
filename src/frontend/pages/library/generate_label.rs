@@ -3,7 +3,8 @@ use serde_json::json;
 
 use crate::{
     backend::api::{
-        api_generate_lto_label::generate_pdf_label, api_tape_type::list_type_type_labels,
+        api_generate_lto_label::{GENERATE_PDF_LABEL_DOWNLOAD, generate_label_preview},
+        api_tape_type::list_type_type_labels,
     },
     frontend::{
         components::card::Card,
@@ -33,7 +34,7 @@ const START_INDEX_MAX: usize = 999999;
 #[component]
 pub fn GenLabel() -> Element {
     let mut options = use_signal(|| LabelOptions::default());
-    let pdf_b64 = use_loader(move || generate_pdf_label(options()))?;
+    let previews = use_loader(move || generate_label_preview(options()))?;
 
     let types = use_loader(list_type_type_labels)?;
 
@@ -96,8 +97,8 @@ pub fn GenLabel() -> Element {
             text: "Download".to_string(),
             primary: true,
             onclick: move |_| async move {
-                js_download_file(
-                    "/api/generate/label/lto/pdf/blob",
+                js_download_file( // Should match endpoint _ep
+                    GENERATE_PDF_LABEL_DOWNLOAD,
                     "pdf",
                     json!({ "options" : options() }),
                 );
@@ -174,7 +175,9 @@ pub fn GenLabel() -> Element {
             }
             Card {
                 div { class: Css::PDF_PREVIEW,
-                    embed { r#type: "application/pdf", src: pdf_b64 }
+                    for p in previews() {
+                        div { dangerous_inner_html: p }
+                    }
                 }
             }
         }

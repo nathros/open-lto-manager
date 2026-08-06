@@ -1,7 +1,7 @@
 use dioxus::{dioxus_core, fullstack::Loader, prelude::*};
 
 use crate::{
-    backend::api::api_generate_lto_label::generate_svg_label,
+    backend::api::api_generate_lto_label::generate_single_svg_label,
     frontend::assets::{IMG_TAPE_PREVIEW, IMG_TAPE_PREVIEW_TAB, LOGO_ASSET},
     shared::models::database::{
         manufacturer::model_manufacturer::RecordManufacturer, tape::model_tape::RecordTape,
@@ -31,7 +31,7 @@ pub fn TapePreview(
         .clone();
 
     let svg_barcode: Loader<String> =
-        use_loader(move || generate_svg_label(preview().barcode, designation.clone()))?;
+        use_loader(move || generate_single_svg_label(preview().barcode, designation.clone()))?;
 
     let hp = "hp"; // HP have their own colour scheme
     let main_class: String = match preview().worm {
