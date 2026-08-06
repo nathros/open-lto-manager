@@ -135,6 +135,12 @@
 			"remix": "icons/System/search-2-line.svg",
 			"iconoir": "icons/regular/search-engine.svg",
 			"sargam": "Icons/Line/si_Search_alt.svg"
+		},
+		"pdf": {
+			"tabler": "icons/outline/file-type-pdf.svg",
+			"remix": "icons/Document/file-pdf-2-fill.svg",
+			"iconoir": "icons/regular/page-flip.svg",
+			"sargam": "../iconoir/icons/regular/page-flip.svg"
 		}
 	}
 }

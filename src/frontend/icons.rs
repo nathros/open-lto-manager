@@ -23,4 +23,5 @@ impl Icons {
     pub const BUG: &str = "bug ";
     pub const BOOK: &str = "book ";
     pub const SEARCH: &str = "search ";
+    pub const PDF: &str = "pdf ";
 }

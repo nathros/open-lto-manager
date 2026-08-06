@@ -1,6 +1,6 @@
 .pdf-preview /* impl Css::PDF_PREVIEW */ {
 	height: calc(100vh - var(--main-header-height) - var(--padding-m) * 4);
-	overflow: scroll;
+	overflow-y: scroll;
 }
 .card:has(.pdf-preview) {
 	flex: 1;

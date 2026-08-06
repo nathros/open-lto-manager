@@ -56,11 +56,11 @@ impl fmt::Display for LabelOptions {
 impl Default for LabelOptions {
     fn default() -> Self {
         Self {
-            start_index: 0,
-            quantity: 5,
+            start_index: 1,
+            quantity: 16,
             designation: "".to_string(),
-            prefix: "".to_string(),
-            postfix: "".to_string(),
+            prefix: "P".to_string(),
+            postfix: "S".to_string(),
             theme: LabelTheme::Standard,
             font: LabelFont::SansSerif,
             text_direction: LabelTextDirection::Normal,

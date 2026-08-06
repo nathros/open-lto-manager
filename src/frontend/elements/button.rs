@@ -1,6 +1,10 @@
 use dioxus::prelude::*;
 
-use crate::{either, frontend::css::Css, static_concat};
+use crate::{
+    either,
+    frontend::{css::Css, size::Size},
+    static_concat,
+};
 
 #[derive(Props, PartialEq, Clone)]
 pub struct ButtonProps {
@@ -9,6 +13,12 @@ pub struct ButtonProps {
 
     #[props(default = "".into())]
     text: String,
+
+    #[props(optional)]
+    icon: &'static str,
+
+    #[props(optional, default = Size::Sm)]
+    icon_size: Size,
 
     #[props(optional, default = false)]
     primary: bool,
@@ -63,6 +73,9 @@ pub fn Button(props: ButtonProps) -> Element {
             onclick: props.onclick,
             disabled: props.disabled,
             ..props.attributes,
+            if !props.icon.is_empty() {
+                span { class: format!("{}{}{}", Css::ICON, props.icon, props.icon_size.to_class()) }
+            }
             "{props.text}"
         }
     }

@@ -15,6 +15,7 @@ use crate::{
             select::Select,
         },
         forms::validator::{TValidator, Validator},
+        icons::Icons,
         js::js_download_file,
         modules::tab::Tab,
     },
@@ -95,6 +96,7 @@ pub fn GenLabel() -> Element {
     let label_tab = rsx! {
         Button {
             text: "Download".to_string(),
+            icon: Icons::PDF,
             primary: true,
             onclick: move |_| async move {
                 js_download_file( // Should match endpoint _ep

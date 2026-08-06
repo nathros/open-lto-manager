@@ -12,3 +12,7 @@
 	width: 2rem;
 	height: 2rem;
 }
+.icon.md /* impl Css::LG */ {
+	width: 4rem;
+	height: 4rem;
+}

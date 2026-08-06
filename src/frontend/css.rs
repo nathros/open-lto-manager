@@ -26,6 +26,7 @@ impl Css {
     pub const ICON: &str = "icon "; // Defined in assets/css/icon.css line 1
     pub const SM: &str = "sm "; // Defined in assets/css/icon.css line 7
     pub const MD: &str = "md "; // Defined in assets/css/icon.css line 11
+    pub const LG: &str = "md "; // Defined in assets/css/icon.css line 15
     pub const FORM_GRID: &str = "form-grid "; // Defined in assets/css/forms.css line 1
     pub const INPUT: &str = "input "; // Defined in assets/css/forms.css line 12
     pub const SELECT: &str = "select "; // Defined in assets/css/forms.css line 13
@@ -40,7 +41,7 @@ impl Css {
     pub const CARD_OVERVIEW_STATUS: &str = "card-overview-status "; // Defined in assets/css/card.css line 32
     pub const CODE_BLOCK: &str = "code-block "; // Defined in assets/css/code-block.css line 1
     pub const BTN: &str = "btn "; // Defined in assets/css/button.css line 1
-    pub const BTN_PRI: &str = "pri "; // Defined in assets/css/button.css line 19
+    pub const BTN_PRI: &str = "pri "; // Defined in assets/css/button.css line 27
     pub const PDF_PREVIEW: &str = "pdf-preview "; // Defined in assets/css/library.css line 1
     pub const LOGIN_CONTAINER: &str = "login-container "; // Defined in assets/css/login.css line 1
     pub const MENU_CONTAINER: &str = "menu-container "; // Defined in assets/css/menu.css line 1

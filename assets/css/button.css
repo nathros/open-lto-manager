@@ -1,4 +1,6 @@
 .btn /* impl Css::BTN */ {
+	display: inline-flex;
+	gap: var(--padding-s);
 	padding: var(--padding-s);
 	border-radius: var(--radius);
 	border: var(--border);
@@ -7,10 +9,16 @@
 	font-size: smaller;
 	transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
+.btn > .icon {
+	transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
 .btn:hover {
 	border-color: var(--colour-accent);
 	color: var(--colour-accent);
 	cursor: pointer;
+}
+.btn:hover > .icon {
+	background-color: var(--colour-accent);
 }
 .btn:active {
 	border-color: hsl(from var(--colour-accent) h s calc(l - 10));
@@ -21,6 +29,9 @@
 	color: white;
 	border: none;
 	padding: calc(var(--padding-s) + 1px); /* Due to loss of border */
+}
+.btn.pri > .icon {
+	background-color: white;
 }
 .btn.pri:hover {
 	background-color: hsl(from var(--colour-accent) h s calc(l + 10));
