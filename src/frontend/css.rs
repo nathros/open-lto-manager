@@ -26,7 +26,7 @@ impl Css {
     pub const ICON: &str = "icon "; // Defined in assets/css/icon.css line 1
     pub const SM: &str = "sm "; // Defined in assets/css/icon.css line 7
     pub const MD: &str = "md "; // Defined in assets/css/icon.css line 11
-    pub const LG: &str = "md "; // Defined in assets/css/icon.css line 15
+    pub const LG: &str = "lg "; // Defined in assets/css/icon.css line 15
     pub const FORM_GRID: &str = "form-grid "; // Defined in assets/css/forms.css line 1
     pub const INPUT: &str = "input "; // Defined in assets/css/forms.css line 12
     pub const SELECT: &str = "select "; // Defined in assets/css/forms.css line 13

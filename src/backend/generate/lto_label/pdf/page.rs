@@ -8,6 +8,9 @@ pub struct PDFPageConfig {
     pub width_mm: f32,  // As unit
     pub height_mm: f32, // As unit
 
+    pub label_width: f32,  // mm
+    pub label_height: f32, // mm
+
     pub count_label: usize,  // Number of labels for a page
     pub count_column: usize, // Number of columns for a page
 
@@ -19,7 +22,7 @@ pub struct PDFPageConfig {
 }
 
 impl PDFPageType {
-    pub fn get_config(&self) -> &PDFPageConfig {
+    pub fn get_config(&self) -> &'static PDFPageConfig {
         match PDF_PAGE_DIMENSIONS.get(self) {
             Some(p) => p,
             None => match PDF_PAGE_DIMENSIONS.get(&PDFPageType::A4) {
@@ -30,37 +33,88 @@ impl PDFPageType {
     }
 }
 
+impl PDFPageConfig {
+    fn empty() -> PDFPageConfig {
+        PDFPageConfig {
+            width_pt: 0.0,
+            height_pt: 0.0,
+            width_mm: 0.0,
+            height_mm: 0.0,
+            label_width: 0.0,
+            label_height: 0.0,
+            count_label: 0,
+            count_column: 0,
+            start_x: 0.0,
+            start_y: 0.0,
+            increment_x: 0.0,
+            increment_y: 0.0,
+        }
+    }
+
+    fn base_a4() -> PDFPageConfig {
+        PDFPageConfig {
+            width_pt: 595.0,
+            height_pt: 842.0,
+            width_mm: 210.0,
+            height_mm: 297.0,
+            ..PDFPageConfig::empty()
+        }
+    }
+
+    fn base_letter() -> PDFPageConfig {
+        PDFPageConfig {
+            width_pt: 612.0,
+            height_pt: 792.0,
+            width_mm: 215.9,
+            height_mm: 279.4,
+            ..PDFPageConfig::empty()
+        }
+    }
+}
+
 pub static PDF_PAGE_DIMENSIONS: LazyLock<HashMap<PDFPageType, PDFPageConfig>> =
     LazyLock::new(|| {
         HashMap::from([
             (
                 PDFPageType::A4,
                 PDFPageConfig {
-                    width_pt: 595.0,
-                    height_pt: 842.0,
-                    width_mm: 210.0,
-                    height_mm: 297.0,
+                    label_width: 80.5,
+                    label_height: 18.5,
                     count_label: 32,
                     count_column: 2,
                     start_x: 26.5,
                     start_y: 16.5,
                     increment_x: 78.5,
                     increment_y: 16.5,
+                    ..PDFPageConfig::base_a4()
                 },
             ),
             (
                 PDFPageType::Letter,
                 PDFPageConfig {
-                    width_pt: 612.0,
-                    height_pt: 792.0,
-                    width_mm: 215.9,
-                    height_mm: 279.4,
+                    label_width: 80.5,
+                    label_height: 18.5,
                     count_label: 30,
                     count_column: 2,
                     start_x: 29.45,
                     start_y: 15.95,
                     increment_x: 78.5,
                     increment_y: 16.5,
+                    ..PDFPageConfig::base_letter()
+                },
+            ),
+            (
+                PDFPageType::Avery6571,
+                PDFPageConfig {
+                    label_width: 76.2,  // 3 Inch
+                    label_height: 15.4, // ~5/8 Inch
+                    count_label: 32,
+                    count_column: 2,
+                    start_x: 21.356,
+                    start_y: 13.432,
+                    increment_x: 96.952,
+                    increment_y: 15.875,
+                    ..PDFPageConfig::base_letter()
                 },
             ),
         ])

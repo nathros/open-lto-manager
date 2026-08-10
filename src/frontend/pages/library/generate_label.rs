@@ -22,7 +22,11 @@ use crate::{
     shared::{
         r#const::Const,
         models::{
-            database::label_preset::model_label_preset::LabelOptions, select_option::vec_into,
+            database::label_preset::model_label_preset::{
+                LabelFont, LabelOptions, LabelTextDirection, LabelTextOrientation, LabelTheme,
+                PDFPageType,
+            },
+            select_option::{vec_into, vec_into_enum},
         },
     },
 };
@@ -139,17 +143,6 @@ pub fn GenLabel() -> Element {
             }
             Input {
                 type_: InputType::Number,
-                label: "Quantity".to_string(),
-                oninput: move |evt: Event<FormData>| {
-                    options.write().quantity = evt.value().parse().unwrap_or_default();
-                },
-                min: QUANTITY_MIN,
-                max: QUANTITY_MAX,
-                value: options().quantity,
-                validation: quantity_error,
-            }
-            Input {
-                type_: InputType::Number,
                 label: "Start Index".to_string(),
                 oninput: move |evt: Event<FormData>| {
                     options.write().start_index = evt.value().parse().unwrap_or_default();
@@ -159,19 +152,174 @@ pub fn GenLabel() -> Element {
                 value: options().start_index,
                 validation: start_index_error,
             }
+            Input {
+                type_: InputType::Number,
+                label: "Quantity".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().quantity = evt.value().parse().unwrap_or_default();
+                },
+                min: QUANTITY_MIN,
+                max: QUANTITY_MAX,
+                value: options().quantity,
+                validation: quantity_error,
+            }
+        }
+    };
+
+    let style_tab = rsx! {
+        form { class: Css::FORM_GRID,
+            Select {
+                label: "Theme".to_string(),
+                options: vec_into_enum::<LabelTheme>(),
+                selected: options().theme as i64,
+                onchange: move |evt: Event<FormData>| {
+                    options.write().theme = LabelTheme::from(
+                        evt.value().parse::<i64>().unwrap_or_default(),
+                    );
+                },
+            }
+            Select {
+                label: "Font".to_string(),
+                options: vec_into_enum::<LabelFont>(),
+                selected: options().font as i64,
+                onchange: move |evt: Event<FormData>| {
+                    options.write().font = LabelFont::from(
+                        evt.value().parse::<i64>().unwrap_or_default(),
+                    );
+                },
+            }
+            Select {
+                label: "Text Direction".to_string(),
+                options: vec_into_enum::<LabelTextDirection>(),
+                selected: options().text_direction as i64,
+                onchange: move |evt: Event<FormData>| {
+                    options.write().text_direction = LabelTextDirection::from(
+                        evt.value().parse::<i64>().unwrap_or_default(),
+                    );
+                },
+            }
+            Select {
+                label: "Text Orientation".to_string(),
+                options: vec_into_enum::<LabelTextOrientation>(),
+                selected: options().text_orientation as i64,
+                onchange: move |evt: Event<FormData>| {
+                    options.write().text_orientation = LabelTextOrientation::from(
+                        evt.value().parse::<i64>().unwrap_or_default(),
+                    );
+                },
+            }
+            Input {
+                type_: InputType::Number,
+                label: "Stroke Outer".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().stroke_outer = evt.value().parse().unwrap_or_default();
+                },
+                min: 0,
+                max: 2,
+                step: 0.1,
+                value: options().stroke_outer,
+            }
+            Input {
+                type_: InputType::Number,
+                label: "Stroke Inner".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().stroke_inner = evt.value().parse().unwrap_or_default();
+                },
+                min: 0,
+                max: 2,
+                step: 0.1,
+                value: options().stroke_inner,
+            }
+            Input {
+                type_: InputType::Number,
+                label: "Radius Outer".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().radius_outer = evt.value().parse().unwrap_or_default();
+                },
+                min: 0,
+                max: 8,
+                step: 0.1,
+                value: options().radius_outer,
+            }
+            Input {
+                type_: InputType::Number,
+                label: "Radius Inner".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().radius_inner = evt.value().parse().unwrap_or_default();
+                },
+                min: 0,
+                max: 8,
+                step: 0.1,
+                value: options().radius_inner,
+            }
+            Input {
+                type_: InputType::Number,
+                label: "Barcode Scale".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().barcode_scale = evt.value().parse().unwrap_or_default();
+                },
+                min: 0.1,
+                max: 1.15,
+                step: 0.05,
+                value: options().barcode_scale,
+            }
+            Input {
+                type_: InputType::Number,
+                label: "Text Box Width".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().text_box_width = evt.value().parse().unwrap_or_default();
+                },
+                min: 3,
+                max: 11.2,
+                step: 0.1,
+                value: options().text_box_width,
+            }
         }
     };
 
     let page_tab = rsx! {
-        p { "aaa" }
+        form { class: Css::FORM_GRID,
+            Select {
+                label: "Page Type".to_string(),
+                options: vec_into_enum::<PDFPageType>(),
+                selected: options().page as i64,
+                onchange: move |evt: Event<FormData>| {
+                    options.write().page = PDFPageType::from(
+                        evt.value().parse::<i64>().unwrap_or_default(),
+                    );
+                },
+            }
+            Input {
+                type_: InputType::Number,
+                label: "X Offset (mm)".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().page_x_offset = evt.value().parse().unwrap_or_default();
+                },
+                min: -10,
+                max: 10,
+                step: 0.1,
+                value: format!("{:.1}", options().page_x_offset),
+            }
+            Input {
+                type_: InputType::Number,
+                label: "Y Offset (mm)".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().page_y_offset = evt.value().parse().unwrap_or_default();
+                },
+                min: -10,
+                max: 10,
+                step: 0.1,
+                value: format!("{:.1}", options().page_y_offset),
+            }
+        }
     };
 
     rsx! {
         div { class: Css::FLEX_ROW,
             Card {
                 Tab {
-                    labels: vec!["Label".to_string(), "Page".to_string()],
-                    contents: vec![label_tab, page_tab],
+                    labels: vec!["Label".to_string(), "Style".to_string(), "Page".to_string()],
+                    contents: vec![label_tab, style_tab, page_tab],
                 }
                 hr {}
             }

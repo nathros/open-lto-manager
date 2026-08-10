@@ -33,13 +33,13 @@ pub struct LabelOptions {
     pub stroke_inner: f64, // Units in millimeter
     pub radius_outer: f64,
     pub radius_inner: f64,
-    pub width: f64,  // Units in millimeter
-    pub height: f64, // Units in millimeter
     pub barcode_scale: f64,
     pub text_box_width: f64,
     pub text_box_height: f64,
     pub background_colour: Option<String>,
     pub page: PDFPageType,
+    pub page_x_offset: f32,
+    pub page_y_offset: f32,
     pub include_view_box: bool,
 }
 
@@ -69,13 +69,13 @@ impl Default for LabelOptions {
             stroke_inner: 0.035, // 0.01 PostScript point
             radius_outer: 0.0,
             radius_inner: 0.0,
-            width: 80.5,
-            height: 18.5,
             barcode_scale: 1.0,
             text_box_width: 10.0_f64,
             text_box_height: 5.8_f64,
             background_colour: Some("#FFF".to_string()),
             page: PDFPageType::A4,
+            page_x_offset: 0_f32,
+            page_y_offset: 0_f32,
             include_view_box: false,
         }
     }
@@ -125,12 +125,34 @@ pub enum LabelTheme {
     Greyscale = 2,
 }
 
+impl From<i64> for LabelTheme {
+    fn from(value: i64) -> Self {
+        match value {
+            _ if value == LabelTheme::Standard as i64 => LabelTheme::Standard,
+            _ if value == LabelTheme::Warm as i64 => LabelTheme::Warm,
+            _ if value == LabelTheme::Greyscale as i64 => LabelTheme::Greyscale,
+            _ => LabelTheme::Standard,
+        }
+    }
+}
+
 #[repr(i64)]
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy, Sequence)]
 pub enum LabelFont {
     SansSerif = 0,
     Serif = 1,
     Monospace = 2,
+}
+
+impl From<i64> for LabelFont {
+    fn from(value: i64) -> Self {
+        match value {
+            _ if value == LabelFont::SansSerif as i64 => LabelFont::SansSerif,
+            _ if value == LabelFont::Serif as i64 => LabelFont::Serif,
+            _ if value == LabelFont::Monospace as i64 => LabelFont::Monospace,
+            _ => LabelFont::SansSerif,
+        }
+    }
 }
 
 #[cfg(feature = "server")]
@@ -145,14 +167,24 @@ impl Display for LabelFont {
 }
 
 #[repr(i64)]
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy, Sequence)]
 pub enum LabelTextDirection {
     Normal = 0,
     Reversed = 1,
 }
 
+impl From<i64> for LabelTextDirection {
+    fn from(value: i64) -> Self {
+        match value {
+            _ if value == LabelTextDirection::Normal as i64 => LabelTextDirection::Normal,
+            _ if value == LabelTextDirection::Reversed as i64 => LabelTextDirection::Reversed,
+            _ => LabelTextDirection::Normal,
+        }
+    }
+}
+
 #[repr(i64)]
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy, Sequence)]
 pub enum LabelTextOrientation {
     Normal = 0,
     Rotate90 = 1,
@@ -160,11 +192,35 @@ pub enum LabelTextOrientation {
     Rotate270 = 3,
 }
 
+impl From<i64> for LabelTextOrientation {
+    fn from(value: i64) -> Self {
+        match value {
+            _ if value == LabelTextOrientation::Normal as i64 => LabelTextOrientation::Normal,
+            _ if value == LabelTextOrientation::Rotate90 as i64 => LabelTextOrientation::Rotate90,
+            _ if value == LabelTextOrientation::Rotate180 as i64 => LabelTextOrientation::Rotate180,
+            _ if value == LabelTextOrientation::Rotate270 as i64 => LabelTextOrientation::Rotate270,
+            _ => LabelTextOrientation::Normal,
+        }
+    }
+}
+
 #[repr(i64)]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Hash, Sequence, Clone, Copy)]
 pub enum PDFPageType {
     A4 = 0,
     Letter = 1,
+    Avery6571 = 2,
+}
+
+impl From<i64> for PDFPageType {
+    fn from(value: i64) -> Self {
+        match value {
+            _ if value == PDFPageType::A4 as i64 => PDFPageType::A4,
+            _ if value == PDFPageType::Letter as i64 => PDFPageType::Letter,
+            _ if value == PDFPageType::Avery6571 as i64 => PDFPageType::Avery6571,
+            _ => PDFPageType::A4,
+        }
+    }
 }
 
 #[cfg(test)]
@@ -223,11 +279,11 @@ mod tests {
         let expected = r##"
         Owned(
             Text("{
-                "start_index":0,
-                "quantity":5,
+                "start_index":1,
+                "quantity":16,
                 "designation":"",
-                "prefix":"",
-                "postfix":"",
+                "prefix":"P",
+                "postfix":"S",
                 "theme":"Warm",
                 "font":"SansSerif",
                 "text_direction":"Normal",
@@ -236,13 +292,13 @@ mod tests {
                 "stroke_inner":0.035,
                 "radius_outer":0.0,
                 "radius_inner":0.0,
-                "width":80.5,
-                "height":18.5,
                 "barcode_scale":1.0,
                 "text_box_width":10.0,
                 "text_box_height":5.8,
                 "background_colour":"#FFF",
                 "page":"A4",
+                "page_x_offset":0.0,
+                "page_y_offset":0.0,
                 "include_view_box":false
             }")
         )"##

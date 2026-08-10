@@ -1,4 +1,5 @@
 use dioxus::fullstack::serde::{Deserialize, Serialize};
+use enum_iterator::all;
 
 use crate::shared::models::database::tape_type::model_tape_type::RecordTapeTypeLabel;
 
@@ -45,4 +46,19 @@ where
     T: Into<U>,
 {
     v.into_iter().map(Into::into).collect()
+}
+
+pub fn vec_into_enum<T>() -> Vec<SelectOption>
+where
+    T: enum_iterator::Sequence + std::fmt::Debug,
+{
+    all::<T>()
+        .collect::<Vec<_>>()
+        .iter()
+        .enumerate()
+        .map(|(index, t)| SelectOption {
+            id: index as i64,
+            label: format!("{:?}", t),
+        })
+        .collect::<Vec<SelectOption>>()
 }

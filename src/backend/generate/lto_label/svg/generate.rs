@@ -32,7 +32,8 @@ pub fn generate_lto_label_svg_single(
         return Err("Barcode not correct length".to_string());
     }
 
-    let mut svg = SvgLabel::new(&options);
+    let page_config = options.page.get_config();
+    let mut svg = SvgLabel::new(&options, page_config);
     //svg.append_line(0, format!("<!--{}-->", barcode).as_str());
 
     let mut unique_characters: BTreeSet<char> = BTreeSet::new(); // Maintain insertion order
@@ -43,7 +44,10 @@ pub fn generate_lto_label_svg_single(
         unique_characters.insert(char);
     }
 
-    let segment_height_str = format!("{}", 11.7_f64 / options.barcode_scale);
+    let segment_height_str = format!(
+        "{:.1}",
+        (page_config.label_height as f64 - 6.8) / options.barcode_scale
+    );
     svg.append_group(
         1,
         "defs",
@@ -70,7 +74,7 @@ pub fn generate_lto_label_svg_single(
                 TEXT_BOX_ID, options.text_box_width, options.text_box_height, options.radius_inner, options.radius_inner, options.stroke_inner).as_str()
             );
             svg.append_line(tab_index, format!("<rect id=\"{}\" width=\"{}\" height=\"{}\" x=\"1\" y=\"1\" rx=\"{}\" ry=\"{}\" />",
-            BACKGROUND_ID, options.width - 2_f64, options.height - 2_f64, options.radius_outer, options.radius_outer).as_str());
+            BACKGROUND_ID, page_config.label_width - 2.0, page_config.label_height - 2.0, options.radius_outer, options.radius_outer).as_str());
         }),
     );
 
@@ -84,7 +88,7 @@ pub fn generate_lto_label_svg_single(
     let shift_x = 6.588 * options.barcode_scale;
     let total_barcode_width = shift_x * Const::CODE_39_BARCODE_LEN as f64; // Extra space needed per segment
 
-    let mut translate_x = options.width - 2_f64; // Total usable space
+    let mut translate_x = page_config.label_width as f64 - 2_f64; // Total usable space
     translate_x -= total_barcode_width; // Calculate free space
     translate_x = (translate_x / 2_f64) + 1_f64; // Divide by 2 to centre + 1
 
@@ -101,7 +105,7 @@ pub fn generate_lto_label_svg_single(
         translate_x += shift_x;
     }
 
-    translate_x = options.width - 2_f64; // Total usable space
+    translate_x = page_config.label_width as f64 - 2_f64; // Total usable space
     translate_x -= options.text_box_width * 7_f64; // Calculate free space, for 7 text boxes
     translate_x = (translate_x / 2_f64) + 1_f64; // Divide by 2 to centre + 1
 
@@ -189,7 +193,11 @@ pub fn generate_lto_label_svg_pages(options: &LabelOptions) -> Vec<String> {
     let mut position = PDFLabelPosition::new(page_config);
 
     for (index, label) in svg_labels_str.iter().enumerate() {
-        svg_page.add_label(label.as_str(), position.x, position.y);
+        svg_page.add_label(
+            label.as_str(),
+            position.x + options.page_x_offset,
+            position.y + options.page_y_offset,
+        );
 
         // Advance position and create new page if returns true, do not create new page for last label
         if position.next() && index + 1 != svg_labels_str.len() {
