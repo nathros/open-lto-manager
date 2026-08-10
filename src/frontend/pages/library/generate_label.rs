@@ -26,7 +26,7 @@ use crate::{
                 LabelFont, LabelOptions, LabelTextDirection, LabelTextOrientation, LabelTheme,
                 PDFPageType,
             },
-            select_option::{vec_into, vec_into_enum},
+            select_option::{vec_into, vec_into_enum, vec_into_enum_default},
         },
     },
 };
@@ -170,7 +170,7 @@ pub fn GenLabel() -> Element {
         form { class: Css::FORM_GRID,
             Select {
                 label: "Theme".to_string(),
-                options: vec_into_enum::<LabelTheme>(),
+                options: vec_into_enum_default::<LabelTheme>(),
                 selected: options().theme as i64,
                 onchange: move |evt: Event<FormData>| {
                     options.write().theme = LabelTheme::from(
@@ -180,7 +180,7 @@ pub fn GenLabel() -> Element {
             }
             Select {
                 label: "Font".to_string(),
-                options: vec_into_enum::<LabelFont>(),
+                options: vec_into_enum_default::<LabelFont>(),
                 selected: options().font as i64,
                 onchange: move |evt: Event<FormData>| {
                     options.write().font = LabelFont::from(
@@ -190,7 +190,7 @@ pub fn GenLabel() -> Element {
             }
             Select {
                 label: "Text Direction".to_string(),
-                options: vec_into_enum::<LabelTextDirection>(),
+                options: vec_into_enum_default::<LabelTextDirection>(),
                 selected: options().text_direction as i64,
                 onchange: move |evt: Event<FormData>| {
                     options.write().text_direction = LabelTextDirection::from(
@@ -200,7 +200,7 @@ pub fn GenLabel() -> Element {
             }
             Select {
                 label: "Text Orientation".to_string(),
-                options: vec_into_enum::<LabelTextOrientation>(),
+                options: vec_into_enum_default::<LabelTextOrientation>(),
                 selected: options().text_orientation as i64,
                 onchange: move |evt: Event<FormData>| {
                     options.write().text_orientation = LabelTextOrientation::from(

@@ -48,7 +48,12 @@ where
     v.into_iter().map(Into::into).collect()
 }
 
-pub fn vec_into_enum<T>() -> Vec<SelectOption>
+// FIXE https://github.com/rust-lang/rust/issues/143874 const trait not ready
+pub trait EnumStr {
+    fn as_str(&self) -> &str;
+}
+
+pub fn vec_into_enum_default<T>() -> Vec<SelectOption>
 where
     T: enum_iterator::Sequence + std::fmt::Debug,
 {
@@ -59,6 +64,21 @@ where
         .map(|(index, t)| SelectOption {
             id: index as i64,
             label: format!("{:?}", t),
+        })
+        .collect::<Vec<SelectOption>>()
+}
+
+pub fn vec_into_enum<T>() -> Vec<SelectOption>
+where
+    T: enum_iterator::Sequence + EnumStr,
+{
+    all::<T>()
+        .collect::<Vec<_>>()
+        .iter()
+        .enumerate()
+        .map(|(index, t)| SelectOption {
+            id: index as i64,
+            label: t.as_str().to_string(),
         })
         .collect::<Vec<SelectOption>>()
 }

@@ -9,6 +9,8 @@ use std::fmt;
 #[cfg(feature = "server")]
 use std::fmt::{Display, Formatter, Result};
 
+use crate::shared::models::select_option::EnumStr;
+
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct RecordLabelPreset {
     pub id: i64,
@@ -210,6 +212,16 @@ pub enum PDFPageType {
     A4 = 0,
     Letter = 1,
     Avery6571 = 2,
+}
+
+impl EnumStr for PDFPageType {
+    fn as_str(&self) -> &str {
+        match self {
+            PDFPageType::A4 => "A4",
+            PDFPageType::Letter => "Letter",
+            PDFPageType::Avery6571 => "Avery 6571 (Letter)",
+        }
+    }
 }
 
 impl From<i64> for PDFPageType {

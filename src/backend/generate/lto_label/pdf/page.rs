@@ -104,15 +104,15 @@ pub static PDF_PAGE_DIMENSIONS: LazyLock<HashMap<PDFPageType, PDFPageConfig>> =
                 },
             ),
             (
-                PDFPageType::Avery6571,
+                PDFPageType::Avery6571, // https://www.avery.com/templates/6571
                 PDFPageConfig {
-                    label_width: 76.2,  // 3 Inch
-                    label_height: 15.4, // ~5/8 Inch
+                    label_width: 77.2,    // 3 Inch + 1mm
+                    label_height: 16.875, // 5/8 Inch + 1mm
                     count_label: 32,
                     count_column: 2,
-                    start_x: 21.356,
-                    start_y: 13.432,
-                    increment_x: 96.952,
+                    start_x: 20.93,
+                    start_y: 12.2,
+                    increment_x: 96.855,
                     increment_y: 15.875,
                     ..PDFPageConfig::base_letter()
                 },

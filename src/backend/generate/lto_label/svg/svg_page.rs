@@ -33,7 +33,9 @@ mod tests {
 
     use crate::{
         backend::generate::lto_label::svg::{
-            generate::{generate_lto_label_svg_single, tests::test_file},
+            generate::{
+                generate_lto_label_svg_pages, generate_lto_label_svg_single, tests::test_file,
+            },
             svg_page::SvgPage,
         },
         shared::models::database::label_preset::model_label_preset::{LabelOptions, PDFPageType},
@@ -65,5 +67,28 @@ mod tests {
         page.add_label(label_2.as_str(), 64_f32, 128_f32);
 
         assert_eq!(test_file("page/test-2-labels.svg"), page.result());
+    }
+
+    #[test]
+    fn svg_full_page_generate() {
+        const DIR: &str = "page/align/";
+
+        let test_data = [LabelOptions {
+            designation: "ZZ".to_string(),
+            page: PDFPageType::Avery6571,
+            quantity: 32, // Max per page as above
+            ..LabelOptions::default()
+        }];
+
+        for options in test_data {
+            let page = generate_lto_label_svg_pages(&options); // Render page
+
+            assert!(page.len() == 1); // Expect only 1 page for this test
+
+            assert_eq!(
+                test_file(format!("{}{:?}_render.svg", DIR, options.page).as_str()),
+                *page.first().unwrap()
+            );
+        }
     }
 }
