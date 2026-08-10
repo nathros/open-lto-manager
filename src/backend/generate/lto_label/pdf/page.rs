@@ -104,7 +104,7 @@ pub static PDF_PAGE_DIMENSIONS: LazyLock<HashMap<PDFPageType, PDFPageConfig>> =
                 },
             ),
             (
-                PDFPageType::Avery6571, // https://www.avery.com/templates/6571
+                PDFPageType::Avery6571_6577, // https://www.avery.com/templates/6571, https://www.avery.com/templates/6577
                 PDFPageConfig {
                     label_width: 77.2,    // 3 Inch + 1mm
                     label_height: 16.875, // 5/8 Inch + 1mm
@@ -115,6 +115,20 @@ pub static PDF_PAGE_DIMENSIONS: LazyLock<HashMap<PDFPageType, PDFPageConfig>> =
                     increment_x: 96.855,
                     increment_y: 15.875,
                     ..PDFPageConfig::base_letter()
+                },
+            ),
+            (
+                PDFPageType::Avery3420, // https://labelsmerge.com/assets/labels/pdf/avery-3420-template-google-docs.pdf
+                PDFPageConfig {
+                    label_width: 71.0,
+                    label_height: 17.9,
+                    count_label: 51,
+                    count_column: 3,
+                    start_x: -0.5,
+                    start_y: 4.5,
+                    increment_x: 70.0,
+                    increment_y: 16.9,
+                    ..PDFPageConfig::base_a4()
                 },
             ),
         ])

@@ -72,12 +72,12 @@ impl Default for LabelOptions {
             radius_outer: 0.0,
             radius_inner: 0.0,
             barcode_scale: 1.0,
-            text_box_width: 10.0_f64,
-            text_box_height: 5.8_f64,
+            text_box_width: 10.0,
+            text_box_height: 5.8,
             background_colour: Some("#FFF".to_string()),
             page: PDFPageType::A4,
-            page_x_offset: 0_f32,
-            page_y_offset: 0_f32,
+            page_x_offset: 0.0,
+            page_y_offset: 0.0,
             include_view_box: false,
         }
     }
@@ -90,6 +90,20 @@ impl LabelOptions {
             include_view_box: true,
             ..Default::default()
         }
+    }
+    pub fn switch_page(&mut self, page: PDFPageType) {
+        let default = LabelOptions::default();
+        if page == PDFPageType::A4 || page == PDFPageType::Letter {
+            self.stroke_outer = default.stroke_outer;
+            self.text_box_width = default.text_box_width;
+        } else if page == PDFPageType::Avery3420 {
+            self.stroke_outer = 0.0;
+            self.text_box_width = 9.95;
+        } else {
+            self.stroke_outer = 0.0;
+            self.text_box_width = default.text_box_width;
+        }
+        self.page = page;
     }
 }
 
@@ -211,7 +225,8 @@ impl From<i64> for LabelTextOrientation {
 pub enum PDFPageType {
     A4 = 0,
     Letter = 1,
-    Avery6571 = 2,
+    Avery6571_6577 = 2,
+    Avery3420 = 3,
 }
 
 impl EnumStr for PDFPageType {
@@ -219,7 +234,8 @@ impl EnumStr for PDFPageType {
         match self {
             PDFPageType::A4 => "A4",
             PDFPageType::Letter => "Letter",
-            PDFPageType::Avery6571 => "Avery 6571 (Letter)",
+            PDFPageType::Avery6571_6577 => "Avery 6571/6577 (Letter)",
+            PDFPageType::Avery3420 => "Avery 3420 (A4)",
         }
     }
 }
@@ -229,7 +245,8 @@ impl From<i64> for PDFPageType {
         match value {
             _ if value == PDFPageType::A4 as i64 => PDFPageType::A4,
             _ if value == PDFPageType::Letter as i64 => PDFPageType::Letter,
-            _ if value == PDFPageType::Avery6571 as i64 => PDFPageType::Avery6571,
+            _ if value == PDFPageType::Avery6571_6577 as i64 => PDFPageType::Avery6571_6577,
+            _ if value == PDFPageType::Avery3420 as i64 => PDFPageType::Avery3420,
             _ => PDFPageType::A4,
         }
     }

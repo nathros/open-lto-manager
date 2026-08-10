@@ -284,9 +284,8 @@ pub fn GenLabel() -> Element {
                 options: vec_into_enum::<PDFPageType>(),
                 selected: options().page as i64,
                 onchange: move |evt: Event<FormData>| {
-                    options.write().page = PDFPageType::from(
-                        evt.value().parse::<i64>().unwrap_or_default(),
-                    );
+                    let p_type = PDFPageType::from(evt.value().parse::<i64>().unwrap_or_default());
+                    options.write().switch_page(p_type);
                 },
             }
             Input {

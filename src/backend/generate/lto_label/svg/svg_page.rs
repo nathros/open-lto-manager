@@ -73,18 +73,30 @@ mod tests {
     fn svg_full_page_generate() {
         const DIR: &str = "page/align/";
 
-        let test_data = [LabelOptions {
-            designation: "ZZ".to_string(),
-            page: PDFPageType::Avery6571,
-            quantity: 32, // Max per page as above
-            ..LabelOptions::default()
-        }];
+        let test_data = [
+            LabelOptions {
+                designation: "ZZ".to_string(),
+                page: PDFPageType::Avery6571_6577,
+                quantity: 32, // Max per page as above
+                ..LabelOptions::default()
+            },
+            LabelOptions {
+                designation: "ZZ".to_string(),
+                page: PDFPageType::Avery3420,
+                quantity: 51, // Max per page as above
+                ..LabelOptions::default()
+            },
+        ];
 
-        for options in test_data {
+        for mut options in test_data {
+            options.switch_page(options.page);
+            options.stroke_outer = LabelOptions::default().stroke_outer;
+
             let page = generate_lto_label_svg_pages(&options); // Render page
 
             assert!(page.len() == 1); // Expect only 1 page for this test
 
+            //std::fs::write("test.svg", page.first().unwrap());
             assert_eq!(
                 test_file(format!("{}{:?}_render.svg", DIR, options.page).as_str()),
                 *page.first().unwrap()

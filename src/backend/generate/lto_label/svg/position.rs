@@ -94,8 +94,11 @@ mod tests {
 
                     // Y position correct
                     assert_eq!(
-                        position.y,
-                        page_config.start_y + (page_config.increment_y * row_index as f32)
+                        format!("{:.3}", position.y),
+                        format!(
+                            "{:.3}",
+                            page_config.start_y + (page_config.increment_y * row_index as f32)
+                        )
                     );
 
                     history_current.push((position.x, position.y)); // Add current X and Y positions
