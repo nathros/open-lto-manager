@@ -60,6 +60,9 @@
 	.icon.pdf {
 		mask-image: url(/assets/icons-tabler.svg#pdf);
 	}
+	.icon.restore {
+		mask-image: url(/assets/icons-tabler.svg#restore);
+	}
 }
 @container style(--icon-theme: remix) {
 	.icon.error {
@@ -121,6 +124,9 @@
 	}
 	.icon.pdf {
 		mask-image: url(/assets/icons-remix.svg#pdf);
+	}
+	.icon.restore {
+		mask-image: url(/assets/icons-remix.svg#restore);
 	}
 }
 @container style(--icon-theme: iconoir) {
@@ -184,6 +190,9 @@
 	.icon.pdf {
 		mask-image: url(/assets/icons-iconoir.svg#pdf);
 	}
+	.icon.restore {
+		mask-image: url(/assets/icons-iconoir.svg#restore);
+	}
 }
 @container style(--icon-theme: sargam) {
 	.icon.error {
@@ -245,5 +254,8 @@
 	}
 	.icon.pdf {
 		mask-image: url(/assets/icons-sargam.svg#pdf);
+	}
+	.icon.restore {
+		mask-image: url(/assets/icons-sargam.svg#restore);
 	}
 }

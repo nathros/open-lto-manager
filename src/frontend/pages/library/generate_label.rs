@@ -38,6 +38,18 @@ const START_INDEX_MAX: usize = 999999;
 
 #[component]
 pub fn GenLabel() -> Element {
+    rsx! {
+        SuspenseBoundary {
+            fallback: |_sc: SuspenseContext| {
+                rsx! {}
+            },
+            GenLabelInner {}
+        }
+    }
+}
+
+#[component]
+fn GenLabelInner() -> Element {
     let mut options = use_signal(|| LabelOptions::default());
     let previews = use_loader(move || generate_label_preview(options()))?;
 
@@ -98,18 +110,6 @@ pub fn GenLabel() -> Element {
     });
 
     let label_tab = rsx! {
-        Button {
-            text: "Download".to_string(),
-            icon: Icons::PDF,
-            primary: true,
-            onclick: move |_| async move {
-                js_download_file( // Should match endpoint _ep
-                    GENERATE_PDF_LABEL_DOWNLOAD,
-                    "pdf",
-                    json!({ "options" : options() }),
-                );
-            },
-        }
         form { class: Css::FORM_GRID,
             Select {
                 label: "Tape Type".to_string(),
@@ -343,6 +343,31 @@ pub fn GenLabel() -> Element {
                     contents: vec![label_tab, style_tab, page_tab],
                 }
                 hr {}
+                Button {
+                    text: "Download".to_string(),
+                    icon: Icons::PDF,
+                    primary: true,
+                    onclick: move |_| async move {
+                        js_download_file( // Should match endpoint _ep
+                            GENERATE_PDF_LABEL_DOWNLOAD,
+                            "pdf",
+                            json!({ "options" : options() }),
+                        );
+                    },
+                }
+                Button {
+                    text: "Reset".to_string(),
+                    icon: Icons::RESTORE,
+                    primary: true,
+                    onclick: move |_| {
+                        let page = options().page;
+                        let des = options().designation;
+                        let mut replace = LabelOptions::default();
+                        replace.switch_page(page);
+                        replace.designation = des;
+                        options.set(replace);
+                    },
+                }
             }
             Card {
                 div { class: Css::PDF_PREVIEW,

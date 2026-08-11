@@ -141,6 +141,12 @@
 			"remix": "icons/Document/file-pdf-2-fill.svg",
 			"iconoir": "icons/regular/page-flip.svg",
 			"sargam": "../iconoir/icons/regular/page-flip.svg"
+		},
+		"restore": {
+			"tabler": "icons/outline/restore.svg",
+			"remix": "icons/System/reset-left-line.svg",
+			"iconoir": "icons/regular/restart.svg",
+			"sargam": "../iconoir/icons/regular/refresh.svg"
 		}
 	}
 }

@@ -11,6 +11,18 @@ use crate::{
 
 #[component]
 pub fn Tape(id: i64) -> Element {
+    rsx! {
+        SuspenseBoundary {
+            fallback: |_sc: SuspenseContext| {
+                rsx! {}
+            },
+            TapeInner { id }
+        }
+    }
+}
+
+#[component]
+fn TapeInner(id: i64) -> Element {
     let manufactures: Loader<Vec<RecordManufacturer>> = use_loader(list_manufacturer)?;
     let types: Loader<Vec<RecordTapeType>> = use_loader(list_type_type)?;
 
