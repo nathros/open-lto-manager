@@ -42,6 +42,8 @@ pub struct LabelOptions {
     pub page: PDFPageType,
     pub page_x_offset: f32,
     pub page_y_offset: f32,
+    pub page_inner_x_gap: f32,
+    pub page_inner_y_gap: f32,
     pub include_view_box: bool,
 }
 
@@ -78,6 +80,8 @@ impl Default for LabelOptions {
             page: PDFPageType::A4,
             page_x_offset: 0.0,
             page_y_offset: 0.0,
+            page_inner_x_gap: 0.0,
+            page_inner_y_gap: 0.0,
             include_view_box: false,
         }
     }
@@ -225,8 +229,10 @@ impl From<i64> for LabelTextOrientation {
 pub enum PDFPageType {
     A4 = 0,
     Letter = 1,
-    Avery6571_6577 = 2,
-    Avery3420 = 3,
+    Avery3420 = 2,
+    Avery5366 = 3,
+    Avery6571_6577 = 4,
+    AveryL7162 = 5,
 }
 
 impl EnumStr for PDFPageType {
@@ -234,8 +240,10 @@ impl EnumStr for PDFPageType {
         match self {
             PDFPageType::A4 => "A4",
             PDFPageType::Letter => "Letter",
-            PDFPageType::Avery6571_6577 => "Avery 6571/6577 (Letter)",
             PDFPageType::Avery3420 => "Avery 3420 (A4)",
+            PDFPageType::Avery5366 => "Avery 5366 (Letter)",
+            PDFPageType::Avery6571_6577 => "Avery 6571/6577 (Letter)",
+            PDFPageType::AveryL7162 => "Avery L7162 (A4)",
         }
     }
 }
@@ -245,8 +253,10 @@ impl From<i64> for PDFPageType {
         match value {
             _ if value == PDFPageType::A4 as i64 => PDFPageType::A4,
             _ if value == PDFPageType::Letter as i64 => PDFPageType::Letter,
-            _ if value == PDFPageType::Avery6571_6577 as i64 => PDFPageType::Avery6571_6577,
             _ if value == PDFPageType::Avery3420 as i64 => PDFPageType::Avery3420,
+            _ if value == PDFPageType::Avery5366 as i64 => PDFPageType::Avery5366,
+            _ if value == PDFPageType::Avery6571_6577 as i64 => PDFPageType::Avery6571_6577,
+            _ if value == PDFPageType::AveryL7162 as i64 => PDFPageType::AveryL7162,
             _ => PDFPageType::A4,
         }
     }
@@ -271,7 +281,7 @@ mod tests {
             let json_str = r#"{}"#;
             let val_ref = ValueRef::Text(json_str.as_bytes());
             let options_result: FromSqlResult<LabelOptions> = FromSql::column_result(val_ref);
-            println!("{:?}", options_result);
+            //println!("{:?}", options_result);
             assert!(options_result.is_ok(), "Failed to deserialise");
             assert_eq!(
                 default,
@@ -328,6 +338,8 @@ mod tests {
                 "page":"A4",
                 "page_x_offset":0.0,
                 "page_y_offset":0.0,
+                "page_inner_x_gap":0.0,
+                "page_inner_y_gap":0.0,
                 "include_view_box":false
             }")
         )"##

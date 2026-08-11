@@ -193,10 +193,12 @@ pub fn generate_lto_label_svg_pages(options: &LabelOptions) -> Vec<String> {
     let mut position = PDFLabelPosition::new(page_config);
 
     for (index, label) in svg_labels_str.iter().enumerate() {
+        let gap_multiplier_x = (index % page_config.count_column) as f32;
+        let gap_multiplier_y = (index / page_config.count_column) as f32;
         svg_page.add_label(
             label.as_str(),
-            position.x + options.page_x_offset,
-            position.y + options.page_y_offset,
+            position.x + options.page_x_offset + (gap_multiplier_x * options.page_inner_x_gap),
+            position.y + options.page_y_offset + (gap_multiplier_y * options.page_inner_y_gap),
         );
 
         // Advance position and create new page if returns true, do not create new page for last label

@@ -76,14 +76,26 @@ mod tests {
         let test_data = [
             LabelOptions {
                 designation: "ZZ".to_string(),
+                page: PDFPageType::Avery3420,
+                quantity: 51, // Max per page as above
+                ..LabelOptions::default()
+            },
+            LabelOptions {
+                designation: "ZZ".to_string(),
+                page: PDFPageType::Avery5366,
+                quantity: 30, // Max per page as above
+                ..LabelOptions::default()
+            },
+            LabelOptions {
+                designation: "ZZ".to_string(),
                 page: PDFPageType::Avery6571_6577,
                 quantity: 32, // Max per page as above
                 ..LabelOptions::default()
             },
             LabelOptions {
                 designation: "ZZ".to_string(),
-                page: PDFPageType::Avery3420,
-                quantity: 51, // Max per page as above
+                page: PDFPageType::AveryL7162,
+                quantity: 32, // Max per page as above
                 ..LabelOptions::default()
             },
         ];

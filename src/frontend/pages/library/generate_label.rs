@@ -310,6 +310,28 @@ pub fn GenLabel() -> Element {
                 step: 0.1,
                 value: format!("{:.1}", options().page_y_offset),
             }
+            Input {
+                type_: InputType::Number,
+                label: "Inner X Gap (mm)".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().page_inner_x_gap = evt.value().parse().unwrap_or_default();
+                },
+                min: -4,
+                max: 4,
+                step: 0.05,
+                value: format!("{:.2}", options().page_inner_x_gap),
+            }
+            Input {
+                type_: InputType::Number,
+                label: "Inner Y Gap (mm)".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().page_inner_y_gap = evt.value().parse().unwrap_or_default();
+                },
+                min: -4,
+                max: 4,
+                step: 0.05,
+                value: format!("{:.2}", options().page_inner_y_gap),
+            }
         }
     };
 
