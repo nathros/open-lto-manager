@@ -2,6 +2,7 @@ use std::{collections::HashMap, sync::LazyLock};
 
 use crate::shared::models::database::label_preset::model_label_preset::PDFPageType;
 
+#[derive(Clone)]
 pub struct PDFPageConfig {
     pub width_pt: f32,  // As unit
     pub height_pt: f32, // As unit
@@ -74,7 +75,7 @@ impl PDFPageConfig {
 
 pub static PDF_PAGE_DIMENSIONS: LazyLock<HashMap<PDFPageType, PDFPageConfig>> =
     LazyLock::new(|| {
-        HashMap::from([
+        let mut result = HashMap::from([
             (
                 PDFPageType::A4,
                 PDFPageConfig {
@@ -106,7 +107,7 @@ pub static PDF_PAGE_DIMENSIONS: LazyLock<HashMap<PDFPageType, PDFPageConfig>> =
             (
                 PDFPageType::Avery3420, // https://labelsmerge.com/assets/labels/pdf/avery-3420-template-google-docs.pdf
                 PDFPageConfig {
-                    label_width: 71.0,
+                    label_width: 71.0, // Label: 70 x 16.9mm
                     label_height: 17.9,
                     count_label: 51,
                     count_column: 3,
@@ -120,7 +121,7 @@ pub static PDF_PAGE_DIMENSIONS: LazyLock<HashMap<PDFPageType, PDFPageConfig>> =
             (
                 PDFPageType::Avery5366, // https://www.avery.com/templates/5366
                 PDFPageConfig {
-                    label_width: 80.5,
+                    label_width: 80.5, // Label: 3-7/16" x 2/3"
                     label_height: 17.93,
                     count_label: 30,
                     count_column: 2,
@@ -134,8 +135,8 @@ pub static PDF_PAGE_DIMENSIONS: LazyLock<HashMap<PDFPageType, PDFPageConfig>> =
             (
                 PDFPageType::Avery6571_6577, // https://www.avery.com/templates/6571, https://www.avery.com/templates/6577
                 PDFPageConfig {
-                    label_width: 77.2,    // 3 Inch + 1mm
-                    label_height: 16.875, // 5/8 Inch + 1mm
+                    label_width: 77.2, // Label: 3" x 5/8"
+                    label_height: 16.875,
                     count_label: 32,
                     count_column: 2,
                     start_x: 20.93,
@@ -148,7 +149,7 @@ pub static PDF_PAGE_DIMENSIONS: LazyLock<HashMap<PDFPageType, PDFPageConfig>> =
             (
                 PDFPageType::AveryL7162, // https://www.avery.co.uk/template-l7162
                 PDFPageConfig {
-                    label_width: 80.5,
+                    label_width: 80.5, // Label: 99.06mm x 33.87mm
                     label_height: 18.0,
                     count_label: 32,
                     count_column: 2,
@@ -159,7 +160,14 @@ pub static PDF_PAGE_DIMENSIONS: LazyLock<HashMap<PDFPageType, PDFPageConfig>> =
                     ..PDFPageConfig::base_a4()
                 },
             ),
-        ])
+        ]);
+        if let Some(find) = result.get(&PDFPageType::Avery3420)
+            && let copy = find.clone()
+        {
+            result.insert(PDFPageType::Herma4459, copy.clone());
+            result.insert(PDFPageType::Herma4611, copy);
+        }
+        result
     });
 
 #[cfg(test)]

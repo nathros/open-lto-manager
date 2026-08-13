@@ -97,15 +97,19 @@ impl LabelOptions {
     }
     pub fn switch_page(&mut self, page: PDFPageType) {
         let default = LabelOptions::default();
-        if page == PDFPageType::A4 || page == PDFPageType::Letter {
-            self.stroke_outer = default.stroke_outer;
-            self.text_box_width = default.text_box_width;
-        } else if page == PDFPageType::Avery3420 {
-            self.stroke_outer = 0.0;
-            self.text_box_width = 9.95;
-        } else {
-            self.stroke_outer = 0.0;
-            self.text_box_width = default.text_box_width;
+        match page {
+            PDFPageType::A4 | PDFPageType::Letter => {
+                self.stroke_outer = default.stroke_outer;
+                self.text_box_width = default.text_box_width;
+            }
+            PDFPageType::Avery3420 | PDFPageType::Herma4459 | PDFPageType::Herma4611 => {
+                self.stroke_outer = 0.0;
+                self.text_box_width = 9.95;
+            }
+            _ => {
+                self.stroke_outer = 0.0;
+                self.text_box_width = default.text_box_width;
+            }
         }
         self.page = page;
     }
@@ -228,22 +232,26 @@ impl From<i64> for LabelTextOrientation {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Hash, Sequence, Clone, Copy)]
 pub enum PDFPageType {
     A4 = 0,
-    Letter = 1,
-    Avery3420 = 2,
-    Avery5366 = 3,
-    Avery6571_6577 = 4,
-    AveryL7162 = 5,
+    Avery3420 = 1,
+    AveryL7162 = 2,
+    Herma4459 = 3, // Clone of Avery3420
+    Herma4611 = 4, // Clone of Avery3420
+    Letter = 5,
+    Avery5366 = 6,
+    Avery6571_6577 = 7, // Clones: OL173, avery 94214
 }
 
 impl EnumStr for PDFPageType {
     fn as_str(&self) -> &str {
         match self {
-            PDFPageType::A4 => "A4",
-            PDFPageType::Letter => "Letter",
-            PDFPageType::Avery3420 => "Avery 3420 (A4)",
-            PDFPageType::Avery5366 => "Avery 5366 (Letter)",
-            PDFPageType::Avery6571_6577 => "Avery 6571/6577 (Letter)",
-            PDFPageType::AveryL7162 => "Avery L7162 (A4)",
+            PDFPageType::A4 => "(A4) Blank",
+            PDFPageType::Avery3420 => "(A4) Avery 3420",
+            PDFPageType::AveryL7162 => "(A4) Avery L7162",
+            PDFPageType::Herma4459 => "(A4) Herma 4459",
+            PDFPageType::Herma4611 => "(A4) Herma 4611",
+            PDFPageType::Letter => "(Letter) Blank",
+            PDFPageType::Avery5366 => "(Letter) Avery 5366",
+            PDFPageType::Avery6571_6577 => "(Letter) Avery 6571/6577",
         }
     }
 }
@@ -252,11 +260,13 @@ impl From<i64> for PDFPageType {
     fn from(value: i64) -> Self {
         match value {
             _ if value == PDFPageType::A4 as i64 => PDFPageType::A4,
-            _ if value == PDFPageType::Letter as i64 => PDFPageType::Letter,
             _ if value == PDFPageType::Avery3420 as i64 => PDFPageType::Avery3420,
+            _ if value == PDFPageType::AveryL7162 as i64 => PDFPageType::AveryL7162,
+            _ if value == PDFPageType::Herma4459 as i64 => PDFPageType::Herma4459,
+            _ if value == PDFPageType::Herma4611 as i64 => PDFPageType::Herma4611,
+            _ if value == PDFPageType::Letter as i64 => PDFPageType::Letter,
             _ if value == PDFPageType::Avery5366 as i64 => PDFPageType::Avery5366,
             _ if value == PDFPageType::Avery6571_6577 as i64 => PDFPageType::Avery6571_6577,
-            _ if value == PDFPageType::AveryL7162 as i64 => PDFPageType::AveryL7162,
             _ => PDFPageType::A4,
         }
     }

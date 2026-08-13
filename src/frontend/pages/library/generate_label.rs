@@ -290,7 +290,7 @@ fn GenLabelInner() -> Element {
             }
             Input {
                 type_: InputType::Number,
-                label: "X Offset (mm)".to_string(),
+                label: "Left Margin (mm)".to_string(),
                 oninput: move |evt: Event<FormData>| {
                     options.write().page_x_offset = evt.value().parse().unwrap_or_default();
                 },
@@ -301,7 +301,7 @@ fn GenLabelInner() -> Element {
             }
             Input {
                 type_: InputType::Number,
-                label: "Y Offset (mm)".to_string(),
+                label: "Top Margin (mm)".to_string(),
                 oninput: move |evt: Event<FormData>| {
                     options.write().page_y_offset = evt.value().parse().unwrap_or_default();
                 },
@@ -312,7 +312,7 @@ fn GenLabelInner() -> Element {
             }
             Input {
                 type_: InputType::Number,
-                label: "Inner X Gap (mm)".to_string(),
+                label: "Column Spacing (mm)".to_string(),
                 oninput: move |evt: Event<FormData>| {
                     options.write().page_inner_x_gap = evt.value().parse().unwrap_or_default();
                 },
@@ -323,7 +323,7 @@ fn GenLabelInner() -> Element {
             }
             Input {
                 type_: InputType::Number,
-                label: "Inner Y Gap (mm)".to_string(),
+                label: "Row Spacing (mm)".to_string(),
                 oninput: move |evt: Event<FormData>| {
                     options.write().page_inner_y_gap = evt.value().parse().unwrap_or_default();
                 },

@@ -29,14 +29,19 @@ impl SvgPage {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::{HashMap, HashSet};
+
     use enum_iterator::all;
 
     use crate::{
-        backend::generate::lto_label::svg::{
-            generate::{
-                generate_lto_label_svg_pages, generate_lto_label_svg_single, tests::test_file,
+        backend::generate::lto_label::{
+            pdf::page::PDF_PAGE_DIMENSIONS,
+            svg::{
+                generate::{
+                    generate_lto_label_svg_pages, generate_lto_label_svg_single, tests::test_file,
+                },
+                svg_page::SvgPage,
             },
-            svg_page::SvgPage,
         },
         shared::models::database::label_preset::model_label_preset::{LabelOptions, PDFPageType},
     };
@@ -72,35 +77,31 @@ mod tests {
     #[test]
     fn svg_full_page_generate() {
         const DIR: &str = "page/align/";
+        let types: HashSet<PDFPageType> =
+            HashSet::from_iter(all::<PDFPageType>().collect::<Vec<_>>());
 
-        let test_data = [
-            LabelOptions {
-                designation: "ZZ".to_string(),
-                page: PDFPageType::Avery3420,
-                quantity: 51, // Max per page as above
-                ..LabelOptions::default()
-            },
-            LabelOptions {
-                designation: "ZZ".to_string(),
-                page: PDFPageType::Avery5366,
-                quantity: 30, // Max per page as above
-                ..LabelOptions::default()
-            },
-            LabelOptions {
-                designation: "ZZ".to_string(),
-                page: PDFPageType::Avery6571_6577,
-                quantity: 32, // Max per page as above
-                ..LabelOptions::default()
-            },
-            LabelOptions {
-                designation: "ZZ".to_string(),
-                page: PDFPageType::AveryL7162,
-                quantity: 32, // Max per page as above
-                ..LabelOptions::default()
-            },
-        ];
+        let mut test_data = HashMap::new();
+        types.iter().for_each(|t| {
+            let page_config = PDF_PAGE_DIMENSIONS.get(t).unwrap().clone();
+            test_data.insert(
+                *t,
+                LabelOptions {
+                    designation: "ZZ".to_string(),
+                    page: *t,
+                    quantity: page_config.count_label,
+                    ..LabelOptions::default()
+                },
+            );
+        });
 
-        for mut options in test_data {
+        let inspector = test_file(format!("{}inspect.preview.html", DIR).as_str());
+
+        for page_type in types {
+            //println!("Do {:?}", page_type);
+            let find_option = test_data.get(&page_type);
+            assert!(find_option.is_some(), "Missing option");
+
+            let mut options = find_option.unwrap().clone();
             options.switch_page(options.page);
             options.stroke_outer = LabelOptions::default().stroke_outer;
 
@@ -108,10 +109,28 @@ mod tests {
 
             assert!(page.len() == 1); // Expect only 1 page for this test
 
-            //std::fs::write("test.svg", page.first().unwrap());
-            assert_eq!(
-                test_file(format!("{}{:?}_render.svg", DIR, options.page).as_str()),
-                *page.first().unwrap()
+            //std::fs::write(format!("{:?}.svg", options.page), page.first().unwrap());
+
+            let render_file_name = format!("{:?}_render.svg", options.page);
+            let template_file_name = format!("{:?}_template.svg", options.page);
+
+            assert!(
+                inspector
+                    .find(&format!("src=\"{}\"", render_file_name))
+                    .is_some(),
+                "Did not find reference to render in inspect.preview.html"
+            );
+            assert!(
+                inspector
+                    .find(&format!("src=\"{}\"", template_file_name))
+                    .is_some(),
+                "Did not find reference to template in inspect.preview.html"
+            );
+
+            assert!(
+                test_file(format!("{}{}", DIR, render_file_name).as_str())
+                    == *page.first().unwrap(),
+                "Render mismatch"
             );
         }
     }
