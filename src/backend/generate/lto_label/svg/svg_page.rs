@@ -52,6 +52,7 @@ mod tests {
             let page_config = page_type.get_config();
             let svg_page_str = SvgPage::new(page_config).result();
             //std::fs::write(format!("{:?}.svg", page_type), svg_page.result());
+            //println!("page/empty-{:?}.svg", page_type);
             assert_eq!(
                 test_file(format!("page/empty-{:?}.svg", page_type).as_str()),
                 svg_page_str

@@ -238,7 +238,11 @@ pub enum PDFPageType {
     Herma4611 = 4, // Clone of Avery3420
     Letter = 5,
     Avery5366 = 6,
-    Avery6571_6577 = 7, // Clones: OL173, avery 94214
+    Avery6571_6577 = 7,
+    Avery94214 = 8, // Clone of Avery6571_6577
+    NetCllc749303_12301 = 9,
+    OnlineLabelsOL173 = 10, // Clone of Avery6571_6577
+    WorldLabelWl173 = 11,   // Clone of Avery6571_6577
 }
 
 impl EnumStr for PDFPageType {
@@ -252,6 +256,10 @@ impl EnumStr for PDFPageType {
             PDFPageType::Letter => "(Letter) Blank",
             PDFPageType::Avery5366 => "(Letter) Avery 5366",
             PDFPageType::Avery6571_6577 => "(Letter) Avery 6571/6577",
+            PDFPageType::Avery94214 => "(Letter) Avery 94214",
+            PDFPageType::NetCllc749303_12301 => "(Letter) NetC LLC #749303-12301",
+            PDFPageType::OnlineLabelsOL173 => "(Letter) OnlineLabels OL173",
+            PDFPageType::WorldLabelWl173 => "(Letter) WorldLabel WL-173",
         }
     }
 }
@@ -267,6 +275,12 @@ impl From<i64> for PDFPageType {
             _ if value == PDFPageType::Letter as i64 => PDFPageType::Letter,
             _ if value == PDFPageType::Avery5366 as i64 => PDFPageType::Avery5366,
             _ if value == PDFPageType::Avery6571_6577 as i64 => PDFPageType::Avery6571_6577,
+            _ if value == PDFPageType::Avery94214 as i64 => PDFPageType::Avery94214,
+            _ if value == PDFPageType::NetCllc749303_12301 as i64 => {
+                PDFPageType::NetCllc749303_12301
+            }
+            _ if value == PDFPageType::OnlineLabelsOL173 as i64 => PDFPageType::OnlineLabelsOL173,
+            _ if value == PDFPageType::WorldLabelWl173 as i64 => PDFPageType::WorldLabelWl173,
             _ => PDFPageType::A4,
         }
     }
@@ -274,12 +288,17 @@ impl From<i64> for PDFPageType {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashSet;
+
+    use enum_iterator::{all, cardinality};
     use rusqlite::{
         ToSql,
         types::{FromSql, FromSqlResult, ValueRef},
     };
 
-    use crate::shared::models::database::label_preset::model_label_preset::LabelTextDirection;
+    use crate::shared::models::database::label_preset::model_label_preset::{
+        LabelTextDirection, PDFPageType,
+    };
 
     use super::{LabelOptions, LabelTheme};
 
@@ -357,5 +376,20 @@ mod tests {
         .replace([' ', '\n'], "");
 
         assert_eq!(expected, sql_output_string);
+    }
+
+    #[test]
+    fn pdf_page_type_from_i64() {
+        let all_types: HashSet<PDFPageType> =
+            HashSet::from_iter(all::<PDFPageType>().collect::<Vec<_>>());
+
+        let check_types: HashSet<PDFPageType> = HashSet::from_iter(
+            (0..cardinality::<PDFPageType>()).map(|i| PDFPageType::from(i as i64)),
+        );
+
+        assert_eq!(
+            all_types, check_types,
+            "impl From<i64> for PDFPageType {{}} does not cover all cases"
+        );
     }
 }

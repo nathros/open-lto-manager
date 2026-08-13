@@ -160,12 +160,33 @@ pub static PDF_PAGE_DIMENSIONS: LazyLock<HashMap<PDFPageType, PDFPageConfig>> =
                     ..PDFPageConfig::base_a4()
                 },
             ),
+            (
+                PDFPageType::NetCllc749303_12301, // https://label.tec-it.com/en/Group/LTO/LTO%20NetC
+                PDFPageConfig {
+                    label_width: 79.74, // Label: 3.1" x 0.66"
+                    label_height: 17.764,
+                    count_label: 20,
+                    count_column: 2,
+                    start_x: 19.250,
+                    start_y: 20.9,
+                    increment_x: 98.425,
+                    increment_y: 24.549,
+                    ..PDFPageConfig::base_letter()
+                },
+            ),
         ]);
         if let Some(find) = result.get(&PDFPageType::Avery3420)
             && let copy = find.clone()
         {
             result.insert(PDFPageType::Herma4459, copy.clone());
             result.insert(PDFPageType::Herma4611, copy);
+        }
+        if let Some(find) = result.get(&PDFPageType::Avery6571_6577)
+            && let copy = find.clone()
+        {
+            result.insert(PDFPageType::WorldLabelWl173, copy.clone());
+            result.insert(PDFPageType::Avery94214, copy.clone());
+            result.insert(PDFPageType::OnlineLabelsOL173, copy);
         }
         result
     });

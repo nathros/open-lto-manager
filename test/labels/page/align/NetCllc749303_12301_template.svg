@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- https://label.tec-it.com/en/Group/LTO/LTO%20NetC -->
+<svg width="816" height="1056" version="1.1" viewBox="0 0 816 1056" xmlns="http://www.w3.org/2000/svg">
+ <g fill="none" stroke="#000">
+  <g stroke-width=".22194">
+   <rect x="74.757" y="80.993" width="297.38" height="63.765"/>
+   <rect x="74.757" y="173.59" width="297.38" height="63.765"/>
+   <rect x="74.757" y="916.04" width="297.38" height="63.765"/>
+  </g>
+  <rect x="446.76" y="80.993" width="297.38" height="63.765" stroke-width=".22194"/>
+  <rect x="446.76" y="916.04" width="297.38" height="63.765" stroke-width=".22194"/>
+ </g>
+</svg>
