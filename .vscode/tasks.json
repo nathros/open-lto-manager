@@ -141,5 +141,16 @@
       "group": "test",
       "problemMatcher": [],
     },
+    {
+      "label": "Lint::rust",
+      "type": "shell",
+      "command": "cargo fmt",
+      "icon": {
+        "id": "clippy",
+        "color": "terminal.ansiBlue"
+      },
+      "group": "test",
+      "problemMatcher": [],
+    },
   ]
 }

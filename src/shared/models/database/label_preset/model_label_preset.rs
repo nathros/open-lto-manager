@@ -24,6 +24,7 @@ pub struct RecordLabelPreset {
 pub struct LabelOptions {
     pub start_index: usize,
     pub quantity: usize,
+    pub check_digit: LabelCheckDigit,
     pub designation: String,
     pub prefix: String,
     pub postfix: String,
@@ -62,6 +63,7 @@ impl Default for LabelOptions {
         Self {
             start_index: 1,
             quantity: 16,
+            check_digit: LabelCheckDigit::None,
             designation: "".to_string(),
             prefix: "P".to_string(),
             postfix: "S".to_string(),
@@ -95,6 +97,7 @@ impl LabelOptions {
             ..Default::default()
         }
     }
+
     pub fn switch_page(&mut self, page: PDFPageType) {
         let default = LabelOptions::default();
         match page {
@@ -137,6 +140,35 @@ impl FromSql for LabelOptions {
                 Err(e) => FromSqlResult::Err(FromSqlError::OutOfRange(e.column() as i64)),
             },
             Err(e) => FromSqlResult::Err(e),
+        }
+    }
+}
+
+#[repr(i64)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy, Sequence)]
+pub enum LabelCheckDigit {
+    None = 0,
+    Modulo10 = 1,
+    Modulo43 = 2,
+}
+
+impl From<i64> for LabelCheckDigit {
+    fn from(value: i64) -> Self {
+        match value {
+            _ if value == LabelCheckDigit::None as i64 => LabelCheckDigit::None,
+            _ if value == LabelCheckDigit::Modulo10 as i64 => LabelCheckDigit::Modulo10,
+            _ if value == LabelCheckDigit::Modulo43 as i64 => LabelCheckDigit::Modulo43,
+            _ => LabelCheckDigit::None,
+        }
+    }
+}
+
+impl EnumStr for LabelCheckDigit {
+    fn as_str(&self) -> &str {
+        match self {
+            LabelCheckDigit::None => "None",
+            LabelCheckDigit::Modulo10 => "Modulo 10",
+            LabelCheckDigit::Modulo43 => "Modulo 43",
         }
     }
 }
@@ -327,7 +359,7 @@ mod tests {
             let json_str = r#"{"text_direction":"Reversed"}"#;
             let val_ref = ValueRef::Text(json_str.as_bytes());
             let options_result: FromSqlResult<LabelOptions> = FromSql::column_result(val_ref);
-            println!("{:?}", options_result);
+            //println!("{:?}", options_result);
             assert!(options_result.is_ok(), "Failed to deserialise");
             assert_eq!(check, options_result.unwrap(), "Expected to be the same");
         }
@@ -349,6 +381,7 @@ mod tests {
             Text("{
                 "start_index":1,
                 "quantity":16,
+                "check_digit":"None",
                 "designation":"",
                 "prefix":"P",
                 "postfix":"S",

@@ -3,12 +3,14 @@ use std::collections::BTreeSet;
 use tracing::error;
 
 use crate::{
-    backend::generate::lto_label::svg::{position::PDFLabelPosition, svg_page::SvgPage},
+    backend::generate::lto_label::svg::{
+        code_39::Code39Segment, position::PDFLabelPosition, svg_page::SvgPage,
+    },
     shared::{
         r#const::Const,
         error::ErrorStr,
         models::database::label_preset::model_label_preset::{
-            LabelOptions, LabelTextDirection, LabelTextOrientation,
+            LabelCheckDigit, LabelOptions, LabelTextDirection, LabelTextOrientation,
         },
     },
 };
@@ -22,15 +24,27 @@ pub fn generate_lto_label_svg_single(
     mut barcode: String,
     options: LabelOptions, // TODO as reference
 ) -> Result<String, ErrorStr> {
-    barcode = format!(
-        "*{}{}*",
+    let label = format!(
+        "{}{}",
         barcode,
-        (0..(8 - barcode.len())).map(|_| " ").collect::<String>() // Pad empty with space
+        (0..(Const::CODE_39_LTO_MAIN_LEN - barcode.len()))
+            .map(|_| " ")
+            .collect::<String>() // Pad empty with space
     );
 
-    if barcode.len() != Const::CODE_39_BARCODE_LEN {
+    if label.len() != Const::CODE_39_LTO_MAIN_LEN {
         return Err("Barcode not correct length".to_string());
     }
+
+    barcode = format!(
+        "*{}{}*",
+        label,
+        match options.check_digit {
+            LabelCheckDigit::None => "".to_string(),
+            LabelCheckDigit::Modulo10 => Code39Segment::create_check_digit_mod_10(label.as_str()),
+            LabelCheckDigit::Modulo43 => Code39Segment::create_check_digit_mod_43(label.as_str()),
+        }
+    );
 
     let page_config = options.page.get_config();
     let mut svg = SvgLabel::new(&options, page_config);
@@ -44,10 +58,15 @@ pub fn generate_lto_label_svg_single(
         unique_characters.insert(char);
     }
 
-    let segment_height_str = format!(
-        "{:.1}",
-        (page_config.label_height as f64 - 6.8) / options.barcode_scale
-    );
+    let scale = if options.check_digit == LabelCheckDigit::None {
+        options.barcode_scale
+    } else {
+        // Check digit has added extra character, scale barcode to add extra segment
+        options.barcode_scale
+            * (Const::CODE_39_BARCODE_LEN as f64 / (Const::CODE_39_BARCODE_LEN + 1) as f64)
+    };
+
+    let segment_height_str = format!("{:.1}", (page_config.label_height as f64 - 6.8) / scale);
     svg.append_group(
         1,
         "defs",
@@ -85,8 +104,8 @@ pub fn generate_lto_label_svg_single(
         );
     }
 
-    let shift_x = 6.588 * options.barcode_scale;
-    let total_barcode_width = shift_x * Const::CODE_39_BARCODE_LEN as f64; // Extra space needed per segment
+    let shift_x = 6.588 * scale;
+    let total_barcode_width = shift_x * barcode.len() as f64; // Extra space needed per segment
 
     let mut translate_x = page_config.label_width as f64 - 2_f64; // Total usable space
     translate_x -= total_barcode_width; // Calculate free space
@@ -98,7 +117,7 @@ pub fn generate_lto_label_svg_single(
             1,
             format!(
                 "<use href=\"#{}\" transform=\"translate({:.3} 5.8) scale({})\"/>",
-                char as i32, translate_x, options.barcode_scale
+                char as i32, translate_x, scale
             )
             .as_str(),
         );
@@ -117,25 +136,25 @@ pub fn generate_lto_label_svg_single(
     };
     let text_y = format!("{}", (options.text_box_height / 2_f64) + y_offset);
 
-    // Add barcode text box, skip first and last '*'
+    // Add label text box
     let barcode_text_actions: [&str; 7] = match options.text_direction {
         LabelTextDirection::Normal => [
-            &barcode[1..2],
-            &barcode[2..3],
-            &barcode[3..4],
-            &barcode[4..5],
-            &barcode[5..6],
-            &barcode[6..7],
-            &barcode[7..9], // Designation at end
+            &label[0..1],
+            &label[1..2],
+            &label[2..3],
+            &label[3..4],
+            &label[4..5],
+            &label[5..6],
+            &label[6..8], // Designation at end
         ],
         LabelTextDirection::Reversed => [
-            &barcode[7..9], // Designation at start
-            &barcode[6..7],
-            &barcode[5..6],
-            &barcode[4..5],
-            &barcode[3..4],
-            &barcode[2..3],
-            &barcode[1..2],
+            &label[6..8], // Designation at start
+            &label[5..6],
+            &label[4..5],
+            &label[3..4],
+            &label[2..3],
+            &label[1..2],
+            &label[0..1],
         ],
     };
     for str in barcode_text_actions {
@@ -255,7 +274,9 @@ fn barcode_text(
 pub mod tests {
     use crate::{
         backend::generate::lto_label::svg::generate::generate_lto_label_svg_single,
-        shared::models::database::label_preset::model_label_preset::{LabelOptions, LabelTheme},
+        shared::models::database::label_preset::model_label_preset::{
+            LabelCheckDigit, LabelOptions, LabelTheme,
+        },
     };
 
     pub fn test_file(test: &str) -> String {
@@ -264,16 +285,17 @@ pub mod tests {
 
     #[test]
     fn single_svg_generate() {
+        const DIR: &str = "single/";
         let test_data = [
             (
-                "single/default_preview.svg",
+                "default_preview.svg",
                 "ABCDEFXX",
                 LabelOptions {
                     ..LabelOptions::default_preview()
                 },
             ),
             (
-                "single/default_preview-no_viewbox.svg",
+                "default_preview-no_viewbox.svg",
                 "ABCDEFXX",
                 LabelOptions {
                     include_view_box: false,
@@ -281,24 +303,50 @@ pub mod tests {
                 },
             ),
             (
-                "single/default_preview-theme_greyscale.svg",
+                "default_preview-theme_greyscale.svg",
                 "ABCDEFXX",
                 LabelOptions {
                     theme: LabelTheme::Greyscale,
                     ..LabelOptions::default_preview()
                 },
             ),
+            (
+                "default_preview-check_digit_mod10.svg",
+                "ABCDEFXX",
+                LabelOptions {
+                    check_digit: LabelCheckDigit::Modulo10,
+                    ..LabelOptions::default_preview()
+                },
+            ),
+            (
+                "default_preview-check_digit_mod43.svg",
+                "ABCDEFXX",
+                LabelOptions {
+                    check_digit: LabelCheckDigit::Modulo43,
+                    ..LabelOptions::default_preview()
+                },
+            ),
         ];
+
+        let inspector = test_file(format!("{}inspect.preview.html", DIR).as_str());
 
         test_data
             .iter()
-            .for_each(|(test_file_path, barcode, options)| {
+            .for_each(|(test_file_name, barcode, options)| {
                 let svg_str =
                     generate_lto_label_svg_single(barcode.to_string(), options.clone()).unwrap();
 
                 //std::fs::write(test_file_path.replace("/", ".").as_str(), &svg_str);
 
-                assert_eq!(test_file(test_file_path), svg_str);
+                assert_eq!(
+                    test_file(format!("{}{}", DIR, test_file_name).as_str()),
+                    svg_str
+                );
+
+                assert!(
+                    inspector.find(&format!("\"{}\"", test_file_name)).is_some(),
+                    "Did not find reference to test file in single/inspect.preview.html"
+                );
             });
     }
 }

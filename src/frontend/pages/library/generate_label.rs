@@ -23,8 +23,8 @@ use crate::{
         r#const::Const,
         models::{
             database::label_preset::model_label_preset::{
-                LabelFont, LabelOptions, LabelTextDirection, LabelTextOrientation, LabelTheme,
-                PDFPageType,
+                LabelCheckDigit, LabelFont, LabelOptions, LabelTextDirection, LabelTextOrientation,
+                LabelTheme, PDFPageType,
             },
             select_option::{vec_into, vec_into_enum, vec_into_enum_default},
         },
@@ -162,6 +162,16 @@ fn GenLabelInner() -> Element {
                 max: QUANTITY_MAX,
                 value: options().quantity,
                 validation: quantity_error,
+            }
+            Select {
+                label: "Check Digit".to_string(),
+                options: vec_into_enum::<LabelCheckDigit>(),
+                selected: options().check_digit as i64,
+                onchange: move |evt: Event<FormData>| {
+                    options.write().check_digit = LabelCheckDigit::from(
+                        evt.value().parse::<i64>().unwrap_or_default(),
+                    );
+                },
             }
         }
     };

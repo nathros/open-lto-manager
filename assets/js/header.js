@@ -164,22 +164,22 @@ var systemCanvas = function () {
 		ctx.fillText(
 			t1,
 			Math.floor((window.innerWidth - t1w) / 2),
-			yPos - cellSize * 2
+			yPos - cellSize * 2,
 		);
 		ctx.fillText(
 			t1,
 			Math.floor((window.innerWidth - t1w) / 2),
-			yPos - cellSize * 2
+			yPos - cellSize * 2,
 		);
 		ctx.fillText(
 			t2,
 			Math.floor((window.innerWidth - t2w) / 2),
-			yPos - cellSize + 5
+			yPos - cellSize + 5,
 		);
 		ctx.fillText(
 			t2,
 			Math.floor((window.innerWidth - t2w) / 2),
-			yPos - cellSize + 5
+			yPos - cellSize + 5,
 		);
 
 		ctx.font = cellSize + "px Lucida Sans Unicode";
@@ -188,12 +188,12 @@ var systemCanvas = function () {
 		ctx.fillText(
 			t3,
 			Math.floor((window.innerWidth - t3w) / 2),
-			yPos + cellSize * 2
+			yPos + cellSize * 2,
 		);
 		ctx.fillText(
 			t3,
 			Math.floor((window.innerWidth - t3w) / 2),
-			yPos + cellSize * 2
+			yPos + cellSize * 2,
 		);
 
 		let t4 =
@@ -204,7 +204,7 @@ var systemCanvas = function () {
 		let y = Math.floor(
 			(window.innerHeight - cellsYNum * cellSize) / 2 +
 				cellSize * cellsYNum -
-				cellSize / 2
+				cellSize / 2,
 		);
 		ctx.fillText(t4, Math.floor((window.innerWidth - t4w) / 2), y);
 		ctx.fillText(t4, Math.floor((window.innerWidth - t4w) / 2), y);
@@ -227,12 +227,12 @@ var systemCanvas = function () {
 		ctx.fillText(
 			t2,
 			Math.floor((window.innerWidth - t2w) / 2),
-			yPos - cellSize + 5
+			yPos - cellSize + 5,
 		);
 		ctx.fillText(
 			t2,
 			Math.floor((window.innerWidth - t2w) / 2),
-			yPos - cellSize + 5
+			yPos - cellSize + 5,
 		);
 		ctx.beginPath();
 
@@ -242,12 +242,12 @@ var systemCanvas = function () {
 		ctx.fillText(
 			t3,
 			Math.floor((window.innerWidth - t3w) / 2),
-			yPos + cellSize * 2
+			yPos + cellSize * 2,
 		);
 		ctx.fillText(
 			t3,
 			Math.floor((window.innerWidth - t3w) / 2),
-			yPos + cellSize * 2
+			yPos + cellSize * 2,
 		);
 
 		let t4 = atob("U2NvcmU6IA==") + score;
@@ -255,7 +255,7 @@ var systemCanvas = function () {
 		let y = Math.floor(
 			(window.innerHeight - cellsYNum * cellSize) / 2 +
 				cellSize * cellsYNum -
-				cellSize / 2
+				cellSize / 2,
 		);
 		ctx.fillText(t4, Math.floor((window.innerWidth - t4w) / 2), y);
 		ctx.fillText(t4, Math.floor((window.innerWidth - t4w) / 2), y);
@@ -408,7 +408,7 @@ var systemCanvas = function () {
 
 		let xStart = Math.floor((window.innerWidth - cellsXNum * cellSize) / 2);
 		let yStart = Math.floor(
-			(window.innerHeight - cellsYNum * cellSize) / 2
+			(window.innerHeight - cellsYNum * cellSize) / 2,
 		);
 
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -427,13 +427,13 @@ var systemCanvas = function () {
 			xStart,
 			yStart,
 			cellsXNum * cellSize,
-			cellsYNum * cellSize
+			cellsYNum * cellSize,
 		);
 		ctx.clearRect(
 			xStart,
 			yStart,
 			cellsXNum * cellSize,
-			cellsYNum * cellSize
+			cellsYNum * cellSize,
 		);
 		ctx.restore();
 		ctx.save();
@@ -442,7 +442,7 @@ var systemCanvas = function () {
 			xStart,
 			yStart,
 			cellsXNum * cellSize,
-			cellsYNum * cellSize
+			cellsYNum * cellSize,
 		);
 		ctx.restore();
 
@@ -467,7 +467,7 @@ var systemCanvas = function () {
 		ctx.fillText(
 			"close",
 			window.innerWidth - crossSize,
-			crossSize + Math.floor(crossSize / 2.5)
+			crossSize + Math.floor(crossSize / 2.5),
 		);
 		ctx.restore();
 
@@ -487,7 +487,7 @@ var systemCanvas = function () {
 					x + 1,
 					y + 1,
 					cellSize - 1,
-					Math.floor(cellSize / 4)
+					Math.floor(cellSize / 4),
 				);
 			}
 
@@ -527,7 +527,7 @@ var systemCanvas = function () {
 			ctx.moveTo(xStart + 0.5 + cellSize * i, yStart);
 			ctx.lineTo(
 				xStart + 0.5 + cellSize * i,
-				window.innerHeight - yStart
+				window.innerHeight - yStart,
 			);
 			ctx.stroke();
 		}
@@ -538,37 +538,37 @@ var systemCanvas = function () {
 		ctx.fillText(
 			"frameTimeStart: " + frameTimeStart,
 			xStart,
-			yStart + cellSize * 2
+			yStart + cellSize * 2,
 		);
 		ctx.fillText(
 			"frameTimeMin  : " + frameTimeMin,
 			xStart,
-			yStart + cellSize * 3
+			yStart + cellSize * 3,
 		);
 		ctx.fillText(
 			"sysDirection  : " + sysDirection,
 			xStart,
-			yStart + cellSize * 4
+			yStart + cellSize * 4,
 		);
 		ctx.fillText(
 			"HeadX         : " + sys[0].x,
 			xStart,
-			yStart + cellSize * 5
+			yStart + cellSize * 5,
 		);
 		ctx.fillText(
 			"HeadY         : " + sys[0].y,
 			xStart,
-			yStart + cellSize * 6
+			yStart + cellSize * 6,
 		);
 		ctx.fillText(
 			"SquareX       : " + square.x,
 			xStart,
-			yStart + cellSize * 7
+			yStart + cellSize * 7,
 		);
 		ctx.fillText(
 			"SquareY       : " + square.y,
 			xStart,
-			yStart + cellSize * 8
+			yStart + cellSize * 8,
 		);
 		ctx.restore();
 	}

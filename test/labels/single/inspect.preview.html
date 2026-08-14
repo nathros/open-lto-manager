@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>inspect preview</title>
+		<style>td { padding: 4px;} img { outline: 1px solid; } h3 { margin: 0; }</style>
+		<style>#group { display: flex; flex-wrap: wrap; gap: 0.5rem; padding-bottom: 2rem; }</style>
+	</head>
+<body>
+
+<table id="table">
+<tr>
+	<td>
+		<h3>Preview</h3>
+		<img id="preview" src="default_preview.svg">
+		<div id="group"></div>
+	</td>
+</tr>
+<!--
+<tr>
+	<td>
+		<h3>Test</h3>
+		<img src="../../../../Herma4611.svg">
+	</td>
+</tr>
+-->
+</table>
+
+<script>
+	const images = [
+		"default_preview.svg",
+		"default_preview-theme_greyscale.svg",
+		"default_preview-no_viewbox.svg",
+		"default_preview-check_digit_mod10.svg",
+		"default_preview-check_digit_mod43.svg"
+	];
+	const group = document.getElementById("group");
+	const table = document.getElementById("table");
+	images.forEach(i => {
+		let btn = document.createElement("button");
+		btn.innerText = i;
+		btn.onclick = () => {
+			const preview = document.getElementById("preview");
+			preview.src = i;
+		};
+		group.appendChild(btn);
+
+		let tr = document.createElement("tr");
+		let td = document.createElement("td");
+		let h3 = document.createElement("h3");
+		h3.innerText = i.slice(0, -4);
+		let img = document.createElement("img");
+		img.src = i;
+		td.appendChild(h3);
+		td.appendChild(img);
+		tr.appendChild(td);
+		table.appendChild(tr);
+	});
+</script>
+
+</body>
+</html>

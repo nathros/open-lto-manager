@@ -39,9 +39,9 @@ else
 	check_ver "Dioxus toolchain" $DIOXUS $MIN_DIOXUS_VER $VER
 fi
 
-echo "Found $(printf '%5s' "$(find . -name '*.rs' -exec cat {} + | wc -l)") lines of Rust"
-echo "Found $(printf '%5s' "$(find . -name '*.css' -exec cat {} + | wc -l)") lines of CSS"
-echo "Found $(printf '%5s' "$(find . -name '*.js' -exec cat {} + | wc -l)") lines of JavaScript"
+echo "Found $(printf '%5s' "$(find src/ -name '*.rs' -exec cat {} + | wc -l)") lines of Rust"
+echo "Found $(printf '%5s' "$(find assets/ -name '*.css' ! -name 'bundle.css' -exec cat {} + | wc -l)") lines of CSS"
+echo "Found $(printf '%5s' "$(find assets/ -name '*.js' ! -name 'bundle.js' -exec cat {} + | wc -l)") lines of JavaScript"
 
 if $FAILURE; then
 	echo "Faults found"

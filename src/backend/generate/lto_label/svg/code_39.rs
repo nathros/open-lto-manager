@@ -1233,17 +1233,66 @@ impl Code39Segment {
         }
         result_array
     }
+
+    fn accumulate_checksum(str: &str) -> u32 {
+        let mut sum = 0;
+        for c in str.chars() {
+            match c {
+                '0'..='9' => sum += c as u32 - '0' as u32,
+                'A'..='Z' => sum += c as u32 - 'A' as u32 + 10,
+                '-' => sum += 36,
+                '.' => sum += 37,
+                ' ' => sum += 38,
+                '$' => sum += 39,
+                '/' => sum += 40,
+                '+' => sum += 41,
+                '%' => sum += 42,
+                _ => {}
+            }
+        }
+        sum
+    }
+
+    pub fn create_check_digit_mod_10(str: &str) -> String {
+        let mut sum = Self::accumulate_checksum(str);
+
+        sum %= 10;
+        sum.to_string()
+    }
+
+    pub fn create_check_digit_mod_43(str: &str) -> String {
+        let mut sum = Self::accumulate_checksum(str);
+
+        sum %= 43;
+
+        match sum {
+            0..=9 => sum.to_string(),
+            10..=35 => char::from_u32('A' as u32 + sum - 10)
+                .unwrap_or('?')
+                .to_string(),
+            36 => '-'.to_string(),
+            37 => '.'.to_string(),
+            38 => ' '.to_string(),
+            39 => '$'.to_string(),
+            40 => '/'.to_string(),
+            41 => '+'.to_string(),
+            42 => '%'.to_string(),
+            _ => '?'.to_string(),
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
 
-    use crate::shared::r#const::Const;
+    use crate::{
+        backend::generate::lto_label::svg::code_39::Code39Segment, shared::r#const::Const,
+    };
 
     use super::CODE_39_BARCODE_SEGMENTS;
 
     #[test]
-    fn check() {
+    fn check_segments() {
         for char in Const::BARCODE_VALID_CHARS.chars() {
             assert!(
                 CODE_39_BARCODE_SEGMENTS.get(&char).is_some(),
@@ -1272,5 +1321,58 @@ mod tests {
             44,
             "Code 39 barcode supports 44 characters" // Check do not have any extras
         );
+    }
+
+    #[test]
+    fn create_check_digits_mod_10() {
+        let test_data = [
+            ("ABC123", "9"),
+            ("ABC124", "0"),
+            ("ABC125", "1"),
+            ("ABC126", "2"),
+            ("ABC127", "3"),
+            ("ABC128", "4"),
+            ("ABC129", "5"),
+            ("ABC139", "6"),
+            ("ABD139", "7"),
+            ("ABE139", "8"),
+            ("BBE139", "9"),
+            ("P0001SL5", "0"),
+        ];
+        for (barcode, check) in test_data {
+            assert_eq!(
+                Code39Segment::create_check_digit_mod_10(barcode),
+                check.to_string()
+            );
+        }
+    }
+
+    #[test]
+    fn create_check_digits_mod_43() {
+        let test_data = [
+            ("DEF456", "E"),
+            ("P0001SL5", "."),
+            ("P0002SL5", " "),
+            ("P0003SL5", "$"),
+            ("P0004SL5", "/"),
+            ("P0005SL5", "+"),
+            ("P0006SL5", "%"),
+            ("P0007SL5", "0"),
+            ("P0008SL5", "1"),
+            ("P0088SL5", "9"),
+            ("P0089SL5", "A"),
+            ("P0099SL5", "B"),
+            ("P0999SL5", "K"),
+            ("P9999SL5", "T"),
+            ("P9999YL5", "Z"),
+            ("P9999YL6", "-"),
+            ("P9999YL7", "."),
+        ];
+        for (barcode, check) in test_data {
+            assert_eq!(
+                Code39Segment::create_check_digit_mod_43(barcode),
+                check.to_string()
+            );
+        }
     }
 }
