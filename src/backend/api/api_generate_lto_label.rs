@@ -22,7 +22,7 @@ pub async fn generate_single_svg_label(mut barcode: String, designation: String)
     let options = LabelOptions::default_preview();
 
     // TODO avoid base64 encode, look into blob
-    match generate_lto_label_svg_single(barcode, options) {
+    match generate_lto_label_svg_single(barcode, &options) {
         Ok(o) => Ok(format!(
             "data:image/svg+xml;base64,{}",
             BASE64_STANDARD.encode(o)

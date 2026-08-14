@@ -7,7 +7,7 @@ pub struct SvgLabel {
     buffer: String,
 }
 
-type GroupFn = Box<dyn FnMut(i32, &mut SvgLabel)>;
+type GroupFn = Box<dyn FnMut(i32, &mut SvgLabel, &LabelOptions)>;
 
 impl SvgLabel {
     pub fn new(options: &LabelOptions, page_config: &PDFPageConfig) -> Self {
@@ -32,9 +32,15 @@ impl SvgLabel {
         self.buffer.to_owned()
     }
 
-    pub fn append_group(&mut self, tab_index: i32, group: &str, mut fun: GroupFn) {
+    pub fn append_group(
+        &mut self,
+        tab_index: i32,
+        group: &str,
+        options: &LabelOptions,
+        mut function: GroupFn,
+    ) {
         self.append_line(tab_index, format!("<{}>", group).as_str());
-        fun(tab_index + 1, self);
+        function(tab_index + 1, self, options);
         self.append_line(tab_index, format!("</{}>", group).as_str());
     }
 

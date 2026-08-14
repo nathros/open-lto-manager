@@ -22,7 +22,7 @@ const BACKGROUND_ID: &str = "b";
 
 pub fn generate_lto_label_svg_single(
     mut barcode: String,
-    options: LabelOptions, // TODO as reference
+    options: &LabelOptions,
 ) -> Result<String, ErrorStr> {
     let label = format!(
         "{}{}",
@@ -47,7 +47,7 @@ pub fn generate_lto_label_svg_single(
     );
 
     let page_config = options.page.get_config();
-    let mut svg = SvgLabel::new(&options, page_config);
+    let mut svg = SvgLabel::new(options, page_config);
     //svg.append_line(0, format!("<!--{}-->", barcode).as_str());
 
     let mut unique_characters: BTreeSet<char> = BTreeSet::new(); // Maintain insertion order
@@ -70,7 +70,8 @@ pub fn generate_lto_label_svg_single(
     svg.append_group(
         1,
         "defs",
-        Box::new(move |tab_index: i32, svg: &mut SvgLabel| {
+        options,
+        Box::new(move |tab_index: i32, svg: &mut SvgLabel, options: &LabelOptions| {
             for index in unique_characters.iter() {
                 if let Some(segment_gen) = CODE_39_BARCODE_SEGMENTS.get(index) {
                     svg.append_line(
@@ -160,7 +161,7 @@ pub fn generate_lto_label_svg_single(
     for str in barcode_text_actions {
         barcode_text(
             &mut svg,
-            &options,
+            options,
             translate_x,
             str,
             text_rotation.as_str(),
@@ -190,7 +191,7 @@ fn generate_lto_label_svg_multiple(options: &LabelOptions) -> Vec<String> {
 
     let mut svg: Vec<String> = vec![];
     for barcode in barcodes {
-        match generate_lto_label_svg_single(barcode, options.clone()) {
+        match generate_lto_label_svg_single(barcode, options) {
             Ok(s) => {
                 svg.push(s);
             }
@@ -333,8 +334,7 @@ pub mod tests {
         test_data
             .iter()
             .for_each(|(test_file_name, barcode, options)| {
-                let svg_str =
-                    generate_lto_label_svg_single(barcode.to_string(), options.clone()).unwrap();
+                let svg_str = generate_lto_label_svg_single(barcode.to_string(), options).unwrap();
 
                 //std::fs::write(test_file_path.replace("/", ".").as_str(), &svg_str);
 

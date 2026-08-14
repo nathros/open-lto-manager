@@ -63,9 +63,11 @@ mod tests {
     #[test]
     fn svg_page_generate() {
         let label_1 =
-            generate_lto_label_svg_single("TEST00..".to_string(), LabelOptions::default()).unwrap();
+            generate_lto_label_svg_single("TEST00..".to_string(), &LabelOptions::default())
+                .unwrap();
         let label_2 =
-            generate_lto_label_svg_single("SECOND++".to_string(), LabelOptions::default()).unwrap();
+            generate_lto_label_svg_single("SECOND++".to_string(), &LabelOptions::default())
+                .unwrap();
         let page_config = PDFPageType::A4.get_config();
 
         let mut page = SvgPage::new(page_config);

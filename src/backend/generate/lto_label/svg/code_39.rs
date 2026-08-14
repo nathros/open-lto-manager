@@ -1235,29 +1235,24 @@ impl Code39Segment {
     }
 
     fn accumulate_checksum(str: &str) -> u32 {
-        let mut sum = 0;
-        for c in str.chars() {
-            match c {
-                '0'..='9' => sum += c as u32 - '0' as u32,
-                'A'..='Z' => sum += c as u32 - 'A' as u32 + 10,
-                '-' => sum += 36,
-                '.' => sum += 37,
-                ' ' => sum += 38,
-                '$' => sum += 39,
-                '/' => sum += 40,
-                '+' => sum += 41,
-                '%' => sum += 42,
-                _ => {}
-            }
-        }
-        sum
+        str.chars()
+            .map(|c| match c {
+                '0'..='9' => c as u32 - '0' as u32,
+                'A'..='Z' => c as u32 - 'A' as u32 + 10,
+                '-' => 36,
+                '.' => 37,
+                ' ' => 38,
+                '$' => 39,
+                '/' => 40,
+                '+' => 41,
+                '%' => 42,
+                _ => 0,
+            })
+            .sum()
     }
 
     pub fn create_check_digit_mod_10(str: &str) -> String {
-        let mut sum = Self::accumulate_checksum(str);
-
-        sum %= 10;
-        sum.to_string()
+        (Self::accumulate_checksum(str) % 10).to_string()
     }
 
     pub fn create_check_digit_mod_43(str: &str) -> String {
