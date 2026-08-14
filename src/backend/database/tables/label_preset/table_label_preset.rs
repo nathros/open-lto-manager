@@ -194,7 +194,7 @@ mod tests {
 
         // Update
         preset.name = "new_name".to_string();
-        preset.options.stroke_inner = 99_f64;
+        preset.options.text_box_stroke = 99_f64;
         assert!(TableLabelPreset::update(&conn, &preset).is_ok());
         let user_presets = TableLabelPreset::get_user_presets(&conn, user.id).unwrap();
         let user_preset = user_presets.first().unwrap();

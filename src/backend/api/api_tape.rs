@@ -55,7 +55,8 @@ pub async fn api_del_tape(id: i64) -> Result<bool> {
     })
 }
 
-#[get("/api/tape/check/barcode/{barcode}")]
+// FIXME issue with get https://github.com/DioxusLabs/dioxus/issues/5758
+#[post("/api/tape/check/barcode")]
 pub async fn api_tape_barcode_exists(barcode: String) -> Result<bool> {
     use crate::backend::database::{db::DB, tables::tape::table_tape::TableTape};
 
@@ -65,7 +66,7 @@ pub async fn api_tape_barcode_exists(barcode: String) -> Result<bool> {
     })
 }
 
-#[get("/api/tape/check/serial/{serial}")]
+#[post("/api/tape/check/serial")]
 pub async fn api_tape_serial_exists(serial: String) -> Result<bool> {
     use crate::backend::database::{db::DB, tables::tape::table_tape::TableTape};
 

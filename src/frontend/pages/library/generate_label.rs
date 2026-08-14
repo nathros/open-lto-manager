@@ -229,17 +229,7 @@ fn GenLabelInner() -> Element {
                 step: 0.1,
                 value: options().stroke_outer,
             }
-            Input {
-                type_: InputType::Number,
-                label: "Stroke Inner".to_string(),
-                oninput: move |evt: Event<FormData>| {
-                    options.write().stroke_inner = evt.value().parse().unwrap_or_default();
-                },
-                min: 0,
-                max: 2,
-                step: 0.1,
-                value: options().stroke_inner,
-            }
+
             Input {
                 type_: InputType::Number,
                 label: "Radius Outer".to_string(),
@@ -248,19 +238,8 @@ fn GenLabelInner() -> Element {
                 },
                 min: 0,
                 max: 8,
-                step: 0.1,
+                step: 0.5,
                 value: options().radius_outer,
-            }
-            Input {
-                type_: InputType::Number,
-                label: "Radius Inner".to_string(),
-                oninput: move |evt: Event<FormData>| {
-                    options.write().radius_inner = evt.value().parse().unwrap_or_default();
-                },
-                min: 0,
-                max: 8,
-                step: 0.1,
-                value: options().radius_inner,
             }
             Input {
                 type_: InputType::Number,
@@ -273,9 +252,14 @@ fn GenLabelInner() -> Element {
                 step: 0.05,
                 value: options().barcode_scale,
             }
+        }
+    };
+
+    let text_tab = rsx! {
+        form { class: Css::FORM_GRID,
             Input {
                 type_: InputType::Number,
-                label: "Text Box Width".to_string(),
+                label: "Width (mm)".to_string(),
                 oninput: move |evt: Event<FormData>| {
                     options.write().text_box_width = evt.value().parse().unwrap_or_default();
                 },
@@ -283,6 +267,73 @@ fn GenLabelInner() -> Element {
                 max: 11.2,
                 step: 0.1,
                 value: options().text_box_width,
+            }
+            Input {
+                type_: InputType::Number,
+                label: "Height (mm)".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().text_box_height = evt.value().parse().unwrap_or_default();
+                },
+                min: 3,
+                max: 16.5,
+                step: 0.1,
+                value: options().text_box_height,
+            }
+            Input {
+                type_: InputType::Number,
+                label: "Border Radius".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().text_box_radius = evt.value().parse().unwrap_or_default();
+                },
+                min: 0,
+                max: 8,
+                step: 0.5,
+                value: options().text_box_radius,
+            }
+            Input {
+                type_: InputType::Number,
+                label: "Border Stroke".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().text_box_stroke = evt.value().parse().unwrap_or_default();
+                },
+                min: 0,
+                max: 2,
+                step: 0.1,
+                value: options().text_box_stroke,
+            }
+
+            Input {
+                type_: InputType::Number,
+                label: "X offset (mm)".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().text_box_x_offset = evt.value().parse().unwrap_or_default();
+                },
+                min: -10,
+                max: 10,
+                step: 0.1,
+                value: format!("{:.1}", options().text_box_x_offset),
+            }
+            Input {
+                type_: InputType::Number,
+                label: "Y Offset (mm)".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().text_box_y_offset = evt.value().parse().unwrap_or_default();
+                },
+                min: -10,
+                max: 10,
+                step: 0.1,
+                value: format!("{:.1}", options().text_box_y_offset),
+            }
+            Input {
+                type_: InputType::Number,
+                label: "Font Size".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().text_box_font_size = evt.value().parse().unwrap_or_default();
+                },
+                min: 1,
+                max: 10,
+                step: 0.5,
+                value: format!("{:.1}", options().text_box_font_size),
             }
         }
     };
@@ -349,8 +400,13 @@ fn GenLabelInner() -> Element {
         div { class: Css::FLEX_ROW,
             Card {
                 Tab {
-                    labels: vec!["Label".to_string(), "Style".to_string(), "Page".to_string()],
-                    contents: vec![label_tab, style_tab, page_tab],
+                    labels: vec![
+                        "Label".to_string(),
+                        "Style".to_string(),
+                        "Text".to_string(),
+                        "Page".to_string(),
+                    ],
+                    contents: vec![label_tab, style_tab, text_tab, page_tab],
                 }
                 hr {}
                 Button {

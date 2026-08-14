@@ -91,7 +91,7 @@ pub fn generate_lto_label_svg_single(
             svg.append_line(
                 tab_index,
                 format!("<rect id=\"{}\" width=\"{}\" height=\"{}\" x=\"0\" y=\"0\" rx=\"{}\" ry=\"{}\" stroke=\"#000\" stroke-width=\"{}\" />",
-                TEXT_BOX_ID, options.text_box_width, options.text_box_height, options.radius_inner, options.radius_inner, options.stroke_inner).as_str()
+                TEXT_BOX_ID, options.text_box_width, options.text_box_height, options.text_box_radius, options.text_box_radius, options.text_box_stroke).as_str()
             );
             svg.append_line(tab_index, format!("<rect id=\"{}\" width=\"{}\" height=\"{}\" x=\"1\" y=\"1\" rx=\"{}\" ry=\"{}\" />",
             BACKGROUND_ID, page_config.label_width - 2.0, page_config.label_height - 2.0, options.radius_outer, options.radius_outer).as_str());
@@ -158,15 +158,20 @@ pub fn generate_lto_label_svg_single(
             &label[0..1],
         ],
     };
+    let font_size_major = options.text_box_font_size.to_string();
+    let font_size_minor = (options.text_box_font_size * 0.8).to_string();
     for str in barcode_text_actions {
         barcode_text(
             &mut svg,
             options,
-            translate_x,
+            translate_x + options.text_box_x_offset,
+            1.0 + options.text_box_y_offset,
             str,
-            text_rotation.as_str(),
-            text_x.as_str(),
-            text_y.as_str(),
+            &text_rotation,
+            &text_x,
+            &text_y,
+            &font_size_major,
+            &font_size_minor,
         );
         translate_x += options.text_box_width;
     }
@@ -232,21 +237,25 @@ pub fn generate_lto_label_svg_pages(options: &LabelOptions) -> Vec<String> {
     result
 }
 
+#[allow(clippy::too_many_arguments)]
 fn barcode_text(
     svg: &mut SvgLabel,
     options: &LabelOptions,
     translate_x: f64,
+    translate_y: f64,
     text: &str,
     rotate: &str,
     text_x: &str,
     text_y: &str,
+    font_size_major: &str,
+    font_size_minor: &str,
 ) {
     let (font_size, colour) = if text.len() > 1 {
-        ("4", options.get_character_colour('*')) // Is tape designation
+        (font_size_minor, options.get_character_colour('*')) // Is tape designation
     } else {
         (
             // Is single character
-            "5",
+            font_size_major,
             options.get_character_colour(text.chars().next().unwrap_or('*')),
         )
     };
@@ -254,7 +263,11 @@ fn barcode_text(
     // svg.append_line(0, format!("<!--{}-->", text).as_str());
     svg.append_line(
         1,
-        format!("<g transform=\"translate({:.3} 1)\">", translate_x).as_str(),
+        format!(
+            "<g transform=\"translate({:.3} {})\">",
+            translate_x, translate_y
+        )
+        .as_str(),
     );
     svg.append_line(
         2,
@@ -327,6 +340,20 @@ pub mod tests {
                     ..LabelOptions::default_preview()
                 },
             ),
+            (
+                "default_preview-text_box_composite.svg",
+                "ABCDEFXX",
+                LabelOptions {
+                    text_box_width: 7.0,
+                    text_box_height: 7.0,
+                    text_box_stroke: 2.0,
+                    text_box_radius: 4.0,
+                    text_box_x_offset: -6.0,
+                    text_box_y_offset: 4.0,
+                    text_box_font_size: 3.0,
+                    ..LabelOptions::default_preview()
+                },
+            ),
         ];
 
         let inspector = test_file(format!("{}inspect.preview.html", DIR).as_str());
@@ -336,7 +363,7 @@ pub mod tests {
             .for_each(|(test_file_name, barcode, options)| {
                 let svg_str = generate_lto_label_svg_single(barcode.to_string(), options).unwrap();
 
-                //std::fs::write(test_file_path.replace("/", ".").as_str(), &svg_str);
+                //std::fs::write(test_file_name, &svg_str);
 
                 assert_eq!(
                     test_file(format!("{}{}", DIR, test_file_name).as_str()),
