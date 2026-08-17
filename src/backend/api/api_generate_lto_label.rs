@@ -39,27 +39,27 @@ pub async fn generate_label_preview(options: LabelOptions) -> Result<Vec<String>
 
 pub const GENERATE_PDF_LABEL_DOWNLOAD: &str = "/api/generate/label/lto/pdf";
 #[post("/api/generate/label/lto/pdf")]
-pub async fn generate_pdf_label_download(options: LabelOptions) -> Result<PDFResponse> {
+pub async fn generate_pdf_label_download(options: LabelOptions) -> Result<PDFResponseFile> {
     use crate::backend::generate::lto_label::pdf::generate::generate_lto_label_pdf_options;
-    Ok(PDFResponse {
+    Ok(PDFResponseFile {
         data: generate_lto_label_pdf_options(options),
     })
 }
 
-pub struct PDFResponse {
+pub struct PDFResponseFile {
     pub data: Vec<u8>,
 }
 
-impl FromResponse for PDFResponse {
+impl FromResponse for PDFResponseFile {
     async fn from_response(res: ClientResponse) -> std::result::Result<Self, ServerFnError> {
-        Ok(PDFResponse {
+        Ok(PDFResponseFile {
             data: res.bytes().await?.to_vec(),
         })
     }
 }
 
 #[cfg(feature = "server")]
-impl IntoResponse for PDFResponse {
+impl IntoResponse for PDFResponseFile {
     fn into_response(self) -> Response {
         match Response::content_disposition_pdf("labels", self.data) {
             Ok(final_response) => final_response,

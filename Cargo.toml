@@ -10,7 +10,7 @@ rust = "1.95"
 [dependencies]
 # Keep the same versions as https://github.com/DioxusLabs/dioxus/blob/main/Cargo.toml
 axum = { version = "0.8.4", optional = true }
-balloon-hash = { version = "0.4.0", optional = true }
+balloon-hash = { version = "0.5.0-rc.5", features = ["password-hash"], optional = true }
 base64 = { version = "0.22.1", optional = true }
 chrono = { version = "0.4.39", features = ["serde"] }
 dioxus = { version = "0.7.9", features = ["router", "fullstack"] }
@@ -19,12 +19,12 @@ fontdb = { version = "0.23.0", optional = true }
 krilla = { version = "0.8.2", optional = true }
 krilla-svg = { version = "0.8.1", optional = true }
 num-traits = { version = "0.2.19" }
-rand_core = { version = "0.6", features = ["std"], optional = true  }
+password-hash = { version = "0.6.1", features = ["phc", "getrandom"],  optional = true }
 reqwest = { version = "0.12.28", default-features = false, optional = true }
 rusqlite = { version = "0.40.1", features = ["bundled", "chrono"], optional = true }
 serde = { version = "1.0.228", features = [] }
 serde_json = { version = "1.0.140", features = [] }
-sha2 = { version = "0.10.9", optional = true }
+sha2 = { version = "0.11.0", optional = true }
 tokio = { version = "1.48", features = ["process"], optional = true }
 tracing = { version = "0.1.41" }
 tracing-subscriber = { version = "0.3.20", optional = true }
@@ -52,7 +52,7 @@ server = ["dioxus/server",
           "dep:krilla",              # PDF
           "dep:krilla-svg",          # PDF
           "dep:fontdb",              # PDF
-          "dep:rand_core",
+          "dep:password-hash",
           "dep:reqwest",
           "dep:rusqlite",
           "dep:sha2",

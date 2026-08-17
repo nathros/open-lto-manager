@@ -14,6 +14,10 @@ pub async fn api_login(username: String, password: String) -> Result<SetHeader<S
 
     let cookie = DB.with(|db| match TableUser::get_by_username(db, username) {
         Ok(user) => {
+            if !user.algorithm.is_latest() {
+                warn!("User is using old hash function and should be upgraded here");
+                unreachable!("Only have 1 hash function for now see crypto.rs");
+            }
             if let Some(session_id) = Session::new_and_add(user, password) {
                 return Some(session_id.generate_set_cookie());
             }

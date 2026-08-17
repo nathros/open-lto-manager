@@ -1,5 +1,9 @@
 use chrono::{DateTime, Local};
 use dioxus::fullstack::serde::{Deserialize, Serialize};
+use rusqlite::{
+    ToSql,
+    types::{FromSql, FromSqlResult, ToSqlOutput, ValueRef},
+};
 
 use super::model_user::{ColourMode, FileTheme, IconTheme};
 
@@ -10,6 +14,7 @@ pub struct RecordUser {
     pub description: String,
     pub hash: String,
     pub salt: String,
+    pub algorithm: HashAlgorithm,
     pub enabled: bool,
     pub created: DateTime<Local>,
     pub language: i64,
@@ -50,6 +55,7 @@ impl RecordUser {
             description,
             hash: generate_hash(raw_password, &salt),
             salt,
+            algorithm: HashAlgorithm::latest(),
             enabled: config.enabled,
             created: Local::now(),
             language: config.language,
@@ -59,5 +65,42 @@ impl RecordUser {
             file_theme: config.file_theme,
             accent_colour: config.accent_colour,
         }
+    }
+}
+
+#[repr(i64)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+pub enum HashAlgorithm {
+    BallonHashSHA256 = 0,
+}
+
+impl HashAlgorithm {
+    pub fn latest() -> HashAlgorithm {
+        HashAlgorithm::BallonHashSHA256
+    }
+
+    pub fn is_latest(&self) -> bool {
+        *self == Self::latest()
+    }
+}
+
+impl From<i64> for HashAlgorithm {
+    fn from(value: i64) -> Self {
+        match value {
+            _ if value == HashAlgorithm::BallonHashSHA256 as i64 => HashAlgorithm::BallonHashSHA256,
+            _ => HashAlgorithm::BallonHashSHA256, // Fallback
+        }
+    }
+}
+
+impl ToSql for HashAlgorithm {
+    fn to_sql(&self) -> rusqlite::Result<ToSqlOutput<'_>> {
+        Ok((*self as i64).into())
+    }
+}
+
+impl FromSql for HashAlgorithm {
+    fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
+        FromSqlResult::Ok(HashAlgorithm::from(value.as_i64().unwrap_or(0)))
     }
 }
