@@ -3,6 +3,8 @@ use base64::{Engine, prelude::BASE64_STANDARD};
 use sha2::Sha256;
 use tracing::error;
 
+use crate::backend::env::get_pepper;
+
 pub fn generate_salt() -> String {
     match password_hash::try_generate_salt() {
         Ok(salt) => BASE64_STANDARD.encode(salt),
@@ -21,10 +23,16 @@ pub fn generate_salt() -> String {
 pub fn generate_hash(password: &str, salt: &str) -> String {
     match BASE64_STANDARD.decode(salt) {
         Ok(salt_vec) => {
-            match Balloon::<Sha256>::default()
-                .hash_password_with_salt(password.as_bytes(), &salt_vec)
-            {
-                //PasswordHasher::
+            let hash_result = if let Some(pepper) = get_pepper() {
+                Balloon::<Sha256>::default().hash_password_with_salt(
+                    format!("{}{}", password, pepper).as_bytes(),
+                    &salt_vec,
+                )
+            } else {
+                Balloon::<Sha256>::default().hash_password_with_salt(password.as_bytes(), &salt_vec)
+            };
+
+            match hash_result {
                 Ok(ph) => {
                     return ph.hash.expect("PasswordHash should exist").to_string(); // Success
                 }

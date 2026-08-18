@@ -1,7 +1,8 @@
-pub static ENV_PATH_DATA: &str = "PATH_DATA"; // TODO uses current working dir, could use /var/lib or ~/.local/share/app_nam
-pub static ENV_PATH_DB: &str = "PATH_DB";
-pub static ENV_PATH_LOG: &str = "PATH_LOG";
-pub static ENV_CONSOLE_LOG: &str = "CONSOLE_LOG";
+static ENV_PATH_DATA: &str = "PATH_DATA"; // TODO uses current working dir, could use /var/lib or ~/.local/share/app_nam
+static ENV_PATH_DB: &str = "PATH_DB";
+static ENV_PATH_LOG: &str = "PATH_LOG";
+static ENV_CONSOLE_LOG: &str = "CONSOLE_LOG";
+static ENV_DB_PEPPER: &str = "DB_PEPPER";
 
 pub fn get_data_dir() -> String {
     std::env::var(ENV_PATH_DATA)
@@ -39,13 +40,17 @@ pub fn get_console_log_enabled() -> bool {
         .unwrap_or(false)
 }
 
+pub fn get_pepper() -> Option<String> {
+    std::env::var(ENV_DB_PEPPER).ok()
+}
+
 #[cfg(test)]
 mod tests {
     use std::env;
 
     use crate::backend::env::{
-        ENV_CONSOLE_LOG, ENV_PATH_DATA, ENV_PATH_DB, ENV_PATH_LOG, get_console_log_enabled,
-        get_data_dir, get_database_path, get_logging_path,
+        ENV_CONSOLE_LOG, ENV_DB_PEPPER, ENV_PATH_DATA, ENV_PATH_DB, ENV_PATH_LOG,
+        get_console_log_enabled, get_data_dir, get_database_path, get_logging_path, get_pepper,
     };
 
     #[test]
@@ -92,6 +97,12 @@ mod tests {
             env::set_var(ENV_CONSOLE_LOG, "ON");
             assert!(get_console_log_enabled());
             env::remove_var(ENV_CONSOLE_LOG); // Reset
+
+            // Database pepper
+            assert!(get_pepper().is_none());
+            env::set_var(ENV_DB_PEPPER, "1234");
+            assert_eq!(get_pepper().unwrap(), "1234".to_string());
+            env::remove_var(ENV_DB_PEPPER); // Reset
         }
     }
 }

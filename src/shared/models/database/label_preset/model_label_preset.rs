@@ -151,7 +151,7 @@ impl FromSql for LabelOptions {
 }
 
 #[repr(i64)]
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy, Sequence)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Sequence, Eq, Clone, Copy)]
 pub enum LabelCheckDigit {
     None = 0,
     Modulo10 = 1,
@@ -199,7 +199,7 @@ impl From<i64> for LabelTheme {
 }
 
 #[repr(i64)]
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy, Sequence)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy, Eq, Sequence)]
 pub enum LabelFont {
     SansSerif = 0,
     Serif = 1,
@@ -229,7 +229,7 @@ impl Display for LabelFont {
 }
 
 #[repr(i64)]
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy, Sequence)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy, Eq, Sequence)]
 pub enum LabelTextDirection {
     Normal = 0,
     Reversed = 1,
@@ -246,7 +246,7 @@ impl From<i64> for LabelTextDirection {
 }
 
 #[repr(i64)]
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy, Sequence)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy, Eq, Sequence)]
 pub enum LabelTextOrientation {
     Normal = 0,
     Rotate90 = 1,
@@ -326,19 +326,29 @@ impl From<i64> for PDFPageType {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashSet;
-
-    use enum_iterator::{all, cardinality};
     use rusqlite::{
         ToSql,
         types::{FromSql, FromSqlResult, ValueRef},
     };
 
-    use crate::shared::models::database::label_preset::model_label_preset::{
-        LabelTextDirection, PDFPageType,
+    use crate::shared::models::{
+        database::label_preset::model_label_preset::{
+            LabelCheckDigit, LabelFont, LabelTextDirection, LabelTextOrientation, PDFPageType,
+        },
+        test::tests::from_generic_keys_test,
     };
 
     use super::{LabelOptions, LabelTheme};
+
+    #[test]
+    fn from_repr_keys() {
+        from_generic_keys_test::<LabelCheckDigit>(&|s| *s as i64);
+        from_generic_keys_test::<LabelTheme>(&|s| *s as i64);
+        from_generic_keys_test::<LabelFont>(&|s| *s as i64);
+        from_generic_keys_test::<LabelTextDirection>(&|s| *s as i64);
+        from_generic_keys_test::<LabelTextOrientation>(&|s| *s as i64);
+        from_generic_keys_test::<PDFPageType>(&|s| *s as i64);
+    }
 
     #[test]
     fn label_options_sql_deserialise() {
@@ -418,20 +428,5 @@ mod tests {
         .replace([' ', '\n'], "");
 
         assert_eq!(expected, sql_output_string);
-    }
-
-    #[test]
-    fn pdf_page_type_from_i64() {
-        let all_types: HashSet<PDFPageType> =
-            HashSet::from_iter(all::<PDFPageType>().collect::<Vec<_>>());
-
-        let check_types: HashSet<PDFPageType> = HashSet::from_iter(
-            (0..cardinality::<PDFPageType>()).map(|i| PDFPageType::from(i as i64)),
-        );
-
-        assert_eq!(
-            all_types, check_types,
-            "impl From<i64> for PDFPageType {{}} does not cover all cases"
-        );
     }
 }

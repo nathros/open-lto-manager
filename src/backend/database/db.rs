@@ -14,7 +14,7 @@ use crate::{
             label_preset::table_label_preset::TableLabelPreset,
             manufacturer::table_manufacturer::TableManufacturer,
             setting::table_setting::TableSetting,
-            table::{RecordInsert, RecordUpdate, TableCreate, TableUpdate},
+            table::{RecordUpdate, TableCreate, TableUpdate},
             tape::table_tape::TableTape,
             tape_type::table_tape_type::TableTapeType,
             user::table_user::TableUser,
@@ -22,8 +22,8 @@ use crate::{
         env::{get_database_file, get_database_path},
     },
     shared::models::database::setting::{
-        model_setting::{RecordMisc, SettingsKey},
-        types_setting::SettingTableVersion,
+        model_setting::RecordMisc,
+        types_setting::{SettingEmpty, SettingTableVersion},
     },
 };
 
@@ -35,15 +35,9 @@ fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, Str
     match TableSetting::create_table(&conn) {
         Ok(created) => {
             if created {
-                match TableSetting::<RecordMisc<SettingTableVersion>>::insert(
-                    &conn,
-                    &RecordMisc::<SettingTableVersion> {
-                        key: SettingsKey::Version,
-                        data: DB_VERSION_LATEST,
-                    },
-                ) {
+                match TableSetting::<SettingEmpty>::new_table_init(&conn, DB_VERSION_LATEST) {
                     Ok(_) => current_database_version = DB_VERSION_LATEST,
-                    Err(e) => return Err(format!("Failed to set table version {}", e)),
+                    Err(e) => return Err(format!("Failed to init settings table {}", e)),
                 }
             } else {
                 // TODO could use: PRAGMA user_version
@@ -124,10 +118,7 @@ fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, Str
     if current_database_version != DB_VERSION_LATEST {
         match TableSetting::<RecordMisc<SettingTableVersion>>::update(
             &conn,
-            &RecordMisc::<SettingTableVersion> {
-                key: SettingsKey::Version,
-                data: DB_VERSION_LATEST,
-            },
+            &DB_VERSION_LATEST.into(),
         ) {
             Ok(_) => info!(
                 "Upgraded table from {} to {}",

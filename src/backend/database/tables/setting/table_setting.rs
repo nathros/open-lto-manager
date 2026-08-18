@@ -8,7 +8,7 @@ use crate::{
     },
     shared::models::database::setting::{
         model_setting::{RecordMisc, SettingsKey},
-        types_setting::SettingEmpty,
+        types_setting::{SettingEmpty, SettingTableVersion},
     },
 };
 
@@ -94,6 +94,13 @@ impl RecordFill<RecordMisc<String>> for TableSetting<RecordMisc<String>> {
             key: row.get(offset + 1)?,
             data: row.get(offset + 2)?,
         })
+    }
+}
+
+impl TableSetting<SettingEmpty> {
+    pub fn new_table_init(db: &Connection, version: i64) -> Result<bool, rusqlite::Error> {
+        TableSetting::<RecordMisc<SettingTableVersion>>::insert(db, &version.into())?;
+        Ok(true)
     }
 }
 

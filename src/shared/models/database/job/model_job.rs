@@ -1,5 +1,6 @@
 use chrono::{DateTime, Local};
 use dioxus::fullstack::serde::{Deserialize, Serialize};
+use enum_iterator::Sequence;
 #[cfg(feature = "server")]
 use rusqlite::{
     ToSql,
@@ -34,7 +35,7 @@ impl RecordJob {
 }
 
 #[repr(i64)]
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Sequence, Eq, Clone, Copy)]
 pub enum JobType {
     Backup = 0,
     Restore = 1,
@@ -70,7 +71,7 @@ impl FromSql for JobType {
 }
 
 #[repr(i64)]
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Sequence, Eq, Clone, Copy)]
 pub enum JobStatus {
     Unknown = 0,
     Pending = 1,
@@ -113,9 +114,20 @@ impl FromSql for JobStatus {
 
 #[cfg(test)]
 mod tests {
+    use crate::shared::models::{
+        database::job::model_job::{JobStatus, JobType},
+        test::tests::from_generic_keys_test,
+    };
+
     #[test]
     fn job_type_enum() {}
 
     #[test]
     fn job_status_enum() {}
+
+    #[test]
+    fn from_repr_keys() {
+        from_generic_keys_test::<JobType>(&|s| *s as i64);
+        from_generic_keys_test::<JobStatus>(&|s| *s as i64);
+    }
 }

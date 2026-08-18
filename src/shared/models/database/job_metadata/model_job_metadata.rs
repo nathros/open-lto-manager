@@ -1,4 +1,5 @@
 use dioxus::fullstack::serde::{Deserialize, Serialize};
+use enum_iterator::Sequence;
 #[cfg(feature = "server")]
 use rusqlite::{
     ToSql,
@@ -15,7 +16,7 @@ pub struct RecordJobMetadata {
 }
 
 #[repr(i64)]
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Sequence, Eq, Clone, Copy)]
 pub enum JobMetadataKey {
     Undefined = 0,
     FileVirtual = 1,
@@ -49,7 +50,16 @@ impl FromSql for JobMetadataKey {
 
 #[cfg(test)]
 mod tests {
+    use crate::shared::models::{
+        database::job_metadata::model_job_metadata::JobMetadataKey,
+        test::tests::from_generic_keys_test,
+    };
 
     #[test]
     fn job_type_enum() {}
+
+    #[test]
+    fn from_repr_keys() {
+        from_generic_keys_test::<JobMetadataKey>(&|s| *s as i64);
+    }
 }

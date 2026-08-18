@@ -43,6 +43,7 @@ sudo bash <(curl -L https://raw.githubusercontent.com/nathros/open-lto-manager/m
 | CONSOLE_LOG    | OFF                 | Should console log be enabled, ON to enable               |
 | IP             | 127.0.0.1           | Bind address, use 0.0.0.0 for external access             |
 | PORT           | 8080                | Bind port                                                 |
+| DB_PEPPER      | None                | Database pepper used for password hashing if set          |
 
 #### Example:
 ```shell
