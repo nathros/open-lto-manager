@@ -1222,13 +1222,13 @@ pub static CODE_39_BARCODE_SEGMENTS: LazyLock<HashMap<char, Code39Segment>> = La
 });
 
 impl Code39Segment {
-    pub fn create_segment(&self, height: &str) -> [String; 5] {
+    pub fn create_segment(&self) -> [String; 5] {
         let mut result_array: [String; 5] = Default::default();
 
         for (result_element, sp) in result_array.iter_mut().zip(&self.v_lines) {
             *result_element = format!(
-                "<rect width=\"{}\" height=\"{}\" x=\"{}\" />",
-                sp.width, height, sp.x
+                "<rect width=\"{}\" height=\"100%\" x=\"{}\" />",
+                sp.width, sp.x
             )
         }
         result_array

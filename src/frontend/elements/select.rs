@@ -55,7 +55,11 @@ pub fn Select(props: SelectProps) -> Element {
                         option { disabled: true, selected: true, "Select" }
                     }
                     for opt in props.options {
-                        option { value: "{opt.id}", "{opt.label}" }
+                        option {
+                            value: "{opt.id}",
+                            selected: opt.id == props.selected,
+                            "{opt.label}"
+                        }
                     }
                 }
                 div { class: static_concat!(Css::INPUT_ERROR_ICON, Css::ICON, Icons::WARNING) }

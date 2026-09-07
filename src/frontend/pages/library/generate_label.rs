@@ -252,6 +252,17 @@ fn GenLabelInner() -> Element {
                 step: 0.05,
                 value: options().barcode_scale,
             }
+            Input {
+                type_: InputType::Number,
+                label: "Barcode Height".to_string(),
+                oninput: move |evt: Event<FormData>| {
+                    options.write().barcode_height = evt.value().parse().unwrap_or_default();
+                },
+                min: 0.0,
+                max: 15,
+                step: 0.1,
+                value: options().barcode_height,
+            }
         }
     };
 
@@ -414,11 +425,7 @@ fn GenLabelInner() -> Element {
                     icon: Icons::PDF,
                     primary: true,
                     onclick: move |_| async move {
-                        js_download_file( // Should match endpoint _ep
-                            GENERATE_PDF_LABEL_DOWNLOAD,
-                            "pdf",
-                            json!({ "options" : options() }),
-                        );
+                        js_download_file(GENERATE_PDF_LABEL_DOWNLOAD, json!({ "options" : options() }));
                     },
                 }
                 Button {

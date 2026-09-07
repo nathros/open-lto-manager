@@ -27,7 +27,7 @@ function copyToClipboard(str) {
 		}
 	}
 }
-function downloadFile(url, method, contentType, ext, body) {
+function downloadFile(url, method, contentType, body) {
 	fetch(url, {
 		method: method,
 		headers: {

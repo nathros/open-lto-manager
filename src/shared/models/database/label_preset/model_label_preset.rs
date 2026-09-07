@@ -35,6 +35,7 @@ pub struct LabelOptions {
     pub stroke_outer: f64, // Units in millimeter
     pub radius_outer: f64,
     pub barcode_scale: f64,
+    pub barcode_height: f64,
     pub text_box_width: f64,
     pub text_box_height: f64,
     pub text_box_stroke: f64, // Units in millimeter
@@ -77,6 +78,7 @@ impl Default for LabelOptions {
             stroke_outer: 0.035, // 0.01 PostScript point
             radius_outer: 0.0,
             barcode_scale: 1.0,
+            barcode_height: 10.7,
             text_box_width: 10.0,
             text_box_height: 5.8,
             text_box_stroke: 0.035, // 0.01 PostScript point
@@ -408,6 +410,7 @@ mod tests {
                 "stroke_outer":0.035,
                 "radius_outer":0.0,
                 "barcode_scale":1.0,
+                "barcode_height":10.7,
                 "text_box_width":10.0,
                 "text_box_height":5.8,
                 "text_box_stroke":0.035,

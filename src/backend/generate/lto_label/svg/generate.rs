@@ -10,7 +10,7 @@ use crate::{
         r#const::Const,
         error::ErrorStr,
         models::database::label_preset::model_label_preset::{
-            LabelCheckDigit, LabelOptions, LabelTextDirection, LabelTextOrientation,
+            LabelCheckDigit, LabelOptions, LabelTextDirection,
         },
     },
 };
@@ -66,7 +66,7 @@ pub fn generate_lto_label_svg_single(
             * (Const::CODE_39_BARCODE_LEN as f64 / (Const::CODE_39_BARCODE_LEN + 1) as f64)
     };
 
-    let segment_height_str = format!("{:.1}", (page_config.label_height as f64 - 6.8) / scale);
+    let segment_height_str = format!("{:.1}", options.barcode_height);
     svg.append_group(
         1,
         "defs",
@@ -77,12 +77,12 @@ pub fn generate_lto_label_svg_single(
                     svg.append_line(
                         tab_index,
                         format!(
-                            "<svg id=\"{}\" width=\"6.588mm\" height=\"{}mm\">",
+                            "<svg id=\"{}\" width=\"6.588\" height=\"{}\">",
                             *index as u8, segment_height_str
                         )
                         .as_str(),
                     );
-                    for segment in segment_gen.create_segment(segment_height_str.as_str()) {
+                    for segment in segment_gen.create_segment() {
                         svg.append_line(tab_index + 1, segment.as_str());
                     }
                     svg.append_line(tab_index, "</svg>");
@@ -113,29 +113,29 @@ pub fn generate_lto_label_svg_single(
     translate_x = (translate_x / 2_f64) + 1_f64; // Divide by 2 to centre + 1
 
     // Add barcode vertical lines
+    let translate_y = format!(
+        "{:.3}",
+        page_config.label_height as f64 - options.barcode_height - 1.0
+    );
     for char in barcode.chars() {
         svg.append_line(
             1,
             format!(
-                "<use href=\"#{}\" transform=\"translate({:.3} 5.8) scale({})\"/>",
-                char as i32, translate_x, scale
+                "<use href=\"#{}\" transform=\"translate({:.3} {}) scale({})\"/>",
+                char as i32, translate_x, translate_y, scale
             )
             .as_str(),
         );
         translate_x += shift_x;
     }
 
-    translate_x = page_config.label_width as f64 - 2_f64; // Total usable space
-    translate_x -= options.text_box_width * 7_f64; // Calculate free space, for 7 text boxes
-    translate_x = (translate_x / 2_f64) + 1_f64; // Divide by 2 to centre + 1
+    translate_x = page_config.label_width as f64 - 2.0; // Total usable space
+    translate_x -= options.text_box_width * 7.0; // Calculate free space, for 7 text boxes
+    translate_x = (translate_x / 2.0) + 1.0; // Divide by 2 to centre + 1
 
-    let text_rotation = format!("{}", options.text_orientation);
-    let text_x = format!("{}", options.text_box_width / 2_f64);
-    let y_offset = match options.text_orientation {
-        LabelTextOrientation::Normal => 0.5_f64,
-        _ => 0.0_f64,
-    };
-    let text_y = format!("{}", (options.text_box_height / 2_f64) + y_offset);
+    let text_rotation = options.text_orientation.to_string();
+    let text_x = format!("{:.3}", (options.text_box_width / 2.0).to_string());
+    let text_y = format!("{:.3}", (options.text_box_height / 2.0).to_string());
 
     // Add label text box
     let barcode_text_actions: [&str; 7] = match options.text_direction {
@@ -158,8 +158,8 @@ pub fn generate_lto_label_svg_single(
             &label[0..1],
         ],
     };
-    let font_size_major = options.text_box_font_size.to_string();
-    let font_size_minor = (options.text_box_font_size * 0.8).to_string();
+    let font_size_major = format!("{:.3}", options.text_box_font_size.to_string());
+    let font_size_minor = format!("{:.3}", (options.text_box_font_size * 0.8).to_string());
     for str in barcode_text_actions {
         barcode_text(
             &mut svg,
@@ -276,7 +276,7 @@ fn barcode_text(
     svg.append_line(
         2,
         format!(
-            "<text x=\"{}\" y=\"{}\" dominant-baseline=\"middle\" text-anchor=\"middle\" transform=\"rotate({} {} {})\" font-size=\"{}\">{}</text>",
+            "<text x=\"{}\" y=\"{}\" dominant-baseline=\"central\" text-anchor=\"middle\" transform=\"rotate({} {} {})\" font-size=\"{}\">{}</text>",
             text_x, text_y, rotate, text_x, text_y, font_size, text
         )
         .as_str(),

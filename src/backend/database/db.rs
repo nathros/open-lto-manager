@@ -187,7 +187,16 @@ thread_local! {
 pub mod tests {
     use tempdir::TempDir;
 
-    use crate::backend::database::db::{create_database, enable_fk_constraints};
+    use crate::{
+        backend::database::{
+            db::{create_database, enable_fk_constraints},
+            tables::{
+                table::RecordInsert,
+                tape::{self, table_tape::TableTape},
+            },
+        },
+        shared::models::database::tape::model_tape::RecordTape,
+    };
 
     pub fn create_test_database() -> rusqlite::Connection {
         let conn = rusqlite::Connection::open_in_memory().unwrap();
@@ -205,6 +214,18 @@ pub mod tests {
             1, // Enabled
             "Expected foreign keys constraints to be enabled"
         );
+        // Try to insert record with bad foreign key
+        let bad_record = RecordTape {
+            manufacturer_id: 99999, // Not valid fk
+            tape_type_id: 99999,    // Not valid fk
+            ..RecordTape::default()
+        };
+        if !db.table_exists(None, "tape").unwrap() {
+            tape::table_tape::tests::create_table(db); // Create needed tables
+        }
+        assert!(TableTape::insert(db, &bad_record).is_err());
+        let insert_result = TableTape::insert(db, &bad_record);
+        assert!(format!("{}", insert_result.unwrap_err()).contains("FOREIGN KEY"));
     }
 
     #[test]
