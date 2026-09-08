@@ -60,16 +60,16 @@
 		<rect id="b" width="78.5" height="16.5" x="1" y="1" rx="1" ry="1" />
 	</defs>
 	<use href="#b" fill="#FFF"/>
-	<use href="#42" transform="translate(7.310 6.800) scale(1)"/>
-	<use href="#65" transform="translate(13.898 6.800) scale(1)"/>
-	<use href="#66" transform="translate(20.486 6.800) scale(1)"/>
-	<use href="#67" transform="translate(27.074 6.800) scale(1)"/>
-	<use href="#68" transform="translate(33.662 6.800) scale(1)"/>
-	<use href="#69" transform="translate(40.250 6.800) scale(1)"/>
-	<use href="#70" transform="translate(46.838 6.800) scale(1)"/>
-	<use href="#88" transform="translate(53.426 6.800) scale(1)"/>
-	<use href="#88" transform="translate(60.014 6.800) scale(1)"/>
-	<use href="#42" transform="translate(66.602 6.800) scale(1)"/>
+	<use href="#42" transform="translate(7.310 6.800) scale(1, 1)"/>
+	<use href="#65" transform="translate(13.898 6.800) scale(1, 1)"/>
+	<use href="#66" transform="translate(20.486 6.800) scale(1, 1)"/>
+	<use href="#67" transform="translate(27.074 6.800) scale(1, 1)"/>
+	<use href="#68" transform="translate(33.662 6.800) scale(1, 1)"/>
+	<use href="#69" transform="translate(40.250 6.800) scale(1, 1)"/>
+	<use href="#70" transform="translate(46.838 6.800) scale(1, 1)"/>
+	<use href="#88" transform="translate(53.426 6.800) scale(1, 1)"/>
+	<use href="#88" transform="translate(60.014 6.800) scale(1, 1)"/>
+	<use href="#42" transform="translate(66.602 6.800) scale(1, 1)"/>
 	<g transform="translate(5.250 1)">
 		<use href="#t" fill="#707070" />
 		<text x="5" y="2.9" dominant-baseline="central" text-anchor="middle" transform="rotate(0 5 2.9)" font-size="5">A</text>

@@ -117,12 +117,17 @@ pub fn generate_lto_label_svg_single(
         "{:.3}",
         page_config.label_height as f64 - options.barcode_height - 1.0
     );
+    let scale_str = if scale == 1.0 {
+        "1".to_string()
+    } else {
+        format!("{:.3}", scale)
+    };
     for char in barcode.chars() {
         svg.append_line(
             1,
             format!(
-                "<use href=\"#{}\" transform=\"translate({:.3} {}) scale({})\"/>",
-                char as i32, translate_x, translate_y, scale
+                "<use href=\"#{}\" transform=\"translate({:.3} {}) scale({}, 1)\"/>",
+                char as i32, translate_x, translate_y, scale_str
             )
             .as_str(),
         );
