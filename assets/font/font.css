@@ -1,42 +1,72 @@
 @font-face {
-	font-family: 'Lato';
+	font-family: "Lato";
 	font-style: normal;
 	font-weight: 400;
 	font-display: swap;
-	src: url(lato-v25-normal-400.woff2) format('woff2');
+	src:
+		url(lato-v25-normal-400.woff2) format("woff2"),
+		url(lato-v25-normal-400.ttf) format("truetype");
 }
 @font-face {
-	font-family: 'Lato';
+	font-family: "Lato";
 	font-style: italic;
 	font-weight: 400;
 	font-display: swap;
-	src: url(lato-v25-italic-400.woff2) format('woff2');
+	src:
+		url(lato-v25-italic-400.woff2) format("woff2"),
+		url(lato-v25-italic-400.ttf) format("truetype");
 }
 @font-face {
-	font-family: 'Lato';
+	font-family: "Lato";
 	font-style: normal;
 	font-weight: 700;
 	font-display: swap;
-	src: url(lato-v25-normal-700.woff2) format('woff2');
+	src:
+		url(lato-v25-normal-700.woff2) format("woff2"),
+		url(lato-v25-normal-700.ttf) format("truetype");
 }
 @font-face {
-	font-family: 'Lato';
+	font-family: "Lato";
 	font-style: italic;
 	font-weight: 700;
 	font-display: swap;
-	src: url(lato-v25-italic-700.woff2) format('woff2');
+	src:
+		url(lato-v25-italic-700.woff2) format("woff2"),
+		url(lato-v25-italic-700.ttf) format("truetype");
 }
 @font-face {
-	font-family: 'JetBrains Mono';
+	font-family: "JetBrains Mono";
 	font-style: normal;
 	font-weight: 100 800;
 	font-display: swap;
-	src: url(jetbrains-mono-v24-normal-100-800.woff2) format('woff2');
+	src:
+		url(jetbrains-mono-v24-normal-100-800.woff2) format("woff2"),
+		url(jetbrains-mono-v24-normal-100-800.ttf) format("truetype");
 }
 @font-face {
-	font-family: 'JetBrains Mono';
+	font-family: "JetBrains Mono";
 	font-style: italic;
 	font-weight: 100 800;
 	font-display: swap;
-	src: url(jetbrains-mono-v24-italic-100-800.woff2) format('woff2');
+	src:
+		url(jetbrains-mono-v24-italic-100-800.woff2) format("woff2"),
+		url(jetbrains-mono-v24-italic-100-800.ttf) format("truetype");
+}
+@font-face {
+	font-family: "Noto Serif";
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: swap;
+	src:
+		url(noto-serif-v33-normal-100-900.woff2) format("woff2"),
+		url(noto-serif-v33-normal-100-900.ttf) format("truetype");
+}
+@font-face {
+	font-family: "Noto Serif";
+	font-style: italic;
+	font-weight: 100 900;
+	font-display: swap;
+	src:
+		url(noto-serif-v33-italic-100-900.woff2) format("woff2"),
+		url(noto-serif-v33-italic-100-900.ttf) format("truetype");
 }

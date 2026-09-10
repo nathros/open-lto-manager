@@ -443,7 +443,7 @@ fn GenLabelInner() -> Element {
                 }
             }
             Card {
-                div { class: Css::PDF_PREVIEW,
+                div { class: [Css::PDF_PREVIEW, options().font.as_str()].concat(),
                     for p in previews() {
                         div { dangerous_inner_html: p }
                     }

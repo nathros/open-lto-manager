@@ -6,8 +6,6 @@ use rusqlite::{
     types::{FromSql, FromSqlError, FromSqlResult, ToSqlOutput, ValueRef},
 };
 use std::fmt;
-#[cfg(feature = "server")]
-use std::fmt::{Display, Formatter, Result};
 
 use crate::shared::models::select_option::EnumStr;
 
@@ -219,13 +217,12 @@ impl From<i64> for LabelFont {
     }
 }
 
-#[cfg(feature = "server")]
-impl Display for LabelFont {
-    fn fmt(&self, formatter: &mut Formatter) -> Result {
-        match *self {
-            LabelFont::SansSerif => write!(formatter, "sans-serif"),
-            LabelFont::Serif => write!(formatter, "serif"),
-            LabelFont::Monospace => write!(formatter, "monospace"),
+impl LabelFont {
+    pub const fn as_str(&self) -> &str {
+        match self {
+            LabelFont::SansSerif => "sans-serif",
+            LabelFont::Serif => "serif",
+            LabelFont::Monospace => "monospace",
         }
     }
 }

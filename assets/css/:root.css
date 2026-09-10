@@ -11,6 +11,10 @@
 	--shadow-overlay: 0px 8px 12px #1e1f2126, 0px 0px 1px #1e1f214f;
 	--shadow-raised: 0px 1px 1px #1e1f2140, 0px 0px 1px #1e1f214f;
 
+	--f-sans: "Lato";
+	--f-serif: "Noto Serif";
+	--f-mono: "JetBrains Mono";
+
 	--colour-accent: #1677ff;
 	--colour-primary: #1677ff;
 	--colour-success: #52c41a;

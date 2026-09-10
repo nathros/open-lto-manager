@@ -22,7 +22,10 @@ impl SvgLabel {
         Self {
             buffer: format!(
                 "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{}mm\" height=\"{}mm\" {}preserveAspectRatio=\"none\" font-family=\"{}\">\n",
-                page_config.label_width, page_config.label_height, view_box, options.font
+                page_config.label_width,
+                page_config.label_height,
+                view_box,
+                options.font.as_str()
             ),
         }
     }

@@ -4,9 +4,9 @@
 pub struct Css; // CSS class names
 
 impl Css {
-    pub const COLOUR_SCHEME: &str = "colour-scheme"; // Defined in assets/css/:root.css line 48
-    pub const COLOUR_SCHEME_LIGHT: &str = "colour-scheme-light"; // Defined in assets/css/:root.css line 49
-    pub const COLOUR_SCHEME_DARK: &str = "colour-scheme-dark"; // Defined in assets/css/:root.css line 50
+    pub const COLOUR_SCHEME: &str = "colour-scheme"; // Defined in assets/css/:root.css line 52
+    pub const COLOUR_SCHEME_LIGHT: &str = "colour-scheme-light"; // Defined in assets/css/:root.css line 53
+    pub const COLOUR_SCHEME_DARK: &str = "colour-scheme-dark"; // Defined in assets/css/:root.css line 54
     pub const MAIN_HEADER: &str = "main-header "; // Defined in assets/css/header.css line 1
     pub const MAIN_HEADER_LOGO: &str = "header-logo "; // Defined in assets/css/header.css line 30
     pub const MAIN_ASIDE: &str = "main-aside "; // Defined in assets/css/header.css line 42

@@ -7,6 +7,7 @@ use krilla::{
     page::PageSettings,
 };
 use krilla_svg::{SurfaceExt, SvgSettings};
+use tracing::error;
 use usvg::{Options, Tree};
 
 use crate::{
@@ -14,14 +15,26 @@ use crate::{
     shared::models::database::label_preset::model_label_preset::{LabelOptions, PDFPageType},
 };
 
+const SANS_SERIF: &str = "Lato";
+const MONOSPACE: &str = "JetBrains Mono";
+const SERIF: &str = "Noto Serif";
+
 pub fn generate_lto_label_pdf_options(options: LabelOptions) -> Vec<u8> {
     let svg_pages = generate_lto_label_svg_pages(&options);
     generate_lto_label_pdf(svg_pages, options.page)
 }
 
 pub fn generate_lto_label_pdf(pages_str: Vec<String>, page_type: PDFPageType) -> Vec<u8> {
-    let mut fontdb = Database::new(); // Reusable font database from system
-    fontdb.load_system_fonts();
+    let fontdb = match get_font_db() {
+        Ok(db) => db,
+        Err(e) => {
+            error!("Failed to load PDF fonts {}", e);
+            let mut db = Database::new();
+            db.load_system_fonts(); // Fallback to system
+            db
+        }
+    };
+
     let opts = Options {
         fontdb: Arc::new(fontdb),
         ..Default::default()
@@ -75,4 +88,60 @@ pub fn generate_lto_label_pdf(pages_str: Vec<String>, page_type: PDFPageType) ->
         return pdf;
     }
     vec![]*/
+}
+
+fn get_font_db() -> Result<Database, std::io::Error> {
+    let mut fontdb = Database::new();
+    fontdb.load_font_file("assets/font/lato-v25-normal-400.ttf")?;
+    fontdb.set_sans_serif_family(SANS_SERIF);
+
+    fontdb.load_font_file("assets/font/jetbrains-mono-v24-normal-100-800.ttf")?;
+    fontdb.set_monospace_family(MONOSPACE);
+
+    // Originally selected Source Serif 4 but as name contains number cannot use
+    // https://github.com/linebender/resvg/issues/804
+    fontdb.load_font_file("assets/font/noto-serif-v33-normal-100-900.ttf")?;
+    fontdb.set_serif_family(SERIF);
+
+    Ok(fontdb)
+}
+
+#[cfg(test)]
+pub mod tests {
+    use fontdb::{Family, Weight};
+
+    use crate::backend::generate::lto_label::pdf::generate::{
+        MONOSPACE, SANS_SERIF, SERIF, get_font_db,
+    };
+
+    #[test]
+    fn get_fonts() {
+        let result = get_font_db();
+        assert!(result.is_ok());
+        let fontdb = result.unwrap();
+        assert_eq!(fontdb.len(), 3); // Sans serif, Serif and Monospace
+
+        assert_eq!(fontdb.family_name(&Family::SansSerif), SANS_SERIF);
+        assert_eq!(fontdb.family_name(&Family::Monospace), MONOSPACE);
+        assert_eq!(fontdb.family_name(&Family::Serif), SERIF);
+
+        for face_info in fontdb.faces() {
+            assert_eq!(face_info.weight, Weight::default());
+
+            for family in face_info.families.iter().as_ref() {
+                match family.0.as_str() {
+                    SANS_SERIF => {
+                        assert!(!face_info.monospaced);
+                    }
+                    MONOSPACE => {
+                        assert!(face_info.monospaced);
+                    }
+                    SERIF => {
+                        assert!(!face_info.monospaced);
+                    }
+                    _ => unreachable!("Unexpected Font"),
+                }
+            }
+        }
+    }
 }

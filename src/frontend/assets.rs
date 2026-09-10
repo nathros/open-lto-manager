@@ -77,32 +77,6 @@ pub const JS_ASSETS: [Asset; 2] = [
     asset!("/assets/js/header.js"),
 ];
 
-// Fonts
-const _FONT_LATO_N_400: Asset = asset!(
-    "/assets/font/lato-v25-normal-400.woff2",
-    AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
-);
-const _FONT_LATO_I_400: Asset = asset!(
-    "/assets/font/lato-v25-italic-400.woff2",
-    AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
-);
-const _FONT_LATO_N_700: Asset = asset!(
-    "/assets/font/lato-v25-normal-700.woff2",
-    AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
-);
-const _FONT_LATO_I_700: Asset = asset!(
-    "/assets/font/lato-v25-italic-700.woff2",
-    AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
-);
-const _FONT_JETBRAINS_N: Asset = asset!(
-    "/assets/font/jetbrains-mono-v24-normal-100-800.woff2",
-    AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
-);
-const _FONT_JETBRAINS_I: Asset = asset!(
-    "/assets/font/jetbrains-mono-v24-italic-100-800.woff2",
-    AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
-);
-
 // Images
 pub const IMG_TAPE_PREVIEW: Asset = asset!("/assets/img/tape-preview.jxl");
 pub const IMG_TAPE_PREVIEW_TAB: Asset = asset!("/assets/img/tape-preview-tab.jxl");
@@ -111,3 +85,71 @@ pub const _IMG_TAPE_PREVIEW_MASK: Asset = asset!(
     AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
 );
 pub const IMG_SANDPIT: Asset = asset!("/assets/img/sandpit.svg");
+
+// Fonts, disable hash as referenced in CSS
+pub const _FONT_ASSETS: [Asset; 16] = [
+    asset!(
+        "/assets/font/lato-v25-normal-400.woff2",
+        AssetOptions::builder().with_hash_suffix(false)
+    ),
+    asset!(
+        "/assets/font/lato-v25-normal-400.ttf",
+        AssetOptions::builder().with_hash_suffix(false)
+    ),
+    asset!(
+        "/assets/font/lato-v25-italic-400.woff2",
+        AssetOptions::builder().with_hash_suffix(false)
+    ),
+    asset!(
+        "/assets/font/lato-v25-italic-400.ttf",
+        AssetOptions::builder().with_hash_suffix(false)
+    ),
+    asset!(
+        "/assets/font/lato-v25-normal-700.woff2",
+        AssetOptions::builder().with_hash_suffix(false)
+    ),
+    asset!(
+        "/assets/font/lato-v25-normal-700.ttf",
+        AssetOptions::builder().with_hash_suffix(false)
+    ),
+    asset!(
+        "/assets/font/lato-v25-italic-700.woff2",
+        AssetOptions::builder().with_hash_suffix(false)
+    ),
+    asset!(
+        "/assets/font/lato-v25-italic-700.ttf",
+        AssetOptions::builder().with_hash_suffix(false)
+    ),
+    asset!(
+        "/assets/font/jetbrains-mono-v24-normal-100-800.woff2",
+        AssetOptions::builder().with_hash_suffix(false)
+    ),
+    asset!(
+        "/assets/font/jetbrains-mono-v24-normal-100-800.ttf",
+        AssetOptions::builder().with_hash_suffix(false)
+    ),
+    asset!(
+        "/assets/font/jetbrains-mono-v24-italic-100-800.woff2",
+        AssetOptions::builder().with_hash_suffix(false)
+    ),
+    asset!(
+        "/assets/font/jetbrains-mono-v24-italic-100-800.ttf",
+        AssetOptions::builder().with_hash_suffix(false)
+    ),
+    asset!(
+        "/assets/font/noto-serif-v33-normal-100-900.woff2",
+        AssetOptions::builder().with_hash_suffix(false)
+    ),
+    asset!(
+        "/assets/font/noto-serif-v33-normal-100-900.ttf",
+        AssetOptions::builder().with_hash_suffix(false)
+    ),
+    asset!(
+        "/assets/font/noto-serif-v33-italic-100-900.woff2",
+        AssetOptions::builder().with_hash_suffix(false)
+    ),
+    asset!(
+        "/assets/font/noto-serif-v33-italic-100-900.ttf",
+        AssetOptions::builder().with_hash_suffix(false)
+    ),
+];
