@@ -225,6 +225,15 @@ impl LabelFont {
             LabelFont::Monospace => "monospace",
         }
     }
+
+    #[cfg(feature = "server")]
+    pub const fn font_name(&self) -> &str {
+        match self {
+            LabelFont::SansSerif => "Lato",
+            LabelFont::Serif => "Noto Serif",
+            LabelFont::Monospace => "JetBrains Mono",
+        }
+    }
 }
 
 #[repr(i64)]

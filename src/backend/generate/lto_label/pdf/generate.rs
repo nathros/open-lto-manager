@@ -7,17 +7,15 @@ use krilla::{
     page::PageSettings,
 };
 use krilla_svg::{SurfaceExt, SvgSettings};
-use tracing::error;
+use tracing::{error, warn};
 use usvg::{Options, Tree};
 
 use crate::{
     backend::generate::lto_label::svg::generate::generate_lto_label_svg_pages,
-    shared::models::database::label_preset::model_label_preset::{LabelOptions, PDFPageType},
+    shared::models::database::label_preset::model_label_preset::{
+        LabelFont, LabelOptions, PDFPageType,
+    },
 };
-
-const SANS_SERIF: &str = "Lato";
-const MONOSPACE: &str = "JetBrains Mono";
-const SERIF: &str = "Noto Serif";
 
 pub fn generate_lto_label_pdf_options(options: LabelOptions) -> Vec<u8> {
     let svg_pages = generate_lto_label_svg_pages(&options);
@@ -48,7 +46,9 @@ pub fn generate_lto_label_pdf(pages_str: Vec<String>, page_type: PDFPageType) ->
         })
         .collect();
 
-    const SCALE: f32 = 1.0 + (1.0 / 3.0); // For some reason SVG label.size() is 33.3% too big, looks fine in Inkscape
+    // TODO investigate: for some reason SVG label.size() is ~33.3% too big
+    // It is close but not exact to mm to pt conversion
+    const SCALE: f32 = 104.713 / 78.5; // In Inkscape at no scale get 104.713mm when expect 78.5mm
     let page_config = page_type.get_config();
     let page_settings =
         PageSettings::from_wh(page_config.width_pt, page_config.height_pt).unwrap_or_default();
@@ -74,6 +74,8 @@ pub fn generate_lto_label_pdf(pages_str: Vec<String>, page_type: PDFPageType) ->
                 page = document.start_page_with(page_settings.clone());
                 surface = page.surface();
             }
+        } else {
+            warn!("Skipped PDF page {} with invalid size", index + 1);
         }
     }
 
@@ -93,15 +95,15 @@ pub fn generate_lto_label_pdf(pages_str: Vec<String>, page_type: PDFPageType) ->
 fn get_font_db() -> Result<Database, std::io::Error> {
     let mut fontdb = Database::new();
     fontdb.load_font_file("assets/font/lato-v25-normal-400.ttf")?;
-    fontdb.set_sans_serif_family(SANS_SERIF);
+    fontdb.set_sans_serif_family(LabelFont::SansSerif.font_name());
 
     fontdb.load_font_file("assets/font/jetbrains-mono-v24-normal-100-800.ttf")?;
-    fontdb.set_monospace_family(MONOSPACE);
+    fontdb.set_monospace_family(LabelFont::Monospace.font_name());
 
     // Originally selected Source Serif 4 but as name contains number cannot use
     // https://github.com/linebender/resvg/issues/804
     fontdb.load_font_file("assets/font/noto-serif-v33-normal-100-900.ttf")?;
-    fontdb.set_serif_family(SERIF);
+    fontdb.set_serif_family(LabelFont::Serif.font_name());
 
     Ok(fontdb)
 }
@@ -110,9 +112,11 @@ fn get_font_db() -> Result<Database, std::io::Error> {
 pub mod tests {
     use fontdb::{Family, Weight};
 
-    use crate::backend::generate::lto_label::pdf::generate::{
-        MONOSPACE, SANS_SERIF, SERIF, get_font_db,
-    };
+    use crate::backend::generate::lto_label::pdf::generate::get_font_db;
+
+    const SANS_SERIF: &str = "Lato";
+    const MONOSPACE: &str = "JetBrains Mono";
+    const SERIF: &str = "Noto Serif";
 
     #[test]
     fn get_fonts() {

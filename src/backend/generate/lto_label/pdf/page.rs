@@ -54,8 +54,8 @@ impl PDFPageConfig {
 
     fn base_a4() -> PDFPageConfig {
         PDFPageConfig {
-            width_pt: 595.0,
-            height_pt: 842.0,
+            width_pt: 595.276,
+            height_pt: 841.89,
             width_mm: 210.0,
             height_mm: 297.0,
             ..PDFPageConfig::empty()
