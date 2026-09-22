@@ -3,7 +3,7 @@
 		"tabler": {
 			"path": "external/tabler-icons/",
 			"repo": "https://github.com/tabler/tabler-icons",
-			"action": "tabler"
+			"action": "none"
 		},
 		"remix": {
 			"path": "external/remixicon/",

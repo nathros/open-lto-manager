@@ -24,6 +24,7 @@ function preview_end() {
 	echo >> $OUTPUT
 	echo "</body>" >> $OUTPUT
 	echo "</html>" >> $OUTPUT
+	echo "Generated: $OUTPUT"
 }
 
 function icon_start() {
@@ -32,10 +33,18 @@ function icon_start() {
 	echo -n "<defs><style>.icon{display:none}.icon:target{display:inline}</style></defs>" >> $OUTPUT
 }
 
+function icon_start_ref() {
+	local OUTPUT=$1
+	local R=$2
+	echo "<svg xmlns=\"http://www.w3.org/2000/svg\">" > $OUTPUT
+	echo -n "<defs><style>.icon{display:none}.icon:target{display:inline}#$R{display:inline}#$R:has(~ :target){display:none}</style></defs>" >> $OUTPUT
+}
+
 function icon_end() {
 	local OUTPUT=$1
 	echo >> $OUTPUT
 	echo -n '</svg>' >> $OUTPUT
+	echo "Generated: $OUTPUT"
 }
 
 function css_start() {
@@ -57,6 +66,7 @@ function css_end() {
 	if [ -n "$OUTPUT" ]; then
 		cat $OUTPUT.$1 >> $OUTPUT
 		rm $OUTPUT.$1
+		echo "Generated: $OUTPUT"
 	fi
 }
 
@@ -76,6 +86,7 @@ function rs_end() {
 	local OUTPUT=$1
 	if [ -n "$OUTPUT" ]; then
 		echo "}" >> $OUTPUT
+		echo "Generated: $OUTPUT"
 	fi
 }
 
@@ -100,6 +111,7 @@ function process_theme() {
 	THEME_REPO=()
 	THEME_ACTION=()
 	THEME_VERSION=()
+	THEME_FALLBACK=()
 
 	SCAN_THEMES=false
 	SCAN_ICONS=false
@@ -121,7 +133,13 @@ function process_theme() {
 
 				for N in ${THEME_NAME[*]} ; do # Start of .svg
 					I=${THEME_NAME_INDEX[$N]}
-					icon_start "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"
+					R=${THEME_FALLBACK[$N]}
+					rm -f "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg.ref"
+					if [ -n "$R" ]; then
+						icon_start_ref "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg" $R
+					else
+						icon_start "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"
+					fi
 					echo "	<th>${OUTPUT_NAME}-${THEME_NAME[$I]}.svg (${THEME_VERSION[$I]})<a href='${THEME_REPO[$I]}' target='_blank'> &#128279;</a></th>" >> ${PREVIEW}
 				done
 				
@@ -144,6 +162,9 @@ function process_theme() {
 
 			elif [[ $LINE == "\"action\": "* ]]; then
 				THEME_ACTION+=(${LINE:11:-1}) # Found theme viewBox
+
+			elif [[ $LINE == "\"fallback\": "* ]]; then
+				THEME_FALLBACK+=(${LINE:13:-1}) # Found fallback sprite definition
 			fi
 
 		elif $SCAN_ICONS ; then
@@ -152,8 +173,15 @@ function process_theme() {
 
 				for N in ${THEME_NAME[*]} ; do # End of .svg
 					I=${THEME_NAME_INDEX[$N]}
-					icon_end "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"
-
+					local FILE="${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"
+					icon_end "$FILE"
+					local REF="${FILE}.ref"
+					if [ -e "$REF" ]; then
+						sed -i "3i <defs>" $FILE
+						sed -i "4i $(cat $REF)" $FILE
+						sed -i "5i </defs>" $FILE
+						rm $REF
+					fi
 					css_line "}" $N $OUTPUT_CSS
 					css_end $N $OUTPUT_CSS
 				done
@@ -178,36 +206,54 @@ function process_theme() {
 				ICON_PATH=`echo "$LINE" | cut -d '"' -f 4`
 				I=${THEME_NAME_INDEX[$THEME]} # Get icon them index from name
 				N=${THEME_NAME[${I}]}
-				SVG=$(cat "../${THEME_PATH[$I]}$ICON_PATH")
+
+				# After: id="anchor" class="icon" viewBox
+				# First occurrence only
 				FIND="<svg"
 				REPLACE="$FIND id=\"$ICON_NAME\" class=\"icon\" "
-				# After: id="achor" class="icon" viewBox
-				# First occurrence only
 
-				echo >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg" # Add new line
+				# If icon path starts with # then as <use/>
+				# if icon path starts with [#] the add as reference and <use/>
+				WRITE_FILE=${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg
+				local FILE_IS_REF=false
+				local ICON_NAME_TMP=$ICON_NAME
+				if [[ $ICON_PATH == "[#]"* ]]; then
+					local ICON_NAME_TMP="_$ICON_NAME"
+					local FILE_IS_REF=true
+					ICON_PATH=${ICON_PATH:3} # Remove [#]
+					echo >> $WRITE_FILE
+					echo -n "<use id=\"$ICON_NAME\" class=\"icon\" href=\"#${ICON_NAME_TMP}\"/>" >> $WRITE_FILE
+					WRITE_FILE="${WRITE_FILE}.ref"
+					REPLACE="$FIND id=\"$ICON_NAME_TMP\" "
+				else
+					echo >> $WRITE_FILE # Add new line
+				fi
 
-				if [[ "${THEME_ACTION[${I}]}" == "tabler" ]]; then
+				if [[ $ICON_PATH == "#"* ]]; then
+					echo -n "<use id=\"$ICON_NAME\" class=\"icon\" href=\"#_${ICON_PATH:1}\"/>" >> $WRITE_FILE
+				elif [[ "${THEME_ACTION[${I}]}" == "papirus"* ]]; then
+					SVG=$(cat "../${THEME_PATH[$I]}$ICON_PATH")
 					echo "$SVG" | tr -d '\n'                                            `# Remove new lines` \
 						| sed -e "s/<!--.*-->//"                                        `# Remove comments` \
-						| sed -e "s/id\=\"/id\=\"${ICON_NAME}-/g"                       `# Append icon name to inner ids to make them unique` \
-						| sed -e "s/href=\"#/href=\"#${ICON_NAME}-/g"                   `# Update url(#) with new ids` \
-						| sed -e "s/=\"url(#/=\"url(#${ICON_NAME}-/g"                   `# Update href(#) with new ids` \
+						| sed -e "s/id\=\"/id\=\"${ICON_NAME_TMP}-/g"                   `# Append icon name to inner ids to make them unique` \
+						| sed -e "s/href=\"#/href=\"#${ICON_NAME_TMP}-/g"               `# Update url(#) with new ids` \
+						| sed -e "s/=\"url(#/=\"url(#${ICON_NAME_TMP}-/g"               `# Update href(#) with new ids` \
 						| sed -e "s/$FIND/$REPLACE/g"                                   `# Add icon class` \
-						| sed -e 's/  \(width\|height\)="[0-9]*"//g'                    `# # tab # Find replace width and height` \
-						| sed -r '/^\s*$/d'                                             `# # tab # Remove empty lines` \
 						| sed -e 's/<style>/<style>@scope{/g'                           `# Wrap styles inside @scope open` \
 						| sed -e 's/<\/style>/}<\/style>/g'                             `# Wrap styles inside @scope close` \
 						| sed -e 's/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"//g'        `# Remove xmlns` \
 						| sed -e 's/> *</></g'                                          `# Replace '> <' with '><'` \
 						| sed -e 's/ *>/>/g'                                            `# Replace ' >' with '>'` \
 						| sed -e 's/ *\/>/\/>/g'                                        `# Replace ' \>' with '\>'` \
-						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `# Remove whitespace`
+						| sed -e 's/width=\"48\" height=\"48\"/viewBox=\"0 0 48 48\"/g' `# Replace 'width="48" height="48"' with viewBox` \
+						| tr -s " " >> "${WRITE_FILE}"                                  `# Remove whitespace`
 				else
+					SVG=$(cat "../${THEME_PATH[$I]}$ICON_PATH")
 					echo "$SVG" | tr -d '\n'                                            `# Remove new lines` \
 						| sed -e "s/<!--.*-->//"                                        `# Remove comments` \
-						| sed -e "s/id\=\"/id\=\"${ICON_NAME}-/g"                       `# Append icon name to inner ids to make them unique` \
-						| sed -e "s/href=\"#/href=\"#${ICON_NAME}-/g"                   `# Update url(#) with new ids` \
-						| sed -e "s/=\"url(#/=\"url(#${ICON_NAME}-/g"                   `# Update href(#) with new ids` \
+						| sed -e "s/id\=\"/id\=\"${ICON_NAME_TMP}-/g"                   `# Append icon name to inner ids to make them unique` \
+						| sed -e "s/href=\"#/href=\"#${ICON_NAME_TMP}-/g"               `# Update url(#) with new ids` \
+						| sed -e "s/=\"url(#/=\"url(#${ICON_NAME_TMP}-/g"               `# Update href(#) with new ids` \
 						| sed -e "s/$FIND/$REPLACE/g"                                   `# Add icon class` \
 						| sed -e 's/<style>/<style>@scope{/g'                           `# Wrap styles inside @scope open` \
 						| sed -e 's/<\/style>/}<\/style>/g'                             `# Wrap styles inside @scope close` \
@@ -218,7 +264,7 @@ function process_theme() {
 						| sed -e 's/width=\"24\" height=\"24\"//g'                      `# Remove 'width="24" height="24"'` \
 						| sed -e 's/width=\"24\" //g'                                   `# Remove 'width="24"'` \
 						| sed -e 's/height=\"24\" //g'                                  `# Remove 'height="24"'` \
-						| tr -s " " >> "${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg"           `# Remove whitespace`
+						| tr -s " " >> "${WRITE_FILE}"                                  `# Remove whitespace`
 				fi
 
 				echo "	<td>" >> ${PREVIEW}
@@ -258,3 +304,4 @@ git submodule update --progress --init --recursive
 
 process_theme "icons.json" "icons" "../assets/" "../assets/css/icons.css" "../src/frontend/icons.rs"
 process_theme "logos.json" "logos" "../assets/"
+process_theme "files.json" "files" "../assets/"
