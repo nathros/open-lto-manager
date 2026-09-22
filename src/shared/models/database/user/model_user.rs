@@ -1,4 +1,5 @@
 use dioxus::fullstack::serde::{Deserialize, Serialize};
+use enum_iterator::Sequence;
 #[cfg(feature = "server")]
 use rusqlite::{
     ToSql,
@@ -63,7 +64,7 @@ impl Default for RecordUserConfig {
 }
 
 #[repr(i64)]
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Sequence, Clone, Copy)]
 pub enum ColourMode {
     System = 0,
     Dark = 1,
@@ -96,7 +97,7 @@ impl FromSql for ColourMode {
 }
 
 #[repr(i64)]
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Sequence, Clone, Copy)]
 pub enum IconTheme {
     Tabler = 0,
     Remix = 1,
@@ -142,18 +143,20 @@ impl FromSql for IconTheme {
 }
 
 #[repr(i64)]
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Copy)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Sequence, Clone, Copy)]
 pub enum FileTheme {
     Breeze = 0,
-    Kora = 1,
+    Papirus = 1,
+    Kora = 2,
 }
 
 impl From<i64> for FileTheme {
     fn from(value: i64) -> Self {
         match value {
             _ if value == FileTheme::Breeze as i64 => FileTheme::Breeze,
+            _ if value == FileTheme::Papirus as i64 => FileTheme::Papirus,
             _ if value == FileTheme::Kora as i64 => FileTheme::Kora,
-            _ => FileTheme::Breeze, // Fallback
+            _ => FileTheme::Papirus, // Fallback
         }
     }
 }
@@ -169,5 +172,20 @@ impl ToSql for FileTheme {
 impl FromSql for FileTheme {
     fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
         FromSqlResult::Ok(FileTheme::from(value.as_i64().unwrap_or(0)))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::shared::models::{
+        database::user::model_user::{ColourMode, FileTheme, IconTheme},
+        test::tests::from_generic_keys_test,
+    };
+
+    #[test]
+    fn from_repr_keys() {
+        from_generic_keys_test::<ColourMode>(&|s| *s as i64);
+        from_generic_keys_test::<IconTheme>(&|s| *s as i64);
+        from_generic_keys_test::<FileTheme>(&|s| *s as i64);
     }
 }

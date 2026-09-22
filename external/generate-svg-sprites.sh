@@ -238,6 +238,7 @@ function process_theme() {
 						| sed -e "s/id\=\"/id\=\"${ICON_NAME_TMP}-/g"                   `# Append icon name to inner ids to make them unique` \
 						| sed -e "s/href=\"#/href=\"#${ICON_NAME_TMP}-/g"               `# Update url(#) with new ids` \
 						| sed -e "s/=\"url(#/=\"url(#${ICON_NAME_TMP}-/g"               `# Update href(#) with new ids` \
+						| sed -e "s/:url(#/:url(#${ICON_NAME_TMP}-/g"                   `# Update href(#) with new ids` \
 						| sed -e "s/$FIND/$REPLACE/g"                                   `# Add icon class` \
 						| sed -e 's/<style>/<style>@scope{/g'                           `# Wrap styles inside @scope open` \
 						| sed -e 's/<\/style>/}<\/style>/g'                             `# Wrap styles inside @scope close` \
@@ -246,7 +247,27 @@ function process_theme() {
 						| sed -e 's/ *>/>/g'                                            `# Replace ' >' with '>'` \
 						| sed -e 's/ *\/>/\/>/g'                                        `# Replace ' \>' with '\>'` \
 						| sed -e 's/width=\"48\" height=\"48\"/viewBox=\"0 0 48 48\"/g' `# Replace 'width="48" height="48"' with viewBox` \
+						| sed -e 's/width=\"32\" height=\"32\"/viewBox=\"0 0 32 32\"/g' `# Replace 'width="48" height="48"' with viewBox` \
 						| tr -s " " >> "${WRITE_FILE}"                                  `# Remove whitespace`
+				elif [[ "${THEME_ACTION[${I}]}" == "breeze"* ]]; then
+					SVG=$(cat "../${THEME_PATH[$I]}$ICON_PATH")
+					echo "$SVG" | tr -d '\n'                                                                         `# Remove new lines` \
+						| sed -e "s/<!--.*-->//"                                                                     `# Remove comments` \
+						| sed -e 's/" width=\"22\" version=\"1.1\" height=\"22\" id=\"svg2/\" viewBox=\"0 0 22 22/g' `# Replace 'width="48" height="48"' with viewBox` \
+						| sed -e "s/id\=\"/id\=\"${ICON_NAME_TMP}-/g"                                                `# Append icon name to inner ids to make them unique` \
+						| sed -e "s/href=\"#/href=\"#${ICON_NAME_TMP}-/g"                                            `# Update url(#) with new ids` \
+						| sed -e "s/=\"url(#/=\"url(#${ICON_NAME_TMP}-/g"                                            `# Update href(#) with new ids` \
+						| sed -e "s/:url(#/:url(#${ICON_NAME_TMP}-/g"                                                `# Update href(#) with new ids` \
+						| sed -e "s/$FIND/$REPLACE/g"                                                                `# Add icon class` \
+						| sed -e 's/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"//g'                                     `# Remove xmlns` \
+						| sed -e 's/> *</></g'                                                                       `# Replace '> <' with '><'` \
+						| sed -e 's/ *>/>/g'                                                                         `# Replace ' >' with '>'` \
+						| sed -e 's/ *\/>/\/>/g'                                                                     `# Replace ' \>' with '\>'` \
+						| sed -e 's/width=\"48\" height=\"48\"/viewBox=\"0 0 48 48\"/g'                              `# Replace 'width="48" height="48"' with viewBox` \
+						| sed -e 's/width=\"32\"  height=\"32\"/viewBox=\"0 0 32 32\"/g'                             `# Replace 'width="32" height="32"' with viewBox` \
+						| sed -e 's/width=\"64\"//g'                                                                 `# Remove 'width="64" ` \
+						| sed -e 's/height=\"64\"//g'                                                                `# Remove 'width="64" ` \
+						| tr -s " " >> "${WRITE_FILE}"                                                               `# Remove whitespace`
 				else
 					SVG=$(cat "../${THEME_PATH[$I]}$ICON_PATH")
 					echo "$SVG" | tr -d '\n'                                            `# Remove new lines` \
@@ -254,6 +275,7 @@ function process_theme() {
 						| sed -e "s/id\=\"/id\=\"${ICON_NAME_TMP}-/g"                   `# Append icon name to inner ids to make them unique` \
 						| sed -e "s/href=\"#/href=\"#${ICON_NAME_TMP}-/g"               `# Update url(#) with new ids` \
 						| sed -e "s/=\"url(#/=\"url(#${ICON_NAME_TMP}-/g"               `# Update href(#) with new ids` \
+						| sed -e "s/:url(#/:url(#${ICON_NAME_TMP}-/g"                   `# Update href(#) with new ids` \
 						| sed -e "s/$FIND/$REPLACE/g"                                   `# Add icon class` \
 						| sed -e 's/<style>/<style>@scope{/g'                           `# Wrap styles inside @scope open` \
 						| sed -e 's/<\/style>/}<\/style>/g'                             `# Wrap styles inside @scope close` \

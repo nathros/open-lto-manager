@@ -1,0 +1,49 @@
+{
+	"themes": {
+		"breeze": {
+			"path": "external/breeze-icons/",
+			"repo": "https://github.com/kde/breeze-icons",
+			"action": "breeze",
+			"fallback": "__fallback"
+		},
+		"papirus": {
+			"path": "external/papirus-icon-theme/",
+			"repo": "https://github.com/PapirusDevelopmentTeam/papirus-icon-theme",
+			"action": "papirus",
+			"fallback": "__fallback"
+		},
+		"kora": {
+			"path": "external/kora/",
+			"repo": "https://github.com/bikass/kora",
+			"action": "none",
+			"fallback": "__fallback"
+		}
+	},
+	"icons": {
+		"__fallback": {
+			"breeze": "icons/mimetypes/22/application-x-zerosize.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-zerosize.svg",
+			"kora": "kora/mimetypes/scalable/application-x-zerosize.svg"
+		},
+		"folder-root": {
+			"breeze": "icons/places/48/folder-root.svg",
+			"papirus": "Papirus/48x48/places/folder-root.svg",
+			"kora": "kora/places/scalable/folder-root.svg"
+		},
+		"png": {
+			"breeze": "icons/mimetypes/32/image-png.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-png.svg",
+			"kora": "kora/mimetypes/scalable/application-image-png.svg"
+		},
+		"htm": {
+			"breeze": "[#]icons/mimetypes/64/text-html.svg",
+			"papirus": "[#]Papirus/48x48/mimetypes/text-html.svg",
+			"kora": "[#]kora/mimetypes/scalable/text-html.svg"
+		},
+		"html": {
+			"breeze": "#htm",
+			"papirus": "#htm",
+			"kora": "#htm"
+		}
+	}
+}
