@@ -3,13 +3,13 @@
 		"breeze": {
 			"path": "external/breeze-icons/",
 			"repo": "https://github.com/kde/breeze-icons",
-			"action": "breeze",
+			"action": "none",
 			"fallback": "__fallback"
 		},
 		"papirus": {
 			"path": "external/papirus-icon-theme/",
 			"repo": "https://github.com/PapirusDevelopmentTeam/papirus-icon-theme",
-			"action": "papirus",
+			"action": "none",
 			"fallback": "__fallback"
 		},
 		"kora": {

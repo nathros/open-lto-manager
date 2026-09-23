@@ -8,8 +8,9 @@ function preview_start() {
 	echo "<html>" >> $OUTPUT
 	echo "	<head>" >> $OUTPUT
 	echo "		<title>$2 preview</title>" >> $OUTPUT
-	echo "		<style>td, th { border: 1px solid; } td { padding: 4px;} tr th { position: sticky; top: 0; background-color: white; } td > div { display: inline-flex; }</style>" >> $OUTPUT
-	echo "		<style>img { width: 5rem; height: 5rem; margin: 2px; } .sm { width: 1rem; height: 1rem; } .md { width: 1.5rem; height: 1.5rem; } .sm, .md { margin-top: auto; margin-bottom: auto; } .fill { background-color: lightgrey; } a { text-decoration: none; }</style>" >> $OUTPUT
+	echo "		<style>td, th { border: 1px solid; } td { padding: 4px;} tr th { position: sticky; top: 0; background-color: white; } td > div { display: inline-flex; } td > div > div { display: flex; flex-direction: column-reverse; align-items: center; justify-content: center; }</style>" >> $OUTPUT
+	echo "		<style>img { width: 5rem; height: 5rem; margin: 2px; white-space: break-spaces; } .sm { width: 1rem; height: 1rem; } .md { width: 1.5rem; height: 1.5rem; } .fill { background-color: lightgrey; } a { text-decoration: none; }</style>" >> $OUTPUT
+	echo "		<style>td > div > b { writing-mode: sideways-lr; text-orientation: upright; text-align: center; } td > div > img:first-of-type { padding-right: 1rem; }</style>" >> $OUTPUT
 	echo "	</head>" >> $OUTPUT
 	echo "<body>" >> $OUTPUT
 	echo "<p>This is a preview of SVG sprites which are accessed via: #anchor</p>" >> $OUTPUT
@@ -212,6 +213,7 @@ function process_theme() {
 				FIND="<svg"
 				REPLACE="$FIND id=\"$ICON_NAME\" class=\"icon\" "
 
+				echo "Processing: $1 $ICON_NAME $N"
 				# If icon path starts with # then as <use/>
 				# if icon path starts with [#] the add as reference and <use/>
 				WRITE_FILE=${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg
@@ -231,72 +233,33 @@ function process_theme() {
 
 				if [[ $ICON_PATH == "#"* ]]; then
 					echo -n "<use id=\"$ICON_NAME\" class=\"icon\" href=\"#_${ICON_PATH:1}\"/>" >> $WRITE_FILE
-				elif [[ "${THEME_ACTION[${I}]}" == "papirus"* ]]; then
-					SVG=$(cat "../${THEME_PATH[$I]}$ICON_PATH")
-					echo "$SVG" | tr -d '\n'                                            `# Remove new lines` \
-						| sed -e "s/<!--.*-->//"                                        `# Remove comments` \
-						| sed -e "s/id\=\"/id\=\"${ICON_NAME_TMP}-/g"                   `# Append icon name to inner ids to make them unique` \
-						| sed -e "s/href=\"#/href=\"#${ICON_NAME_TMP}-/g"               `# Update url(#) with new ids` \
-						| sed -e "s/=\"url(#/=\"url(#${ICON_NAME_TMP}-/g"               `# Update href(#) with new ids` \
-						| sed -e "s/:url(#/:url(#${ICON_NAME_TMP}-/g"                   `# Update href(#) with new ids` \
-						| sed -e "s/$FIND/$REPLACE/g"                                   `# Add icon class` \
-						| sed -e 's/<style>/<style>@scope{/g'                           `# Wrap styles inside @scope open` \
-						| sed -e 's/<\/style>/}<\/style>/g'                             `# Wrap styles inside @scope close` \
-						| sed -e 's/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"//g'        `# Remove xmlns` \
-						| sed -e 's/> *</></g'                                          `# Replace '> <' with '><'` \
-						| sed -e 's/ *>/>/g'                                            `# Replace ' >' with '>'` \
-						| sed -e 's/ *\/>/\/>/g'                                        `# Replace ' \>' with '\>'` \
-						| sed -e 's/width=\"48\" height=\"48\"/viewBox=\"0 0 48 48\"/g' `# Replace 'width="48" height="48"' with viewBox` \
-						| sed -e 's/width=\"32\" height=\"32\"/viewBox=\"0 0 32 32\"/g' `# Replace 'width="48" height="48"' with viewBox` \
-						| tr -s " " >> "${WRITE_FILE}"                                  `# Remove whitespace`
-				elif [[ "${THEME_ACTION[${I}]}" == "breeze"* ]]; then
-					SVG=$(cat "../${THEME_PATH[$I]}$ICON_PATH")
-					echo "$SVG" | tr -d '\n'                                                                         `# Remove new lines` \
-						| sed -e "s/<!--.*-->//"                                                                     `# Remove comments` \
-						| sed -e 's/" width=\"22\" version=\"1.1\" height=\"22\" id=\"svg2/\" viewBox=\"0 0 22 22/g' `# Replace 'width="48" height="48"' with viewBox` \
-						| sed -e "s/id\=\"/id\=\"${ICON_NAME_TMP}-/g"                                                `# Append icon name to inner ids to make them unique` \
-						| sed -e "s/href=\"#/href=\"#${ICON_NAME_TMP}-/g"                                            `# Update url(#) with new ids` \
-						| sed -e "s/=\"url(#/=\"url(#${ICON_NAME_TMP}-/g"                                            `# Update href(#) with new ids` \
-						| sed -e "s/:url(#/:url(#${ICON_NAME_TMP}-/g"                                                `# Update href(#) with new ids` \
-						| sed -e "s/$FIND/$REPLACE/g"                                                                `# Add icon class` \
-						| sed -e 's/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"//g'                                     `# Remove xmlns` \
-						| sed -e 's/> *</></g'                                                                       `# Replace '> <' with '><'` \
-						| sed -e 's/ *>/>/g'                                                                         `# Replace ' >' with '>'` \
-						| sed -e 's/ *\/>/\/>/g'                                                                     `# Replace ' \>' with '\>'` \
-						| sed -e 's/width=\"48\" height=\"48\"/viewBox=\"0 0 48 48\"/g'                              `# Replace 'width="48" height="48"' with viewBox` \
-						| sed -e 's/width=\"32\"  height=\"32\"/viewBox=\"0 0 32 32\"/g'                             `# Replace 'width="32" height="32"' with viewBox` \
-						| sed -e 's/width=\"64\"//g'                                                                 `# Remove 'width="64" ` \
-						| sed -e 's/height=\"64\"//g'                                                                `# Remove 'width="64" ` \
-						| tr -s " " >> "${WRITE_FILE}"                                                               `# Remove whitespace`
 				else
-					SVG=$(cat "../${THEME_PATH[$I]}$ICON_PATH")
-					echo "$SVG" | tr -d '\n'                                            `# Remove new lines` \
-						| sed -e "s/<!--.*-->//"                                        `# Remove comments` \
-						| sed -e "s/id\=\"/id\=\"${ICON_NAME_TMP}-/g"                   `# Append icon name to inner ids to make them unique` \
-						| sed -e "s/href=\"#/href=\"#${ICON_NAME_TMP}-/g"               `# Update url(#) with new ids` \
-						| sed -e "s/=\"url(#/=\"url(#${ICON_NAME_TMP}-/g"               `# Update href(#) with new ids` \
-						| sed -e "s/:url(#/:url(#${ICON_NAME_TMP}-/g"                   `# Update href(#) with new ids` \
-						| sed -e "s/$FIND/$REPLACE/g"                                   `# Add icon class` \
-						| sed -e 's/<style>/<style>@scope{/g'                           `# Wrap styles inside @scope open` \
-						| sed -e 's/<\/style>/}<\/style>/g'                             `# Wrap styles inside @scope close` \
-						| sed -e 's/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"//g'        `# Remove xmlns` \
-						| sed -e 's/> *</></g'                                          `# Replace '> <' with '><'` \
-						| sed -e 's/ *>/>/g'                                            `# Replace ' >' with '>'` \
-						| sed -e 's/ *\/>/\/>/g'                                        `# Replace ' \>' with '\>'` \
-						| sed -e 's/width=\"24\" height=\"24\"//g'                      `# Remove 'width="24" height="24"'` \
-						| sed -e 's/width=\"24\" //g'                                   `# Remove 'width="24"'` \
-						| sed -e 's/height=\"24\" //g'                                  `# Remove 'height="24"'` \
-						| tr -s " " >> "${WRITE_FILE}"                                  `# Remove whitespace`
+					SVG=$(SVGO_PREFIX=$ICON_NAME svgo "../${THEME_PATH[$I]}$ICON_PATH" -o -)  # Uses config file: svgo.config.mjs
+					echo "$SVG" | tr -d '\n'                                                 `# Remove new lines` \
+						| sed -e "s/$FIND/$REPLACE/g"                                        `# Add icon class` \
+						| tr -s " " >> "${WRITE_FILE}"                                       `# Remove whitespace`
 				fi
 
 				echo "	<td>" >> ${PREVIEW}
 				echo "		<div>" >> ${PREVIEW}
+				if [[ $ICON_PATH == "#"* ]]; then
+					echo "			<b>Original</b>" >> ${PREVIEW}
+					echo "			<img alt='Reference to: #${ICON_PATH:1}'>" >> ${PREVIEW}
+				else
+					echo "			<b>Original</b>" >> ${PREVIEW}
+					echo "			<img alt='git submodule missing' src='../${THEME_PATH[$I]}$ICON_PATH'>" >> ${PREVIEW}
+				fi
+				echo "			<b>Sprites</b>" >> ${PREVIEW}
 				echo "			<img src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
-				echo "			<img class='md' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
-				echo "			<img class='sm' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
+				echo "			<div>" >> ${PREVIEW}
+				echo "				<img class='md' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
+				echo "				<img class='sm' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
+				echo "			</div>" >> ${PREVIEW}
 				echo "			<img class='fill' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
-				echo "			<img class='fill md' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
-				echo "			<img class='fill sm' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
+				echo "			<div>" >> ${PREVIEW}
+				echo "				<img class='fill md' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
+				echo "				<img class='fill sm' src='./${OUTPUT_NAME}-${N}.svg#$ICON_NAME'>" >> ${PREVIEW}
+				echo "			</div>" >> ${PREVIEW}
 				echo "		</div>" >> ${PREVIEW}
 				echo "	</td>" >> ${PREVIEW}
 
@@ -321,6 +284,17 @@ function process_theme() {
 }
 
 cd "$(dirname "$0")" # cd to this script dir
+
+if ! command -v svgo >/dev/null 2>&1; then
+    echo "Not found: svgo"
+	if ! command -v npm >/dev/null 2>&1; then
+		echo "First install npm, then run: npm install -g svgo"
+	else
+		echo "Install via: npm install -g svgo"
+	fi
+	echo "https://github.com/svg/svgo#installation"
+    exit 1
+fi
 
 git submodule update --progress --init --recursive
 
