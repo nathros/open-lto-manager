@@ -15,7 +15,7 @@ export default {
 		{
 			name: "cleanupIds",
 			params: {
-				minify: false, // Leave ids alone will be updated via
+				minify: false, // Leave ids alone will be updated via prefixIds bellow
 				remove: true, // Remove unreferences ids
 				force: true, // Do not abort for ids in <script> and <style>
 			},

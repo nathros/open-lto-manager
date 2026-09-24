@@ -8,8 +8,8 @@ function preview_start() {
 	echo "<html>" >> $OUTPUT
 	echo "	<head>" >> $OUTPUT
 	echo "		<title>$2 preview</title>" >> $OUTPUT
-	echo "		<style>td, th { border: 1px solid; } td { padding: 4px;} tr th { position: sticky; top: 0; background-color: white; } td > div { display: inline-flex; } td > div > div { display: flex; flex-direction: column-reverse; align-items: center; justify-content: center; }</style>" >> $OUTPUT
-	echo "		<style>img { width: 5rem; height: 5rem; margin: 2px; white-space: break-spaces; } .sm { width: 1rem; height: 1rem; } .md { width: 1.5rem; height: 1.5rem; } .fill { background-color: lightgrey; } a { text-decoration: none; }</style>" >> $OUTPUT
+	echo "		<style>html{ font-family: system-ui; } td, th { border: 1px solid; } td { padding: 4px;} tr th { position: sticky; top: 0; background-color: white; } td > div { display: inline-flex; } td > div > div { display: flex; flex-direction: column-reverse; align-items: center; justify-content: center; }</style>" >> $OUTPUT
+	echo "		<style>img { width: 5rem; height: 5rem; margin: 2px; white-space: break-spaces; font-size: x-small; text-align: right; } .sm { width: 1rem; height: 1rem; } .md { width: 1.5rem; height: 1.5rem; } .fill { background-color: lightgrey; } a { text-decoration: none; }</style>" >> $OUTPUT
 	echo "		<style>td > div > b { writing-mode: sideways-lr; text-orientation: upright; text-align: center; } td > div > img:first-of-type { padding-right: 1rem; }</style>" >> $OUTPUT
 	echo "	</head>" >> $OUTPUT
 	echo "<body>" >> $OUTPUT
@@ -244,7 +244,7 @@ function process_theme() {
 				echo "		<div>" >> ${PREVIEW}
 				if [[ $ICON_PATH == "#"* ]]; then
 					echo "			<b>Original</b>" >> ${PREVIEW}
-					echo "			<img alt='Reference to: #${ICON_PATH:1}'>" >> ${PREVIEW}
+					echo "			<img alt='Missing as uses reference to: #${ICON_PATH:1}'>" >> ${PREVIEW}
 				else
 					echo "			<b>Original</b>" >> ${PREVIEW}
 					echo "			<img alt='git submodule missing' src='../${THEME_PATH[$I]}$ICON_PATH'>" >> ${PREVIEW}
