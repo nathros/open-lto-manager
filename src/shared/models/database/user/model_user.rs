@@ -156,7 +156,7 @@ impl From<i64> for FileTheme {
             _ if value == FileTheme::Breeze as i64 => FileTheme::Breeze,
             _ if value == FileTheme::Papirus as i64 => FileTheme::Papirus,
             _ if value == FileTheme::Kora as i64 => FileTheme::Kora,
-            _ => FileTheme::Papirus, // Fallback
+            _ => FileTheme::Breeze, // Fallback
         }
     }
 }

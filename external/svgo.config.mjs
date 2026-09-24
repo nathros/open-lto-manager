@@ -24,7 +24,7 @@ export default {
 			name: "prefixIds",
 			params: {
 				delim: "-",
-				prefix: () => process.env.SVGO_PREFIX,
+				prefix: () => process.env.SVGO_PREFIX.replaceAll(" ", "_"), // id cannot contain spaces
 			},
 		},
 	],

@@ -189,6 +189,10 @@ function process_theme() {
 
 			elif [[ $LINE == *": {" ]]; then
 				ICON_NAME=${LINE:1:-4} # Start of current icon
+				if [[ $ICON_NAME == *" "* ]]; then
+					echo "Error: '$ICON_NAME' key contains invalid space from file: $1"
+					exit 1
+				fi
 
 				echo "<tr>" >> ${PREVIEW}
 				echo "	<td>$ICON_NAME</td>" >> ${PREVIEW}

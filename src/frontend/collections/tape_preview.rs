@@ -22,7 +22,8 @@ pub fn TapePreview(
         .find(|p| p.id == preview().manufacturer_id)
         .unwrap_or(&RecordManufacturer::blank())
         .name
-        .to_lowercase();
+        .to_lowercase()
+        .replace(" ", "_");
 
     let tape_type: RecordTapeType = tapes_list
         .iter()
