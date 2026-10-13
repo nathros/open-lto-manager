@@ -1,7 +1,33 @@
 table {
 	border-collapse: collapse;
+	background-color: var(--fill);
+	border-radius: var(--radius);
+	outline: var(--border);
 }
-table, th, td {
-	border: 1px solid black;
-	padding: 0.5rem;
+th,
+td {
+	padding: var(--xs);
+	border-left: var(--border);
+}
+td {
+	border-top: var(--border);
+}
+th:first-child,
+td:first-child {
+	border-left: none;
+}
+tr:last-child,
+tr:last-child > td:last-child {
+	border-bottom-right-radius: var(--radius);
+}
+tr:last-child,
+tr:last-child > td:first-child {
+	border-bottom-left-radius: var(--radius);
+}
+tr:hover {
+	box-shadow: var(--hover);
+}
+tr.selected,
+tr:hover:has(th) {
+	box-shadow: none;
 }

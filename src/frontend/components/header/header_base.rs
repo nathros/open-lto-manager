@@ -71,6 +71,7 @@ fn error_handler(err: ErrorContext) -> Element {
 #[component]
 pub fn Header() -> Element {
     let mut current_user = use_loader(api_current_user)?;
+    use_context_provider(|| current_user);
 
     #[cfg(all(feature = "auto_login", debug_assertions))]
     {
@@ -132,9 +133,9 @@ pub fn Header() -> Element {
 
                         button { id: Id::HeaderBaseAnchor.as_str() } // Anchor for more Icons if needed
 
-                        HeaderIcon {
-                            button_id: Id::HeaderInfoIcon.as_str(),
-                            menu_id: Id::HeaderNotificationIcon.as_str(),
+                        HeaderIcon { // TODO use DropDown component
+                            button_id: Id::HeaderNotificationIcon.as_str(),
+                            menu_id: Id::HeaderNotificationMenu.as_str(),
                             icon: Icons::NOTIFICATION,
                             div { class: static_concat!(Css::ICON_LIST_ITEM, Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE),
                                 "..."

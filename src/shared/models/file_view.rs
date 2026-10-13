@@ -1,177 +1,111 @@
+use chrono::{DateTime, Local};
 use dioxus::fullstack::serde::{Deserialize, Serialize};
 
-use crate::backend::api::api_file_view::fv_files_in_dir;
-
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Default, Serialize, Deserialize, PartialEq, Clone)]
 pub struct FileView {
-    pub is_dir: bool,
-    pub nest: usize,
-    pub path: String,
-    pub name: String,
-    pub size: u64,
-    pub expanded: bool,
-    pub hidden: bool,
-    pub selected: bool,
+    pub current_dir: Option<FileViewInfo>,
+    pub children: Vec<FileViewInfo>,
 }
 
-impl FileView {
-    pub async fn toggle_dir(dir: &mut Vec<FileView>, index: usize) {
-        if let Some(file) = dir.get_mut(index) {
-            file.expanded = !file.expanded;
-            let expanded = file.expanded;
+#[derive(Debug, Default, Serialize, Deserialize, PartialEq, Clone)]
+pub struct FileViewInfo {
+    pub id: i64,
+    pub is_dir: bool,
+    pub is_selected: bool,
+    pub file_name: String,
+    pub file_path: String,
+    pub file_size: i64,
+    pub created: DateTime<Local>,
+    pub modified: DateTime<Local>,
+    pub icon: String,
+}
 
-            if file.expanded && file.size == 0 {
-                let fetch = fv_files_in_dir(file.path.clone(), false, file.nest + 1).await;
-                if let Ok(Ok(new_dir)) = fetch {
-                    FileView::insert_dir(dir, new_dir, index);
-                }
-            } else {
-                let nest = file.nest;
-                for element in dir.iter_mut().skip(index + 1) {
-                    if element.nest > nest {
-                        element.hidden = !expanded;
-                    } else {
-                        break;
-                    }
-                }
-            }
+impl FileViewInfo {
+    pub fn is_dir(file_name: &str) -> bool {
+        file_name.chars().last().is_some_and(|c| c == '/')
+    }
+
+    pub fn trim_name(file_name: String) -> String {
+        if file_name.chars().next().is_some_and(|c| c == '/')
+            && file_name.chars().last().is_some_and(|c| c == '/')
+            && file_name.len() > 1
+        {
+            file_name.as_str()[1..file_name.len() - 1].to_string()
+        } else {
+            file_name
         }
     }
 
-    pub fn insert_dir(
-        main: &mut Vec<FileView>,
-        new_dir: Vec<FileView>,
-        index: usize,
-    ) -> Option<&str> {
-        //FileView::println(main);
-
-        let current_dir = main.get(index);
-        if current_dir.is_none() {
-            return Some("Index does not exist");
-        }
-        if let Some(element) = main.get(index) {
-            if !element.is_dir {
-                return Some("Index is not dir");
-            }
-            let new_dir_size = new_dir.len();
-            let mut tmp = main.split_off(index + 1); // Split elements after dir into separate vector
-            if let Some(last) = main.last_mut() {
-                last.size = new_dir_size as u64; // Set dir size as number of elements
-            }
-            main.extend_from_slice(&new_dir); // Append new items
-            main.append(&mut tmp); // Append split
-        }
-
-        None
+    pub fn full_path(&self) -> String {
+        let mut full = self.file_path.clone();
+        full.push_str(&self.file_name);
+        full
     }
 
-    pub fn println(list: &[FileView]) {
-        for (index, file) in list.iter().enumerate() {
-            println!(
-                "{}",
-                format_args!(
-                    "[{:>2}]:{:>2} {:>5} {:>5}  {}",
-                    index, file.nest, file.is_dir, file.size, file.name
-                )
-            );
+    pub fn pretty_size(&self) -> String {
+        let mut size = self.file_size as f32;
+        if size < 1024.0 {
+            if size == 0.0 {
+                return "empty".to_string();
+            }
+            return format!("{} bytes", self.file_size);
         }
+        for unit in ["KB", "MB", "GB", "TB"] {
+            size /= 1024.0;
+            if size < 1024.0 {
+                return format!("{:.2} {}", size, unit);
+            }
+        }
+        format!("{:.2} TB", size)
     }
 }
 
 #[cfg(test)]
 mod tests {
-    #![allow(clippy::unwrap_used)]
+    use crate::shared::models::file_view::FileViewInfo;
 
-    use crate::{
-        backend::api::api_file_view::{fv_files_in_dir, fv_working_dir},
-        shared::models::file_view::FileView,
-    };
-
-    #[tokio::test]
-    async fn invalid_ranges_insert() {
-        let test_dir_str = fv_working_dir().await.unwrap(); // Will be code dir
-        let mut root_dir = fv_files_in_dir(test_dir_str.clone(), false, 0)
-            .await
-            .unwrap()
-            .unwrap();
-        let root_dir_len = root_dir.len();
-
-        let result = FileView::insert_dir(&mut root_dir, vec![], root_dir_len + 1);
-        assert!(result.is_some(), "Out of range not triggered");
-
-        let (dir_index, _) = root_dir
-            .iter()
-            .enumerate()
-            .find(|(_, f)| f.name == "src")
-            .unwrap();
-        let result = FileView::insert_dir(&mut root_dir, vec![], dir_index);
-        assert!(result.is_none(), "Should be valid dir");
-
-        let (file_index, _) = root_dir
-            .iter()
-            .enumerate()
-            .find(|(_, f)| f.name == "Cargo.toml")
-            .unwrap();
-        let result = FileView::insert_dir(&mut root_dir, vec![], file_index);
-        assert!(result.is_some(), "Should be invalid file");
+    #[test]
+    fn check_is_dir() {
+        assert!(FileViewInfo::is_dir("/"));
+        assert!(FileViewInfo::is_dir("/test/"));
+        assert!(!FileViewInfo::is_dir("test"));
+        assert!(FileViewInfo::is_dir("test/"));
+        assert!(FileViewInfo::is_dir("/test/"));
     }
 
-    #[tokio::test]
-    async fn insert_dir() {
-        let test_dir_str = fv_working_dir().await.unwrap(); // Will be code dir
-        let mut root_dir = fv_files_in_dir(test_dir_str.clone(), false, 0)
-            .await
-            .unwrap()
-            .unwrap();
+    #[test]
+    fn check_trim_name() {
+        assert_eq!(FileViewInfo::trim_name("/dir/".to_string()), "dir");
+        assert_eq!(FileViewInfo::trim_name("file".to_string()), "file");
+        assert_eq!(FileViewInfo::trim_name("/".to_string()), "/");
+    }
 
-        // Search for src dir which will be used for test
-        let (test_index_dir, src_dir) = root_dir
-            .iter()
-            .enumerate()
-            .find(|(_, f)| f.name == "src")
-            .unwrap();
+    #[test]
+    fn check_pretty_size() {
+        let test_data = [
+            (0, "empty"),
+            (888, "888 bytes"),
+            (1024, "1.00 KB"),
+            (1025, "1.00 KB"),
+            (1099, "1.07 KB"),
+            (1048576, "1.00 MB"),
+            (345742486, "329.73 MB"),
+            (1073741824, "1.00 GB"),
+            (406643380416, "378.72 GB"),
+            (1099511627776, "1.00 TB"),
+            (1125899906842624, "1024.00 TB"), // No PB tape exists
+            (9223372036854775807, "8388608.00 TB"),
+        ];
 
-        assert!(
-            test_index_dir > 0,
-            "Expected to find a dir in the second half"
-        );
-
-        let test_inner_dir_str = format!(
-            "{}{}{}",
-            test_dir_str,
-            std::path::MAIN_SEPARATOR,
-            src_dir.name
-        );
-
-        let src_dir = fv_files_in_dir(test_inner_dir_str, false, 1)
-            .await
-            .unwrap()
-            .unwrap();
-
-        let original_len = root_dir.len();
-        let additional_len = src_dir.len();
-
-        // println!("Before");
-        // println!("root_dir [{}]:", test_index_dir);
-        // FileView::println(&root_dir);
-        // println!("------------------");
-        // println!("src_dir:");
-        // FileView::println(&src_dir);
-        // println!("==================");
-
-        assert_eq!(
-            FileView::insert_dir(&mut root_dir, src_dir, test_index_dir),
-            None // No error
-        );
-        assert_eq!(
-            root_dir.len(),
-            (original_len + additional_len),
-            "Expected length mismatch"
-        );
-
-        // println!("After");
-        // println!("root_dir [{}]:", test_index_dir);
-        // FileView::println(&root_dir);
-        // println!("==================");
+        test_data.iter().for_each(|(size, str)| {
+            assert_eq!(
+                FileViewInfo {
+                    file_size: *size,
+                    ..Default::default()
+                }
+                .pretty_size(),
+                str.to_string()
+            );
+        });
     }
 }

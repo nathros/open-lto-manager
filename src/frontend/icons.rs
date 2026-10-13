@@ -24,5 +24,10 @@ impl Icons {
     pub const BOOK: &str = "book ";
     pub const SEARCH: &str = "search ";
     pub const PDF: &str = "pdf ";
+    pub const CHECK: &str = "check ";
+    pub const COG: &str = "cog ";
+    pub const EDIT: &str = "edit ";
+    pub const DIR_UP: &str = "dir-up ";
+    pub const REFRESH: &str = "refresh ";
     pub const RESTORE: &str = "restore ";
 }

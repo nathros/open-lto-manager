@@ -204,42 +204,88 @@ impl TableFile<RecordFile> {
         .query_map([], |row| TableFile::fill(row, 0))?
         .collect::<Result<Vec<RecordFile>, rusqlite::Error>>()
     }
+
+    pub fn get_in_virtual_dir(
+        db: &Connection,
+        dir: String,
+    ) -> Result<Vec<RecordFile>, rusqlite::Error> {
+        let (path, name, directory) = Self::split_dir(dir);
+        db.prepare(
+            "SELECT
+                    id,
+                    tape_id,
+                    file_name_virt,
+                    file_path_virt,
+                    file_name_phy,
+                    file_path_phy,
+                    file_size,
+                    created,
+                    modified,
+                    hash,
+                    icon
+                FROM file
+                WHERE
+                    ((file_path_virt = ?1) AND (file_name_virt = ?2))
+                    OR (file_path_virt LIKE ?3)",
+        )?
+        .query_map(params![path, name, directory], |row| {
+            TableFile::fill(row, 0)
+        })?
+        .collect::<Result<Vec<RecordFile>, rusqlite::Error>>()
+    }
+
+    pub fn split_dir(mut dir: String) -> (String, String, String) {
+        // Split dir ready for SQL query
+        if !dir.ends_with("/") {
+            dir.push('/');
+        }
+        if let Some(penultimate) = dir[..dir.len() - 1].rfind("/") {
+            return (
+                dir[..penultimate + 1].to_string(),      // Parent dir
+                dir[penultimate..dir.len()].to_string(), // Dir name
+                dir,                                     // Dir which starts add end with /
+            );
+        }
+        ("/".to_string(), "/".to_string(), dir)
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::backend::database::{
-        db::tests::create_test_database,
-        tables::{file::table_file::TableFile, table::TableCreate, tape},
-    };
-
-    fn create_table() -> rusqlite::Connection {
-        let conn = create_test_database();
-        // TableFile depends on TableManufacturer, TableTapeType and TableTape, so these must be created first
-        tape::table_tape::tests::create_table(&conn); // This creates TableManufacturer and TableTapeType
-
-        assert!(
-            !conn.table_exists(None, "file").unwrap(),
-            "New table should be empty"
-        );
-        assert!(
-            TableFile::create_table(&conn).is_ok(),
-            "Failed to create file table"
-        );
-        assert!(
-            conn.table_exists(None, "file").unwrap(),
-            "create_table() file reported Ok but table does not exist"
-        );
-        conn
-    }
+    use crate::backend::database::tables::file::table_file::TableFile;
 
     #[test]
-    fn create() {
-        let _db = create_table();
-    }
+    fn split_dir_query() {
+        assert_eq!(
+            TableFile::split_dir("/hello".to_string()),
+            (
+                "/".to_string(),
+                "/hello/".to_string(),
+                "/hello/".to_string()
+            )
+        );
 
-    #[test]
-    fn insert() {
-        let _db = create_table();
+        assert_eq!(
+            TableFile::split_dir("/Documents/json/Batch1/".to_string()),
+            (
+                "/Documents/json/".to_string(),
+                "/Batch1/".to_string(),
+                "/Documents/json/Batch1/".to_string()
+            )
+        );
+
+        assert_eq!(
+            TableFile::split_dir("/Documents/json".to_string()),
+            (
+                "/Documents/".to_string(),
+                "/json/".to_string(),
+                "/Documents/json/".to_string()
+            )
+        );
+
+        assert_eq!(
+            TableFile::split_dir("/".to_string()),
+            ("/".to_string(), "/".to_string(), "/".to_string())
+        );
     }
 }

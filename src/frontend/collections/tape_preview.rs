@@ -83,6 +83,7 @@ pub fn TapePreview(
             img {
                 class: format!("tape-worm {}", worm_show),
                 src: IMG_TAPE_PREVIEW,
+                loading: "eager", // When worm is checked takes a sec to update, pre-fetch image
             }
             img { class: "tape-tab", src: IMG_TAPE_PREVIEW_TAB }
             div { class: "tape-overlay",

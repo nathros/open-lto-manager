@@ -19,6 +19,7 @@ pub struct HeaderIconProps {
 
 #[component]
 pub fn HeaderIcon(props: HeaderIconProps) -> Element {
+    // TODO is similar to DropDown, make generic
     rsx! {
         button {
             class: Css::HEADER_DROPDOWN,

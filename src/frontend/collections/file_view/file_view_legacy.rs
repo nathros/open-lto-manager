@@ -3,10 +3,10 @@ use std::{collections::HashSet, path::MAIN_SEPARATOR};
 
 use crate::backend::api::api_file_view::{fv_files_in_dir, fv_working_dir};
 use crate::frontend::elements::button::Button;
-use crate::shared::models::file_view::FileView;
+use crate::shared::models::file_view_legacy::FileViewLegacy;
 
 #[component]
-pub fn FileViewer(mut selected_files: WriteSignal<HashSet<String>>) -> Element {
+pub fn FileViewerV1(mut selected_files: WriteSignal<HashSet<String>>) -> Element {
     let mut current_path: Signal<String> = use_signal(|| "".to_string()); // TODO merge these into single signal
     let mut current_path_input: Signal<String> = use_signal(|| current_path());
 
@@ -69,7 +69,7 @@ fn FileViewerBody(
     mut current_path_input: WriteSignal<String>,
     mut selected_files: WriteSignal<HashSet<String>>,
 ) -> Element {
-    let mut loader: Loader<Result<Vec<FileView>, String>> =
+    let mut loader: Loader<Result<Vec<FileViewLegacy>, String>> =
         use_loader(move || fv_files_in_dir(current_path(), false, 0))?;
 
     rsx! {
@@ -103,7 +103,7 @@ fn FileViewerBody(
                                         info!("click: {}", file_path);
                                         spawn(async move {
                                             if let Ok(mut dir) = loader() {
-                                                FileView::toggle_dir(&mut dir, index).await;
+                                                FileViewLegacy::toggle_dir(&mut dir, index).await;
                                                 loader.set(Ok(dir));
                                             }
                                         });

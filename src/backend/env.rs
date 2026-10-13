@@ -44,6 +44,14 @@ pub fn get_pepper() -> Option<String> {
     std::env::var(ENV_DB_PEPPER).ok()
 }
 
+pub fn get_working_dir() -> String {
+    std::env::current_dir()
+        .unwrap_or([r""].iter().collect())
+        .into_os_string()
+        .into_string()
+        .unwrap_or("".to_string())
+}
+
 #[cfg(test)]
 mod tests {
     use std::env;
@@ -51,6 +59,7 @@ mod tests {
     use crate::backend::env::{
         ENV_CONSOLE_LOG, ENV_DB_PEPPER, ENV_PATH_DATA, ENV_PATH_DB, ENV_PATH_LOG,
         get_console_log_enabled, get_data_dir, get_database_path, get_logging_path, get_pepper,
+        get_working_dir,
     };
 
     #[test]
@@ -103,6 +112,8 @@ mod tests {
             env::set_var(ENV_DB_PEPPER, "1234");
             assert_eq!(get_pepper().unwrap(), "1234".to_string());
             env::remove_var(ENV_DB_PEPPER); // Reset
+
+            assert_ne!(get_working_dir(), "".to_string());
         }
     }
 }

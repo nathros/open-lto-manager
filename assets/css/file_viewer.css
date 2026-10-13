@@ -1,0 +1,28 @@
+.file-viewer /* impl Css::FILE_VIEWER */ {
+	display: flex;
+	flex-direction: column;
+	gap: var(--xs);
+}
+.file-viewer > 
+.breadcrumb /* impl Css::FILE_VIEWER_BREADCRUMB */ {
+	display: flex;
+	flex-direction: row;
+}
+.breadcrumb > div {
+	width: 100%;
+	display: flex;
+	gap: 2px;
+}
+.breadcrumb > div button {
+	min-width: var(--md);
+	justify-content: center;
+}
+.file-viewer > table img {
+	width: var(--md);
+	height: var(--md);
+}
+.file-viewer > table > tr > td {
+	border-left: none;
+	cursor: default;
+	user-select: none;
+}

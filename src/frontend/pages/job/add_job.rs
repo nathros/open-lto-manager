@@ -5,7 +5,7 @@ use crate::{
     backend::api::api_job::new_backup,
     frontend::{
         collections::{
-            file_view::FileViewer,
+            file_view::file_view_legacy::FileViewerV1,
             message::{Message, MessageDetails},
         },
         elements::button::Button,
@@ -29,7 +29,7 @@ pub fn AddJob() -> Element {
     };
 
     let tab_files = rsx! {
-        FileViewer { selected_files }
+        FileViewerV1 { selected_files }
         hr {}
         for f in selected_files() {
             span { "{f}" }
@@ -65,12 +65,11 @@ pub fn AddJob() -> Element {
         Tab {
             labels: vec!["Options".to_string(), "Files".to_string(), "Destination".to_string()],
             contents: vec![
-                tab_options,
-                tab_files,
-                rsx! {
-                    p { "Implement virtual file viewer" }
-                },
-            ],
+                                        tab_options,
+                                        tab_files,
+                                        rsx! {
+                                        },
+                                    ],
         }
         hr {}
         Message { details: message() }

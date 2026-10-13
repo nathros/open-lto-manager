@@ -77,6 +77,12 @@ pub struct InputProps {
     oninput: EventHandler<FormEvent>,
 
     #[props(optional)]
+    onkeypress: EventHandler<KeyboardEvent>,
+
+    #[props(optional)]
+    onmounted: EventHandler<MountedEvent>,
+
+    #[props(optional)]
     validation: ReadSignal<Option<String>>,
 
     #[props(extends = input, extends = GlobalAttributes)]
@@ -100,6 +106,8 @@ pub fn Input(props: InputProps) -> Element {
                         r#type: props.type_.to_string(),
                         style: props.style,
                         oninput: props.oninput,
+                        onkeypress: props.onkeypress,
+                        onmounted: props.onmounted,
                         ..props.attributes,
                     }
                     div { class: Css::INPUT_MESSAGE,

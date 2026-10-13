@@ -3,6 +3,7 @@ pub mod heading;
 pub mod icon;
 pub mod input;
 pub mod link;
+pub mod loading;
 pub mod menu_item;
 pub mod select;
 pub mod vertical_divider;

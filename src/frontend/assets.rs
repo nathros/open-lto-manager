@@ -29,6 +29,10 @@ pub const ICONS_ASSET_SARGAM_LINE: Asset = asset!(
     AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS
 );
 
+pub const FILES_ICONS_ASSET_BREEZE: Asset = asset!("/assets/files-breeze.svg");
+pub const FILES_ICONS_ASSET_KORA: Asset = asset!("/assets/files-kora.svg");
+pub const FILES_ICONS_ASSET_PAPIRUS: Asset = asset!("/assets/files-papirus.svg");
+
 // CSS
 #[cfg(not(debug_assertions))] // Release build combined CSS files
 pub const CSS_ASSETS: [Asset; 1] = [asset!(
@@ -38,7 +42,7 @@ pub const CSS_ASSETS: [Asset; 1] = [asset!(
 
 // Release (build.rs) will combine all these files into single bundle.css
 #[cfg(debug_assertions)] // Debug build individual CSS files
-pub const CSS_ASSETS: [Asset; 22] = [
+pub const CSS_ASSETS: [Asset; 23] = [
     asset!("/assets/css/:root.css"),
     asset!("/assets/font/font.css"),
     asset!("/assets/css/header.css"),
@@ -53,6 +57,7 @@ pub const CSS_ASSETS: [Asset; 22] = [
     asset!("/assets/css/table.css"),
     asset!("/assets/css/card.css"),
     asset!("/assets/css/code-block.css"),
+    asset!("/assets/css/file_viewer.css"),
     asset!("/assets/css/button.css"),
     asset!("/assets/css/section.css"),
     asset!("/assets/css/library.css"),

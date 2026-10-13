@@ -6,6 +6,10 @@ use rusqlite::{
     types::{FromSql, FromSqlResult, ToSqlOutput, ValueRef},
 };
 
+use crate::frontend::assets::{
+    FILES_ICONS_ASSET_BREEZE, FILES_ICONS_ASSET_KORA, FILES_ICONS_ASSET_PAPIRUS,
+};
+
 #[cfg(feature = "server")]
 use super::model_user_sensitive::RecordUser;
 
@@ -172,6 +176,16 @@ impl ToSql for FileTheme {
 impl FromSql for FileTheme {
     fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self> {
         FromSqlResult::Ok(FileTheme::from(value.as_i64().unwrap_or(0)))
+    }
+}
+
+impl FileTheme {
+    pub fn as_file_theme(&self) -> String {
+        match self {
+            FileTheme::Breeze => FILES_ICONS_ASSET_BREEZE.to_string(),
+            FileTheme::Papirus => FILES_ICONS_ASSET_PAPIRUS.to_string(),
+            FileTheme::Kora => FILES_ICONS_ASSET_KORA.to_string(),
+        }
     }
 }
 

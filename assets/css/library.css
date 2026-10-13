@@ -13,12 +13,12 @@
 .pdf-preview > div > svg {
 	background-color: white;
 }
-.pdf-preview.sans-serif > div > svg > g > svg > g {
+.pdf-preview.sans-serif g {
 	font-family: var(--f-sans);
 }
-.pdf-preview.monospace > div > svg > g > svg > g {
+.pdf-preview.monospace g {
 	font-family: var(--f-mono);
 }
-.pdf-preview.serif > div > svg > g > svg > g {
+.pdf-preview.serif g {
 	font-family: var(--f-serif);
 }

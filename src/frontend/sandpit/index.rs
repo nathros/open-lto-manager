@@ -11,11 +11,12 @@ use crate::{
         },
         sandpit::{
             sandpit_accordion::SandpitAccordion, sandpit_button::SandpitButton,
-            sandpit_floating_message::SandpitFloating, sandpit_input::SandpitInput,
-            sandpit_menu::SandpitMenu, sandpit_menu_item::SandpitMenuItem,
-            sandpit_message::SandpitMessage, sandpit_modal::SandpitModal,
-            sandpit_radio_pill::SandpitRadioPill, sandpit_select::SandpitSelect,
-            sandpit_tab::SandpitTab,
+            sandpit_dropdown::SandpitDropDown, sandpit_file_view_v1::SandpitFileView,
+            sandpit_file_view_v2::SandpitFileViewV2, sandpit_floating_message::SandpitFloating,
+            sandpit_input::SandpitInput, sandpit_menu::SandpitMenu,
+            sandpit_menu_item::SandpitMenuItem, sandpit_message::SandpitMessage,
+            sandpit_modal::SandpitModal, sandpit_radio_pill::SandpitRadioPill,
+            sandpit_select::SandpitSelect, sandpit_tab::SandpitTab,
         },
     },
     route::Route,
@@ -48,9 +49,14 @@ pub fn Sandpit(name: String) -> Element {
                 ("Message", SandpitMessage()),
                 ("Radio Pill", SandpitRadioPill()),
                 ("Floating", SandpitFloating()),
+                ("FileViewerV1", SandpitFileView()),
+                ("FileViewerV2", SandpitFileViewV2()),
             ],
         ),
-        ("UI Components", vec![("Menu", SandpitMenu())]),
+        (
+            "UI Components",
+            vec![("Menu", SandpitMenu()), ("DropDown", SandpitDropDown())],
+        ),
     ];
 
     let style = "width:100%;align-items:unset";

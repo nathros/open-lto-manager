@@ -60,6 +60,21 @@
 	.icon.pdf {
 		mask-image: url(/assets/icons-tabler.svg#pdf);
 	}
+	.icon.check {
+		mask-image: url(/assets/icons-tabler.svg#check);
+	}
+	.icon.cog {
+		mask-image: url(/assets/icons-tabler.svg#cog);
+	}
+	.icon.edit {
+		mask-image: url(/assets/icons-tabler.svg#edit);
+	}
+	.icon.dir-up {
+		mask-image: url(/assets/icons-tabler.svg#dir-up);
+	}
+	.icon.refresh {
+		mask-image: url(/assets/icons-tabler.svg#refresh);
+	}
 	.icon.restore {
 		mask-image: url(/assets/icons-tabler.svg#restore);
 	}
@@ -124,6 +139,21 @@
 	}
 	.icon.pdf {
 		mask-image: url(/assets/icons-remix.svg#pdf);
+	}
+	.icon.check {
+		mask-image: url(/assets/icons-remix.svg#check);
+	}
+	.icon.cog {
+		mask-image: url(/assets/icons-remix.svg#cog);
+	}
+	.icon.edit {
+		mask-image: url(/assets/icons-remix.svg#edit);
+	}
+	.icon.dir-up {
+		mask-image: url(/assets/icons-remix.svg#dir-up);
+	}
+	.icon.refresh {
+		mask-image: url(/assets/icons-remix.svg#refresh);
 	}
 	.icon.restore {
 		mask-image: url(/assets/icons-remix.svg#restore);
@@ -190,6 +220,21 @@
 	.icon.pdf {
 		mask-image: url(/assets/icons-iconoir.svg#pdf);
 	}
+	.icon.check {
+		mask-image: url(/assets/icons-iconoir.svg#check);
+	}
+	.icon.cog {
+		mask-image: url(/assets/icons-iconoir.svg#cog);
+	}
+	.icon.edit {
+		mask-image: url(/assets/icons-iconoir.svg#edit);
+	}
+	.icon.dir-up {
+		mask-image: url(/assets/icons-iconoir.svg#dir-up);
+	}
+	.icon.refresh {
+		mask-image: url(/assets/icons-iconoir.svg#refresh);
+	}
 	.icon.restore {
 		mask-image: url(/assets/icons-iconoir.svg#restore);
 	}
@@ -254,6 +299,21 @@
 	}
 	.icon.pdf {
 		mask-image: url(/assets/icons-sargam.svg#pdf);
+	}
+	.icon.check {
+		mask-image: url(/assets/icons-sargam.svg#check);
+	}
+	.icon.cog {
+		mask-image: url(/assets/icons-sargam.svg#cog);
+	}
+	.icon.edit {
+		mask-image: url(/assets/icons-sargam.svg#edit);
+	}
+	.icon.dir-up {
+		mask-image: url(/assets/icons-sargam.svg#dir-up);
+	}
+	.icon.refresh {
+		mask-image: url(/assets/icons-sargam.svg#refresh);
 	}
 	.icon.restore {
 		mask-image: url(/assets/icons-sargam.svg#restore);

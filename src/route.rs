@@ -10,6 +10,7 @@ use crate::frontend::{
         },
         home::Home,
         job::add_job::AddJob,
+        job::add_job_v2::AddJob2,
         library::{generate_label::GenLabel, tape::Tape, view_library::ViewLibrary},
         login::login_user::LoginUser,
         show::Show,
@@ -40,6 +41,8 @@ pub enum Route {
 
     #[route("/jobs/")]
     AddJob {},
+    #[route("/jobs2/")]
+    AddJob2 {},
 
     #[route("/admin/sessions")]
     Sessions {},

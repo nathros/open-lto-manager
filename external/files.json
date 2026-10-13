@@ -25,15 +25,65 @@
 			"papirus": "Papirus/48x48/mimetypes/application-x-zerosize.svg",
 			"kora": "kora/mimetypes/scalable/application-x-zerosize.svg"
 		},
+		"folder": {
+			"breeze": "icons/places/48/folder.svg",
+			"papirus": "Papirus/48x48/places/folder.svg",
+			"kora": "kora/places/scalable/folder.svg"
+		},
+		"folder-black": {
+			"breeze": "icons/places/48/folder-black.svg",
+			"papirus": "Papirus/48x48/places/folder-black.svg",
+			"kora": "kora/places/scalable/folder-black.svg"
+		},
+		"folder-brown": {
+			"breeze": "icons/places/48/folder-brown.svg",
+			"papirus": "Papirus/48x48/places/folder-brown.svg",
+			"kora": "kora/places/scalable/folder-brown.svg"
+		},
+		"folder-cyan": {
+			"breeze": "icons/places/48/folder-cyan.svg",
+			"papirus": "Papirus/48x48/places/folder-cyan.svg",
+			"kora": "kora/places/scalable/folder-cyan.svg"
+		},
+		"folder-green": {
+			"breeze": "icons/places/48/folder-green.svg",
+			"papirus": "Papirus/48x48/places/folder-green.svg",
+			"kora": "kora/places/scalable/folder-green.svg"
+		},
+		"folder-grey": {
+			"breeze": "icons/places/48/folder-grey.svg",
+			"papirus": "Papirus/48x48/places/folder-grey.svg",
+			"kora": "kora/places/scalable/folder-grey.svg"
+		},
+		"folder-magenta": {
+			"breeze": "icons/places/48/folder-magenta.svg",
+			"papirus": "Papirus/48x48/places/folder-magenta.svg",
+			"kora": "kora/places/scalable/folder-magenta.svg"
+		},
+		"folder-orange": {
+			"breeze": "icons/places/48/folder-orange.svg",
+			"papirus": "Papirus/48x48/places/folder-orange.svg",
+			"kora": "kora/places/scalable/folder-orange.svg"
+		},
+		"folder-red": {
+			"breeze": "icons/places/48/folder-red.svg",
+			"papirus": "#folder-root",
+			"kora": "kora/places/scalable/folder-red.svg"
+		},
 		"folder-root": {
 			"breeze": "icons/places/48/folder-root.svg",
-			"papirus": "Papirus/48x48/places/folder-root.svg",
+			"papirus": "[#]Papirus/48x48/places/folder-root.svg",
 			"kora": "kora/places/scalable/folder-root.svg"
 		},
-		"png": {
-			"breeze": "icons/mimetypes/32/image-png.svg",
-			"papirus": "Papirus/48x48/mimetypes/image-png.svg",
-			"kora": "kora/mimetypes/scalable/application-image-png.svg"
+		"folder-violet": {
+			"breeze": "icons/places/48/folder-violet.svg",
+			"papirus": "Papirus/48x48/places/folder-violet.svg",
+			"kora": "kora/places/scalable/folder-violet.svg"
+		},
+		"folder-yellow": {
+			"breeze": "icons/places/48/folder-yellow.svg",
+			"papirus": "Papirus/48x48/places/folder-yellow.svg",
+			"kora": "kora/places/scalable/folder-yellow.svg"
 		},
 		"htm": {
 			"breeze": "[#]icons/mimetypes/64/text-html.svg",
@@ -44,6 +94,36 @@
 			"breeze": "#htm",
 			"papirus": "#htm",
 			"kora": "#htm"
+		},
+		"json": {
+			"breeze": "icons/mimetypes/32/application-json.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-json.svg",
+			"kora": "kora/mimetypes/scalable/application-json.svg"
+		},
+		"jp2": {
+			"breeze": "#jpg",
+			"papirus": "#jpg",
+			"kora": "#jpg"
+		},
+		"jpeg": {
+			"breeze": "#jpg",
+			"papirus": "#jpg",
+			"kora": "#jpg"
+		},
+		"jpg": {
+			"breeze": "[#]icons/mimetypes/32/image-jpeg.svg",
+			"papirus": "[#]Papirus/48x48/mimetypes/image-jpeg.svg",
+			"kora": "[#]kora/mimetypes/scalable/image-jpeg.svg"
+		},
+		"png": {
+			"breeze": "icons/mimetypes/32/image-png.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-png.svg",
+			"kora": "kora/mimetypes/scalable/application-image-png.svg"
+		},
+		"txt": {
+			"breeze": "icons/mimetypes/32/text-x-plain.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-x-plain.svg",
+			"kora": "kora/mimetypes/scalable/text-plain.svg"
 		}
 	}
 }

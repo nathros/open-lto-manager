@@ -177,6 +177,11 @@ pub fn backup_database(db: &Connection, path: String) -> Result<usize, rusqlite:
     db.execute("VACUUM main INTO ?1", params![path])
 }
 
+pub fn sqlite_version(db: &Connection) -> Result<String, rusqlite::Error> {
+    db.prepare("select sqlite_version()")?
+        .query_one([], |row| row.get::<usize, String>(0))
+}
+
 thread_local! {
     pub static DB: LazyLock<rusqlite::Connection> = LazyLock::new(|| {
         create_database(get_database_path()).expect("Attempt to open uninitialised database") // In separate function as rustfmt does not work inside this closure
@@ -189,7 +194,7 @@ pub mod tests {
 
     use crate::{
         backend::database::{
-            db::{create_database, enable_fk_constraints},
+            db::{create_database, enable_fk_constraints, sqlite_version},
             tables::{
                 table::RecordInsert,
                 tape::{self, table_tape::TableTape},
@@ -240,5 +245,11 @@ pub mod tests {
         let path = tmp_dir.path().display().to_string();
         let db = create_database(path).unwrap();
         check_foreign_keys_constraints(&db);
+    }
+
+    #[test]
+    fn check_sqlite_version() {
+        let db = create_test_database();
+        assert_eq!(sqlite_version(&db).unwrap(), "3.53.2");
     }
 }

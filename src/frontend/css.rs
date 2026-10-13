@@ -4,9 +4,9 @@
 pub struct Css; // CSS class names
 
 impl Css {
-    pub const COLOUR_SCHEME: &str = "colour-scheme"; // Defined in assets/css/:root.css line 52
-    pub const COLOUR_SCHEME_LIGHT: &str = "colour-scheme-light"; // Defined in assets/css/:root.css line 53
-    pub const COLOUR_SCHEME_DARK: &str = "colour-scheme-dark"; // Defined in assets/css/:root.css line 54
+    pub const COLOUR_SCHEME: &str = "colour-scheme"; // Defined in assets/css/:root.css line 56
+    pub const COLOUR_SCHEME_LIGHT: &str = "colour-scheme-light"; // Defined in assets/css/:root.css line 57
+    pub const COLOUR_SCHEME_DARK: &str = "colour-scheme-dark"; // Defined in assets/css/:root.css line 58
     pub const MAIN_HEADER: &str = "main-header "; // Defined in assets/css/header.css line 1
     pub const MAIN_HEADER_LOGO: &str = "header-logo "; // Defined in assets/css/header.css line 30
     pub const MAIN_ASIDE: &str = "main-aside "; // Defined in assets/css/header.css line 42
@@ -31,8 +31,8 @@ impl Css {
     pub const INPUT: &str = "input "; // Defined in assets/css/forms.css line 12
     pub const SELECT: &str = "select "; // Defined in assets/css/forms.css line 13
     pub const INPUT_CONTAINER: &str = "input-container "; // Defined in assets/css/forms.css line 49
-    pub const INPUT_ERROR_ICON: &str = "input-error-icon "; // Defined in assets/css/forms.css line 65
-    pub const RADIO_PILL_CONTAINER: &str = "radio-pill-container "; // Defined in assets/css/forms.css line 91
+    pub const INPUT_ERROR_ICON: &str = "input-error-icon "; // Defined in assets/css/forms.css line 66
+    pub const RADIO_PILL_CONTAINER: &str = "radio-pill-container "; // Defined in assets/css/forms.css line 92
     pub const INPUT_MESSAGE: &str = "input-message "; // Defined in assets/css/input.css line 1
     pub const MESSAGE: &str = "message "; // Defined in assets/css/message.css line 1
     pub const CARD: &str = "card "; // Defined in assets/css/card.css line 1
@@ -40,8 +40,11 @@ impl Css {
     pub const CARD_OVERVIEW: &str = "card-overview "; // Defined in assets/css/card.css line 13
     pub const CARD_OVERVIEW_STATUS: &str = "card-overview-status "; // Defined in assets/css/card.css line 32
     pub const CODE_BLOCK: &str = "code-block "; // Defined in assets/css/code-block.css line 1
+    pub const FILE_VIEWER: &str = "file-viewer "; // Defined in assets/css/file_viewer.css line 1
+    pub const FILE_VIEWER_BREADCRUMB: &str = "breadcrumb "; // Defined in assets/css/file_viewer.css line 7
     pub const BTN: &str = "btn "; // Defined in assets/css/button.css line 1
     pub const BTN_PRI: &str = "pri "; // Defined in assets/css/button.css line 27
+    pub const BTN_RESET: &str = "btn-reset "; // Defined in assets/css/button.css line 46
     pub const PDF_PREVIEW: &str = "pdf-preview "; // Defined in assets/css/library.css line 1
     pub const LOGIN_CONTAINER: &str = "login-container "; // Defined in assets/css/login.css line 1
     pub const MENU_CONTAINER: &str = "menu-container "; // Defined in assets/css/menu.css line 1

@@ -1,5 +1,6 @@
 {
   "chat.disableAIFeatures": true,
+  "rust-analyzer.files.exclude": ["external/**"], // external/ can contain 1000s file which slows the analyser
   "[rust]": {
     "editor.rulers": [
       120

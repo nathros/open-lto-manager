@@ -47,11 +47,18 @@ impl MenuConfig {
                     current_route,
                     Icons::LIST.into(),
                     "Jobs".to_string(),
-                    vec![MenuItemConfig {
-                        icon: "".to_string(),
-                        label: "Add Job".to_string(),
-                        link: Route::AddJob {}.to_string(),
-                    }],
+                    vec![
+                        MenuItemConfig {
+                            icon: "".to_string(),
+                            label: "Add Job".to_string(),
+                            link: Route::AddJob {}.to_string(),
+                        },
+                        MenuItemConfig {
+                            icon: "".to_string(),
+                            label: "Add Job2".to_string(),
+                            link: Route::AddJob2 {}.to_string(),
+                        },
+                    ],
                 ),
                 MenuGroup::new(
                     current_route,

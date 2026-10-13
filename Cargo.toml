@@ -16,12 +16,13 @@ chrono = { version = "0.4.39", features = ["serde"] }
 dioxus = { version = "0.7.9", features = ["router", "fullstack"] }
 enum-iterator = { version = "2.3.0" } # Replace with std::mem::variant_count when stable
 fontdb = { version = "0.23.0", optional = true }
+gloo-timers = { version = "0.3.0" }
 krilla = { version = "0.8.2", optional = true }
 krilla-svg = { version = "0.8.1", optional = true }
 num-traits = { version = "0.2.19" }
 password-hash = { version = "0.6.1", features = ["phc", "getrandom"],  optional = true }
 reqwest = { version = "0.12.28", default-features = false, optional = true }
-rusqlite = { version = "0.40.1", features = ["bundled", "chrono"], optional = true }
+rusqlite = { version = "0.40.2", features = ["bundled", "chrono"], optional = true }
 serde = { version = "1.0.228", features = [] }
 serde_json = { version = "1.0.140", features = [] }
 sha2 = { version = "0.11.0", optional = true }
@@ -74,17 +75,17 @@ allow-unwrap-in-tests = "allow"
 
 # https://dioxuslabs.com/learn/0.5/cookbook/optimizing/#build-configuration
 [profile.release]
-opt-level = 3
-debug = false
-lto = true
-codegen-units = 1
-panic = "abort"
-strip = true
-incremental = false
+opt-level = 3          # Maximum speed optimisation
+debug = false          # No debug info at all
+lto = "fat"            # Best cross-create optimisation
+codegen-units = 1      # Single codegen unit: more optimisation opportunities
+panic = "abort"        # No unwinding; smaller, slightly faster code
+strip = true           # Strip symbols to reduce binary size
+incremental = false    # Not incremental
 
 # https://book.leptos.dev/deployment/binary_size.html
 [profile.wasm-release]
 inherits = "release"
-opt-level = "z"
-lto = true
+opt-level = "z"       # Optimise for smallest size
+lto = "fat"
 codegen-units = 1

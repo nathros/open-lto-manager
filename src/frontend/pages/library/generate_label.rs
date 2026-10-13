@@ -409,7 +409,7 @@ fn GenLabelInner() -> Element {
 
     rsx! {
         div { class: Css::FLEX_ROW,
-            Card {
+            Card { style: "min-width: 16rem",
                 Tab {
                     labels: vec![
                         "Label".to_string(),
@@ -420,26 +420,28 @@ fn GenLabelInner() -> Element {
                     contents: vec![label_tab, style_tab, text_tab, page_tab],
                 }
                 hr {}
-                Button {
-                    text: "Download".to_string(),
-                    icon: Icons::PDF,
-                    primary: true,
-                    onclick: move |_| async move {
-                        js_download_file(GENERATE_PDF_LABEL_DOWNLOAD, json!({ "options" : options() }));
-                    },
-                }
-                Button {
-                    text: "Reset".to_string(),
-                    icon: Icons::RESTORE,
-                    primary: true,
-                    onclick: move |_| {
-                        let page = options().page;
-                        let des = options().designation;
-                        let mut replace = LabelOptions::default();
-                        replace.switch_page(page);
-                        replace.designation = des;
-                        options.set(replace);
-                    },
+                div { class: Css::FLEX_ROW, style: "margin-top: auto",
+                    Button {
+                        text: "Download".to_string(),
+                        icon: Icons::PDF,
+                        primary: true,
+                        onclick: move |_| async move {
+                            js_download_file(GENERATE_PDF_LABEL_DOWNLOAD, json!({ "options" : options() }));
+                        },
+                    }
+                    Button {
+                        text: "Reset".to_string(),
+                        icon: Icons::RESTORE,
+                        primary: true,
+                        onclick: move |_| {
+                            let page = options().page;
+                            let des = options().designation;
+                            let mut replace = LabelOptions::default();
+                            replace.switch_page(page);
+                            replace.designation = des;
+                            options.set(replace);
+                        },
+                    }
                 }
             }
             Card {

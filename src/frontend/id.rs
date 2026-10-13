@@ -20,11 +20,14 @@ pub enum Id {
 
     AccentPicker,
 
+    FileViewerSettingsAnchor,
+
     ModalJob,
     ModalSandpitError,
     ModalSandpitWarning,
     ModalSandpitInfo,
     ModalSandpitSuccess,
+    DropDownSandpitSingleAnchor,
 }
 
 impl Id {
@@ -46,11 +49,14 @@ impl Id {
 
             Id::AccentPicker => Css::ID_ACCENT_PICKER,
 
+            Id::FileViewerSettingsAnchor => "fv-set",
+
             Id::ModalJob => "modal-b_job",
             Id::ModalSandpitError => "modal-sandpit_e",
             Id::ModalSandpitWarning => "modal-sandpit_w",
             Id::ModalSandpitInfo => "modal-sandpit_i",
             Id::ModalSandpitSuccess => "modal-sandpit_s",
+            Id::DropDownSandpitSingleAnchor => "sandpit-dropdown_a",
         }
     }
 }

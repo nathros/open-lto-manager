@@ -142,6 +142,36 @@
 			"iconoir": "icons/regular/page-flip.svg",
 			"sargam": "../iconoir/icons/regular/page-flip.svg"
 		},
+		"check": {
+			"tabler": "icons/filled/check.svg",
+			"remix": "icons/System/check-fill.svg",
+			"iconoir": "icons/regular/check.svg",
+			"sargam": "Icons/Line/si_Check_alt.svg"
+		},
+		"cog": {
+			"tabler": "icons/filled/settings.svg",
+			"remix": "icons/System/settings-fill.svg",
+			"iconoir": "icons/regular/settings.svg",
+			"sargam": "Icons/Line/si_Settings_applications.svg"
+		},
+		"edit": {
+			"tabler": "icons/filled/edit.svg",
+			"remix": "icons/Design/pencil-fill.svg",
+			"iconoir": "icons/regular/edit.svg",
+			"sargam": "Icons/Line/si_Edit_detailed.svg"
+		},
+		"dir-up": {
+			"tabler": "icons/outline/folder-up.svg",
+			"remix": "icons/Arrows/corner-right-up-fill.svg",
+			"iconoir": "icons/solid/long-arrow-right-up.svg",
+			"sargam": "Icons/Line/si_Left_up.svg"
+		},
+		"refresh": {
+			"tabler": "icons/outline/refresh.svg",
+			"remix": "icons/System/refresh-line.svg",
+			"iconoir": "icons/regular/refresh-double.svg",
+			"sargam": "../iconoir/icons/regular/refresh-double.svg"
+		},
 		"restore": {
 			"tabler": "icons/outline/restore.svg",
 			"remix": "icons/System/reset-left-line.svg",
