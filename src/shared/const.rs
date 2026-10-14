@@ -15,4 +15,5 @@ impl Const {
     pub const CODE_39_LTO_USABLE_LEN: usize = 6; // Length of LTO barcode excluding tape designation eg, L7
     pub const CODE_39_LTO_DESIGNATION_LEN: usize = 2;
     pub const BARCODE_VALID_CHARS: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -$%./+*";
+    pub const BARCODE_ALLOWED_CHARS: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -$%./+";
 }

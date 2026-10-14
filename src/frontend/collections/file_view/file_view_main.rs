@@ -3,7 +3,10 @@ use dioxus::{fullstack::Loader, prelude::*};
 use std::path;
 
 use crate::{
-    backend::api::{api_file_view::fv_virtual_files_in_dir, api_user::update_user},
+    backend::api::{
+        api_file_view::{fv_physical_files_in_dir, fv_virtual_files_in_dir, fv_working_dir},
+        api_user::update_user,
+    },
     either,
     frontend::{
         collections::file_view::file_view_breadcrumb::Breadcrumb,
@@ -35,7 +38,13 @@ pub struct FileViewerProps {
 
 #[component]
 pub fn FileViewer(props: FileViewerProps) -> Element {
-    let mut current_path = use_signal(|| path::MAIN_SEPARATOR.to_string());
+    let mut current_path = use_signal(|| {
+        either!(
+            props.is_virtual,
+            path::MAIN_SEPARATOR.to_string(),
+            "".to_string()
+        )
+    });
 
     let mut current_user = use_context::<Loader<Option<RecordUserConfig>>>();
     let mut show_edit = use_signal(|| false);
@@ -69,9 +78,18 @@ pub fn FileViewer(props: FileViewerProps) -> Element {
     };
 
     let mut fetch_dir: Resource<FileView> = use_resource(move || async move {
-        fv_virtual_files_in_dir(current_path())
-            .await
-            .unwrap_or_default()
+        if props.is_virtual {
+            fv_virtual_files_in_dir(current_path())
+                .await
+                .unwrap_or_default()
+        } else {
+            if current_path().is_empty() {
+                update_current_path(fv_working_dir().await.unwrap_or_default());
+            }
+            fv_physical_files_in_dir(current_path())
+                .await
+                .unwrap_or_default()
+        }
     });
 
     let str_cat = |path: &mut String, add: &String| -> String {
@@ -102,7 +120,7 @@ pub fn FileViewer(props: FileViewerProps) -> Element {
                                     oninput: move |evt: Event<FormData>| {
                                         edit_path.set(evt.value());
                                     },
-                                    onkeypress: move |evt: Event<KeyboardData>| {
+                                    onkeydown: move |evt: Event<KeyboardData>| {
                                         if evt.code() == Code::Enter {
                                             update_current_path(edit_path());
                                             show_edit.set(false);
@@ -144,7 +162,10 @@ pub fn FileViewer(props: FileViewerProps) -> Element {
                         }
                         span {
                             DropDown {
-                                anchor_id: Id::FileViewerSettingsAnchor.as_str(),
+                                anchor_id: either!( // FIXME popover does not work in FireFox
+                                    props.is_virtual, Id::FileViewerSettingsAnchorVirtual.as_str(),
+                                    Id::FileViewerSettingsAnchorPhysical.as_str()
+                                ),
                                 anchor: rsx! {
                                     Button { icon: Icons::COG }
                                 },
@@ -199,7 +220,7 @@ pub fn FileViewer(props: FileViewerProps) -> Element {
                             onclick: move |_| {
                                 fetch_dir.clear();
                                 gloo_timers::callback::Timeout::new(
-                                        111, // Prevent too fast refresh
+                                        333, // Prevent too fast refresh
                                         move || {
                                             fetch_dir.restart();
                                         },
@@ -221,12 +242,12 @@ pub fn FileViewer(props: FileViewerProps) -> Element {
                                         th { "Modified" }
                                     }
                                     for (index , child) in dir.children.clone().iter().enumerate() {
-                                        if let is_dir = child.is_dir && let move_path = child.full_path() {
+                                        if let is_dir = child.is_dir && let move_path = child.file_name.clone() {
                                             tr {
                                                 class: either!(child.is_selected, Css::SELECTED, ""),
                                                 ondoubleclick: move |_| {
                                                     if is_dir {
-                                                        update_current_path(move_path.clone());
+                                                        update_current_path(format!("{}{}", current_path(), move_path));
                                                     }
                                                 },
                                                 onclick: move |_| {

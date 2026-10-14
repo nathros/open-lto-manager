@@ -77,7 +77,7 @@ pub struct InputProps {
     oninput: EventHandler<FormEvent>,
 
     #[props(optional)]
-    onkeypress: EventHandler<KeyboardEvent>,
+    onkeydown: EventHandler<KeyboardEvent>,
 
     #[props(optional)]
     onmounted: EventHandler<MountedEvent>,
@@ -106,7 +106,7 @@ pub fn Input(props: InputProps) -> Element {
                         r#type: props.type_.to_string(),
                         style: props.style,
                         oninput: props.oninput,
-                        onkeypress: props.onkeypress,
+                        onkeydown: props.onkeydown,
                         onmounted: props.onmounted,
                         ..props.attributes,
                     }

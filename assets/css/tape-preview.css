@@ -14,7 +14,7 @@
 	/*background-color: #FFDD22; /* Yellow */
 }
 .tape-worm {
-	display: none; /* FIXME: mask will not be fetched until .show applied */
+	display: none;
 	mask: url(tape-preview-mask.jxl);
 	mask-size: var(--tape-prev-size);
 	filter: saturate(0);

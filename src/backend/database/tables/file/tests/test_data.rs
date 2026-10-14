@@ -146,7 +146,4 @@ pub fn get_file_test_data_1(tape_id: i64) -> Vec<RecordFile> {
             ..file.clone()
         },
     ]
-
-    //SELECT t4.* FROM table_file t4 WHERE (((t4.file_path_virt = '/') AND (t4.file_name_virt = '/')) OR (t4.file_path_virt LIKE '/')) ORDER BY t4.file_path_virt,t4.file_name_virt
-    //SELECT t4.* FROM table_file t4 WHERE (((t4.file_path_virt = '/home/') AND (t4.file_name_virt = '/emptydir/')) OR (t4.file_path_virt LIKE '/home/emptydir/')) ORDER BY t4.file_path_virt,t4.file_name_virt
 }

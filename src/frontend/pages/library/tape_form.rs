@@ -67,7 +67,7 @@ pub fn TapeForm(
 
     let form_invalid = use_resource(move || async move {
         let barcode_validator = Validator::<String>::create()
-            .with_only_allowed_chars(Const::BARCODE_VALID_CHARS)
+            .with_only_allowed_chars(Const::BARCODE_ALLOWED_CHARS)
             .with_expected_length(Const::CODE_39_LTO_USABLE_LEN);
 
         // Validate form

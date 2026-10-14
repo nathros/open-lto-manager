@@ -20,7 +20,8 @@ pub enum Id {
 
     AccentPicker,
 
-    FileViewerSettingsAnchor,
+    FileViewerSettingsAnchorVirtual,
+    FileViewerSettingsAnchorPhysical,
 
     ModalJob,
     ModalSandpitError,
@@ -49,7 +50,8 @@ impl Id {
 
             Id::AccentPicker => Css::ID_ACCENT_PICKER,
 
-            Id::FileViewerSettingsAnchor => "fv-set",
+            Id::FileViewerSettingsAnchorVirtual => "fv-v-set",
+            Id::FileViewerSettingsAnchorPhysical => "fv-p-set",
 
             Id::ModalJob => "modal-b_job",
             Id::ModalSandpitError => "modal-sandpit_e",

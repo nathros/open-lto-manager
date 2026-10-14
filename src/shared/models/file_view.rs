@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use chrono::{DateTime, Local};
 use dioxus::fullstack::serde::{Deserialize, Serialize};
 
@@ -36,12 +38,6 @@ impl FileViewInfo {
         }
     }
 
-    pub fn full_path(&self) -> String {
-        let mut full = self.file_path.clone();
-        full.push_str(&self.file_name);
-        full
-    }
-
     pub fn pretty_size(&self) -> String {
         let mut size = self.file_size as f32;
         if size < 1024.0 {
@@ -57,6 +53,51 @@ impl FileViewInfo {
             }
         }
         format!("{:.2} TB", size)
+    }
+
+    #[cfg(feature = "server")]
+    pub fn default_dir_icon() -> String {
+        "#folder".to_string()
+    }
+
+    #[cfg(feature = "server")]
+    fn dir_icon(icon: String) -> String {
+        if icon.is_empty() {
+            Self::default_dir_icon() // Default for dir
+        } else {
+            icon
+        }
+    }
+
+    #[cfg(feature = "server")]
+    fn file_icon(file_name: &String) -> String {
+        [
+            "#", // Anchor for sprite
+            &Path::new(&file_name)
+                .extension()
+                .unwrap_or_default()
+                .to_string_lossy()
+                .to_lowercase(),
+        ]
+        .concat()
+    }
+
+    #[cfg(feature = "server")]
+    pub fn get_icon(is_dir: bool, file_name: &String, icon: String) -> String {
+        if is_dir {
+            Self::dir_icon(icon)
+        } else {
+            Self::file_icon(file_name)
+        }
+    }
+
+    #[cfg(feature = "server")]
+    pub fn get_icon_default(is_dir: bool, file_name: &String) -> String {
+        if is_dir {
+            Self::default_dir_icon()
+        } else {
+            Self::file_icon(file_name)
+        }
     }
 }
 

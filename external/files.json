@@ -85,6 +85,16 @@
 			"papirus": "Papirus/48x48/places/folder-yellow.svg",
 			"kora": "kora/places/scalable/folder-yellow.svg"
 		},
+		"css": {
+			"breeze": "icons/mimetypes/32/text-css.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-css.svg",
+			"kora": "kora/mimetypes/scalable/text-css.svg"
+		},
+		"flac": {
+			"breeze": "icons/mimetypes/32/audio-x-flac+ogg.svg",
+			"papirus": "Papirus/48x48/mimetypes/audio-x-flac+ogg.svg",
+			"kora": "kora/mimetypes/scalable/audio-x-flac+ogg.svg"
+		},
 		"htm": {
 			"breeze": "[#]icons/mimetypes/64/text-html.svg",
 			"papirus": "[#]Papirus/48x48/mimetypes/text-html.svg",
@@ -115,15 +125,70 @@
 			"papirus": "[#]Papirus/48x48/mimetypes/image-jpeg.svg",
 			"kora": "[#]kora/mimetypes/scalable/image-jpeg.svg"
 		},
+		"js": {
+			"breeze": "icons/mimetypes/32/application-json.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-json.svg",
+			"kora": "kora/mimetypes/scalable/application-json.svg"
+		},
+		"jxl": {
+			"breeze": "#jpg",
+			"papirus": "#jpg",
+			"kora": "#jpg"
+		},
+		"md": {
+			"breeze": "#txt",
+			"papirus": "#txt",
+			"kora": "#txt"
+		},
+		"mkv": {
+			"breeze": "icons/mimetypes/32/video-x-matroska.svg",
+			"papirus": "Papirus/48x48/mimetypes/video-x-matroska.svg",
+			"kora": "kora/mimetypes/scalable/video-x-matroska.svg"
+		},
+		"mp3": {
+			"breeze": "icons/mimetypes/32/audio-mp3.svg",
+			"papirus": "Papirus/48x48/mimetypes/audio-mp3.svg",
+			"kora": "kora/mimetypes/scalable/audio-mp3.svg"
+		},
 		"png": {
 			"breeze": "icons/mimetypes/32/image-png.svg",
 			"papirus": "Papirus/48x48/mimetypes/image-png.svg",
 			"kora": "kora/mimetypes/scalable/application-image-png.svg"
 		},
+		"rar": {
+			"breeze": "icons/mimetypes/32/application-vnd.rar.svg",
+			"papirus": "#zip",
+			"kora": "kora/mimetypes/scalable/application-vnd.rar.svg"
+		},
+		"rs": {
+			"breeze": "icons/mimetypes/32/text-rust.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-rust.svg",
+			"kora": "kora/mimetypes/scalable/text-rust.svg"
+		},
+		"sh": {
+			"breeze": "icons/mimetypes/32/text-x-script.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-x-script.svg",
+			"kora": "kora/mimetypes/scalable/text-x-script.svg"
+		},
+		"svg": {
+			"breeze": "icons/mimetypes/32/image-x-svg+xml.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-x-svg+xml.svg",
+			"kora": "kora/mimetypes/scalable/image-x-svg+xml.svg"
+		},
+		"toml": {
+			"breeze": "icons/mimetypes/32/application-toml.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-toml.svg",
+			"kora": "kora/mimetypes/scalable/application-toml.svg"
+		},
 		"txt": {
-			"breeze": "icons/mimetypes/32/text-x-plain.svg",
-			"papirus": "Papirus/48x48/mimetypes/text-x-plain.svg",
-			"kora": "kora/mimetypes/scalable/text-plain.svg"
+			"breeze": "[#]icons/mimetypes/32/text-x-plain.svg",
+			"papirus": "[#]Papirus/48x48/mimetypes/text-x-plain.svg",
+			"kora": "[#]kora/mimetypes/scalable/text-plain.svg"
+		},
+		"zip": {
+			"breeze": "icons/mimetypes/32/application-zip.svg",
+			"papirus": "[#]Papirus/48x48/mimetypes/application-zip.svg",
+			"kora": "kora/mimetypes/scalable/application-zip.svg"
 		}
 	}
 }

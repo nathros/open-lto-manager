@@ -1,5 +1,3 @@
-use std::path::Path;
-
 use rusqlite::{Connection, params};
 use tracing::info;
 
@@ -17,23 +15,7 @@ impl RecordFill<FileViewInfo> for TableFile<FileViewInfo> {
         let is_dir = FileViewInfo::is_dir(&file_name_db);
         Ok(FileViewInfo {
             id: row.get(offset)?,
-            icon: if is_dir {
-                let ico: String = row.get(offset + 6)?;
-                if ico.is_empty() {
-                    "#folder".to_string() // Default for dir
-                } else {
-                    ico
-                }
-            } else {
-                [
-                    "#", // Anchor for sprite
-                    &Path::new(&file_name_db)
-                        .extension()
-                        .unwrap_or_default()
-                        .to_string_lossy(),
-                ]
-                .concat()
-            },
+            icon: FileViewInfo::get_icon(is_dir, &file_name_db, row.get(offset + 6)?),
             is_dir,
             is_selected: false,
             file_name: FileViewInfo::trim_name(file_name_db),

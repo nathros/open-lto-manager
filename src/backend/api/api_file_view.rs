@@ -35,7 +35,7 @@ pub async fn fv_files_in_dir(
     let mut results = vec![];
 
     for current_path in read_dir.flatten() {
-        let name = current_path
+        let name: String = current_path
             .file_name()
             .into_string()
             .unwrap_or("Failed to read filename".to_string());
@@ -71,4 +71,113 @@ pub async fn fv_virtual_files_in_dir(path: String) -> Result<FileView> {
             Err(e) => Err(e)?,
         }
     })
+}
+
+#[post("/api/fv/physical/explore")]
+pub async fn fv_physical_files_in_dir(mut path: String) -> Result<FileView> {
+    use std::{
+        cmp::Ordering, fs::read_dir, os::unix::fs::MetadataExt, path::MAIN_SEPARATOR, path::Path,
+        time::SystemTime,
+    };
+
+    use chrono::Local;
+
+    use crate::{backend::env::get_working_dir, shared::models::file_view::FileViewInfo};
+
+    if path.is_empty() {
+        path = get_working_dir();
+        path.push(MAIN_SEPARATOR);
+    } else {
+        if !path.ends_with(MAIN_SEPARATOR) {
+            path.push(MAIN_SEPARATOR);
+        }
+    }
+
+    let current_dir = match read_dir(&path) {
+        Ok(dir) => dir,
+        Err(_e) => {
+            return Ok(FileView::default()); // Did not find dir return empty, TODO could return error reason
+        }
+    };
+
+    let mut children = current_dir
+        .flatten()
+        .filter(|fe| fe.metadata().is_ok())
+        .map(|fe: std::fs::DirEntry| {
+            if let name = fe
+                .file_name()
+                .into_string()
+                .unwrap_or("Failed to read filename".to_string())
+                && let Ok(metadata) = fe.metadata()
+            {
+                FileViewInfo {
+                    id: 0,
+                    is_dir: metadata.is_dir(),
+                    is_selected: false,
+                    file_path: path.clone(),
+                    icon: FileViewInfo::get_icon_default(metadata.is_dir(), &name),
+                    file_name: name,
+                    file_size: metadata.size() as i64,
+                    created: metadata.created().unwrap_or(SystemTime::now()).into(),
+                    modified: metadata.modified().unwrap_or(SystemTime::now()).into(),
+                }
+            } else {
+                unreachable!("Filter not correctly applied")
+            }
+        })
+        .collect::<Vec<FileViewInfo>>();
+
+    children.sort_by(|a, b| {
+        if a.is_dir == b.is_dir {
+            a.file_name.cmp(&b.file_name)
+        } else if a.is_dir {
+            Ordering::Less // Directories at top
+        } else {
+            Ordering::Greater
+        }
+    });
+
+    let current_path = Path::new(&path);
+
+    let result = FileView {
+        current_dir: Some(FileViewInfo {
+            id: 0,
+            is_dir: true,
+            is_selected: false,
+            file_name: current_path
+                .file_name()
+                .unwrap_or_default()
+                .to_string_lossy()
+                .to_string(),
+            file_path: current_path
+                .parent()
+                .unwrap_or(Path::new("/"))
+                .to_string_lossy()
+                .to_string(),
+            file_size: 0,
+            created: Local::now(),
+            modified: Local::now(),
+            icon: FileViewInfo::default_dir_icon(),
+        }),
+        children,
+    };
+
+    Ok(result)
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::backend::api::api_file_view::{fv_physical_files_in_dir, fv_working_dir};
+
+    #[tokio::test]
+    async fn fetch_physical_working_dir() {
+        let test_path = fv_working_dir().await.unwrap();
+        let test_files = fv_physical_files_in_dir(test_path).await.unwrap();
+
+        assert!(test_files.current_dir.is_some(), "Did not find directory");
+        assert!(
+            !test_files.children.is_empty(),
+            "Expected some children files"
+        );
+    }
 }

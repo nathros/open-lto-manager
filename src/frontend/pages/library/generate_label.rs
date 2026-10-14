@@ -71,7 +71,7 @@ fn GenLabelInner() -> Element {
         use_signal(|| None),
         Validator::<String>::create()
             .with_max_length(Const::CODE_39_LTO_USABLE_LEN)
-            .with_only_allowed_chars(Const::BARCODE_VALID_CHARS),
+            .with_only_allowed_chars(Const::BARCODE_ALLOWED_CHARS),
     );
     let (mut quantity_error, n_validator) = (
         use_signal(|| None),
