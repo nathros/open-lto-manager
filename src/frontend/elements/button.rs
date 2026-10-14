@@ -48,6 +48,24 @@ pub struct LinkButtonProps {
     to: NavigationTarget,
 }
 
+#[derive(Props, PartialEq, Clone)]
+pub struct FakeButtonProps {
+    #[props(default = "".into())]
+    text: String,
+
+    #[props(optional)]
+    icon: &'static str,
+
+    #[props(optional, default = Size::Sm)]
+    icon_size: Size,
+
+    #[props(optional, default = false)]
+    primary: bool,
+
+    #[props(extends = button, extends = GlobalAttributes)]
+    attributes: Vec<Attribute>,
+}
+
 /*pub enum ButtonType {
     button, // HTML default
     submit,
@@ -88,6 +106,22 @@ pub fn LinkButton(props: LinkButtonProps) -> Element {
             class: either!(props.primary, static_concat!(Css::BTN, Css::BTN_PRI), Css::BTN),
             style: props.style,
             to: props.to,
+            "{props.text}"
+        }
+    }
+}
+
+#[component]
+pub fn FakeButton(props: FakeButtonProps) -> Element {
+    // Used by DropDown as a <button> having a <button> as a child is not valid and stops
+    // popovertarget from working in FireFox
+    rsx! {
+        div {
+            class: either!(props.primary, static_concat!(Css::BTN, Css::BTN_PRI), Css::BTN),
+            ..props.attributes,
+            if !props.icon.is_empty() {
+                span { class: format!("{}{}{}", Css::ICON, props.icon, props.icon_size.to_class()) }
+            }
             "{props.text}"
         }
     }

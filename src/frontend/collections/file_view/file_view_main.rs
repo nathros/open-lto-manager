@@ -13,7 +13,7 @@ use crate::{
         components::dropdown::component::DropDown,
         css::Css,
         elements::{
-            button::Button,
+            button::{Button, FakeButton},
             input::{Input, InputType},
             loading::Loading,
         },
@@ -162,12 +162,12 @@ pub fn FileViewer(props: FileViewerProps) -> Element {
                         }
                         span {
                             DropDown {
-                                anchor_id: either!( // FIXME popover does not work in FireFox
+                                anchor_id: either!(
                                     props.is_virtual, Id::FileViewerSettingsAnchorVirtual.as_str(),
                                     Id::FileViewerSettingsAnchorPhysical.as_str()
                                 ),
                                 anchor: rsx! {
-                                    Button { icon: Icons::COG }
+                                    FakeButton { icon: Icons::COG }
                                 },
                                 h4 { style: "padding-left:var(--sm)", "Theme" }
                                 hr {}
