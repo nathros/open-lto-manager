@@ -235,45 +235,47 @@ pub fn FileViewer(props: FileViewerProps) -> Element {
                         rsx! {
                             if let Some(_found_dir) = &dir.current_dir
                             {
-                                table {
-                                    tr {
-                                        th { "File" }
-                                        th { "Size" }
-                                        th { "Modified" }
-                                    }
-                                    for (index , child) in dir.children.clone().iter().enumerate() {
-                                        if let is_dir = child.is_dir && let move_path = child.file_name.clone() {
-                                            tr {
-                                                class: either!(child.is_selected, Css::SELECTED, ""),
-                                                ondoubleclick: move |_| {
-                                                    if is_dir {
-                                                        update_current_path(format!("{}{}", current_path(), move_path));
-                                                    }
-                                                },
-                                                onclick: move |_| {
-                                                    fetch_dir
-                                                        .with_mut(|opt_f| {
-                                                            if let Some(fv) = opt_f {
-                                                                fv.children
-                                                                    .iter_mut()
-                                                                    .enumerate()
-                                                                    .for_each(|(i, f)| {
-                                                                        f.is_selected = i == index;
-                                                                    })
-                                                            }
-                                                        });
-                                                },
-                                                td {
-                                                    div { class: [Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE, Css::GAP_S].concat(),
-                                                        img {
-                                                            class: Css::MD,
-                                                            src: format!("{}{}", theme_svg, child.icon),
+                                div { class: Css::FILE_VIEWER_TABLE_CONTAINER,
+                                    table {
+                                        tr {
+                                            th { "File" }
+                                            th { "Size" }
+                                            th { "Modified" }
+                                        }
+                                        for (index , child) in dir.children.clone().iter().enumerate() {
+                                            if let is_dir = child.is_dir && let move_path = child.file_name.clone() {
+                                                tr {
+                                                    class: either!(child.is_selected, Css::SELECTED, ""),
+                                                    ondoubleclick: move |_| {
+                                                        if is_dir {
+                                                            update_current_path(format!("{}{}", current_path(), move_path));
                                                         }
-                                                        span { "{child.file_name}" }
+                                                    },
+                                                    onclick: move |_| {
+                                                        fetch_dir
+                                                            .with_mut(|opt_f| {
+                                                                if let Some(fv) = opt_f {
+                                                                    fv.children
+                                                                        .iter_mut()
+                                                                        .enumerate()
+                                                                        .for_each(|(i, f)| {
+                                                                            f.is_selected = i == index;
+                                                                        })
+                                                                }
+                                                            });
+                                                    },
+                                                    td {
+                                                        div { class: [Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE, Css::GAP_S].concat(),
+                                                            img {
+                                                                class: Css::MD,
+                                                                src: format!("{}{}", theme_svg, child.icon),
+                                                            }
+                                                            span { "{child.file_name}" }
+                                                        }
                                                     }
+                                                    td { "{child.pretty_size()}" }
+                                                    td { "{child.modified}" }
                                                 }
-                                                td { "{child.pretty_size()}" }
-                                                td { "{child.modified}" }
                                             }
                                         }
                                     }

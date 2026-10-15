@@ -41,7 +41,9 @@ impl Css {
     pub const CARD_OVERVIEW_STATUS: &str = "card-overview-status "; // Defined in assets/css/card.css line 32
     pub const CODE_BLOCK: &str = "code-block "; // Defined in assets/css/code-block.css line 1
     pub const FILE_VIEWER: &str = "file-viewer "; // Defined in assets/css/file_viewer.css line 1
-    pub const FILE_VIEWER_BREADCRUMB: &str = "breadcrumb "; // Defined in assets/css/file_viewer.css line 8
+    pub const FILE_VIEWER_BREADCRUMB: &str = "breadcrumb "; // Defined in assets/css/file_viewer.css line 7
+    pub const FILE_VIEWER_PAIR: &str = "file-viewer-pair "; // Defined in assets/css/file_viewer.css line 11
+    pub const FILE_VIEWER_TABLE_CONTAINER: &str = "table-container "; // Defined in assets/css/file_viewer.css line 16
     pub const BTN: &str = "btn "; // Defined in assets/css/button.css line 1
     pub const BTN_PRI: &str = "pri "; // Defined in assets/css/button.css line 27
     pub const BTN_RESET: &str = "btn-reset "; // Defined in assets/css/button.css line 46

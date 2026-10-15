@@ -1,5 +1,3 @@
-use std::path::Path;
-
 use chrono::{DateTime, Local};
 use dioxus::fullstack::serde::{Deserialize, Serialize};
 
@@ -71,6 +69,7 @@ impl FileViewInfo {
 
     #[cfg(feature = "server")]
     fn file_icon(file_name: &String) -> String {
+        use std::path::Path;
         [
             "#", // Anchor for sprite
             &Path::new(&file_name)

@@ -50,7 +50,7 @@ fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, Str
         Err(e) => return Err(format!("TableVersion creation error {}", e)),
     }
     info!(
-        "Database version: {}, latest is : {}",
+        "Database version: {}, latest is: {}",
         current_database_version, DB_VERSION_LATEST
     );
 

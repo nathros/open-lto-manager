@@ -4,7 +4,7 @@ use crate::frontend::{components::dropdown::dropdown_config::DropDownConfig, css
 
 #[component]
 pub fn DropDown(props: DropDownConfig) -> Element {
-    let menu_id = format!("{}_m", props.anchor_id);
+    let menu_id = [props.anchor_id, "_m"].concat();
     rsx! {
         button {
             class: Css::BTN_RESET,
