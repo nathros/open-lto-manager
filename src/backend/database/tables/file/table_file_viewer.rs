@@ -1,26 +1,24 @@
 use rusqlite::{Connection, params};
-use tracing::info;
 
 use crate::{
     backend::database::tables::{file::table_file::TableFile, table::RecordFill},
-    shared::models::{
-        database::file::model_file::RecordFile,
-        file_view::{FileView, FileViewInfo},
-    },
+    shared::models::file_view::{FileView, FileViewInfo},
 };
 
 impl RecordFill<FileViewInfo> for TableFile<FileViewInfo> {
     fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<FileViewInfo, rusqlite::Error> {
-        let file_name_db: String = row.get(offset + 1)?;
-        let is_dir = FileViewInfo::is_dir(&file_name_db);
+        let file_name: String = row.get(offset + 1)?;
+        let is_dir = row.get_ref(offset + 2)?.as_bytes_or_null()?.is_some();
+
+        //let is_dir = FileViewInfo::is_dir(&file_name_db);
         Ok(FileViewInfo {
             id: row.get(offset)?,
-            icon: FileViewInfo::get_icon(is_dir, &file_name_db, row.get(offset + 6)?),
-            is_dir,
             is_selected: false,
-            file_name: FileViewInfo::trim_name(file_name_db),
-            file_path: row.get(offset + 2)?,
+            icon: FileViewInfo::get_icon(is_dir, &file_name, row.get(offset + 6)?),
+            is_dir,
+            file_name,
             file_size: row.get(offset + 3)?,
+            file_size_pretty: FileViewInfo::pretty_size(row.get(offset + 3)?),
             created: row.get(offset + 4)?,
             modified: row.get(offset + 5)?,
         })
@@ -28,12 +26,11 @@ impl RecordFill<FileViewInfo> for TableFile<FileViewInfo> {
 }
 
 impl TableFile<FileView> {
-    pub fn get_in_virtual_dir(db: &Connection, dir: String) -> Result<FileView, rusqlite::Error> {
-        let (path, name, directory) = TableFile::<RecordFile>::split_dir(dir.clone());
-        info!(
-            "dir: {}, path: {}, name: {}, directory: {}",
-            dir, path, name, directory
-        );
+    pub fn get_in_virtual_dir(
+        db: &Connection,
+        user_id: i64,
+        dir: String,
+    ) -> Result<FileView, rusqlite::Error> {
         let dir_result: Result<FileViewInfo, rusqlite::Error> = db
             .prepare(
                 "SELECT
@@ -43,17 +40,16 @@ impl TableFile<FileView> {
                         file_size,
                         created,
                         modified,
-                        hash,
                         icon
                     FROM file
                     WHERE
-                        file_path_virt = ?1 AND file_name_virt = ?2",
+                        user_id = ?1 AND file_path_virt = ?2",
             )?
-            .query_one(params![path, name], |row| TableFile::fill(row, 0));
+            .query_one(params![user_id, dir], |row| TableFile::fill(row, 0));
 
         match dir_result {
             Ok(dir) => {
-                let children_result = db
+                let mut children_result = db
                     .prepare(
                         "SELECT
                                 id,
@@ -62,14 +58,15 @@ impl TableFile<FileView> {
                                 file_size,
                                 created,
                                 modified,
-                                hash,
                                 icon
                             FROM file
                             WHERE
-                                file_path_virt LIKE ?1 AND NOT id = ?2",
+                                parent_id = ?1",
                     )?
-                    .query_map(params![directory, dir.id], |row| TableFile::fill(row, 0))?
+                    .query_map(params![dir.id], |row| TableFile::fill(row, 0))?
                     .collect::<Result<Vec<FileViewInfo>, rusqlite::Error>>()?;
+
+                FileViewInfo::sort(&mut children_result);
 
                 Ok(FileView {
                     current_dir: Some(dir),
@@ -78,10 +75,11 @@ impl TableFile<FileView> {
             }
             Err(e) => match e {
                 rusqlite::Error::QueryReturnedNoRows => Ok(FileView {
+                    // Directory not found
                     current_dir: None,
                     children: vec![],
                 }),
-                _ => Err(e),
+                _ => Err(e), // Return error
             },
         }
     }

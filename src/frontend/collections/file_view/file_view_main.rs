@@ -273,7 +273,7 @@ pub fn FileViewer(props: FileViewerProps) -> Element {
                                                             span { "{child.file_name}" }
                                                         }
                                                     }
-                                                    td { "{child.pretty_size()}" }
+                                                    td { "{child.file_size_pretty}" }
                                                     td { "{child.modified}" }
                                                 }
                                             }

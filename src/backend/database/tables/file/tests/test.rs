@@ -5,7 +5,7 @@ use crate::backend::database::{
             table_file::TableFile,
             tests::test_data::{get_file_test_data_1, get_test_tape},
         },
-        table::{RecordInsert, TableCreate},
+        table::RecordInsert,
         tape::{self, table_tape::TableTape},
     },
 };
@@ -14,19 +14,6 @@ fn create_table() -> rusqlite::Connection {
     let conn = create_test_database();
     // TableFile depends on TableManufacturer, TableTapeType and TableTape, so these must be created first
     tape::table_tape::tests::create_table(&conn); // This creates TableManufacturer and TableTapeType
-
-    assert!(
-        !conn.table_exists(None, "file").unwrap(),
-        "New table should be empty"
-    );
-    assert!(
-        TableFile::create_table(&conn).is_ok(),
-        "Failed to create file table"
-    );
-    assert!(
-        conn.table_exists(None, "file").unwrap(),
-        "create_table() file reported Ok but table does not exist"
-    );
     conn
 }
 

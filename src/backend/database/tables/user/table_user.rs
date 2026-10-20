@@ -3,11 +3,17 @@ use std::marker::PhantomData;
 use rusqlite::{Connection, Error, params};
 
 use crate::{
-    backend::database::tables::table::{
-        RecordDelete, RecordFill, RecordInsert, RecordRead, RecordUpdate, TableCreate, TableUpdate,
+    backend::database::tables::{
+        file::table_file::TableFile,
+        table::{
+            RecordDelete, RecordFill, RecordInsert, RecordRead, RecordUpdate, TableCreate,
+            TableUpdate,
+        },
     },
     shared::models::database::user::model_user_sensitive::RecordUser,
 };
+
+pub const DEFAULT_ADMIN_USERNAME: &str = "admin";
 
 pub struct TableUser<T = RecordUser> {
     phantom: PhantomData<T>,
@@ -42,11 +48,6 @@ impl TableCreate<RecordUser> for TableUser<RecordUser> {
                 accent_colour TEXT NOT NULL
             );",
             (),
-        )?;
-
-        Self::insert(
-            db,
-            &RecordUser::create("admin".to_string(), "Admin".to_string(), "admin"),
         )?;
 
         Ok(true)
@@ -131,7 +132,9 @@ impl RecordInsert<RecordUser> for TableUser<RecordUser> {
                 record.accent_colour,
             ],
         )?;
-        Ok(db.last_insert_rowid())
+        let new_user_id = db.last_insert_rowid();
+        TableFile::insert_root_dir(db, new_user_id)?; // Give new user a root dir
+        Ok(new_user_id)
     }
 }
 
@@ -252,12 +255,14 @@ impl TableUser<RecordUser> {
 #[cfg(test)]
 pub mod tests {
     use chrono::Local;
+    use uuid::Uuid;
 
     use crate::{
         backend::database::{
             db::tests::create_test_database,
             tables::{
                 table::{RecordInsert, RecordRead, TableCreate},
+                tape,
                 user::table_user::TableUser,
             },
         },
@@ -282,6 +287,27 @@ pub mod tests {
             conn.table_exists(None, "user").unwrap(),
             "create_table() reported Ok but table does not exist"
         );
+    }
+
+    pub fn create_additional_user(db: &rusqlite::Connection) -> RecordUser {
+        let mut new_user = RecordUser {
+            id: 0,
+            username: Uuid::new_v4().to_string(),
+            description: "description".to_string(),
+            hash: "#hash".to_string(),
+            salt: "#salt".to_string(),
+            algorithm: HashAlgorithm::latest(),
+            enabled: true,
+            created: Local::now(),
+            language: 0,
+            avatar: "".to_string(),
+            system_theme: ColourMode::Dark,
+            icon_theme: IconTheme::Tabler,
+            file_theme: FileTheme::Breeze,
+            accent_colour: "".to_string(),
+        };
+        new_user.id = TableUser::<RecordUser>::insert(db, &new_user).unwrap();
+        new_user
     }
 
     fn insert(db: &rusqlite::Connection) {
@@ -333,7 +359,7 @@ pub mod tests {
     #[test]
     fn suite() {
         let conn = create_test_database();
-        create_table(&conn);
+        tape::table_tape::tests::create_table(&conn);
         insert(&conn);
         get(&conn);
     }

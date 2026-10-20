@@ -4,22 +4,22 @@
 pub struct Css; // CSS class names
 
 impl Css {
-    pub const COLOUR_SCHEME: &str = "colour-scheme"; // Defined in assets/css/:root.css line 56
-    pub const COLOUR_SCHEME_LIGHT: &str = "colour-scheme-light"; // Defined in assets/css/:root.css line 57
-    pub const COLOUR_SCHEME_DARK: &str = "colour-scheme-dark"; // Defined in assets/css/:root.css line 58
+    pub const COLOUR_SCHEME: &str = "colour-scheme"; // Defined in assets/css/:root.css line 57
+    pub const COLOUR_SCHEME_LIGHT: &str = "colour-scheme-light"; // Defined in assets/css/:root.css line 58
+    pub const COLOUR_SCHEME_DARK: &str = "colour-scheme-dark"; // Defined in assets/css/:root.css line 59
     pub const MAIN_HEADER: &str = "main-header "; // Defined in assets/css/header.css line 1
-    pub const MAIN_HEADER_LOGO: &str = "header-logo "; // Defined in assets/css/header.css line 30
-    pub const MAIN_ASIDE: &str = "main-aside "; // Defined in assets/css/header.css line 42
-    pub const HEADER_USER: &str = "header-user "; // Defined in assets/css/header.css line 56
-    pub const HEADER_DROPDOWN: &str = "header-dropdown "; // Defined in assets/css/header.css line 66
-    pub const HEADER_DROPDOWN_CONTENT: &str = "header-dropdown-content "; // Defined in assets/css/header.css line 73
-    pub const HEADER_DROPDOWN_NESTED: &str = "nested "; // Defined in assets/css/header.css line 87
-    pub const FLOAT_RIGHT: &str = "float-right "; // Defined in assets/css/header.css line 92
-    pub const HEADER_COL: &str = "header-colour "; // Defined in assets/css/header.css line 95
-    pub const RAINBOW: &str = "rainbow "; // Defined in assets/css/header.css line 98
-    pub const ID_ACCENT_PICKER: &str = "accent-picker"; // Defined in assets/css/header.css line 101
-    pub const HEADER_ANCHOR_BASE: &str = "h-base"; // Defined in assets/css/header.css line 120
-    pub const HEADER_ANCHOR_POSITION: &str = "header-anchor-position "; // Defined in assets/css/header.css line 124
+    pub const MAIN_HEADER_LOGO: &str = "header-logo "; // Defined in assets/css/header.css line 29
+    pub const MAIN_ASIDE: &str = "main-aside "; // Defined in assets/css/header.css line 41
+    pub const HEADER_USER: &str = "header-user "; // Defined in assets/css/header.css line 55
+    pub const HEADER_DROPDOWN: &str = "header-dropdown "; // Defined in assets/css/header.css line 65
+    pub const HEADER_DROPDOWN_CONTENT: &str = "header-dropdown-content "; // Defined in assets/css/header.css line 74
+    pub const HEADER_DROPDOWN_NESTED: &str = "nested "; // Defined in assets/css/header.css line 88
+    pub const FLOAT_RIGHT: &str = "float-right "; // Defined in assets/css/header.css line 93
+    pub const HEADER_COL: &str = "header-colour "; // Defined in assets/css/header.css line 96
+    pub const RAINBOW: &str = "rainbow "; // Defined in assets/css/header.css line 99
+    pub const ID_ACCENT_PICKER: &str = "accent-picker"; // Defined in assets/css/header.css line 102
+    pub const HEADER_ANCHOR_BASE: &str = "h-base"; // Defined in assets/css/header.css line 121
+    pub const HEADER_ANCHOR_POSITION: &str = "header-anchor-position "; // Defined in assets/css/header.css line 126
     pub const ACCORDION_CONTAINER: &str = "accordion-container "; // Defined in assets/css/accordion.css line 1
     pub const ACTIVE: &str = "active "; // Defined in assets/css/accordion.css line 23
     pub const ICON_LIST_ITEM: &str = "icon-list-item "; // Defined in assets/css/icon-list.css line 1
@@ -44,9 +44,9 @@ impl Css {
     pub const FILE_VIEWER_BREADCRUMB: &str = "breadcrumb "; // Defined in assets/css/file_viewer.css line 7
     pub const FILE_VIEWER_PAIR: &str = "file-viewer-pair "; // Defined in assets/css/file_viewer.css line 11
     pub const FILE_VIEWER_TABLE_CONTAINER: &str = "table-container "; // Defined in assets/css/file_viewer.css line 16
-    pub const BTN: &str = "btn "; // Defined in assets/css/button.css line 1
-    pub const BTN_PRI: &str = "pri "; // Defined in assets/css/button.css line 27
-    pub const BTN_RESET: &str = "btn-reset "; // Defined in assets/css/button.css line 46
+    pub const BTN: &str = "btn "; // Defined in assets/css/button.css line 5
+    pub const BTN_PRI: &str = "pri "; // Defined in assets/css/button.css line 31
+    pub const BTN_RESET: &str = "btn-reset "; // Defined in assets/css/button.css line 50
     pub const PDF_PREVIEW: &str = "pdf-preview "; // Defined in assets/css/library.css line 1
     pub const LOGIN_CONTAINER: &str = "login-container "; // Defined in assets/css/login.css line 1
     pub const MENU_CONTAINER: &str = "menu-container "; // Defined in assets/css/menu.css line 1

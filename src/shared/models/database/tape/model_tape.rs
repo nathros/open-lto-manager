@@ -9,6 +9,7 @@ use rusqlite::{
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct RecordTape {
     pub id: i64,
+    pub user_id: i64,
     pub manufacturer_id: i64,
     pub tape_type_id: i64,
     pub barcode: String,
@@ -28,6 +29,7 @@ impl Default for RecordTape {
     fn default() -> Self {
         Self {
             id: 0,
+            user_id: 0,
             manufacturer_id: 0,
             tape_type_id: 0,
             barcode: "".to_string(),

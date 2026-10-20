@@ -43,7 +43,10 @@ pub struct RecordUserWithRoles {
 impl RecordUser {
     pub fn create(username: String, description: String, raw_password: &str) -> RecordUser {
         use crate::{
-            backend::crypto::{generate_hash, generate_salt},
+            backend::{
+                crypto::{generate_hash, generate_salt},
+                env::get_pepper,
+            },
             shared::models::database::user::model_user::RecordUserConfig,
         };
 
@@ -53,7 +56,7 @@ impl RecordUser {
             id: config.id,
             username,
             description,
-            hash: generate_hash(raw_password, &salt),
+            hash: generate_hash(raw_password, &salt, get_pepper()),
             salt,
             algorithm: HashAlgorithm::latest(),
             enabled: config.enabled,

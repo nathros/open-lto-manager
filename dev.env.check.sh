@@ -5,7 +5,7 @@ YELLOW="\e[0;33m"
 RED="\e[0;31m"
 RESET="\e[0m"
 
-MIN_RUST_VER=$(cat Cargo.toml | grep "rust = " | cut -d '"' -f 2)      # Minimum Rust version
+MIN_RUST_VER=$(cat Cargo.toml | grep "rust-version = " | cut -d '"' -f 2)      # Minimum Rust version
 MIN_DIOXUS_VER=$(cat Cargo.toml | grep "dioxus = {" | cut -d '"' -f 2) # Get Dixous version from Cargo.toml
 
 FAILURE=false

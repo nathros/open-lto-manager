@@ -73,6 +73,7 @@ pub fn dev_database_backup(dir: String) -> bool {
             for t in tapes {
                 let mut tmp = Value::Object(serde_json::Map::new());
                 tmp["id"] = Value::Number(t.id.into());
+                tmp["user_id"] = Value::Number(t.user_id.into());
                 tmp["manufacturer_id"] = Value::Number(t.manufacturer_id.into());
                 tmp["tape_type_id"] = Value::Number(t.tape_type_id.into());
                 tmp["barcode"] = Value::String(t.barcode);
@@ -107,9 +108,19 @@ pub fn dev_database_backup(dir: String) -> bool {
             for t in files {
                 let mut tmp = Value::Object(serde_json::Map::new());
                 tmp["id"] = Value::Number(t.id.into());
-                tmp["tape_id"] = Value::Number(t.tape_id.unwrap_or(0).into());
+                tmp["parent_id"] = Value::Number(t.parent_id.into());
+                tmp["user_id"] = Value::Number(t.user_id.into());
+                if let Some(tape_id) = t.tape_id {
+                    tmp["tape_id"] = Value::Number(tape_id.into());
+                } else {
+                    tmp["tape_id"] = Value::Null;
+                }
                 tmp["file_name_virt"] = Value::String(t.file_name_virt);
-                tmp["file_path_virt"] = Value::String(t.file_path_virt);
+                if let Some(file_path_virt) = t.file_path_virt {
+                    tmp["file_path_virt"] = Value::String(file_path_virt);
+                } else {
+                    tmp["file_path_virt"] = Value::Null;
+                }
                 tmp["file_name_phy"] = Value::String(t.file_name_phy);
                 tmp["file_path_phy"] = Value::String(t.file_path_phy);
                 tmp["file_size"] = Value::Number(t.file_size.into());
@@ -172,6 +183,14 @@ pub fn dev_database_restore(dir: String) -> Option<bool> {
                                 Some(i) => i.as_i64()?,
                                 None => {
                                     error!("Tape failure id");
+                                    return None;
+                                }
+                            },
+
+                            user_id: match value["user_id"].as_number() {
+                                Some(i) => i.as_i64()?,
+                                None => {
+                                    error!("Tape failure user_id");
                                     return None;
                                 }
                             },
@@ -291,6 +310,20 @@ pub fn dev_database_restore(dir: String) -> Option<bool> {
                                     return None;
                                 }
                             },
+                            parent_id: match value["parent_id"].as_number() {
+                                Some(i) => i.as_i64()?,
+                                None => {
+                                    error!("File failure parent_id");
+                                    return None;
+                                }
+                            },
+                            user_id: match value["user_id"].as_number() {
+                                Some(i) => i.as_i64()?,
+                                None => {
+                                    error!("File failure user_id");
+                                    return None;
+                                }
+                            },
                             tape_id: match value["tape_id"].as_number() {
                                 Some(i) => {
                                     let result = i.as_i64()?;
@@ -308,13 +341,8 @@ pub fn dev_database_restore(dir: String) -> Option<bool> {
                                     return None;
                                 }
                             },
-                            file_path_virt: match value["file_path_virt"].as_str() {
-                                Some(i) => i.to_string(),
-                                None => {
-                                    error!("File failure file_path_virt");
-                                    return None;
-                                }
-                            },
+                            file_path_virt: value["file_path_virt"].as_str().map(|i| i.to_string()),
+
                             file_name_phy: match value["file_name_phy"].as_str() {
                                 Some(i) => i.to_string(),
                                 None => {

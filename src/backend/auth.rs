@@ -63,6 +63,38 @@ where
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct UserIdSession(pub i64);
+
+impl<S> FromRequestParts<S> for UserIdSession
+where
+    S: Send + Sync,
+{
+    type Rejection = (http::StatusCode, &'static str);
+
+    async fn from_request_parts(req: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
+        //let session = Session::from_request_parts(req, _state).await?;
+
+        //info!("Called {:?}", req);
+        if let Some(session_id_str) = SessionId::get_session_id(&req.headers)
+            && let session_id = SessionId(session_id_str.to_string())
+            && let Some(session) = Session::find(&session_id)
+        {
+            if session.expired() {
+                warn!(
+                    "Session {:?} has expired for user {}",
+                    session_id, session.user_id
+                );
+                return Err((http::StatusCode::UNAUTHORIZED, "Session expired"));
+            } else {
+                return Ok(UserIdSession(session.user_id)); // Session exists and return user_id
+            }
+        }
+
+        Err((http::StatusCode::UNAUTHORIZED, "Not authorised"))
+    }
+}
+
 impl SessionId {
     pub async fn layer(request: http::Request<Body>, next: Next) -> Response<Body> {
         #[cfg(feature = "slow_server")]
@@ -97,11 +129,18 @@ impl SessionId {
     }
 
     pub fn generate_set_cookie(&self) -> String {
-        format!("{}={};max-age=31536000;path=/", SESSION_KEY, self.0)
+        format!(
+            // HttpOnly stops JavaScript access and SameSite disables cross-site
+            "{}={}; max-age=31536000; path=/; SameSite=Strict; HttpOnly",
+            SESSION_KEY, self.0
+        )
     }
 
     pub fn generate_remove_cookie() -> String {
-        format!("{}=unset;max-age=-1;path=/", SESSION_KEY)
+        format!(
+            "{}=unset; max-age=-1; path=/; SameSite=Strict; HttpOnly",
+            SESSION_KEY
+        )
     }
 }
 
@@ -280,7 +319,10 @@ mod tests {
         let id = SessionId(id_str.clone());
         let cookie = id.generate_set_cookie();
         assert_eq!(
-            format!("{}={};max-age=31536000;path=/", SESSION_KEY, id_str),
+            format!(
+                "{}={}; max-age=31536000; path=/; SameSite=Strict; HttpOnly",
+                SESSION_KEY, id_str
+            ),
             cookie
         );
     }

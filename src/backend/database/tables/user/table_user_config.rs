@@ -104,7 +104,8 @@ pub mod tests {
             db::tests::create_test_database,
             tables::{
                 table::{RecordRead, RecordUpdate},
-                user::table_user::{TableUser, tests::create_table},
+                tape,
+                user::table_user::TableUser,
             },
         },
         shared::models::database::user::{
@@ -128,7 +129,7 @@ pub mod tests {
     #[test]
     fn suite() {
         let conn = create_test_database();
-        create_table(&conn);
+        tape::table_tape::tests::create_table(&conn);
 
         // Get first found user from complete record
         let test_user = TableUser::<RecordUser>::get_all(&conn)

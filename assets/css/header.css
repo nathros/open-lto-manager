@@ -24,7 +24,6 @@
 .header-anchor-position > button {
 	border: unset;
 	background-color: unset;
-	font-size: unset;
 	margin: 0;
 }
 .header-logo /* impl Css::MAIN_HEADER_LOGO */ {
@@ -65,6 +64,8 @@
 }
 .header-dropdown /* impl Css::HEADER_DROPDOWN */ {
 	position: relative;
+	padding: var(--padding-x);
+	border-radius: var(--radius);
 }
 .header-dropdown:hover {
 	cursor: pointer;
@@ -120,11 +121,13 @@
 #h-base /* [trim] impl Css::HEADER_ANCHOR_BASE */ {
 	anchor-name: --header-anchor;
 	pointer-events: none;
+	padding: 0;
 }
 .header-anchor-position /* impl Css::HEADER_ANCHOR_POSITION */ {
 	position: fixed;
 	position-anchor: --header-anchor;
-	right: anchor(right);
-	top: calc(anchor(top) - var(--padding-m));
+	position-area: inline-start;
+	/*right: anchor(right);
+	top: calc(anchor(top) - var(--padding-m));*/
 	z-index: 11; /* .main-header::z-index: + 1  */
 }

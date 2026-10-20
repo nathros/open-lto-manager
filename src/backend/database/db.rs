@@ -27,7 +27,7 @@ use crate::{
     },
 };
 
-static DB_VERSION_LATEST: i64 = 0;
+const DB_VERSION_LATEST: i64 = 0;
 
 fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, String> {
     let current_database_version: i64;
@@ -40,7 +40,7 @@ fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, Str
                     Err(e) => return Err(format!("Failed to init settings table {}", e)),
                 }
             } else {
-                // TODO could use: PRAGMA user_version
+                // If TableSetting does not exist then this a brand new database
                 match TableSetting::<RecordMisc<SettingTableVersion>>::get(&conn) {
                     Ok(v) => current_database_version = v.data,
                     Err(e) => return Err(format!("Failed to get table version {}", e)),

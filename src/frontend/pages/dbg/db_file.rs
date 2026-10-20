@@ -54,7 +54,7 @@ fn Inner() -> Element {
                     td { "null" }
                 }
                 td { "{rec.file_name_virt}" }
-                td { "{rec.file_path_virt}" }
+                td { "{rec.file_path_virt:?}" }
                 td { "{rec.file_name_phy}" }
                 td { "{rec.file_path_phy}" }
                 td { "{rec.file_size}" }

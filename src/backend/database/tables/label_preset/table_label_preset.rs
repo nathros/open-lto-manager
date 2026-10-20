@@ -134,7 +134,8 @@ mod tests {
             tables::{
                 label_preset::table_label_preset::TableLabelPreset,
                 table::{RecordDelete, RecordInsert, RecordUpdate, TableCreate},
-                user::{self, table_user::TableUser},
+                tape,
+                user::table_user::TableUser,
             },
         },
         shared::models::database::{
@@ -146,7 +147,7 @@ mod tests {
     fn create() -> rusqlite::Connection {
         let conn = create_test_database();
         // TableLabelPreset depends on TableUser, so this must be created first
-        user::table_user::tests::create_table(&conn);
+        tape::table_tape::tests::create_table(&conn);
 
         assert!(
             !conn.table_exists(None, "label_preset").unwrap(),
@@ -160,6 +161,7 @@ mod tests {
             conn.table_exists(None, "label_preset").unwrap(),
             "create_table() reported Ok but table does not exist"
         );
+
         conn
     }
 

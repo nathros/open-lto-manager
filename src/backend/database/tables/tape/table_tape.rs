@@ -27,10 +27,11 @@ impl TableCreate<RecordTape> for TableTape<RecordTape> {
         db.execute(
             "CREATE TABLE IF NOT EXISTS tape (
                 id INTEGER PRIMARY KEY,
+                user_id INTEGER NOT NULL,
                 manufacturer_id INTEGER NOT NULL,
                 tape_type_id INTEGER NOT NULL,
-                barcode VARCHAR(8) UNIQUE,
-                serial TEXT UNIQUE,
+                barcode VARCHAR(8),
+                serial TEXT,
                 format INTEGER NOT NULL,
                 worm BOOLEAN NOT NULL,
                 encryption_type INTEGER NOT NULL,
@@ -40,8 +41,11 @@ impl TableCreate<RecordTape> for TableTape<RecordTape> {
                 used_space INTEGER NOT NULL,
                 created BIGINT NOT NULL,
                 last_used BIGINT NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES user(id),
                 FOREIGN KEY(manufacturer_id) REFERENCES manufacturer(id),
-                FOREIGN KEY(tape_type_id) REFERENCES tape_type(id)
+                FOREIGN KEY(tape_type_id) REFERENCES tape_type(id),
+                UNIQUE(user_id, barcode),
+                UNIQUE(user_id, serial)
             );",
             (),
         )?;
@@ -60,6 +64,7 @@ impl RecordRead<RecordTape> for TableTape<RecordTape> {
         db.prepare(
             "SELECT
                     id,
+                    user_id,
                     manufacturer_id,
                     tape_type_id,
                     barcode,
@@ -84,6 +89,7 @@ impl RecordInsert<RecordTape> for TableTape<RecordTape> {
     fn insert(db: &Connection, record: &RecordTape) -> Result<i64, rusqlite::Error> {
         db.execute(
             "INSERT INTO tape (
+                    user_id,
                     manufacturer_id,
                     tape_type_id,
                     barcode,
@@ -110,8 +116,10 @@ impl RecordInsert<RecordTape> for TableTape<RecordTape> {
                     ?10,
                     ?11,
                     ?12,
-                    ?13);",
+                    ?13,
+                    ?14);",
             params![
+                record.user_id,
                 record.manufacturer_id,
                 record.tape_type_id,
                 record.barcode,
@@ -179,19 +187,20 @@ impl RecordFill<RecordTape> for TableTape<RecordTape> {
     fn fill(row: &rusqlite::Row<'_>, offset: usize) -> Result<RecordTape, rusqlite::Error> {
         Ok(RecordTape {
             id: row.get(offset)?,
-            manufacturer_id: row.get(offset + 1)?,
-            tape_type_id: row.get(offset + 2)?,
-            barcode: row.get(offset + 3)?,
-            serial: row.get(offset + 4)?,
-            format: row.get(offset + 5)?,
-            worm: row.get(offset + 6)?,
-            encryption_type: row.get(offset + 7)?,
-            encryption_sw: row.get(offset + 8)?,
-            encryption_hw: row.get(offset + 9)?,
-            compressed: row.get(offset + 10)?,
-            used_space: row.get(offset + 11)?,
-            created: row.get(offset + 12)?,
-            last_used: row.get(offset + 13)?,
+            user_id: row.get(offset + 1)?,
+            manufacturer_id: row.get(offset + 2)?,
+            tape_type_id: row.get(offset + 3)?,
+            barcode: row.get(offset + 4)?,
+            serial: row.get(offset + 5)?,
+            format: row.get(offset + 6)?,
+            worm: row.get(offset + 7)?,
+            encryption_type: row.get(offset + 8)?,
+            encryption_sw: row.get(offset + 9)?,
+            encryption_hw: row.get(offset + 10)?,
+            compressed: row.get(offset + 11)?,
+            used_space: row.get(offset + 12)?,
+            created: row.get(offset + 13)?,
+            last_used: row.get(offset + 14)?,
         })
     }
 }
@@ -201,6 +210,7 @@ impl TableTape<RecordTape> {
         db.prepare(
             "SELECT
                     id,
+                    user_id,
                     manufacturer_id,
                     tape_type_id,
                     barcode,
@@ -220,23 +230,31 @@ impl TableTape<RecordTape> {
         .collect::<Result<Vec<RecordTape>, rusqlite::Error>>()
     }
 
-    pub fn barcode_exists(db: &Connection, barcode: String) -> Result<bool, rusqlite::Error> {
+    pub fn barcode_exists(
+        db: &Connection,
+        user_id: i64,
+        barcode: String,
+    ) -> Result<bool, rusqlite::Error> {
         let count: i64 = db.query_row(
             "SELECT COUNT(barcode)
                     FROM tape
-                    WHERE barcode = ?1;",
-            params![barcode],
+                    WHERE user_id =?1 AND barcode = ?2;",
+            params![user_id, barcode],
             |row| row.get(0),
         )?;
         Ok(count > 0)
     }
 
-    pub fn serial_exists(db: &Connection, serial: String) -> Result<bool, rusqlite::Error> {
+    pub fn serial_exists(
+        db: &Connection,
+        user_id: i64,
+        serial: String,
+    ) -> Result<bool, rusqlite::Error> {
         let count: i64 = db.query_row(
             "SELECT COUNT(serial)
                     FROM tape
-                    WHERE serial = ?1;",
-            params![serial],
+                    WHERE user_id =?1 AND serial = ?2;",
+            params![user_id, serial],
             |row| row.get(0),
         )?;
         Ok(count > 0)
@@ -247,18 +265,23 @@ impl TableTape<RecordTape> {
 pub mod tests {
     use chrono::Local;
     const TEST_BARCODE: &str = "test barcode";
-    const NEW_BARCODE: &str = "test barcode changed";
+    const UPDATED_BARCODE: &str = "test barcode changed";
     const TEST_SERIAL: &str = "test serial";
-    const NEW_SERIAL: &str = "test serial changed";
+    const UPDATED_SERIAL: &str = "test serial changed";
 
     use crate::{
         backend::database::{
             db::tests::create_test_database,
             tables::{
+                file,
                 manufacturer::{self, table_manufacturer::TableManufacturer},
                 table::{RecordDelete, RecordInsert, RecordRead, RecordUpdate, TableCreate},
                 tape::table_tape::TableTape,
                 tape_type::{self, table_tape_type::TableTapeType},
+                user::{
+                    self,
+                    table_user::{TableUser, tests::create_additional_user},
+                },
             },
         },
         shared::models::database::{
@@ -267,11 +290,13 @@ pub mod tests {
                 TapeFormat,
             },
             tape_type::model_tape_type::RecordTapeType,
+            user::model_user_sensitive::RecordUser,
         },
     };
 
     pub fn create_table(conn: &rusqlite::Connection) {
-        // TableTape depends on TableManufacturer and TableTapeType, so these must be created first
+        // TableTape depends on TableUser, TableManufacturer and TableTapeType, so these must be created first
+        user::table_user::tests::create_table(conn);
         manufacturer::table_manufacturer::tests::create_table(conn);
         tape_type::table_tape_type::tests::create_table(conn);
 
@@ -287,13 +312,16 @@ pub mod tests {
             conn.table_exists(None, "tape").unwrap(),
             "create_table() tape reported Ok but table does not exist"
         );
+
+        file::table_file::tests::create_table(conn); // This will create default user
     }
 
-    fn insert(db: &rusqlite::Connection) -> i64 {
+    fn insert(db: &rusqlite::Connection, user_id: i64) -> i64 {
         let manufacturers = TableManufacturer::get_all(db).unwrap();
         let types = TableTapeType::<RecordTapeType>::get_all(db).unwrap();
         let mut new_tape = RecordTape {
             id: 0,
+            user_id,
             manufacturer_id: manufacturers.get(manufacturers.len() / 2).unwrap().id,
             tape_type_id: types.get(types.len() / 2).unwrap().id,
             barcode: TEST_BARCODE.to_string(),
@@ -321,10 +349,11 @@ pub mod tests {
 
         let changed_tape = RecordTape {
             id: test_tape.id,
+            user_id: test_tape.user_id,
             manufacturer_id: test_tape.manufacturer_id + 1,
             tape_type_id: test_tape.tape_type_id + 1,
-            barcode: NEW_BARCODE.to_string(),
-            serial: Some(NEW_SERIAL.to_string()),
+            barcode: UPDATED_BARCODE.to_string(),
+            serial: Some(UPDATED_SERIAL.to_string()),
             format: match test_tape.format {
                 TapeFormat::Tar => TapeFormat::LTFS,
                 TapeFormat::LTFS => TapeFormat::Tar,
@@ -367,37 +396,87 @@ pub mod tests {
         );
     }
 
-    fn check_duplicate_barcode(db: &rusqlite::Connection, barcode: String, expected: bool) {
-        assert_eq!(TableTape::barcode_exists(db, barcode).unwrap(), expected);
+    fn check_duplicate_barcode(
+        db: &rusqlite::Connection,
+        user_id: i64,
+        barcode: String,
+        expected: bool,
+    ) {
+        assert_eq!(
+            TableTape::barcode_exists(db, user_id, barcode).unwrap(),
+            expected
+        );
     }
 
-    fn check_duplicate_serial(db: &rusqlite::Connection, serial: String, expected: bool) {
-        assert_eq!(TableTape::serial_exists(db, serial).unwrap(), expected);
+    fn check_duplicate_serial(
+        db: &rusqlite::Connection,
+        user_id: i64,
+        serial: String,
+        expected: bool,
+    ) {
+        assert_eq!(
+            TableTape::serial_exists(db, user_id, serial).unwrap(),
+            expected
+        );
     }
 
     #[test]
     fn suite() {
         let conn = create_test_database();
         create_table(&conn);
-        check_duplicate_barcode(&conn, TEST_BARCODE.to_string(), false);
-        check_duplicate_serial(&conn, TEST_SERIAL.to_string(), false);
+        let first_user = TableUser::<RecordUser>::get_all(&conn)
+            .unwrap()
+            .first()
+            .unwrap()
+            .clone();
+        let second_user = create_additional_user(&conn);
 
-        let new_id = insert(&conn);
-        check_duplicate_barcode(&conn, TEST_BARCODE.to_string(), true);
-        check_duplicate_serial(&conn, TEST_SERIAL.to_string(), true);
-        check_duplicate_barcode(&conn, NEW_BARCODE.to_string(), false);
-        check_duplicate_serial(&conn, NEW_SERIAL.to_string(), false);
+        // Barcode and serial does not exist for either user
+        check_duplicate_barcode(&conn, first_user.id, TEST_BARCODE.to_string(), false);
+        check_duplicate_serial(&conn, first_user.id, TEST_SERIAL.to_string(), false);
+        check_duplicate_barcode(&conn, second_user.id, TEST_BARCODE.to_string(), false);
+        check_duplicate_serial(&conn, second_user.id, TEST_SERIAL.to_string(), false);
 
-        update(&conn, new_id);
-        check_duplicate_barcode(&conn, TEST_BARCODE.to_string(), false);
-        check_duplicate_serial(&conn, TEST_SERIAL.to_string(), false);
-        check_duplicate_barcode(&conn, NEW_BARCODE.to_string(), true);
-        check_duplicate_serial(&conn, NEW_SERIAL.to_string(), true);
+        let new_id = insert(&conn, first_user.id); // Insert new Tape as first user
+        // Expect match for first user
+        check_duplicate_barcode(&conn, first_user.id, TEST_BARCODE.to_string(), true);
+        check_duplicate_serial(&conn, first_user.id, TEST_SERIAL.to_string(), true);
+        check_duplicate_barcode(&conn, first_user.id, UPDATED_BARCODE.to_string(), false);
+        check_duplicate_serial(&conn, first_user.id, UPDATED_SERIAL.to_string(), false);
+        // Expect no match for second user
+        check_duplicate_barcode(&conn, second_user.id, UPDATED_BARCODE.to_string(), false);
+        check_duplicate_serial(&conn, second_user.id, UPDATED_SERIAL.to_string(), false);
+        check_duplicate_barcode(&conn, second_user.id, UPDATED_BARCODE.to_string(), false);
+        check_duplicate_serial(&conn, second_user.id, UPDATED_SERIAL.to_string(), false);
+
+        update(&conn, new_id); // Update Tape
+        // Expect match for updated
+        check_duplicate_barcode(&conn, first_user.id, TEST_BARCODE.to_string(), false);
+        check_duplicate_serial(&conn, first_user.id, TEST_SERIAL.to_string(), false);
+        check_duplicate_barcode(&conn, first_user.id, UPDATED_BARCODE.to_string(), true);
+        check_duplicate_serial(&conn, first_user.id, UPDATED_SERIAL.to_string(), true);
+        // Expect no match for second user
+        check_duplicate_barcode(&conn, second_user.id, UPDATED_BARCODE.to_string(), false);
+        check_duplicate_serial(&conn, second_user.id, UPDATED_SERIAL.to_string(), false);
+        check_duplicate_barcode(&conn, second_user.id, UPDATED_BARCODE.to_string(), false);
+        check_duplicate_serial(&conn, second_user.id, UPDATED_SERIAL.to_string(), false);
 
         delete(&conn, new_id);
-        check_duplicate_barcode(&conn, TEST_BARCODE.to_string(), false);
-        check_duplicate_serial(&conn, TEST_SERIAL.to_string(), false);
-        check_duplicate_barcode(&conn, NEW_BARCODE.to_string(), false);
-        check_duplicate_serial(&conn, NEW_SERIAL.to_string(), false);
+        check_duplicate_barcode(&conn, first_user.id, TEST_BARCODE.to_string(), false);
+        check_duplicate_serial(&conn, first_user.id, TEST_SERIAL.to_string(), false);
+        check_duplicate_barcode(&conn, first_user.id, UPDATED_BARCODE.to_string(), false);
+        check_duplicate_serial(&conn, first_user.id, UPDATED_SERIAL.to_string(), false);
+
+        let _ = insert(&conn, second_user.id); // Insert new Tape as second user
+        // Expect no match for first user
+        check_duplicate_barcode(&conn, first_user.id, TEST_BARCODE.to_string(), false);
+        check_duplicate_serial(&conn, first_user.id, TEST_SERIAL.to_string(), false);
+        check_duplicate_barcode(&conn, first_user.id, UPDATED_BARCODE.to_string(), false);
+        check_duplicate_serial(&conn, first_user.id, UPDATED_SERIAL.to_string(), false);
+        // Expect no match for second user
+        check_duplicate_barcode(&conn, second_user.id, TEST_BARCODE.to_string(), true);
+        check_duplicate_serial(&conn, second_user.id, TEST_SERIAL.to_string(), true);
+        check_duplicate_barcode(&conn, second_user.id, UPDATED_BARCODE.to_string(), false);
+        check_duplicate_serial(&conn, second_user.id, UPDATED_SERIAL.to_string(), false);
     }
 }

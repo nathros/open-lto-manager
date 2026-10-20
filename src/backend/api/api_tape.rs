@@ -55,21 +55,23 @@ pub async fn api_del_tape(id: i64) -> Result<bool> {
     })
 }
 
-#[get("/api/tape/check/barcode?barcode")]
+#[get("/api/tape/check/barcode?barcode", user_id: crate::backend::auth::UserIdSession)]
 pub async fn api_tape_barcode_exists(barcode: String) -> Result<bool> {
     use crate::backend::database::{db::DB, tables::tape::table_tape::TableTape};
 
-    DB.with(|db| match TableTape::barcode_exists(db, barcode) {
-        Ok(found) => Ok(found),
-        Err(e) => Err(e)?,
-    })
+    DB.with(
+        |db| match TableTape::barcode_exists(db, user_id.0, barcode) {
+            Ok(found) => Ok(found),
+            Err(e) => Err(e)?,
+        },
+    )
 }
 
-#[get("/api/tape/check/serial?serial")]
+#[get("/api/tape/check/serial?serial", user_id: crate::backend::auth::UserIdSession)]
 pub async fn api_tape_serial_exists(serial: String) -> Result<bool> {
     use crate::backend::database::{db::DB, tables::tape::table_tape::TableTape};
 
-    DB.with(|db| match TableTape::serial_exists(db, serial) {
+    DB.with(|db| match TableTape::serial_exists(db, user_id.0, serial) {
         Ok(found) => Ok(found),
         Err(e) => Err(e)?,
     })

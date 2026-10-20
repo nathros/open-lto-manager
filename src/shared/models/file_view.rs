@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 use chrono::{DateTime, Local};
 use dioxus::fullstack::serde::{Deserialize, Serialize};
 
@@ -10,39 +12,37 @@ pub struct FileView {
 #[derive(Debug, Default, Serialize, Deserialize, PartialEq, Clone)]
 pub struct FileViewInfo {
     pub id: i64,
-    pub is_dir: bool,
     pub is_selected: bool,
+    pub is_dir: bool,
     pub file_name: String,
-    pub file_path: String,
     pub file_size: i64,
+    pub file_size_pretty: String,
     pub created: DateTime<Local>,
     pub modified: DateTime<Local>,
     pub icon: String,
 }
 
 impl FileViewInfo {
-    pub fn is_dir(file_name: &str) -> bool {
-        file_name.chars().last().is_some_and(|c| c == '/')
+    pub fn sort(children: &mut [FileViewInfo]) {
+        children.sort_by(|a, b| {
+            if a.is_dir == b.is_dir {
+                a.file_name.cmp(&b.file_name)
+            } else if a.is_dir {
+                Ordering::Less // Directories at top
+            } else {
+                Ordering::Greater
+            }
+        });
     }
 
-    pub fn trim_name(file_name: String) -> String {
-        if file_name.chars().next().is_some_and(|c| c == '/')
-            && file_name.chars().last().is_some_and(|c| c == '/')
-            && file_name.len() > 1
-        {
-            file_name.as_str()[1..file_name.len() - 1].to_string()
-        } else {
-            file_name
-        }
-    }
-
-    pub fn pretty_size(&self) -> String {
-        let mut size = self.file_size as f32;
+    #[cfg(feature = "server")]
+    pub fn pretty_size(file_size: i64) -> String {
+        let mut size = file_size as f32;
         if size < 1024.0 {
             if size == 0.0 {
                 return "empty".to_string();
             }
-            return format!("{} bytes", self.file_size);
+            return format!("{} bytes", file_size);
         }
         for unit in ["KB", "MB", "GB", "TB"] {
             size /= 1024.0;
@@ -105,22 +105,6 @@ mod tests {
     use crate::shared::models::file_view::FileViewInfo;
 
     #[test]
-    fn check_is_dir() {
-        assert!(FileViewInfo::is_dir("/"));
-        assert!(FileViewInfo::is_dir("/test/"));
-        assert!(!FileViewInfo::is_dir("test"));
-        assert!(FileViewInfo::is_dir("test/"));
-        assert!(FileViewInfo::is_dir("/test/"));
-    }
-
-    #[test]
-    fn check_trim_name() {
-        assert_eq!(FileViewInfo::trim_name("/dir/".to_string()), "dir");
-        assert_eq!(FileViewInfo::trim_name("file".to_string()), "file");
-        assert_eq!(FileViewInfo::trim_name("/".to_string()), "/");
-    }
-
-    #[test]
     fn check_pretty_size() {
         let test_data = [
             (0, "empty"),
@@ -138,14 +122,7 @@ mod tests {
         ];
 
         test_data.iter().for_each(|(size, str)| {
-            assert_eq!(
-                FileViewInfo {
-                    file_size: *size,
-                    ..Default::default()
-                }
-                .pretty_size(),
-                str.to_string()
-            );
+            assert_eq!(FileViewInfo::pretty_size(*size), str.to_string());
         });
     }
 }

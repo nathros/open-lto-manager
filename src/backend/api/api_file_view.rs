@@ -61,12 +61,12 @@ pub async fn fv_files_in_dir(
     Ok(Ok(results))
 }
 
-#[post("/api/fv/virtual/explore")]
+#[post("/api/fv/virtual/explore", user_id: crate::backend::auth::UserIdSession)]
 pub async fn fv_virtual_files_in_dir(path: String) -> Result<FileView> {
     use crate::backend::database::{db::DB, tables::file::table_file::TableFile};
 
     DB.with(|db: &std::sync::LazyLock<rusqlite::Connection>| {
-        match TableFile::<FileView>::get_in_virtual_dir(db, path) {
+        match TableFile::<FileView>::get_in_virtual_dir(db, user_id.0, path) {
             Ok(records) => Ok(records),
             Err(e) => Err(e)?,
         }
@@ -76,8 +76,7 @@ pub async fn fv_virtual_files_in_dir(path: String) -> Result<FileView> {
 #[post("/api/fv/physical/explore")]
 pub async fn fv_physical_files_in_dir(mut path: String) -> Result<FileView> {
     use std::{
-        cmp::Ordering, fs::read_dir, os::unix::fs::MetadataExt, path::MAIN_SEPARATOR, path::Path,
-        time::SystemTime,
+        fs::read_dir, os::unix::fs::MetadataExt, path::MAIN_SEPARATOR, path::Path, time::SystemTime,
     };
 
     use chrono::Local;
@@ -112,12 +111,12 @@ pub async fn fv_physical_files_in_dir(mut path: String) -> Result<FileView> {
             {
                 FileViewInfo {
                     id: 0,
-                    is_dir: metadata.is_dir(),
                     is_selected: false,
-                    file_path: path.clone(),
+                    is_dir: metadata.is_dir(),
                     icon: FileViewInfo::get_icon_default(metadata.is_dir(), &name),
                     file_name: name,
                     file_size: metadata.size() as i64,
+                    file_size_pretty: FileViewInfo::pretty_size(metadata.size() as i64),
                     created: metadata.created().unwrap_or(SystemTime::now()).into(),
                     modified: metadata.modified().unwrap_or(SystemTime::now()).into(),
                 }
@@ -127,34 +126,22 @@ pub async fn fv_physical_files_in_dir(mut path: String) -> Result<FileView> {
         })
         .collect::<Vec<FileViewInfo>>();
 
-    children.sort_by(|a, b| {
-        if a.is_dir == b.is_dir {
-            a.file_name.cmp(&b.file_name)
-        } else if a.is_dir {
-            Ordering::Less // Directories at top
-        } else {
-            Ordering::Greater
-        }
-    });
+    FileViewInfo::sort(&mut children);
 
     let current_path = Path::new(&path);
 
     let result = FileView {
         current_dir: Some(FileViewInfo {
             id: 0,
-            is_dir: true,
             is_selected: false,
+            is_dir: true,
             file_name: current_path
                 .file_name()
                 .unwrap_or_default()
                 .to_string_lossy()
                 .to_string(),
-            file_path: current_path
-                .parent()
-                .unwrap_or(Path::new("/"))
-                .to_string_lossy()
-                .to_string(),
             file_size: 0,
+            file_size_pretty: "".to_string(),
             created: Local::now(),
             modified: Local::now(),
             icon: FileViewInfo::default_dir_icon(),
