@@ -190,7 +190,8 @@ thread_local! {
 
 #[cfg(test)]
 pub mod tests {
-    use tempdir::TempDir;
+
+    use tempfile::tempdir;
 
     use crate::{
         backend::database::{
@@ -241,7 +242,7 @@ pub mod tests {
 
     #[test]
     fn create_database_file() {
-        let tmp_dir = TempDir::new("database_file").unwrap();
+        let tmp_dir = tempdir().unwrap();
         let path = tmp_dir.path().display().to_string();
         let db = create_database(path).unwrap();
         check_foreign_keys_constraints(&db);

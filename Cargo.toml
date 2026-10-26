@@ -3,7 +3,7 @@ name = "openltomanager"
 version = "0.1.0"
 authors = ["nathros"]
 edition = "2024"
-rust = "1.95"
+rust-version = "1.95"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -36,7 +36,7 @@ wasm-bindgen = { version = "0.2.121" }
 whoami = { version = "2.1.2", optional = true }
 
 [dev-dependencies]
-tempdir = "0.3.7"
+tempfile = "3.27.0"
 
 [features]
 default = ["web", "server"]
@@ -71,7 +71,7 @@ auto_login = []  # Testing only, auto login as admin for debug build only
 
 [lints.clippy]
 unwrap_used = "deny"
-allow-unwrap-in-tests = "allow"
+allow_unwrap_in_tests = "allow"
 
 # https://dioxuslabs.com/learn/0.5/cookbook/optimizing/#build-configuration
 [profile.release]

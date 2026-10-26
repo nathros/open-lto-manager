@@ -330,7 +330,7 @@ fn init_backend() -> AppState {
 mod tests {
     use std::fs;
 
-    use tempdir::TempDir;
+    use tempfile::tempdir;
 
     use crate::{
         backend::init::{
@@ -432,7 +432,7 @@ list:x:38:"#;
             (test_file_not_exists, Some(false)),
         ];
 
-        let tmp_dir = TempDir::new("check_platform_existing_group").unwrap();
+        let tmp_dir = tempdir().unwrap();
         for (index, (groups_file_content, exists)) in test_data.iter().enumerate() {
             let tmp_file_path = tmp_dir.path().join(format!("{}", index));
             fs::write(&tmp_file_path, groups_file_content).unwrap();
@@ -534,7 +534,7 @@ REDHAT_SUPPORT_PRODUCT_VERSION="CentOS Stream""#;
             ),
         ];
 
-        let tmp_dir = TempDir::new("check_platform_expected_group").unwrap();
+        let tmp_dir = tempdir().unwrap();
         for (index, (os_release_content, os_name, expected_result)) in test_data.iter().enumerate()
         {
             let tmp_file_path = tmp_dir.path().join(format!("{}", index));

@@ -142,6 +142,28 @@
       "problemMatcher": [],
     },
     {
+      "label": "Cargo::audit",
+      "type": "shell",
+      "command": "cargo-audit audit",
+      "icon": {
+        "id": "zap",
+        "color": "terminal.ansiBlue"
+      },
+      "group": "test",
+      "problemMatcher": [],
+    },
+    {
+      "label": "Cargo::audit fix",
+      "type": "shell",
+      "command": "cargo-audit audit fix",
+      "icon": {
+        "id": "zap",
+        "color": "terminal.ansiBlue"
+      },
+      "group": "test",
+      "problemMatcher": [],
+    },
+    {
       "label": "Lint::rust",
       "type": "shell",
       "command": "cargo fmt",

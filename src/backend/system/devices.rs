@@ -95,13 +95,14 @@ fn check_devices_shell(sender: Sender<String>, on_complete: TaskCompleteFn) {
 #[cfg(test)]
 mod tests {
     use std::fs::File;
-    use tempdir::TempDir;
+
+    use tempfile::tempdir;
 
     use crate::backend::system::devices::check_dir;
 
     #[test]
     fn find_devices() {
-        let tmp_dir = TempDir::new("test-find-tape-devices").unwrap();
+        let tmp_dir = tempdir().unwrap();
 
         let mut tmp_devices = vec![];
 
