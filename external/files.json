@@ -136,9 +136,9 @@
 			"kora": "#jpg"
 		},
 		"md": {
-			"breeze": "#txt",
-			"papirus": "#txt",
-			"kora": "#txt"
+			"breeze": "icons/mimetypes/32/text-markdown.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-markdown.svg",
+			"kora": "kora/mimetypes/scalable/text-markdown.svg"
 		},
 		"mkv": {
 			"breeze": "icons/mimetypes/32/video-x-matroska.svg",
