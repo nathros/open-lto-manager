@@ -114,6 +114,7 @@ function process_theme() {
 
 	INDEX=0
 	declare -A THEME_NAME_INDEX
+	declare -A FILE_HASH
 
 	THEME_NAME=()
 	THEME_PATH=()
@@ -246,6 +247,12 @@ function process_theme() {
 				if [[ $ICON_PATH == "#"* ]]; then
 					echo -n "<use id=\"$ICON_NAME\" class=\"icon\" href=\"#_${ICON_PATH:1}\"/>" >> $WRITE_FILE
 				else
+					HASH=$(cat "../${THEME_PATH[$I]}$ICON_PATH" | shasum)
+					if [[ "${FILE_HASH[$N,$HASH]}" != "" ]]; then
+						echo "Warning: found duplicate file hash: {$N} ${FILE_HASH[$N,$HASH]} for ($ICON_NAME), this should be a reference [#]"
+					else
+						FILE_HASH[$N,$HASH]="../${THEME_PATH[$I]}$ICON_PATH ($ICON_NAME)"
+					fi
 					SVG=$(SVGO_PREFIX=$ICON_NAME svgo "../${THEME_PATH[$I]}$ICON_PATH" -o -)  # Uses config file: svgo.config.mjs
 					echo "$SVG" | tr -d '\n'                                                 `# Remove new lines` \
 						| sed -e "s/$FIND/$REPLACE/g"                                        `# Add icon class` \

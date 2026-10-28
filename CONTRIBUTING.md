@@ -16,7 +16,7 @@ rustup target add wasm32-unknown-unknown
 ```
 Install Dioxus cli
 ```
-cargo install dioxus-cli
+cargo install dioxus-cli --version 0.7.9
 ```
 ##### Make sure libssl-dev is installed
 
