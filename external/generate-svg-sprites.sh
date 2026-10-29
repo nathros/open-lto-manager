@@ -107,6 +107,7 @@ function rs_line() {
 }
 
 function process_theme() {
+	local START_TIME=$(date +%s)
 	local OUTPUT_NAME=$2
 	local OUTPUT_DIR=$3
 	local OUTPUT_CSS=$4
@@ -115,6 +116,9 @@ function process_theme() {
 	INDEX=0
 	declare -A THEME_NAME_INDEX
 	declare -A FILE_HASH
+	local COUNT
+	local HAS_FALLBACK=false
+	local WARNINGS=0
 
 	THEME_NAME=()
 	THEME_PATH=()
@@ -175,6 +179,7 @@ function process_theme() {
 
 			elif [[ $LINE == "\"fallback\": "* ]]; then
 				THEME_FALLBACK+=(${LINE:13:-1}) # Found fallback sprite definition
+				HAS_FALLBACK=true
 			fi
 
 		elif $SCAN_ICONS ; then
@@ -188,8 +193,8 @@ function process_theme() {
 					local REF="${FILE}.ref"
 					if [ -e "$REF" ]; then
 						sed -i "3i <defs>" $FILE
-						sed -i "4i $(cat $REF)" $FILE
-						sed -i "5i </defs>" $FILE
+						sed -i "4i </defs>" $FILE
+						sed -i "3r $REF" $FILE
 						rm $REF
 					fi
 					css_line "}" $N $OUTPUT_CSS
@@ -227,36 +232,64 @@ function process_theme() {
 				REPLACE="$FIND id=\"$ICON_NAME\" class=\"icon\" "
 
 				echo "Processing: $1 $ICON_NAME $N"
-				# If icon path starts with # then as <use/>
-				# if icon path starts with [#] the add as reference and <use/>
-				WRITE_FILE=${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg
-				local FILE_IS_REF=false
-				local ICON_NAME_TMP=$ICON_NAME
-				if [[ $ICON_PATH == "[#]"* ]]; then
+				COUNT=$((COUNT + 1))
+
+				if [[ $HAS_FALLBACK == true ]]; then
+					# Automatic referencing <use/>
 					local ICON_NAME_TMP="_$ICON_NAME"
-					local FILE_IS_REF=true
-					ICON_PATH=${ICON_PATH:3} # Remove [#]
+					WRITE_FILE=${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg
+					HASH=$(cat "../${THEME_PATH[$I]}$ICON_PATH" | shasum)
+					if [[ "${FILE_HASH[$N,$HASH]}" == "" ]]; then
+						# Not seen this file before
+						FILE_HASH[$N,$HASH]="$ICON_NAME_TMP"
+						REPLACE="$FIND id=\"$ICON_NAME_TMP\" "
+						SVG=$(SVGO_PREFIX=$ICON_NAME svgo "../${THEME_PATH[$I]}$ICON_PATH" -o -)  # Uses config file: svgo.config.mjs
+						echo "$SVG" | tr -d '\n'                                                 `# Remove new lines` \
+							| sed -e "s/$FIND/$REPLACE/g"                                        `# Add icon class`   \
+							| tr -s " " >> "${WRITE_FILE}.ref"                                   `# Remove whitespace`
+						echo >> "${WRITE_FILE}.ref"
+					else
+						ICON_NAME_TMP="${FILE_HASH[$N,$HASH]}" # Get reference name from hash
+						ICON_PATH="#$ICON_NAME_TMP"
+						# echo "$N $ICON_NAME is using reference $ICON_NAME_TMP"
+					fi
 					echo >> $WRITE_FILE
 					echo -n "<use id=\"$ICON_NAME\" class=\"icon\" href=\"#${ICON_NAME_TMP}\"/>" >> $WRITE_FILE
-					WRITE_FILE="${WRITE_FILE}.ref"
-					REPLACE="$FIND id=\"$ICON_NAME_TMP\" "
-				else
-					echo >> $WRITE_FILE # Add new line
-				fi
 
-				if [[ $ICON_PATH == "#"* ]]; then
-					echo -n "<use id=\"$ICON_NAME\" class=\"icon\" href=\"#_${ICON_PATH:1}\"/>" >> $WRITE_FILE
 				else
-					HASH=$(cat "../${THEME_PATH[$I]}$ICON_PATH" | shasum)
-					if [[ "${FILE_HASH[$N,$HASH]}" != "" ]]; then
-						echo "Warning: found duplicate file hash: {$N} ${FILE_HASH[$N,$HASH]} for ($ICON_NAME), this should be a reference [#]"
+					# Manual referencing <use/>
+					# If icon path starts with # then as <use/>
+					# if icon path starts with [#] the add as reference and <use/>
+					WRITE_FILE=${OUTPUT_DIR}${OUTPUT_NAME}-${N}.svg
+					local FILE_IS_REF=false
+					local ICON_NAME_TMP=$ICON_NAME
+					if [[ $ICON_PATH == "[#]"* ]]; then
+						local ICON_NAME_TMP="_$ICON_NAME"
+						local FILE_IS_REF=true
+						ICON_PATH=${ICON_PATH:3} # Remove [#]
+						echo >> $WRITE_FILE
+						echo -n "<use id=\"$ICON_NAME\" class=\"icon\" href=\"#${ICON_NAME_TMP}\"/>" >> $WRITE_FILE
+						WRITE_FILE="${WRITE_FILE}.ref"
+						REPLACE="$FIND id=\"$ICON_NAME_TMP\" "
 					else
-						FILE_HASH[$N,$HASH]="../${THEME_PATH[$I]}$ICON_PATH ($ICON_NAME)"
+						echo >> $WRITE_FILE # Add new line
 					fi
-					SVG=$(SVGO_PREFIX=$ICON_NAME svgo "../${THEME_PATH[$I]}$ICON_PATH" -o -)  # Uses config file: svgo.config.mjs
-					echo "$SVG" | tr -d '\n'                                                 `# Remove new lines` \
-						| sed -e "s/$FIND/$REPLACE/g"                                        `# Add icon class` \
-						| tr -s " " >> "${WRITE_FILE}"                                       `# Remove whitespace`
+
+					if [[ $ICON_PATH == "#"* ]]; then
+						echo -n "<use id=\"$ICON_NAME\" class=\"icon\" href=\"#_${ICON_PATH:1}\"/>" >> $WRITE_FILE
+					else
+						HASH=$(cat "../${THEME_PATH[$I]}$ICON_PATH" | shasum)
+						if [[ "${FILE_HASH[$N,$HASH]}" != "" ]]; then
+							echo "Warning: found duplicate file hash: {$N} ${FILE_HASH[$N,$HASH]} for ($ICON_NAME), this should be a reference [#]"
+							WARNINGS=$((WARNINGS + 1))
+						else
+							FILE_HASH[$N,$HASH]="../${THEME_PATH[$I]}$ICON_PATH ($ICON_NAME)"
+						fi
+						SVG=$(SVGO_PREFIX=$ICON_NAME svgo "../${THEME_PATH[$I]}$ICON_PATH" -o -)  # Uses config file: svgo.config.mjs
+						echo "$SVG" | tr -d '\n'                                                 `# Remove new lines` \
+							| sed -e "s/$FIND/$REPLACE/g"                                        `# Add icon class`   \
+							| tr -s " " >> "${WRITE_FILE}"                                       `# Remove whitespace`
+					fi
 				fi
 
 				echo "	<td>" >> ${PREVIEW}
@@ -295,23 +328,38 @@ function process_theme() {
 
 	rs_end $OUTPUT_RS
 	preview_end ${PREVIEW}
+
+	local END_TIME=$(date +%s)
+	local ELAPSED_TIME=$(echo $((END_TIME-START_TIME)) | awk '{print int($1/60)" minutes and "int($1%60)" seconds"}')
+	echo "Completed ${#THEME_NAME_INDEX[@]} themes which each contain $(($COUNT / ${#THEME_NAME_INDEX[@]})) sprites in $ELAPSED_TIME"
+	if [[ $WARNINGS != 0 ]]; then
+		echo "$WARNINGS warnings needs to be addressed"
+	fi
 }
 
 cd "$(dirname "$0")" # cd to this script dir
 
 if ! command -v svgo >/dev/null 2>&1; then
-    echo "Not found: svgo"
 	if ! command -v npm >/dev/null 2>&1; then
-		echo "First install npm, then run: npm install -g svgo"
+		echo "Not found: npm and svgo"
+		echo "First install npm"
+		echo "https://docs.npmjs.com/cli/v12/commands/npm-install"
 	else
-		echo "Install via: npm install -g svgo"
+		echo "Not found: svgo"
 	fi
+	echo "Install svgo via: npm install -g svgo"
 	echo "https://github.com/svg/svgo#installation"
-    exit 1
+	exit 1
 fi
+
+START_TIME_GLOBAL=$(date +%s)
 
 git submodule update --progress --init --recursive
 
 process_theme "icons.json" "icons" "../assets/" "../assets/css/icons.css" "../src/frontend/icons.rs"
 process_theme "logos.json" "logos" "../assets/"
 process_theme "files.json" "files" "../assets/"
+
+END_TIME_GLOBAL=$(date +%s)
+ELAPSED_TIME_GLOBAL=$(echo $((END_TIME_GLOBAL-START_TIME_GLOBAL)) | awk '{print int($1/60)" minutes and "int($1%60)" seconds"}')
+echo "Completed all operations in $ELAPSED_TIME_GLOBAL"

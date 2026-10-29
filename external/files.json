@@ -67,12 +67,12 @@
 		},
 		"folder-red": {
 			"breeze": "icons/places/48/folder-red.svg",
-			"papirus": "#folder-root",
+			"papirus": "Papirus/48x48/places/folder-red.svg",
 			"kora": "kora/places/scalable/folder-red.svg"
 		},
 		"folder-root": {
 			"breeze": "icons/places/48/folder-root.svg",
-			"papirus": "[#]Papirus/48x48/places/folder-root.svg",
+			"papirus": "Papirus/48x48/places/folder-root.svg",
 			"kora": "kora/places/scalable/folder-root.svg"
 		},
 		"folder-violet": {
@@ -85,55 +85,285 @@
 			"papirus": "Papirus/48x48/places/folder-yellow.svg",
 			"kora": "kora/places/scalable/folder-yellow.svg"
 		},
+		"abc": {
+			"breeze": "icons/mimetypes/32/text-vnd.abc.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-vnd.abc.svg",
+			"kora": "kora/mimetypes/scalable/text-vnd.abc.svg"
+		},
+		"ac3": {
+			"breeze": "icons/mimetypes/32/audio-ac3.svg",
+			"papirus": "Papirus/48x48/mimetypes/audio-ac3.svg",
+			"kora": "kora/mimetypes/scalable/audio-ac3.svg"
+		},
+		"afm": {
+			"breeze": "icons/mimetypes/32/application-x-font-afm.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-font-afm.svg",
+			"kora": "kora/mimetypes/scalable/application-x-font-afm.svg"
+		},
+		"ai": {
+			"breeze": "icons/mimetypes/32/application-illustrator.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-illustrator.svg",
+			"kora": "kora/mimetypes/scalable/application-illustrator.svg"
+		},
+		"aiff": {
+			"breeze": "icons/mimetypes/32/audio-x-aiff.svg",
+			"papirus": "Papirus/48x48/mimetypes/audio-x-aiff.svg",
+			"kora": "kora/mimetypes/scalable/audio-x-aiff.svg"
+		},
+		"ape": {
+			"breeze": "icons/mimetypes/32/audio-x-monkey.svg",
+			"papirus": "Papirus/48x48/mimetypes/audio-x-monkey.svg",
+			"kora": "kora/mimetypes/scalable/audio-x-monkey.svg"
+		},
+		"appimage": {
+			"breeze": "icons/mimetypes/32/application-x-iso9660-appimage.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-iso9660-appimage.svg",
+			"kora": "kora/mimetypes/scalable/application-x-iso9660-appimage.svg"
+		},
+		"avi": {
+			"breeze": "icons/mimetypes/32/video-x-generic.svg",
+			"papirus": "Papirus/48x48/mimetypes/com.github.torikulhabib.mindi.avi.svg",
+			"kora": "kora/mimetypes/scalable/video-x-generic.svg"
+		},
+		"bdmv": {
+			"breeze": "icons/mimetypes/32/video-x-generic.svg",
+			"papirus": "Papirus/48x48/mimetypes/video-x-generic.svg",
+			"kora": "kora/mimetypes/scalable/video-x-generic.svg"
+		},
+		"bmp": {
+			"breeze": "icons/mimetypes/32/image-x-win-bmp.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-x-win-bmp.svg",
+			"kora": "kora/mimetypes/scalable/image-x-win-bmp.svg"
+		},
+		"cert": {
+			"breeze": "icons/mimetypes/32/application-certificate.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-certificate.svg",
+			"kora": "kora/mimetypes/scalable/application-certificate.svg"
+		},
+		"cmake": {
+			"breeze": "icons/mimetypes/32/text-x-cmake.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-x-cmake.svg",
+			"kora": "kora/mimetypes/scalable/text-x-cmake.svg"
+		},
+		"conf": {
+			"breeze": "icons/mimetypes/32/text-plain.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-plain.svg",
+			"kora": "kora/mimetypes/scalable/text-plain.svg"
+		},
+		"crash": {
+			"breeze": "icons/mimetypes/32/text-x-apport.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-vnd.tcpdump.pcap.svg",
+			"kora": "kora/mimetypes/scalable/text-plain.svg"
+		},
+		"cso": {
+			"breeze": "icons/mimetypes/32/application-x-compressed-iso.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-compressed-iso.svg",
+			"kora": "kora/mimetypes/scalable/application-x-compressed-iso.svg"
+		},
 		"css": {
 			"breeze": "icons/mimetypes/32/text-css.svg",
 			"papirus": "Papirus/48x48/mimetypes/text-css.svg",
 			"kora": "kora/mimetypes/scalable/text-css.svg"
+		},
+		"csv": {
+			"breeze": "icons/mimetypes/32/text-csv.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-csv.svg",
+			"kora": "kora/mimetypes/scalable/text-csv.svg"
+		},
+		"cue": {
+			"breeze": "icons/mimetypes/32/application-x-cue.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-cue.svg",
+			"kora": "kora/mimetypes/scalable/application-x-cue.svg"
+		},
+		"dcm": {
+			"breeze": "icons/mimetypes/32/application-dicom.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-dicom.svg",
+			"kora": "kora/mimetypes/scalable/application-dicom.svg"
+		},
+		"deb": {
+			"breeze": "icons/mimetypes/32/application-x-deb.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-deb.svg",
+			"kora": "kora/mimetypes/scalable/application-x-deb.svg"
+		},
+		"djvu": {
+			"breeze": "icons/mimetypes/32/image-vnd.djvu.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-vnd.djvu.svg",
+			"kora": "kora/mimetypes/scalable/image-vnd.djvu.svg"
+		},
+		"dll": {
+			"breeze": "icons/mimetypes/32/application-x-sharedlib.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-sharedlib.svg",
+			"kora": "kora/mimetypes/scalable/application-x-sharedlib.svg"
+		},
+		"dng": {
+			"breeze": "icons/mimetypes/32/image-x-adobe-dng.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-x-adobe-dng.svg",
+			"kora": "kora/mimetypes/scalable/image-x-adobe-dng.svg"
+		},
+		"doc": {
+			"breeze": "icons/mimetypes/32/application-wps-office.doc.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-wps-office.doc.svg",
+			"kora": "kora/mimetypes/scalable/application-wps-office.doc.svg"
+		},
+		"dockerfile": {
+			"breeze": "icons/mimetypes/32/text-dockerfile.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-plain.svg",
+			"kora": "kora/mimetypes/scalable/application-wps-office.doc.svg"
+		},
+		"docx": {
+			"breeze": "icons/mimetypes/32/application-wps-office.docx.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-wps-office.docx.svg",
+			"kora": "kora/mimetypes/scalable/application-wps-office.docx.svg"
+		},
+		"dwg": {
+			"breeze": "icons/mimetypes/32/image-vnd.dwg.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-x-dwg.svg",
+			"kora": "kora/mimetypes/scalable/image-x-dwg.svg"
+		},
+		"emf": {
+			"breeze": "icons/mimetypes/32/image-x-emf.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-x-emf.svg",
+			"kora": "kora/mimetypes/scalable/image-x-emf.svg"
+		},
+		"eml": {
+			"breeze": "icons/mimetypes/32/message-rfc822.svg",
+			"papirus": "Papirus/48x48/mimetypes/message-rfc822.svg",
+			"kora": "kora/mimetypes/scalable/message-rfc822.svg"
+		},
+		"eps": {
+			"breeze": "icons/mimetypes/32/image-x-eps.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-x-eps.svg",
+			"kora": "kora/mimetypes/scalable/image-x-eps.svg"
+		},
+		"epub": {
+			"breeze": "icons/mimetypes/32/application-epub+zip.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-epub+zip.svg",
+			"kora": "kora/mimetypes/scalable/application-epub+zip.svg"
+		},
+		"exe": {
+			"breeze": "icons/mimetypes/32/application-x-msdownload.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-msdownload.svg",
+			"kora": "kora/mimetypes/scalable/application-x-msdownload.svg"
+		},
+		"f": {
+			"breeze": "icons/mimetypes/32/text-x-fortran.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-x-fortran.svg",
+			"kora": "kora/mimetypes/scalable/text-x-fortran.svg"
 		},
 		"flac": {
 			"breeze": "icons/mimetypes/32/audio-x-flac+ogg.svg",
 			"papirus": "Papirus/48x48/mimetypes/audio-x-flac+ogg.svg",
 			"kora": "kora/mimetypes/scalable/audio-x-flac+ogg.svg"
 		},
+		"flatpak": {
+			"breeze": "icons/mimetypes/32/application-vnd.flatpak.ref.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-vnd.flatpak.svg",
+			"kora": "kora/mimetypes/scalable/application-vnd.flatpak.svg"
+		},
+		"flv": {
+			"breeze": "icons/mimetypes/32/video-x-flv.svg",
+			"papirus": "Papirus/48x48/mimetypes/video-x-flv.svg",
+			"kora": "kora/mimetypes/scalable/video-x-flv.svg"
+		},
+		"gif": {
+			"breeze": "icons/mimetypes/32/image-gif.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-gif.svg",
+			"kora": "kora/mimetypes/scalable/image-gif.svg"
+		},
+		"go": {
+			"breeze": "icons/mimetypes/32/text-x-go.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-x-go.svg",
+			"kora": "kora/mimetypes/scalable/text-x-go.svg"
+		},
 		"htm": {
-			"breeze": "[#]icons/mimetypes/64/text-html.svg",
-			"papirus": "[#]Papirus/48x48/mimetypes/text-html.svg",
-			"kora": "[#]kora/mimetypes/scalable/text-html.svg"
+			"breeze": "icons/mimetypes/64/text-html.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-html.svg",
+			"kora": "kora/mimetypes/scalable/text-html.svg"
 		},
 		"html": {
-			"breeze": "#htm",
-			"papirus": "#htm",
-			"kora": "#htm"
+			"breeze": "icons/mimetypes/64/text-html.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-html.svg",
+			"kora": "kora/mimetypes/scalable/text-html.svg"
+		},
+		"icc": {
+			"breeze": "icons/mimetypes/32/application-vnd.iccprofile.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-vnd.iccprofile.svg",
+			"kora": "kora/mimetypes/scalable/application-vnd.iccprofile.svg"
+		},
+		"ico": {
+			"breeze": "icons/mimetypes/32/image-x-ico.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-x-ico.svg",
+			"kora": "kora/mimetypes/scalable/image-x-ico.svg"
+		},
+		"ini": {
+			"breeze": "icons/mimetypes/32/text-plain.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-plain.svg",
+			"kora": "kora/mimetypes/scalable/application-x-wine-extension-ini.svg"
+		},
+		"iso": {
+			"breeze": "icons/mimetypes/32/application-x-iso.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-iso.svg",
+			"kora": "kora/mimetypes/scalable/application-x-iso.svg"
+		},
+		"jar": {
+			"breeze": "icons/mimetypes/32/application-x-java-archive.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-java-archive.svg",
+			"kora": "kora/mimetypes/scalable/application-x-java-archive.svg"
+		},
+		"java": {
+			"breeze": "icons/mimetypes/32/text-x-java-source.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-x-java-source.svg",
+			"kora": "kora/mimetypes/scalable/text-x-java-source.svg"
+		},
+		"jp2": {
+			"breeze": "icons/mimetypes/32/image-jpeg2000.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-jpeg2000.svg",
+			"kora": "kora/mimetypes/scalable/image-jpeg2000.svg"
+		},
+		"jpeg": {
+			"breeze": "icons/mimetypes/32/image-jpeg.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-jpeg.svg",
+			"kora": "kora/mimetypes/scalable/application-image-jpg.svg"
+		},
+		"jpg": {
+			"breeze": "icons/mimetypes/32/image-jpeg.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-jpeg.svg",
+			"kora": "kora/mimetypes/scalable/application-image-jpg.svg"
+		},
+		"js": {
+			"breeze": "icons/mimetypes/32/text-javascript.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-javascript.svg",
+			"kora": "kora/mimetypes/scalable/text-javascript.svg"
 		},
 		"json": {
 			"breeze": "icons/mimetypes/32/application-json.svg",
 			"papirus": "Papirus/48x48/mimetypes/application-json.svg",
 			"kora": "kora/mimetypes/scalable/application-json.svg"
 		},
-		"jp2": {
-			"breeze": "#jpg",
-			"papirus": "#jpg",
-			"kora": "#jpg"
-		},
-		"jpeg": {
-			"breeze": "#jpg",
-			"papirus": "#jpg",
-			"kora": "#jpg"
-		},
-		"jpg": {
-			"breeze": "[#]icons/mimetypes/32/image-jpeg.svg",
-			"papirus": "[#]Papirus/48x48/mimetypes/image-jpeg.svg",
-			"kora": "[#]kora/mimetypes/scalable/image-jpeg.svg"
-		},
-		"js": {
-			"breeze": "icons/mimetypes/32/application-json.svg",
-			"papirus": "Papirus/48x48/mimetypes/application-json.svg",
-			"kora": "kora/mimetypes/scalable/application-json.svg"
-		},
 		"jxl": {
-			"breeze": "#jpg",
-			"papirus": "#jpg",
-			"kora": "#jpg"
+			"breeze": "icons/mimetypes/32/image-jpeg.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-jpeg.svg",
+			"kora": "kora/mimetypes/scalable/application-image-jxl.svg"
+		},
+		"kra": {
+			"breeze": "icons/mimetypes/32/image-x-krita.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-x-krita.svg",
+			"kora": "kora/mimetypes/scalable/image-x-krita.svg"
+		},
+		"lib": {
+			"breeze": "icons/mimetypes/32/application-x-executable.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-executable.svg",
+			"kora": "kora/mimetypes/scalable/application-x-sharedlib.svg"
+		},
+		"log": {
+			"breeze": "icons/mimetypes/32/text-x-log.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-x-log.svg",
+			"kora": "kora/mimetypes/scalable/text-x-log.svg"
+		},
+		"m2ts": {
+			"breeze": "icons/mimetypes/32/video-mp2t.svg",
+			"papirus": "Papirus/48x48/mimetypes/video-mp2t.svg",
+			"kora": "kora/mimetypes/scalable/video-mp2t.svg"
 		},
 		"md": {
 			"breeze": "icons/mimetypes/32/text-markdown.svg",
@@ -145,49 +375,359 @@
 			"papirus": "Papirus/48x48/mimetypes/video-x-matroska.svg",
 			"kora": "kora/mimetypes/scalable/video-x-matroska.svg"
 		},
+		"mng": {
+			"breeze": "icons/mimetypes/32/video-x-mng.svg",
+			"papirus": "Papirus/48x48/mimetypes/video-x-mng.svg",
+			"kora": "kora/mimetypes/scalable/video-x-mng.svg"
+		},
+		"mp2": {
+			"breeze": "icons/mimetypes/32/audio-mp2.svg",
+			"papirus": "Papirus/48x48/mimetypes/audio-mp2.svg",
+			"kora": "kora/mimetypes/scalable/audio-mp2.svg"
+		},
 		"mp3": {
 			"breeze": "icons/mimetypes/32/audio-mp3.svg",
 			"papirus": "Papirus/48x48/mimetypes/audio-mp3.svg",
 			"kora": "kora/mimetypes/scalable/audio-mp3.svg"
+		},
+		"mp4": {
+			"breeze": "icons/mimetypes/32/video-mp4.svg",
+			"papirus": "Papirus/48x48/mimetypes/video-mp4.svg",
+			"kora": "kora/mimetypes/scalable/video-mp4.svg"
+		},
+		"nzb": {
+			"breeze": "icons/mimetypes/32/application-x-nzb.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-nzb.svg",
+			"kora": "kora/mimetypes/scalable/application-x-nzb.svg"
+		},
+		"odb": {
+			"breeze": "icons/mimetypes/32/application-vnd.oasis.opendocument.database.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-vnd.oasis.opendocument.database.svg",
+			"kora": "kora/mimetypes/scalable/application-vnd.oasis.opendocument.database.svg"
+		},
+		"odf": {
+			"breeze": "icons/mimetypes/32/application-vnd.oasis.opendocument.formula.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-vnd.oasis.opendocument.formula.svg",
+			"kora": "kora/mimetypes/scalable/application-vnd.oasis.opendocument.formula.svg"
+		},
+		"odg": {
+			"breeze": "icons/mimetypes/32/libreoffice-drawing.svg",
+			"papirus": "Papirus/48x48/mimetypes/openoffice4-oasis-drawing.svg",
+			"kora": "kora/mimetypes/scalable/libreoffice-drawing.svg"
+		},
+		"odm": {
+			"breeze": "icons/mimetypes/32/libreoffice-master-document.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-vnd.oasis.opendocument.text-master.svg",
+			"kora": "kora/mimetypes/scalable/libreoffice-master-document.svg"
+		},
+		"odp": {
+			"breeze": "icons/mimetypes/32/x-office-presentation.svg",
+			"papirus": "Papirus/48x48/mimetypes/x-office-presentation.svg",
+			"kora": "kora/mimetypes/scalable/x-office-presentation.svg"
+		},
+		"ods": {
+			"breeze": "icons/mimetypes/32/libreoffice-spreadsheet.svg",
+			"papirus": "Papirus/48x48/mimetypes/x-office-spreadsheet.svg",
+			"kora": "kora/mimetypes/scalable/libreoffice-spreadsheet.svg"
+		},
+		"odt": {
+			"breeze": "icons/mimetypes/32/application-vnd.oasis.opendocument.text.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-vnd.oasis.opendocument.text.svg",
+			"kora": "kora/mimetypes/scalable/application-vnd.oasis.opendocument.text.svg"
+		},
+		"ogg": {
+			"breeze": "icons/mimetypes/32/audio-ogg.svg",
+			"papirus": "Papirus/48x48/mimetypes/audio-x-vorbis+ogg.svg",
+			"kora": "kora/mimetypes/scalable/audio-x-vorbis+ogg.svg"
+		},
+		"otf": {
+			"breeze": "icons/mimetypes/32/font-otf.svg",
+			"papirus": "Papirus/48x48/mimetypes/font-otf.svg",
+			"kora": "kora/mimetypes/scalable/font-otf.svg"
+		},
+		"otg": {
+			"breeze": "icons/mimetypes/32/libreoffice-oasis-drawing-template.svg",
+			"papirus": "Papirus/48x48/mimetypes/openoffice4-drawing.svg",
+			"kora": "kora/mimetypes/scalable/x-office-drawing-template.svg"
+		},
+		"oth": {
+			"breeze": "icons/mimetypes/32/libreoffice-oasis-web-template.svg",
+			"papirus": "Papirus/48x48/mimetypes/openoffice4-oasis-web-template.svg",
+			"kora": "kora/mimetypes/scalable/application-web-template.svg"
+		},
+		"otp": {
+			"breeze": "icons/mimetypes/32/application-vnd.oasis.opendocument.presentation-template.svg",
+			"papirus": "Papirus/48x48/mimetypes/x-office-presentation-template.svg",
+			"kora": "kora/mimetypes/scalable/x-office-presentation-template.svg"
+		},
+		"ots": {
+			"breeze": "icons/mimetypes/32/libreoffice-spreadsheet-template.svg",
+			"papirus": "Papirus/48x48/mimetypes/x-office-spreadsheet-template.svg",
+			"kora": "kora/mimetypes/scalable/x-office-spreadsheet-template.svg"
+		},
+		"ott": {
+			"breeze": "icons/mimetypes/32/libreoffice-text-template.svg",
+			"papirus": "Papirus/48x48/mimetypes/openoffice4-text-template.svg",
+			"kora": "kora/mimetypes/scalable/libreoffice-text-template.svg"
+		},
+		"ova": {
+			"breeze": "icons/mimetypes/32/virtualbox-ova.svg",
+			"papirus": "Papirus/48x48/mimetypes/virtualbox-ova.svg",
+			"kora": "kora/mimetypes/scalable/application-x-virtualbox-ova.svg"
+		},
+		"ovf": {
+			"breeze": "icons/mimetypes/32/virtualbox-ovf.svg",
+			"papirus": "Papirus/48x48/mimetypes/virtualbox-ovf.svg",
+			"kora": "kora/mimetypes/scalable/application-x-virtualbox-ovf.svg"
+		},
+		"oxt": {
+			"breeze": "icons/mimetypes/32/libreoffice-extension.svg",
+			"papirus": "Papirus/48x48/mimetypes/openoffice4-extension.svg",
+			"kora": "kora/mimetypes/scalable/openoffice4-extension.svg"
+		},
+		"patch": {
+			"breeze": "icons/mimetypes/32/text-x-patch.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-x-patch.svg",
+			"kora": "kora/mimetypes/scalable/text-x-patch.svg"
+		},
+		"pcap": {
+			"breeze": "icons/mimetypes/32/application-x-cisco-vpn-settings.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-vnd.tcpdump.pcap.svg",
+			"kora": "kora/mimetypes/scalable/application-vnd.tcpdump.pcap.svg"
+		},
+		"pdf": {
+			"breeze": "icons/mimetypes/32/application-pdf.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-pdf.svg",
+			"kora": "kora/mimetypes/scalable/application-pdf.svg"
+		},
+		"perl": {
+			"breeze": "icons/mimetypes/32/application-x-perl.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-perl.svg",
+			"kora": "kora/mimetypes/scalable/application-x-perl.svg"
+		},
+		"php": {
+			"breeze": "icons/mimetypes/32/application-x-php.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-php.svg",
+			"kora": "kora/mimetypes/scalable/application-x-php.svg"
+		},
+		"pkpass": {
+			"breeze": "icons/mimetypes/32/application-vnd.apple.pkpass.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-keepass.svg",
+			"kora": "kora/mimetypes/scalable/application-x-keepass.svg"
 		},
 		"png": {
 			"breeze": "icons/mimetypes/32/image-png.svg",
 			"papirus": "Papirus/48x48/mimetypes/image-png.svg",
 			"kora": "kora/mimetypes/scalable/application-image-png.svg"
 		},
+		"psd": {
+			"breeze": "icons/mimetypes/32/image-x-psd.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-vnd.adobe.photoshop.svg",
+			"kora": "kora/mimetypes/scalable/image-vnd.adobe.photoshop.svg"
+		},
+		"py": {
+			"breeze": "icons/mimetypes/32/text-x-python.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-x-python.svg",
+			"kora": "kora/mimetypes/scalable/text-x-python.svg"
+		},
 		"rar": {
 			"breeze": "icons/mimetypes/32/application-vnd.rar.svg",
-			"papirus": "#zip",
+			"papirus": "Papirus/48x48/mimetypes/application-x-rar.svg",
 			"kora": "kora/mimetypes/scalable/application-vnd.rar.svg"
+		},
+		"rb": {
+			"breeze": "icons/mimetypes/32/application-x-ruby.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-ruby.svg",
+			"kora": "kora/mimetypes/scalable/application-x-ruby.svg"
+		},
+		"rpm": {
+			"breeze": "icons/mimetypes/32/application-x-rpm.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-rpm.svg",
+			"kora": "kora/mimetypes/scalable/application-x-rpm.svg"
 		},
 		"rs": {
 			"breeze": "icons/mimetypes/32/text-rust.svg",
 			"papirus": "Papirus/48x48/mimetypes/text-rust.svg",
 			"kora": "kora/mimetypes/scalable/text-rust.svg"
 		},
+		"rss": {
+			"breeze": "icons/mimetypes/32/application-rss+xml.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-rss+xml.svg",
+			"kora": "kora/mimetypes/scalable/application-rss+xml.svg"
+		},
+		"rtf": {
+			"breeze": "icons/mimetypes/32/text-rtf.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-rtf.svg",
+			"kora": "kora/mimetypes/scalable/application-rtf.svg"
+		},
+		"sgml": {
+			"breeze": "icons/mimetypes/32/text-sgml.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-sgml.svg",
+			"kora": "kora/mimetypes/scalable/text-sgml.svg"
+		},
 		"sh": {
 			"breeze": "icons/mimetypes/32/text-x-script.svg",
 			"papirus": "Papirus/48x48/mimetypes/text-x-script.svg",
 			"kora": "kora/mimetypes/scalable/text-x-script.svg"
+		},
+		"sig": {
+			"breeze": "icons/mimetypes/32/application-pgp-signature.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-pgp-signature.svg",
+			"kora": "kora/mimetypes/scalable/application-pgp-signature.svg"
+		},
+		"so": {
+			"breeze": "icons/mimetypes/32/application-x-sharedlib.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-msdownload.svg",
+			"kora": "kora/mimetypes/scalable/application-x-sharedlib.svg"
+		},
+		"sql": {
+			"breeze": "icons/mimetypes/32/text-x-sql.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-x-sql.svg",
+			"kora": "kora/mimetypes/scalable/text-x-sql.svg"
 		},
 		"svg": {
 			"breeze": "icons/mimetypes/32/image-x-svg+xml.svg",
 			"papirus": "Papirus/48x48/mimetypes/image-x-svg+xml.svg",
 			"kora": "kora/mimetypes/scalable/image-x-svg+xml.svg"
 		},
+		"tga": {
+			"breeze": "icons/mimetypes/32/image-x-tga.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-x-tga.svg",
+			"kora": "kora/mimetypes/scalable/image-x-tga.svg"
+		},
+		"tiff": {
+			"breeze": "icons/mimetypes/32/image-tiff.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-x-tiff.svg",
+			"kora": "kora/mimetypes/scalable/image-tiff.svg"
+		},
 		"toml": {
 			"breeze": "icons/mimetypes/32/application-toml.svg",
 			"papirus": "Papirus/48x48/mimetypes/application-toml.svg",
 			"kora": "kora/mimetypes/scalable/application-toml.svg"
 		},
+		"torrent": {
+			"breeze": "icons/mimetypes/32/application-x-bittorrent.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-bittorrent.svg",
+			"kora": "kora/mimetypes/scalable/application-x-bittorrent.svg"
+		},
+		"ts": {
+			"breeze": "icons/mimetypes/32/text-x-gettext-translation.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-x-gettext-translation.svg",
+			"kora": "kora/mimetypes/scalable/text-x-gettext-translation.svg"
+		},
+		"ttf": {
+			"breeze": "icons/mimetypes/32/font-ttf.svg",
+			"papirus": "Papirus/48x48/mimetypes/font-ttf.svg",
+			"kora": "kora/mimetypes/scalable/font-ttf.svg"
+		},
 		"txt": {
-			"breeze": "[#]icons/mimetypes/32/text-x-plain.svg",
-			"papirus": "[#]Papirus/48x48/mimetypes/text-x-plain.svg",
-			"kora": "[#]kora/mimetypes/scalable/text-plain.svg"
+			"breeze": "icons/mimetypes/32/text-x-plain.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-x-plain.svg",
+			"kora": "kora/mimetypes/scalable/text-plain.svg"
+		},
+		"ui": {
+			"breeze": "icons/mimetypes/32/application-x-designer.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-x-designer.svg",
+			"kora": "kora/mimetypes/scalable/application-x-designer.svg"
+		},
+		"vbox": {
+			"breeze": "icons/mimetypes/32/virtualbox-vbox.svg",
+			"papirus": "Papirus/48x48/mimetypes/virtualbox-vbox.svg",
+			"kora": "kora/mimetypes/scalable/virtualbox-vbox.svg"
+		},
+		"vbox-extpack": {
+			"breeze": "icons/mimetypes/32/virtualbox-vbox-extpack.svg",
+			"papirus": "Papirus/48x48/mimetypes/virtualbox-vbox-extpack.svg",
+			"kora": "kora/mimetypes/scalable/virtualbox-vbox-extpack.svg"
+		},
+		"vdi": {
+			"breeze": "icons/mimetypes/32/virtualbox-vdi.svg",
+			"papirus": "Papirus/48x48/mimetypes/virtualbox-vdi.svg",
+			"kora": "kora/mimetypes/scalable/virtualbox-vdi.svg"
+		},
+		"vmdk": {
+			"breeze": "icons/mimetypes/32/virtualbox-vmdk.svg",
+			"papirus": "Papirus/48x48/mimetypes/virtualbox-vmdk.svg",
+			"kora": "kora/mimetypes/scalable/virtualbox-vmdk.svg"
+		},
+		"wav": {
+			"breeze": "icons/mimetypes/32/audio-x-wav.svg",
+			"papirus": "Papirus/48x48/mimetypes/audio-x-wav.svg",
+			"kora": "kora/mimetypes/scalable/audio-x-wav.svg"
+		},
+		"webm": {
+			"breeze": "icons/mimetypes/32/video-webm.svg",
+			"papirus": "Papirus/48x48/mimetypes/video-webm.svg",
+			"kora": "kora/mimetypes/scalable/video-webm.svg"
+		},
+		"webp": {
+			"breeze": "icons/mimetypes/32/image-x-generic.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-x-generic.svg",
+			"kora": "kora/mimetypes/scalable/image-x-generic.svg"
+		},
+		"wma": {
+			"breeze": "icons/mimetypes/32/audio-x-generic.svg",
+			"papirus": "Papirus/48x48/mimetypes/audio-x-ms-wma.svg",
+			"kora": "kora/mimetypes/scalable/audio-x-ms-wma.svg"
+		},
+		"wmf": {
+			"breeze": "icons/mimetypes/32/image-x-wmf.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-x-wmf.svg",
+			"kora": "kora/mimetypes/scalable/image-x-wmf.svg"
+		},
+		"wml": {
+			"breeze": "icons/mimetypes/32/text-vnd.wap.wml.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-vnd.wap.wml.svg",
+			"kora": "kora/mimetypes/scalable/text-vnd.wap.wml.svg"
+		},
+		"wmv": {
+			"breeze": "icons/mimetypes/32/video-x-msvideo.svg",
+			"papirus": "Papirus/48x48/mimetypes/video-x-msvideo.svg",
+			"kora": "kora/mimetypes/scalable/video-x-msvideo.svg"
+		},
+		"xcf": {
+			"breeze": "icons/mimetypes/32/image-x-xcf.svg",
+			"papirus": "Papirus/48x48/mimetypes/image-x-xcf.svg",
+			"kora": "kora/mimetypes/scalable/image-x-xcf.svg"
+		},
+		"xls": {
+			"breeze": "icons/mimetypes/32/application-wps-office.xls.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-wps-office.xls.svg",
+			"kora": "kora/mimetypes/scalable/application-wps-office.xls.svg"
+		},
+		"xlsx": {
+			"breeze": "icons/mimetypes/32/application-wps-office.xlsx.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-wps-office.xlsx.svg",
+			"kora": "kora/mimetypes/scalable/application-wps-office.xlsx.svg"
+		},
+		"xlt": {
+			"breeze": "icons/mimetypes/32/application-wps-office.xlt.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-wps-office.xlt.svg",
+			"kora": "kora/mimetypes/scalable/application-wps-office.xlt.svg"
+		},
+		"xltx": {
+			"breeze": "icons/mimetypes/32/application-wps-office.xltx.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-wps-office.xltx.svg",
+			"kora": "kora/mimetypes/scalable/application-wps-office.xltx.svg"
+		},
+		"xml": {
+			"breeze": "icons/mimetypes/32/text-xml.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-xml.svg",
+			"kora": "kora/mimetypes/scalable/text-xml.svg"
+		},
+		"xslfo": {
+			"breeze": "icons/mimetypes/32/text-x-xslfo.svg",
+			"papirus": "Papirus/48x48/mimetypes/text-x-xslfo.svg",
+			"kora": "kora/mimetypes/scalable/text-x-xslfo.svg"
+		},
+		"xslt": {
+			"breeze": "icons/mimetypes/32/application-xslt+xml.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-xslt+xml.svg",
+			"kora": "kora/mimetypes/scalable/application-xslt+xml.svg"
 		},
 		"zip": {
 			"breeze": "icons/mimetypes/32/application-zip.svg",
-			"papirus": "[#]Papirus/48x48/mimetypes/application-zip.svg",
+			"papirus": "Papirus/48x48/mimetypes/application-zip.svg",
 			"kora": "kora/mimetypes/scalable/application-zip.svg"
 		}
 	}
