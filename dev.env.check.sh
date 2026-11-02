@@ -5,6 +5,8 @@ YELLOW="\e[0;33m"
 RED="\e[0;31m"
 RESET="\e[0m"
 
+cd "$(dirname "$0")"
+
 MIN_RUST_VER=$(cat Cargo.toml | grep "rust-version = " | cut -d '"' -f 2)      # Minimum Rust version
 MIN_DIOXUS_VER=$(cat Cargo.toml | grep "dioxus = {" | cut -d '"' -f 2) # Get Dixous version from Cargo.toml
 
@@ -39,9 +41,21 @@ else
 	check_ver "Dioxus toolchain" $DIOXUS $MIN_DIOXUS_VER $VER
 fi
 
-echo "Found $(printf '%5s' "$(find src/ -name '*.rs' -exec cat {} + | wc -l)") lines of Rust"
-echo "Found $(printf '%5s' "$(find assets/ -name '*.css' ! -name 'bundle.css' -exec cat {} + | wc -l)") lines of CSS"
-echo "Found $(printf '%5s' "$(find assets/ -name '*.js' ! -name 'bundle.js' -exec cat {} + | wc -l)") lines of JavaScript"
+
+SIZE=$(numfmt --to=iec-i --suffix=B --format="%.2f" $(find src/ -name '*.rs' -printf "%s\n" | awk '{t+=$1}END{print t}'))
+echo "Found $(printf '%5s' "$(find src/ -name '*.rs' -exec cat {} + | wc -l)") lines of Rust       ($SIZE)"
+
+SIZE=$(numfmt --to=iec-i --suffix=B --format="%.2f" $(find . -name '*.html'  -printf "%s\n" | awk '{t+=$1}END{print t}'))
+echo "Found $(printf '%5s' "$(find . -name '*.html' -exec cat {} + | wc -l)") lines of HTML       ($SIZE)"
+
+SIZE=$(numfmt --to=iec-i --suffix=B --format="%.2f" $(find assets/ -name '*.css' ! -name 'bundle.css' -printf "%s\n" | awk '{t+=$1}END{print t}'))
+echo "Found $(printf '%5s' "$(find assets/ -name '*.css' ! -name 'bundle.css' -exec cat {} + | wc -l)") lines of CSS        ($SIZE)"
+
+SIZE=$(numfmt --to=iec-i --suffix=B --format="%.2f" $(find assets/ -name '*.js' ! -name 'bundle.js' -printf "%s\n" | awk '{t+=$1}END{print t}'))
+echo "Found $(printf '%5s' "$(find assets/ -name '*.js' ! -name 'bundle.js' -exec cat {} + | wc -l)") lines of JavaScript ($SIZE)"
+
+SIZE=$(numfmt --to=iec-i --suffix=B --format="%.2f" $(find assets/ -name '*.svg' -printf "%s\n" | awk '{t+=$1}END{print t}'))
+echo "Found $(printf '%5s' "$(find assets/ -name '*.svg' -exec cat {} + | wc -l)") lines of SVG        ($SIZE)"
 
 if $FAILURE; then
 	echo "Faults found"

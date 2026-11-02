@@ -80,12 +80,13 @@ debug = false          # No debug info at all
 lto = "fat"            # Best cross-create optimisation
 codegen-units = 1      # Single codegen unit: more optimisation opportunities
 panic = "abort"        # No unwinding; smaller, slightly faster code
-strip = true           # Strip symbols to reduce binary size
+strip = "symbols"      # Strip symbols to reduce binary size
 incremental = false    # Not incremental
 
 # https://book.leptos.dev/deployment/binary_size.html
 [profile.wasm-release]
 inherits = "release"
-opt-level = "z"       # Optimise for smallest size
+opt-level = "z"        # Optimise for smallest size
 lto = "fat"
 codegen-units = 1
+strip = "debuginfo"    # https://github.com/DioxusLabs/dioxus/issues/5766

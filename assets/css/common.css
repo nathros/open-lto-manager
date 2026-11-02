@@ -2,12 +2,14 @@ html {
 	scrollbar-width: thin;
 	scrollbar-color: #7f7f7f transparent;
 }
+html * {
+	font-family: var(--f-sans), sans-serif;
+}
 body {
 	margin-top: calc(var(--main-header-height) + var(--padding-m));
 	margin-left: calc(var(--main-aside-width) + var(--padding-m));
 	margin-right: var(--padding-m);
 	background-color: #f0f0f0;
-	font-family: var(--f-sans), sans-serif;
 }
 @container style(--dark-mode: 1) {
 	body {
@@ -20,6 +22,9 @@ body {
 a {
 	all: unset;
 	cursor: pointer;
+}
+button {
+	font-size: inherit;
 }
 hr {
 	width: 100%;

@@ -1,7 +1,3 @@
-button {
-	font-size: inherit;
-	font-family: inherit; /* Apply font */
-}
 .btn /* impl Css::BTN */ {
 	display: inline-flex;
 	gap: var(--padding-s);
