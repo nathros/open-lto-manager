@@ -4,10 +4,7 @@ use std::collections::HashSet;
 use crate::{
     backend::api::api_job::new_backup,
     frontend::{
-        collections::{
-            file_view::file_view_legacy::FileViewerV1,
-            message::{Message, MessageDetails},
-        },
+        collections::message::{Message, MessageDetails},
         elements::button::Button,
         id::Id,
         level::Level,
@@ -29,7 +26,6 @@ pub fn AddJob() -> Element {
     };
 
     let tab_files = rsx! {
-        FileViewerV1 { selected_files }
         hr {}
         for f in selected_files() {
             span { "{f}" }
@@ -65,11 +61,11 @@ pub fn AddJob() -> Element {
         Tab {
             labels: vec!["Options".to_string(), "Files".to_string(), "Destination".to_string()],
             contents: vec![
-                                        tab_options,
-                                        tab_files,
-                                        rsx! {
-                                        },
-                                    ],
+                                                    tab_options,
+                                                    tab_files,
+                                                    rsx! {
+                                                    },
+                                                ],
         }
         hr {}
         Message { details: message() }
