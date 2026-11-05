@@ -21,13 +21,8 @@ pub struct TableUser<T = RecordUser> {
 
 impl TableCreate<RecordUser> for TableUser<RecordUser> {
     fn create_table(db: &Connection) -> Result<bool, rusqlite::Error> {
-        match db.table_exists(None, "user") {
-            std::result::Result::Ok(exist) => {
-                if exist {
-                    return Ok(false);
-                }
-            }
-            Err(e) => return Err(e),
+        if db.table_exists(None, "user")? {
+            return Ok(false);
         }
 
         db.execute(

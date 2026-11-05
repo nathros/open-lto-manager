@@ -15,13 +15,8 @@ pub struct TableTapeType<T = RecordTapeType> {
 
 impl TableCreate<RecordTapeType> for TableTapeType<RecordTapeType> {
     fn create_table(db: &Connection) -> Result<bool, rusqlite::Error> {
-        match db.table_exists(None, "tape_type") {
-            std::result::Result::Ok(exist) => {
-                if exist {
-                    return Ok(false);
-                }
-            }
-            Err(e) => return Err(e),
+        if db.table_exists(None, "tape_type")? {
+            return Ok(false);
         }
 
         db.execute(

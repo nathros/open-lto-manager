@@ -19,13 +19,8 @@ pub struct TableJob<T = RecordJob> {
 
 impl TableCreate<RecordJob> for TableJob<RecordJob> {
     fn create_table(db: &Connection) -> Result<bool, rusqlite::Error> {
-        match db.table_exists(None, "job") {
-            std::result::Result::Ok(exist) => {
-                if exist {
-                    return Ok(false);
-                }
-            }
-            Err(e) => return Err(e),
+        if db.table_exists(None, "job")? {
+            return Ok(false);
         }
 
         db.execute(

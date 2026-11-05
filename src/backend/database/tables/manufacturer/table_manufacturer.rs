@@ -15,13 +15,8 @@ pub struct TableManufacturer<T = RecordManufacturer> {
 
 impl TableCreate<RecordManufacturer> for TableManufacturer<RecordManufacturer> {
     fn create_table(db: &Connection) -> Result<bool, rusqlite::Error> {
-        match db.table_exists(None, "manufacturer") {
-            std::result::Result::Ok(exist) => {
-                if exist {
-                    return Ok(false);
-                }
-            }
-            Err(e) => return Err(e),
+        if db.table_exists(None, "manufacturer")? {
+            return Ok(false);
         }
 
         db.execute(

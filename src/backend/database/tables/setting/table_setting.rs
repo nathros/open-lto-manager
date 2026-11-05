@@ -18,13 +18,8 @@ pub struct TableSetting<T> {
 
 impl TableCreate<RecordMisc<SettingEmpty>> for TableSetting<RecordMisc<SettingEmpty>> {
     fn create_table(db: &Connection) -> Result<bool, rusqlite::Error> {
-        match db.table_exists(None, "setting") {
-            std::result::Result::Ok(exist) => {
-                if exist {
-                    return Ok(false);
-                }
-            }
-            Err(e) => return Err(e),
+        if db.table_exists(None, "setting")? {
+            return Ok(false);
         }
 
         db.execute(

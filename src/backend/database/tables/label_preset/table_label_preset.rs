@@ -15,13 +15,8 @@ pub struct TableLabelPreset<T = RecordLabelPreset> {
 
 impl TableCreate<RecordLabelPreset> for TableLabelPreset<RecordLabelPreset> {
     fn create_table(db: &Connection) -> Result<bool, rusqlite::Error> {
-        match db.table_exists(None, "label_preset") {
-            std::result::Result::Ok(exist) => {
-                if exist {
-                    return Ok(false);
-                }
-            }
-            Err(e) => return Err(e),
+        if db.table_exists(None, "label_preset")? {
+            return Ok(false);
         }
 
         db.execute(

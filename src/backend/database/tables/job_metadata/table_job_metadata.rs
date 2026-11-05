@@ -16,13 +16,8 @@ pub struct TableJobMetadata<T = RecordJobMetadata> {
 
 impl TableCreate<RecordJobMetadata> for TableJobMetadata<RecordJobMetadata> {
     fn create_table(db: &Connection) -> Result<bool, rusqlite::Error> {
-        match db.table_exists(None, "job_metadata") {
-            std::result::Result::Ok(exist) => {
-                if exist {
-                    return Ok(false);
-                }
-            }
-            Err(e) => return Err(e),
+        if db.table_exists(None, "job_metadata")? {
+            return Ok(false);
         }
 
         db.execute(

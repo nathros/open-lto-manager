@@ -21,13 +21,8 @@ pub struct TableFile<T = RecordFile> {
 
 impl TableCreate<RecordFile> for TableFile<RecordFile> {
     fn create_table(db: &Connection) -> Result<bool, rusqlite::Error> {
-        match db.table_exists(None, "file") {
-            std::result::Result::Ok(exist) => {
-                if exist {
-                    return Ok(false);
-                }
-            }
-            Err(e) => return Err(e),
+        if db.table_exists(None, "file")? {
+            return Ok(false);
         }
 
         db.execute(
