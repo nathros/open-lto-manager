@@ -11,12 +11,12 @@ use crate::{
         },
         sandpit::{
             sandpit_accordion::SandpitAccordion, sandpit_button::SandpitButton,
-            sandpit_dropdown::SandpitDropDown, sandpit_file_view::SandpitFileView,
-            sandpit_floating_message::SandpitFloating, sandpit_input::SandpitInput,
-            sandpit_menu::SandpitMenu, sandpit_menu_item::SandpitMenuItem,
-            sandpit_message::SandpitMessage, sandpit_modal::SandpitModal,
-            sandpit_radio_pill::SandpitRadioPill, sandpit_select::SandpitSelect,
-            sandpit_tab::SandpitTab,
+            sandpit_context_menu::SandpitContextMenu, sandpit_dropdown::SandpitDropDown,
+            sandpit_file_view::SandpitFileView, sandpit_floating_message::SandpitFloating,
+            sandpit_input::SandpitInput, sandpit_menu::SandpitMenu,
+            sandpit_menu_item::SandpitMenuItem, sandpit_message::SandpitMessage,
+            sandpit_modal::SandpitModal, sandpit_radio_pill::SandpitRadioPill,
+            sandpit_select::SandpitSelect, sandpit_tab::SandpitTab,
         },
     },
     route::Route,
@@ -54,7 +54,11 @@ pub fn Sandpit(name: String) -> Element {
         ),
         (
             "UI Components",
-            vec![("Menu", SandpitMenu()), ("DropDown", SandpitDropDown())],
+            vec![
+                ("Menu", SandpitMenu()),
+                ("DropDown", SandpitDropDown()),
+                ("ContextMenu", SandpitContextMenu()),
+            ],
         ),
     ];
 

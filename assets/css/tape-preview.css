@@ -63,7 +63,7 @@
 }
 .tape-ulto {
 	display: flex;
-	align-items: center;
+	align-items: self-end;
 	gap: calc(var(--tape-prev-size) * 0.01);
 	height: calc(var(--tape-prev-size) * 0.07);
 	margin-left: auto;
@@ -75,7 +75,6 @@
 }
 .tape-ulto > span {
 	font-size: calc(var(--tape-prev-size) * 0.07);
-	font-family: "Arial Black";
 	font-style: italic;
 }
 .tape-size {
@@ -86,7 +85,6 @@
 	transform-style: preserve-3d;
 	transform: rotateX(4deg);
 	font-size: calc(var(--tape-prev-size) * 0.07);
-	font-family: "Arial";
 }
 .tape-size > div {
 	font-size: calc(var(--tape-prev-size) * 0.02);

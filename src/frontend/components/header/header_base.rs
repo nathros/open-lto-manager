@@ -131,7 +131,10 @@ pub fn Header() -> Element {
                     header { class: Css::MAIN_HEADER,
                         div { class: Css::MAIN_HEADER_LOGO, "{APP_NAME}" }
 
-                        button { id: Id::HeaderBaseAnchor.as_str() } // Anchor for more Icons if needed
+                        button {
+                            id: Id::HeaderBaseAnchor.as_str(),
+                            class: Css::HIDDEN_BUTTON_ANCHOR,
+                        } // Anchor for more Icons if needed
 
                         HeaderIcon { // TODO use DropDown component
                             button_id: Id::HeaderNotificationIcon.as_str(),

@@ -60,12 +60,7 @@ pub fn AddJob() -> Element {
         }
         Tab {
             labels: vec!["Options".to_string(), "Files".to_string(), "Destination".to_string()],
-            contents: vec![
-                                                    tab_options,
-                                                    tab_files,
-                                                    rsx! {
-                                                    },
-                                                ],
+            contents: vec![tab_options, tab_files, rsx! {}],
         }
         hr {}
         Message { details: message() }

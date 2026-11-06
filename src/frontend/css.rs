@@ -19,9 +19,11 @@ impl Css {
     pub const RAINBOW: &str = "rainbow "; // Defined in assets/css/header.css line 99
     pub const ID_ACCENT_PICKER: &str = "accent-picker"; // Defined in assets/css/header.css line 102
     pub const HEADER_ANCHOR_BASE: &str = "h-base"; // Defined in assets/css/header.css line 121
-    pub const HEADER_ANCHOR_POSITION: &str = "header-anchor-position "; // Defined in assets/css/header.css line 126
+    pub const HEADER_ANCHOR_POSITION: &str = "header-anchor-position "; // Defined in assets/css/header.css line 124
     pub const ACCORDION_CONTAINER: &str = "accordion-container "; // Defined in assets/css/accordion.css line 1
     pub const ACTIVE: &str = "active "; // Defined in assets/css/accordion.css line 23
+    pub const CONTEXT_MENU_ANCHOR: &str = "context-menu-anchor "; // Defined in assets/css/context_menu.css line 1
+    pub const CONTEXT_MENU: &str = "context-menu "; // Defined in assets/css/context_menu.css line 4
     pub const ICON_LIST_ITEM: &str = "icon-list-item "; // Defined in assets/css/icon-list.css line 1
     pub const ICON: &str = "icon "; // Defined in assets/css/icon.css line 1
     pub const SM: &str = "sm "; // Defined in assets/css/icon.css line 7
@@ -68,6 +70,7 @@ impl Css {
     pub const BG: &str = "bg "; // Defined in assets/css/common.css line 103
     pub const COL: &str = "col "; // Defined in assets/css/common.css line 118
     pub const HOVER: &str = "hover "; // Defined in assets/css/common.css line 133
-    pub const ID_SNA: &str = "sna"; // Defined in assets/css/common.css line 137
-    pub const ID_SAND: &str = "sandpit"; // Defined in assets/css/common.css line 159
+    pub const HIDDEN_BUTTON_ANCHOR: &str = "hidden-button-anchor "; // Defined in assets/css/common.css line 137
+    pub const ID_SNA: &str = "sna"; // Defined in assets/css/common.css line 141
+    pub const ID_SAND: &str = "sandpit"; // Defined in assets/css/common.css line 163
 }

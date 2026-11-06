@@ -1,9 +1,11 @@
 function showModal(id) {
 	document.getElementById(id).showModal();
 }
+
 function hidePopover(id) {
 	document.getElementById(id).hidePopover();
 }
+
 function copyToClipboard(str) {
 	if (navigator.clipboard) {
 		navigator.clipboard.writeText(str);
@@ -27,6 +29,7 @@ function copyToClipboard(str) {
 		}
 	}
 }
+
 function downloadFile(url, method, contentType, body) {
 	fetch(url, {
 		method: method,
@@ -55,4 +58,11 @@ function downloadFile(url, method, contentType, body) {
 		.catch((error) => {
 			alert(`Download failed with error: ${error}`);
 		});
+}
+
+function showContextMenu(id, xPos, yPos) {
+	const element = document.getElementById(id);
+	element.style.top = `${yPos - 3}px`;
+	element.style.left = `${xPos - 3}px`;
+	element.click(); // Show menu
 }

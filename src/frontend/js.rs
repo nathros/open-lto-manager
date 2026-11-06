@@ -1,3 +1,4 @@
+use dioxus::html::{InteractionLocation, MouseEvent};
 use serde_json::Value;
 use wasm_bindgen::prelude::*;
 
@@ -8,6 +9,7 @@ extern "C" {
     fn hidePopover(id: &str); // Defined in assets/js/common.js
     fn copyToClipboard(str: &str); // Defined in assets/js/common.js
     fn downloadFile(url: &str, method: &str, contentType: &str, body: &str); // Defined in assets/js/common.js
+    fn showContextMenu(id: &str, xPos: i32, yPos: i32); // Defined in assets/js/common.js
 }
 
 pub fn js_system_canvas() {
@@ -28,4 +30,9 @@ pub fn js_copy_to_clipboard(str: &str) {
 
 pub fn js_download_file(url: &str, body: Value) {
     downloadFile(url, "POST", "application/json", body.to_string().as_str());
+}
+
+pub fn js_show_context_menu(id: &str, event: &MouseEvent) {
+    let pos = event.data.page_coordinates();
+    showContextMenu(id, pos.x as i32, pos.y as i32);
 }

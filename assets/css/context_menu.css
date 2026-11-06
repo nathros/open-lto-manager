@@ -1,0 +1,8 @@
+.context-menu-anchor /* impl Css::CONTEXT_MENU_ANCHOR */ {
+	position: fixed;
+}
+.context-menu /* impl Css::CONTEXT_MENU */ {
+	position: fixed;
+	position-area: bottom span-right;
+	z-index: 10;
+}

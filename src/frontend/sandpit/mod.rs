@@ -1,6 +1,7 @@
 pub mod index;
 mod sandpit_accordion;
 mod sandpit_button;
+mod sandpit_context_menu;
 mod sandpit_dropdown;
 mod sandpit_file_view;
 mod sandpit_floating_message;

@@ -134,6 +134,10 @@ dialog {
 	cursor: pointer;
 	box-shadow: var(--hover);
 }
+.hidden-button-anchor /* impl Css::HIDDEN_BUTTON_ANCHOR */ {
+	border: none;
+	padding: 0;
+}
 #sna /* [trim] impl Css::ID_SNA */ {
 	position: relative;
 	cursor: pointer;

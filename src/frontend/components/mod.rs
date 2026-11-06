@@ -1,5 +1,6 @@
 pub mod card;
 mod colour_mode;
+pub mod context_menu;
 pub mod dropdown;
 pub mod header;
 pub mod main_body;

@@ -120,8 +120,6 @@
 }
 #h-base /* [trim] impl Css::HEADER_ANCHOR_BASE */ {
 	anchor-name: --header-anchor;
-	pointer-events: none;
-	padding: 0;
 }
 .header-anchor-position /* impl Css::HEADER_ANCHOR_POSITION */ {
 	position: fixed;
