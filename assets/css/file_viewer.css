@@ -30,6 +30,7 @@
 .breadcrumb > div button {
 	min-width: var(--md);
 	justify-content: center;
+	text-wrap: nowrap;
 }
 .table-container > table {
 	width: 100%;
