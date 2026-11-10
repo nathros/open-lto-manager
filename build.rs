@@ -25,5 +25,22 @@ fn main() {
                 panic!("{}", e); // Build failure
             }
         }
+
+        // Create assets/info-release.json which contains build info
+        match Command::new("bash")
+            .arg("./external/generate-about.sh")
+            .status()
+        {
+            Ok(exit_status) => {
+                if !exit_status.success() {
+                    println!("cargo:error=Bundle bad exit: {}", exit_status);
+                    panic!("{}", exit_status); // Build failure
+                }
+            }
+            Err(e) => {
+                println!("cargo:error=Bundle error: {}", e);
+                panic!("{}", e); // Build failure
+            }
+        }
     }
 }

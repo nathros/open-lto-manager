@@ -4,7 +4,6 @@ use crate::{
     backend::api::api_init::app_state,
     either,
     frontend::{
-        assets::APP_NAME,
         collections::{
             code_block::CodeBlock,
             message::{Message, MessageDetails},
@@ -139,7 +138,7 @@ fn Inner() -> Element {
                             div { class: Css::FLEX_COL,
                                 span {
                                     "In order to access tape devices "
-                                    b { {APP_NAME} }
+                                    b { {Const::APP_NAME} }
                                     " needs access to the following devices:"
                                 }
                                 H4 {

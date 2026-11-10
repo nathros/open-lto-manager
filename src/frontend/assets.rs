@@ -1,7 +1,5 @@
 use dioxus::prelude::*;
 
-pub const APP_NAME: &str = "Open LTO Manager";
-
 pub const FAVICON: Asset = asset!(
     "/assets/logo.svg",
     AssetOptions::builder().with_hash_suffix(false) // Disable hash as referenced in CSS

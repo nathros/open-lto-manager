@@ -63,6 +63,7 @@
     "oninput",
     "onmounted",
     "Papirus",
+    "popovertarget",
     "Reloadable",
     "repr",
     "reqwest",

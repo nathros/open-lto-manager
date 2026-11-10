@@ -4,19 +4,22 @@
 			"path": "external/breeze-icons/",
 			"repo": "https://github.com/kde/breeze-icons",
 			"action": "none",
-			"fallback": "__fallback"
+			"fallback": "__fallback",
+			"name": "Breeze"
 		},
 		"papirus": {
 			"path": "external/papirus-icon-theme/",
 			"repo": "https://github.com/PapirusDevelopmentTeam/papirus-icon-theme",
 			"action": "none",
-			"fallback": "__fallback"
+			"fallback": "__fallback",
+			"name": "Papirus"
 		},
 		"kora": {
 			"path": "external/kora/",
 			"repo": "https://github.com/bikass/kora",
 			"action": "none",
-			"fallback": "__fallback"
+			"fallback": "__fallback",
+			"name": "Kora"
 		}
 	},
 	"icons": {

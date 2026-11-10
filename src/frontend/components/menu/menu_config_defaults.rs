@@ -80,6 +80,11 @@ impl MenuConfig {
                             label: "Diagnostics".to_string(),
                             link: Route::Diagnostics {}.to_string(),
                         },
+                        MenuItemConfig {
+                            icon: "".to_string(),
+                            label: "About".to_string(),
+                            link: Route::About {}.to_string(),
+                        },
                     ],
                 ),
                 #[cfg(debug_assertions)]

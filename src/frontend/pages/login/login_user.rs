@@ -5,7 +5,7 @@ use dioxus::prelude::*;
 use crate::{
     backend::api::api_login::api_login,
     frontend::{
-        assets::{APP_NAME, FAVICON},
+        assets::FAVICON,
         collections::message::{Message, MessageDetails},
         css::Css,
         elements::{
@@ -15,6 +15,7 @@ use crate::{
         level::Level,
     },
     route::Route,
+    shared::r#const::Const,
     static_concat,
 };
 
@@ -30,7 +31,7 @@ pub fn LoginUser(#[props(default)] success_signal: Callback) -> Element {
                 div {
                     div { class: static_concat!(Css::FLEX_COL, Css::FLEX_ALIGN_CENTRE),
                         img { src: FAVICON }
-                        h3 { "{APP_NAME}" }
+                        h3 { "{Const::APP_NAME}" }
                     }
                 }
                 hr {}

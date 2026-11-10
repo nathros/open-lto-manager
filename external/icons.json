@@ -3,22 +3,26 @@
 		"tabler": {
 			"path": "external/tabler-icons/",
 			"repo": "https://github.com/tabler/tabler-icons",
-			"action": "none"
+			"action": "none",
+			"name": "Tabler"
 		},
 		"remix": {
 			"path": "external/remixicon/",
 			"repo": "https://github.com/Remix-Design/remixicon",
-			"action": "none"
+			"action": "none",
+			"name": "Remix"
 		},
 		"iconoir": {
 			"path": "external/iconoir/",
 			"repo": "https://github.com/iconoir-icons/iconoir",
-			"action": "none"
+			"action": "none",
+			"name": "Iconoir"
 		},
 		"sargam": {
 			"path": "external/sargam-icons/",
 			"repo": "https://github.com/planetabhi/sargam-icons",
-			"action": "none"
+			"action": "none",
+			"name": "Sargam"
 		}
 	},
 	"icons": {

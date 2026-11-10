@@ -363,3 +363,5 @@ process_theme "files.json" "files" "../assets/"
 END_TIME_GLOBAL=$(date +%s)
 ELAPSED_TIME_GLOBAL=$(echo $((END_TIME_GLOBAL-START_TIME_GLOBAL)) | awk '{print int($1/60)" minutes and "int($1%60)" seconds"}')
 echo "Completed all operations in $ELAPSED_TIME_GLOBAL"
+
+./generate-about.sh debug

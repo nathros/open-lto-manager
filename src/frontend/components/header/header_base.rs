@@ -9,8 +9,8 @@ use crate::{
     either,
     frontend::{
         assets::{
-            APP_NAME, ICONS_ASSET_ICONOIR, ICONS_ASSET_REMIX, ICONS_ASSET_SARGAM_LINE,
-            ICONS_ASSET_TABLER, LOGO_ASSET,
+            ICONS_ASSET_ICONOIR, ICONS_ASSET_REMIX, ICONS_ASSET_SARGAM_LINE, ICONS_ASSET_TABLER,
+            LOGO_ASSET,
         },
         collections::message::{Message, MessageDetails},
         components::{
@@ -27,6 +27,7 @@ use crate::{
         pages::login::login_user::LoginUser,
     },
     shared::{
+        r#const::Const,
         href::Href,
         models::database::user::model_user::{
             ACCENT_BLUE, ACCENT_GREEN, ACCENT_RED, ACCENT_STANDARD, ColourMode, IconTheme,
@@ -129,7 +130,7 @@ pub fn Header() -> Element {
                         Menu { config: aside_config, current_route: route_str }
                     }
                     header { class: Css::MAIN_HEADER,
-                        div { class: Css::MAIN_HEADER_LOGO, "{APP_NAME}" }
+                        div { class: Css::MAIN_HEADER_LOGO, "{Const::APP_NAME}" }
 
                         button {
                             id: Id::HeaderBaseAnchor.as_str(),

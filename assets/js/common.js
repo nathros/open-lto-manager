@@ -61,6 +61,7 @@ function downloadFile(url, method, contentType, body) {
 }
 
 function showContextMenu(id, xPos, yPos) {
+	// Show menu, expect element to be a <button> with with a popovertarget
 	const element = document.getElementById(id);
 	element.style.top = `${yPos - 3}px`;
 	element.style.left = `${xPos - 3}px`;

@@ -3,6 +3,7 @@ use dioxus::prelude::*;
 use crate::frontend::{
     components::header::header_base::Header,
     pages::{
+        admin::about::About,
         admin::sessions::Sessions,
         dbg::{
             db_dev::ShowDev, db_file::DBFile, db_job::DBJob, db_job_metadata::DBJobMetaData,
@@ -46,6 +47,8 @@ pub enum Route {
 
     #[route("/admin/sessions")]
     Sessions {},
+    #[route("/admin/About")]
+    About {},
 
     #[route("/system/diagnostics")]
     Diagnostics {},
