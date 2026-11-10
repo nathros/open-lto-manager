@@ -27,6 +27,11 @@
     "editor.formatOnSave": true,
     "prettier.useTabs": true,
   },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "prettier.useTabs": true,
+  },
   "rust-analyzer.check.command": "clippy",
   "workbench.editor.wrapTabs": true,
   "emeraldwalk.runonsave": {

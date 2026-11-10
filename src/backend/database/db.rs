@@ -251,6 +251,6 @@ pub mod tests {
     #[test]
     fn check_sqlite_version() {
         let db = create_test_database();
-        assert_eq!(sqlite_version(&db).unwrap(), "3.53.2");
+        assert_eq!(sqlite_version(&db).unwrap(), "3.54.1");
     }
 }
