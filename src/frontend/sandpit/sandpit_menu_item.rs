@@ -23,7 +23,7 @@ pub fn SandpitMenuItem() -> Element {
                 }
                 MenuItem {
                     text: "Menu item 4 (link)",
-                    onclick: fn_link(Route::Home {}.to_string()),
+                    onclick: fn_link(Route::Dashboard {}.to_string()),
                 }
             }
             section {
@@ -45,7 +45,7 @@ pub fn SandpitMenuItem() -> Element {
                 MenuItem {
                     icon: Icons::WARNING,
                     text: "Menu item 4 (link)",
-                    onclick: fn_link(Route::Home {}.to_string()),
+                    onclick: fn_link(Route::Dashboard {}.to_string()),
                 }
             }
         }

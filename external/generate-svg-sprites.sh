@@ -178,7 +178,7 @@ function process_theme() {
 				THEME_ACTION+=(${LINE:11:-1}) # Found theme viewBox
 
 			elif [[ $LINE == "\"fallback\": "* ]]; then
-				THEME_FALLBACK+=(${LINE:13:-1}) # Found fallback sprite definition
+				THEME_FALLBACK+=($(echo ${LINE:13:-1} | tr -d '"')) # Found fallback sprite definition
 				HAS_FALLBACK=true
 			fi
 

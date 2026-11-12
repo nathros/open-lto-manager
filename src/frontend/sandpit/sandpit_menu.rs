@@ -23,7 +23,7 @@ pub fn SandpitMenu() -> Element {
                 items: vec![MenuItemConfig {
                     icon: "".to_string(),
                     label: "inner 1.1".to_string(),
-                    link: Route::Home {}.to_string(),
+                    link: Route::Dashboard {}.to_string(),
                 }],
             },
             MenuGroup {
@@ -34,12 +34,12 @@ pub fn SandpitMenu() -> Element {
                     MenuItemConfig {
                         icon: "".to_string(),
                         label: "inner 2.1".to_string(),
-                        link: Route::Home {}.to_string(),
+                        link: Route::Dashboard {}.to_string(),
                     },
                     MenuItemConfig {
                         icon: "".to_string(),
                         label: "inner 2.2".to_string(),
-                        link: Route::Home {}.to_string(),
+                        link: Route::Dashboard {}.to_string(),
                     },
                 ],
             },

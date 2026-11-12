@@ -24,6 +24,9 @@
 	.icon.sandpit {
 		mask-image: url(/assets/icons-tabler.svg#sandpit);
 	}
+	.icon.dashboard {
+		mask-image: url(/assets/icons-tabler.svg#dashboard);
+	}
 	.icon.logout {
 		mask-image: url(/assets/icons-tabler.svg#logout);
 	}
@@ -103,6 +106,9 @@
 	}
 	.icon.sandpit {
 		mask-image: url(/assets/icons-remix.svg#sandpit);
+	}
+	.icon.dashboard {
+		mask-image: url(/assets/icons-remix.svg#dashboard);
 	}
 	.icon.logout {
 		mask-image: url(/assets/icons-remix.svg#logout);
@@ -184,6 +190,9 @@
 	.icon.sandpit {
 		mask-image: url(/assets/icons-iconoir.svg#sandpit);
 	}
+	.icon.dashboard {
+		mask-image: url(/assets/icons-iconoir.svg#dashboard);
+	}
 	.icon.logout {
 		mask-image: url(/assets/icons-iconoir.svg#logout);
 	}
@@ -263,6 +272,9 @@
 	}
 	.icon.sandpit {
 		mask-image: url(/assets/icons-sargam.svg#sandpit);
+	}
+	.icon.dashboard {
+		mask-image: url(/assets/icons-sargam.svg#dashboard);
 	}
 	.icon.logout {
 		mask-image: url(/assets/icons-sargam.svg#logout);

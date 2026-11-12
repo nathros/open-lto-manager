@@ -63,7 +63,7 @@ pub fn LoginUser(#[props(default)] success_signal: Callback) -> Element {
                                         if discriminant(&use_route::<Route>())
                                             == discriminant(&Route::LoginUser {})
                                         {
-                                            use_navigator().push(Route::Home {});
+                                            use_navigator().push(Route::Dashboard {});
                                         }
                                     }
                                     Err(e) => {

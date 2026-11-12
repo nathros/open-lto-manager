@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
 #[component]
-pub fn Home() -> Element {
+pub fn Dashboard() -> Element {
     rsx! {}
 }

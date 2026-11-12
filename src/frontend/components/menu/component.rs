@@ -26,6 +26,7 @@ pub fn Menu(config: Signal<MenuConfig>, current_route: String) -> Element {
             if let c = config() {
                 if c.enable_search {
                     Input {
+                        style: "margin-bottom: var(--padding-x)",
                         type_: InputType::Search,
                         oninput: move |evt: Event<FormData>| {
                             filter.set(evt.value().to_lowercase());
@@ -36,29 +37,37 @@ pub fn Menu(config: Signal<MenuConfig>, current_route: String) -> Element {
                 }
                 if filter().is_empty() {
                     for (g_index , group) in c.groups.iter().enumerate() {
-                        MenuItem {
-                            onclick: move |_evt: MouseEvent| {
-                                config.write().toggle_group(g_index);
-                            },
-                            icon: group.icon.clone(),
-                            text: group.label.clone(),
-                            open: group.open,
-                            vertical: true,
-                            children: rsx! {},
-                        }
-                        div {
-                            class: Css::MENU_GROUP,
-                            // TODO Could use calc-size but not supported in FireFox, height of each element is known
-                            style: format!("max-height:{}px", either!(group.open, 36 * group.items.len(), 0)),
-                            for item in group.items.iter() {
-                                if let link = item.link.clone() {
-                                    MenuItem {
-                                        onclick: move |evt: MouseEvent| {
-                                            evt.stop_propagation();
-                                            fn_link_follow(link.clone());
-                                        },
-                                        text: item.label.to_owned(),
-                                        selected: item.link == current_route,
+                        if let single_item = group.items.len() == 1 {
+                            if !single_item {
+                                MenuItem {
+                                    onclick: move |_evt: MouseEvent| {
+                                        config.write().toggle_group(g_index);
+                                    },
+                                    icon: group.icon.clone(),
+                                    text: group.label.clone(),
+                                    open: group.open,
+                                    vertical: true,
+                                    children: rsx! {},
+                                }
+                            }
+                            div {
+                                class: either!(single_item, "", Css::MENU_GROUP),
+                                // TODO Could use calc-size but not supported in FireFox, height of each element is known
+                                style: format!(
+                                    "max-height:{}px",
+                                    either!(group.open || single_item, 36 * group.items.len(), 0),
+                                ),
+                                for item in group.items.iter() {
+                                    if let link = item.link.clone() {
+                                        MenuItem {
+                                            onclick: move |evt: MouseEvent| {
+                                                evt.stop_propagation();
+                                                fn_link_follow(link.clone());
+                                            },
+                                            icon: item.icon.to_owned(),
+                                            text: item.label.to_owned(),
+                                            selected: item.link == current_route,
+                                        }
                                     }
                                 }
                             }

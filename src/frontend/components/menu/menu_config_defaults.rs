@@ -13,12 +13,12 @@ impl MenuConfig {
             groups: vec![
                 MenuGroup::new(
                     current_route,
-                    Icons::HOME.into(),
-                    "Home".to_string(),
+                    "".to_string(),
+                    "".to_string(),
                     vec![MenuItemConfig {
-                        icon: "".to_string(),
-                        label: "Home".to_string(),
-                        link: Route::Home {}.to_string(),
+                        icon: Icons::DASHBOARD.into(),
+                        label: "Dashboard".to_string(),
+                        link: Route::Dashboard {}.to_string(),
                     }],
                 ),
                 MenuGroup::new(

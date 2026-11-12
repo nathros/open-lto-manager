@@ -12,6 +12,7 @@ impl Icons {
     pub const NOTIFICATION: &str = "notification ";
     pub const USER: &str = "user ";
     pub const SANDPIT: &str = "sandpit ";
+    pub const DASHBOARD: &str = "dashboard ";
     pub const LOGOUT: &str = "logout ";
     pub const PALETTE: &str = "palette ";
     pub const CONTRAST: &str = "contrast ";

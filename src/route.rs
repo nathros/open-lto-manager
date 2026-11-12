@@ -5,11 +5,11 @@ use crate::frontend::{
     pages::{
         admin::about::About,
         admin::sessions::Sessions,
+        dashboard::Dashboard,
         dbg::{
             db_dev::ShowDev, db_file::DBFile, db_job::DBJob, db_job_metadata::DBJobMetaData,
             db_tape::DBTape, db_type::DBType, db_user::DBUser, show_devices::ShowDevices,
         },
-        home::Home,
         job::add_job::AddJob,
         job::add_job_v2::AddJob2,
         library::{generate_label::GenLabel, tape::Tape, view_library::ViewLibrary},
@@ -25,7 +25,7 @@ use crate::frontend::{
 pub enum Route {
     #[layout(Header)]
     #[route("/")]
-    Home {},
+    Dashboard {},
 
     #[route("/show")]
     Show {},

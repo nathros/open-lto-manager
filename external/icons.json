@@ -74,6 +74,12 @@
 			"iconoir": "icons/regular/test-tube.svg",
 			"sargam": "Icons/Line/si_Traffic_cone.svg"
 		},
+		"dashboard": {
+			"tabler": "icons/outline/layout-dashboard.svg",
+			"remix": "icons/System/dashboard-fill.svg",
+			"iconoir": "icons/regular/dashboard.svg",
+			"sargam": "Icons/Line/si_Dashboard.svg"
+		},
 		"logout": {
 			"tabler": "icons/outline/logout.svg",
 			"remix": "icons/System/logout-box-r-fill.svg",

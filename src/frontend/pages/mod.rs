@@ -1,6 +1,6 @@
 pub mod admin;
+pub mod dashboard;
 pub mod dbg;
-pub mod home;
 pub mod job;
 pub mod library;
 pub mod login;
