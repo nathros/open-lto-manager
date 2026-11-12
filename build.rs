@@ -6,12 +6,12 @@ fn issue_cmd(command: &str) {
     match Command::new("bash").arg(command).status() {
         Ok(exit_status) => {
             if !exit_status.success() {
-                println!("{} cargo:error=Bundle bad exit: {}", command, exit_status);
+                println!("cargo:error={} bad exit: {}", command, exit_status);
                 panic!("{}", exit_status); // Build failure
             }
         }
         Err(e) => {
-            println!("{} cargo:error=Bundle error: {}", command, e);
+            println!("cargo:error={} error: {}", command, e);
             panic!("{}", e); // Build failure
         }
     }

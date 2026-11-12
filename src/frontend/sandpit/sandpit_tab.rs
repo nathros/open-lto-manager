@@ -1,12 +1,19 @@
 use dioxus::prelude::*;
 
-use crate::frontend::modules::tab::Tab;
+use crate::frontend::{
+    icons::Icons,
+    modules::tab::{Tab, TabLabel},
+};
 
 #[component]
 pub fn SandpitTab() -> Element {
     rsx! {
         Tab {
-            labels: vec!["Tab A".to_string(), "Tab B".to_string(), "Tab C".to_string()],
+            labels: vec![
+                TabLabel::new("Tab A", Some(Icons::BUG)),
+                TabLabel::new("Tab B", Some(Icons::SEARCH)),
+                TabLabel::new("Tab C", Some(Icons::USER)),
+            ],
             contents: vec![
                 rsx! {
                     p { "Content A" }

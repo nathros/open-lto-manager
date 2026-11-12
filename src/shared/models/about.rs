@@ -1,5 +1,4 @@
 use dioxus::fullstack::serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct About {
@@ -23,6 +22,7 @@ pub struct DependencyInfo {
 impl About {
     pub fn get() -> About {
         use crate::backend::database::db::{DB, sqlite_version};
+        use serde_json::Value;
 
         #[cfg(debug_assertions)]
         const EMBEDDED: &str = include_str!("../../../assets/info-debug.json");

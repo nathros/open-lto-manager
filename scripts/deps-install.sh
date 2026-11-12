@@ -237,6 +237,16 @@ install_as_void () {
 	# https://github.com/void-linux/void-packages/pull/50845/changes
 	PACKAGES="base-devel git make automake autoconf libtool pkg-config icu fuse-devel libuuid-devel libxml2-devel icu icu-devel net-snmp-devel pciutils-devel pcre-devel libsensors-devel libnl3-devel python3-pyxattr"
 
+	MUSL=$(ldd /bin/ls | grep "musl")
+	if [[ $MUSL == *"musl"* ]]; then
+		# https://github.com/ronchaine/libexecinfo
+		# cd libexecinfo/ make && make install
+		# Install libbsd libbsd-devel, find replace sys/cdefs.h to bsd/sys/cdefs.h
+		# export CFLAGS="$CFLAGS -Wno-error=declaration-after-statement"
+		# Still other issues
+		echo "LTFS cannot yet be compiled with musl"
+		exit 1
+	fi
 	do_msg
 	ask_buggy_ifs
 	xbps-install -Suy

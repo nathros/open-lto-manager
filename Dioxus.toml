@@ -1,9 +1,10 @@
-#:schema https://raw.githubusercontent.com/DioxusLabs/dioxus/main/packages/cli/schema.json
+#:schema https://raw.githubusercontent.com/DioxusLabs/dioxus/refs/heads/main/packages/dx/schema.json
 
 [application]
 
 [web]
 pre_compress = true
+wasm_opt.memory_packing = true
 
 [web.app]
 

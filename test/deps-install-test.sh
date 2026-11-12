@@ -22,11 +22,13 @@ docker run -v $MOUNT -it --rm ubuntu:26.04 /bin/bash -c "$INSTALLER && $REMOVE"
 docker run -v $MOUNT -it --rm archlinux:latest /bin/bash -c "$INSTALLER && $REMOVE"
 
 docker run -v $MOUNT -it --rm ghcr.io/void-linux/void-glibc-full:latest /bin/sh -c "xbps-install -Suy && xbps-install -y bash && /bin/bash -c \"$INSTALLER && $REMOVE\""
+# LTFS does not compile with musl
+#docker run -v $MOUNT -it --rm ghcr.io/void-linux/void-musl-full:latest /bin/sh -c "xbps-install -Suy && xbps-install -y bash && /bin/bash -c \"$INSTALLER && $REMOVE\""
 
 docker run -v $MOUNT -it --rm dokken/centos-stream-9:latest /bin/bash -c "$INSTALLER && $REMOVE"
 docker run -v $MOUNT -it --rm dokken/centos-stream-10:latest /bin/bash -c "$INSTALLER && $REMOVE"
 docker run -v $MOUNT -it --rm fedora:44 /bin/bash -c "$INSTALLER && $REMOVE"
-docker run -v $MOUNT -it --rm rockylinux/rockylinux:9-ubi-init /bin/bash -c "$INSTALLER && $REMOVE"
+docker run -v $MOUNT -it --rm rockylinux/rockylinux:9 /bin/bash -c "$INSTALLER && $REMOVE"
 docker run -v $MOUNT -it --rm rockylinux/rockylinux:10 /bin/bash -c "$INSTALLER && $REMOVE"
 
 docker run -v $MOUNT -it --rm opensuse/leap /bin/bash -c "$INSTALLER && $REMOVE"

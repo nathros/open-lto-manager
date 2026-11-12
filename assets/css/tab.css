@@ -1,0 +1,33 @@
+.tab-header /* impl Css::TAB_HEADER */ {
+	display: flex;
+	gap: var(--padding-s);
+}
+.tab-header > button {
+	display: flex;
+	align-items: center;
+	gap: var(--padding-s);
+	padding: var(--padding-s);
+	border: none;
+	background-color: transparent;
+	transition: color 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.tab-header > button > span {
+	transition: background-color 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.tab-header > button.selected {
+	box-shadow: inset 0px -2px 0px 0px var(--colour-accent);
+	color: var(--colour-accent);
+}
+.tab-header > button.selected > span {
+	background-color: var(--colour-accent);
+}
+.tab-header > button:hover {
+	cursor: pointer;
+	color: var(--colour-accent);
+}
+.tab-header > button:hover > span {
+	background-color: var(--colour-accent);
+}
+.tab-header ~ hr {
+	margin-top: 0;
+}

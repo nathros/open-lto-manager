@@ -47,7 +47,7 @@ sudo bash <(curl -L https://raw.githubusercontent.com/nathros/open-lto-manager/m
 
 #### Example:
 ```shell
-IP=0.0.0.0 CONSOLE_LOG=ON ./openltomanager
+IP=0.0.0.0 CONSOLE_LOG=ON ./server
 ```
 
 ## Build

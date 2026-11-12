@@ -1,48 +1,57 @@
 use dioxus::prelude::*;
 
-fn show_tab(show: bool) -> String {
-    if show {
-        "display:block".to_string()
-    } else {
-        "display:none".to_string()
+use crate::{either, frontend::css::Css};
+
+#[derive(PartialEq, Clone)]
+pub struct TabLabel {
+    text: &'static str,
+    icon: Option<&'static str>,
+}
+
+impl TabLabel {
+    pub fn new(text: &'static str, icon: Option<&'static str>) -> TabLabel {
+        TabLabel { text, icon }
     }
 }
 
-fn highlight_btn(show: bool) -> String {
-    if show {
-        "background-color:cyan".to_string()
-    } else {
-        "background-color:initial".to_string()
-    }
+#[derive(Props, PartialEq, Clone)]
+pub struct TabProps {
+    #[props(optional)]
+    labels: Vec<TabLabel>,
+
+    #[props(optional)]
+    contents: Vec<Element>,
+
+    #[props(extends = button, extends = GlobalAttributes)]
+    attributes: Vec<Attribute>,
 }
 
 #[component]
-pub fn Tab(
-    labels: Vec<String>,
-    contents: Vec<Element>,
-    #[props(extends = div, extends = GlobalAttributes)] attributes: Vec<Attribute>,
-) -> Element {
+pub fn Tab(props: TabProps) -> Element {
     let mut selected_tab = use_signal(|| 0);
 
     rsx! {
-        div {..attributes,
-            if let tab_index = selected_tab() {
-                for (index , name) in labels.iter().enumerate() {
+        div {..props.attributes,
+            div { class: Css::TAB_HEADER,
+                for (index , label) in props.labels.iter().enumerate() {
                     button {
-                        style: highlight_btn(tab_index == index),
+                        class: either!(selected_tab() == index, Css::SELECTED, ""),
                         onclick: move |_| {
                             selected_tab.set(index);
                         },
-                        "{name}"
+                        if let Some(icon) = label.icon {
+                            span { class: [Css::ICON, Css::SM, icon].concat() }
+                        }
+                        "{label.text}"
                     }
                 }
-                br {}
-                br {}
-                for (index , child) in contents.iter().enumerate() {
-                    div { style: show_tab(tab_index == index), {child} }
+            }
+            hr {}
+            for (index , child) in props.contents.iter().enumerate() {
+                div { style: either!(selected_tab() == index, "display:block", "display:none"),
+                    {child}
                 }
             }
-
         }
     }
 }

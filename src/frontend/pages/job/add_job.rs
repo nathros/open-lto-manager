@@ -8,7 +8,10 @@ use crate::{
         elements::button::Button,
         id::Id,
         level::Level,
-        modules::{modal::Modal, tab::Tab},
+        modules::{
+            modal::Modal,
+            tab::{Tab, TabLabel},
+        },
         pages::job::backup_job_form::BackupJobForm,
     },
     shared::models::database::job::model_job::{JobType, RecordJob},
@@ -59,7 +62,11 @@ pub fn AddJob() -> Element {
             message: modal_message,
         }
         Tab {
-            labels: vec!["Options".to_string(), "Files".to_string(), "Destination".to_string()],
+            labels: vec![
+                TabLabel::new("Options", None),
+                TabLabel::new("Files", None),
+                TabLabel::new("Destination", None),
+            ],
             contents: vec![tab_options, tab_files, rsx! {}],
         }
         hr {}

@@ -17,7 +17,7 @@ use crate::{
         forms::validator::{TValidator, Validator},
         icons::Icons,
         js::js_download_file,
-        modules::tab::Tab,
+        modules::tab::{Tab, TabLabel},
     },
     shared::{
         r#const::Const,
@@ -412,10 +412,10 @@ fn GenLabelInner() -> Element {
             Card { style: "min-width: 16rem",
                 Tab {
                     labels: vec![
-                        "Label".to_string(),
-                        "Style".to_string(),
-                        "Text".to_string(),
-                        "Page".to_string(),
+                        TabLabel::new("Label", None),
+                        TabLabel::new("Style", None),
+                        TabLabel::new("Text", None),
+                        TabLabel::new("Page", None),
                     ],
                     contents: vec![label_tab, style_tab, text_tab, page_tab],
                 }

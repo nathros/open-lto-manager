@@ -75,3 +75,7 @@ echo >> $OUTPUT
 echo "	]" >> $OUTPUT
 
 echo "}" >> $OUTPUT
+
+if [[ $# -eq 0 ]]; then
+	./$(basename "$0") debug
+fi

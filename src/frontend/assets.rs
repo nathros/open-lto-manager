@@ -40,7 +40,7 @@ pub const CSS_ASSETS: [Asset; 1] = [asset!(
 
 // Release (build.rs) will combine all these files into single bundle.css
 #[cfg(debug_assertions)] // Debug build individual CSS files
-pub const CSS_ASSETS: [Asset; 24] = [
+pub const CSS_ASSETS: [Asset; 25] = [
     asset!("/assets/css/:root.css"),
     asset!("/assets/font/font.css"),
     asset!("/assets/css/header.css"),
@@ -59,6 +59,7 @@ pub const CSS_ASSETS: [Asset; 24] = [
     asset!("/assets/css/file_viewer.css"),
     asset!("/assets/css/button.css"),
     asset!("/assets/css/section.css"),
+    asset!("/assets/css/tab.css"),
     asset!("/assets/css/library.css"),
     asset!("/assets/css/login.css"),
     asset!("/assets/css/menu.css"),
