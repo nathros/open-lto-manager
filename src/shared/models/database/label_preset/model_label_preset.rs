@@ -185,6 +185,7 @@ pub enum LabelTheme {
     Standard = 0,
     Warm = 1,
     Greyscale = 2,
+    None = 3,
 }
 
 impl From<i64> for LabelTheme {
@@ -193,6 +194,7 @@ impl From<i64> for LabelTheme {
             _ if value == LabelTheme::Standard as i64 => LabelTheme::Standard,
             _ if value == LabelTheme::Warm as i64 => LabelTheme::Warm,
             _ if value == LabelTheme::Greyscale as i64 => LabelTheme::Greyscale,
+            _ if value == LabelTheme::None as i64 => LabelTheme::None,
             _ => LabelTheme::Standard,
         }
     }

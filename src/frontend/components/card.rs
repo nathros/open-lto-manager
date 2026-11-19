@@ -11,14 +11,20 @@ use crate::{
 #[component]
 pub fn Card(
     children: Element,
+    #[props(optional, default = "")] class: &'static str,
     #[props(optional, default = true)] top_padding: bool,
     #[props(extends = div, extends = GlobalAttributes)] attributes: Vec<Attribute>,
 ) -> Element {
     rsx! {
         if top_padding {
-            div { class: Css::CARD, ..attributes, {children} }
+            div { class: [Css::CARD, class].concat(), ..attributes, {children} }
         } else {
-            div { style: "padding-top:0", class: Css::CARD, ..attributes, {children} }
+            div {
+                style: "padding-top:0",
+                class: [Css::CARD, class].concat(),
+                ..attributes,
+                {children}
+            }
         }
     }
 }

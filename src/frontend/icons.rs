@@ -29,6 +29,7 @@ impl Icons {
     pub const COG: &str = "cog ";
     pub const EDIT: &str = "edit ";
     pub const DIR_UP: &str = "dir-up ";
+    pub const STAR: &str = "star ";
     pub const REFRESH: &str = "refresh ";
     pub const RESTORE: &str = "restore ";
 }

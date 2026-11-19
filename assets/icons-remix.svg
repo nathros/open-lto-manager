@@ -25,6 +25,7 @@
 <svg id="cog" class="icon" fill="currentColor" viewBox="0 0 24 24"><path d="m12 1 9.5 5.5v11L12 23l-9.5-5.5v-11zm0 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/></svg>
 <svg id="edit" class="icon" fill="currentColor" viewBox="0 0 24 24"><path d="m12.9 6.855 4.242 4.242-9.9 9.9H3v-4.243zm1.414-1.415 2.121-2.121a1 1 0 0 1 1.414 0l2.829 2.828a1 1 0 0 1 0 1.415l-2.122 2.121z"/></svg>
 <svg id="dir-up" class="icon" fill="currentColor" viewBox="0 0 24 24"><path d="M14 19H5v-2h7V9.414H6.586L13 3l6.414 6.414H14z"/></svg>
+<svg id="star" class="icon" fill="currentColor" viewBox="0 0 24 24"><path d="m12 18.26-7.053 3.948 1.575-7.928L.588 8.792l8.027-.952L12 .5l3.385 7.34 8.027.952-5.934 5.488 1.575 7.928z"/></svg>
 <svg id="refresh" class="icon" fill="currentColor" viewBox="0 0 24 24"><path d="M5.463 4.433A9.96 9.96 0 0 1 12 2c5.523 0 10 4.477 10 10 0 2.136-.67 4.116-1.81 5.74L17 12h3A8 8 0 0 0 6.46 6.228zm13.074 15.134A9.96 9.96 0 0 1 12 22C6.477 22 2 17.523 2 12c0-2.136.67-4.116 1.81-5.74L7 12H4a8 8 0 0 0 13.54 5.772z"/></svg>
 <svg id="restore" class="icon" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2v2a8 8 0 1 0 4.5 1.385V8h-2V2h6v2H18a9.99 9.99 0 0 1 4 8"/></svg>
 </svg>

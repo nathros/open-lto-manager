@@ -176,6 +176,12 @@
 			"iconoir": "icons/solid/long-arrow-right-up.svg",
 			"sargam": "Icons/Line/si_Left_up.svg"
 		},
+		"star": {
+			"tabler": "icons/filled/star.svg",
+			"remix": "icons/System/star-fill.svg",
+			"iconoir": "icons/regular/bright-star.svg",
+			"sargam": "Icons/Line/si_Star.svg"
+		},
 		"refresh": {
 			"tabler": "icons/outline/refresh.svg",
 			"remix": "icons/System/refresh-line.svg",

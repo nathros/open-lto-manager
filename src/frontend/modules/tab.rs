@@ -22,6 +22,10 @@ pub struct TabProps {
     #[props(optional)]
     contents: Vec<Element>,
 
+    // Tabs fill all available space
+    #[props(optional, default = false)]
+    grow_tabs: bool,
+
     #[props(extends = button, extends = GlobalAttributes)]
     attributes: Vec<Attribute>,
 }
@@ -32,7 +36,7 @@ pub fn Tab(props: TabProps) -> Element {
 
     rsx! {
         div {..props.attributes,
-            div { class: Css::TAB_HEADER,
+            div { class: [Css::TAB_HEADER, either!(props.grow_tabs, Css::GROW, "")].concat(),
                 for (index , label) in props.labels.iter().enumerate() {
                     button {
                         class: either!(selected_tab() == index, Css::SELECTED, ""),

@@ -29,6 +29,7 @@ use crate::{
             select_option::{vec_into, vec_into_enum, vec_into_enum_default},
         },
     },
+    static_concat,
 };
 
 const QUANTITY_MIN: usize = 0;
@@ -220,7 +221,7 @@ fn GenLabelInner() -> Element {
             }
             Input {
                 type_: InputType::Number,
-                label: "Stroke Outer".to_string(),
+                label: "Border Stroke".to_string(),
                 oninput: move |evt: Event<FormData>| {
                     options.write().stroke_outer = evt.value().parse().unwrap_or_default();
                 },
@@ -232,7 +233,7 @@ fn GenLabelInner() -> Element {
 
             Input {
                 type_: InputType::Number,
-                label: "Radius Outer".to_string(),
+                label: "Border Radius".to_string(),
                 oninput: move |evt: Event<FormData>| {
                     options.write().radius_outer = evt.value().parse().unwrap_or_default();
                 },
@@ -409,7 +410,9 @@ fn GenLabelInner() -> Element {
 
     rsx! {
         div { class: Css::FLEX_ROW,
-            Card { style: "min-width: 16rem",
+            Card {
+                style: "min-width: 16rem",
+                class: static_concat!(Css::FLEX_COL),
                 Tab {
                     labels: vec![
                         TabLabel::new("Label", None),
@@ -417,10 +420,12 @@ fn GenLabelInner() -> Element {
                         TabLabel::new("Text", None),
                         TabLabel::new("Page", None),
                     ],
+                    grow_tabs: true,
                     contents: vec![label_tab, style_tab, text_tab, page_tab],
                 }
-                hr {}
-                div { class: Css::FLEX_ROW, style: "margin-top: auto",
+                div {
+                    class: static_concat!(Css::FLEX_ROW, Css::FLEX_CENTRE),
+                    style: "margin-top: auto",
                     Button {
                         text: "Download".to_string(),
                         icon: Icons::PDF,
@@ -440,6 +445,13 @@ fn GenLabelInner() -> Element {
                             replace.switch_page(page);
                             replace.designation = des;
                             options.set(replace);
+                        },
+                    }
+                    Button {
+                        text: "".to_string(),
+                        icon: Icons::STAR,
+                        onclick: move |_| async move {
+                            let _ = document::eval("alert('Not ready yet');").await;
                         },
                     }
                 }

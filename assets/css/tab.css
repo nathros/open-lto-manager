@@ -5,11 +5,15 @@
 .tab-header > button {
 	display: flex;
 	align-items: center;
+	justify-content: center;
 	gap: var(--padding-s);
 	padding: var(--padding-s);
 	border: none;
 	background-color: transparent;
 	transition: color 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.tab-header.grow /* impl Css::GROW */ > button {
+	flex-grow: 1;
 }
 .tab-header > button > span {
 	transition: background-color 1s cubic-bezier(0.075, 0.82, 0.165, 1);
