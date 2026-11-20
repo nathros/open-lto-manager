@@ -30,6 +30,7 @@ use crate::{
             select_option::{SelectOption, vec_into},
         },
     },
+    static_concat,
 };
 
 #[component]
@@ -128,7 +129,7 @@ pub fn TapeForm(
 
     rsx! {
         div { class: Css::FLEX_ROW,
-            form { class: Css::FORM_GRID,
+            form { class: static_concat!(Css::FORM_GRID, Css::MD),
                 Select {
                     label: "Tape Type".to_string(),
                     required: true,
@@ -189,7 +190,7 @@ pub fn TapeForm(
                         tape.write().serial = either!(evt.value().is_empty(), None, Some(evt.value()));
                     },
                     validation: serial_err,
-                    value: tape().serial,
+                    value: tape().serial.unwrap_or_default(),
                     maxlength: 24,
                 }
                 Input {

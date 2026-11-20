@@ -1,7 +1,8 @@
 .input-message /* impl Css::INPUT_MESSAGE */ {
 	display: none;
 	position: absolute;
-	top: calc(100% + 1px);
+	top: calc(100% + 2px);
+	left: 0;
 	border-radius: var(--radius);
 	color: var(--colour-error);
 	font-weight: bold;

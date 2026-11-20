@@ -193,6 +193,12 @@
 			"remix": "icons/System/reset-left-line.svg",
 			"iconoir": "icons/regular/restart.svg",
 			"sargam": "../iconoir/icons/regular/refresh.svg"
+		},
+		"x-mark": {
+			"tabler": "icons/outline/x.svg",
+			"remix": "icons/System/close-fill.svg",
+			"iconoir": "icons/regular/xmark.svg",
+			"sargam": "Icons/Line/si_Close.svg"
 		}
 	}
 }

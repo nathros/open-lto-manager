@@ -9,6 +9,7 @@ use crate::{
             input::{Input, InputType},
             menu_item::MenuItem,
         },
+        icons::Icons,
         js::js_system_canvas,
         utils::function::fn_link_follow,
     },
@@ -27,10 +28,12 @@ pub fn Menu(config: Signal<MenuConfig>, current_route: String) -> Element {
                 if c.enable_search {
                     Input {
                         style: "margin-bottom: var(--padding-x)",
+                        icon: Icons::SEARCH,
                         type_: InputType::Search,
                         oninput: move |evt: Event<FormData>| {
                             filter.set(evt.value().to_lowercase());
                         },
+                        clear_button: filter,
                         value: filter(),
                         placeholder: "search",
                     }

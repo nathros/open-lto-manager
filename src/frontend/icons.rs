@@ -32,4 +32,5 @@ impl Icons {
     pub const STAR: &str = "star ";
     pub const REFRESH: &str = "refresh ";
     pub const RESTORE: &str = "restore ";
+    pub const X_MARK: &str = "x-mark ";
 }

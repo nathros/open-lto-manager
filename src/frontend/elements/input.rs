@@ -68,7 +68,16 @@ pub struct InputProps {
     type_: InputType,
 
     #[props(default = "".into())]
-    style: String,
+    value: String,
+
+    #[props(default = "".into())]
+    style: String, // For container
+
+    #[props(default = "")]
+    icon: &'static str,
+
+    #[props(optional)]
+    clear_button: Option<Signal<String>>,
 
     #[props(optional)]
     label: String,
@@ -96,24 +105,35 @@ pub struct InputProps {
 pub fn Input(props: InputProps) -> Element {
     rsx! {
         if let err = props.validation.as_ref().is_some() {
-            div { class: Css::INPUT_CONTAINER,
+            div { class: Css::INPUT_CONTAINER, style: props.style,
                 if !props.label.is_empty() {
                     label { "{props.label}:" }
                 }
-                div {
+                label { class: either!(props.type_ == InputType::Checkbox, "", Css::INPUT_WRAPPER),
+                    if !props.icon.is_empty() {
+                        span { class: [Css::ICON, props.icon, Css::SM].concat() }
+                    }
                     input {
                         class: [Css::INPUT, either!(err, Icons::ERROR, "")].concat(),
                         r#type: props.type_.to_string(),
-                        style: props.style,
                         oninput: props.oninput,
                         onkeydown: props.onkeydown,
                         onmounted: props.onmounted,
+                        value: props.value,
                         ..props.attributes,
                     }
                     div { class: Css::INPUT_MESSAGE,
                         "{props.validation.read().clone().unwrap_or_default()}"
                     }
                     div { class: static_concat!(Css::INPUT_ERROR_ICON, Css::ICON, Icons::WARNING) }
+                    if let Some(mut clear) = props.clear_button && !clear().is_empty() {
+                        button {
+                            class: static_concat!(Css::ICON, Icons::X_MARK, Css::SM),
+                            onclick: move |_| {
+                                clear.write().clear();
+                            },
+                        }
+                    }
                 }
             }
         }
@@ -129,7 +149,9 @@ pub fn InputBarcode(props: InputProps) -> Element {
                     label { "{props.label}:" }
                 }
                 div { class: Css::GAP_S, style: "display:flex",
-                    div { style: "position:relative;flex:1",
+                    div {
+                        class: Css::INPUT_WRAPPER,
+                        style: "position:relative;flex:1",
                         input {
                             class: [Css::INPUT, either!(err, Icons::ERROR, "")].concat(),
                             r#type: props.type_.to_string(),
@@ -142,7 +164,7 @@ pub fn InputBarcode(props: InputProps) -> Element {
                         }
                         div { class: static_concat!(Css::INPUT_ERROR_ICON, Css::ICON, Icons::WARNING) }
                     }
-                    div {
+                    div { class: Css::INPUT_WRAPPER,
                         input {
                             class: Css::INPUT,
                             style: "text-align:center;width:1.25rem", // field-sizing:content

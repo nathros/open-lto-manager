@@ -5,6 +5,7 @@ use crate::{
         css::Css,
         elements::input::{Input, InputType},
         forms::validator::{TValidator, Validator},
+        icons::Icons,
     },
     static_concat,
 };
@@ -13,6 +14,7 @@ use crate::{
 pub fn SandpitInput() -> Element {
     let validator_1 = Validator::<String>::create().with_max_length(4);
     let mut value_1 = use_signal(|| "".to_string());
+    let a = Some(value_1);
     let mut err_msg_1 = use_signal(move || None);
 
     let validator_2 = Validator::<String>::create().with_expected_length(4);
@@ -28,7 +30,20 @@ pub fn SandpitInput() -> Element {
         div { class: static_concat!(Css::FLEX_COL, Css::FLEX_ALIGN_LEFT),
             Input {
                 type_: InputType::Text,
-                label: "Max len(4)".to_string(),
+                label: "Max len(4) with clear button".to_string(),
+                icon: Icons::HOME,
+                oninput: move |evt: Event<FormData>| {
+                    value_1.set(evt.value());
+                },
+                clear_button: value_1,
+                validation: err_msg_1,
+                value: value_1,
+            }
+            hr {}
+            Input {
+                type_: InputType::Text,
+                label: "Max len(4) no clear button".to_string(),
+                icon: Icons::HOME,
                 oninput: move |evt: Event<FormData>| {
                     value_1.set(evt.value());
                 },
@@ -39,6 +54,7 @@ pub fn SandpitInput() -> Element {
             Input {
                 type_: InputType::Text,
                 label: "Expected len(4)".to_string(),
+                icon: Icons::BUG,
                 oninput: move |evt: Event<FormData>| {
                     value_2.set(evt.value());
                 },

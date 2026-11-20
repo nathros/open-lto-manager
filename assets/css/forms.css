@@ -2,45 +2,32 @@
 	display: grid;
 	gap: var(--padding-m);
 }
+.form-grid.md {
+	min-width: 14rem;
+}
 .select,
 .input {
-	padding: var(--padding-s);
-	border-radius: var(--radius);
-	border: var(--border);
+	border: unset;
 	background-color: transparent;
 }
 .input /* impl Css::INPUT */,
 .select /* impl Css::SELECT */ {
-	outline: unset;
-	color: var(--fg);
-	width: stretch;
-	&:hover {
-		outline: var(--border);
-	}
-	&.error {
-		border-color: var(--colour-error);
-		animation: shake 0.1s ease-in-out 0s 2;
-	}
-	&.error:hover {
-		outline-color: var(--colour-error);
-	}
+	width: 100%;
+	padding: 0;
 	&:focus-within,
 	&:focus-visible {
-		outline: var(--border);
-		border-color: var(--colour-accent);
-		outline-color: var(--colour-accent);
-	}
-	&.error:focus-within,
-	&.error:focus-visible {
-		outline: var(--border);
-		border-color: var(--colour-error);
-		outline-color: var(--colour-error);
+		outline: unset; /* See: after selecting option from select */
 	}
 }
-.select:disabled,
-.input:disabled {
-	opacity: 0.2;
+/*.select {
+	appearance: base-select; TODO Opera has issue on Windows
+}*/
+input:disabled,
+select:disabled {
 	cursor: not-allowed;
+}
+.select {
+	padding: var(--padding-s);
 }
 .input[readonly]:read-only {
 	cursor: default;
@@ -52,8 +39,65 @@
 	gap: var(--padding-s);
 	width: 100%;
 }
-.input-container > div {
+.input-container
+.input-wrapper /* impl Css::INPUT_WRAPPER */ {
+	display: flex;
+	align-items: center;
 	position: relative;
+	padding: var(--padding-s);
+	border-radius: var(--radius);
+	border: var(--border);
+}
+.input-container .input-wrapper {
+	&:has(select) {
+		padding: 0;
+	}
+	&:has(input) {
+		cursor: text;
+	}
+	&:hover,
+	&:has(input:hover, select:hover) {
+		outline: var(--border);
+	}
+	&:has(input.error, select.error) {
+		border-color: var(--colour-error);
+		animation: shake 0.1s ease-in-out 0s 2;
+	}
+	&:hover:has(input.error, select.error),
+	&:has(input.error:hover, select.error:hover) {
+		outline-color: var(--colour-error);
+	}
+	&:has(input:focus-within, select:focus-within) {
+		outline: var(--border);
+		border-color: var(--colour-accent);
+		outline-color: var(--colour-accent);
+	}
+	&:has(input.error:focus-within, select.error:focus-within) {
+		outline: var(--border);
+		border-color: var(--colour-error);
+		outline-color: var(--colour-error);
+	}
+	&:has(input:disabled, select:disabled) {
+		opacity: 0.4;
+		cursor: not-allowed;
+	}
+	&:has(input:disabled:hover, select:disabled:hover) {
+		outline: unset;
+	}
+}
+.input-wrapper > span {
+	margin-right: var(--padding-s);
+	opacity: 0.5;
+}
+.input-wrapper:has(.input.error) > span {
+	background-color: var(--colour-error);
+	opacity: 1;
+}
+.input-wrapper:has(.input.error) > button {
+	margin-right: var(--padding-l);
+}
+.input-wrapper > button:hover {
+	cursor: default;
 }
 .input.error ~ .input-error-icon,
 .select.error ~ .input-error-icon,

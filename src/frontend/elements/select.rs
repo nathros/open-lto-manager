@@ -47,7 +47,7 @@ pub fn Select(props: SelectProps) -> Element {
             if !props.label.is_empty() {
                 label { "{props.label}:" }
             }
-            div {
+            div { class: Css::INPUT_WRAPPER,
                 select {
                     class: [Css::SELECT, either!(not_found && props.required, Icons::ERROR, "")].concat(),
                     onchange: props.onchange,

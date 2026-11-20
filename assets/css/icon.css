@@ -6,13 +6,16 @@
 }
 .icon.sm /* impl Css::SM */ {
 	width: var(--sm);
+	min-width: var(--sm);
 	height: var(--sm);
 }
 .icon.md /* impl Css::MD */ {
 	width: var(--md);
+	min-width: var(--md);
 	height: var(--md);
 }
 .icon.lg /* impl Css::LG */ {
 	width: var(--lg);
+	min-width: var(--lg);
 	height: var(--lg);
 }
