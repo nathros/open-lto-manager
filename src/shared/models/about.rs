@@ -6,6 +6,7 @@ pub struct About {
     pub commit_hash_full: String,
     pub commit_hash_short: String,
     pub dirty: bool,
+    pub build_type: String,
     pub build_date: String,
     pub tag: String,
     pub dependencies: Vec<DependencyInfo>,
@@ -21,7 +22,10 @@ pub struct DependencyInfo {
 #[cfg(feature = "server")]
 impl About {
     pub fn get() -> About {
-        use crate::backend::database::db::{DB, sqlite_version};
+        use crate::{
+            backend::database::db::{DB, sqlite_version},
+            either,
+        };
         use serde_json::Value;
 
         #[cfg(debug_assertions)]
@@ -63,6 +67,7 @@ impl About {
                 .unwrap_or(FALLBACK)
                 .to_string(),
             dirty: json["dirty"].as_bool().unwrap_or(true),
+            build_type: either!(cfg!(debug_assertions), "debug", "release").to_string(),
             build_date: json["build-date"].as_str().unwrap_or(FALLBACK).to_string(),
             tag: json["tag"].as_str().unwrap_or(FALLBACK).to_string(),
             dependencies,

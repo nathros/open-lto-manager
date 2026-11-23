@@ -14,7 +14,6 @@ use crate::{
 pub fn SandpitInput() -> Element {
     let validator_1 = Validator::<String>::create().with_max_length(4);
     let mut value_1 = use_signal(|| "".to_string());
-    let a = Some(value_1);
     let mut err_msg_1 = use_signal(move || None);
 
     let validator_2 = Validator::<String>::create().with_expected_length(4);

@@ -14,6 +14,7 @@ pub fn About() -> Element {
             p { "Branch: {about().branch}" }
             p { "Commit Hash: {about().commit_hash_short}" }
             p { "Dirty: {about().dirty}" }
+            p { "Build Type: {about().build_type}" }
             p { "Build Date: {about().build_date}" }
             p { "Tag: {about().tag}" }
             for dep in about().dependencies {

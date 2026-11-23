@@ -29,7 +29,7 @@ pub fn Menu(config: Signal<MenuConfig>, current_route: String) -> Element {
                     Input {
                         style: "margin-bottom: var(--padding-x)",
                         icon: Icons::SEARCH,
-                        type_: InputType::Search,
+                        type_: InputType::Text,
                         oninput: move |evt: Event<FormData>| {
                             filter.set(evt.value().to_lowercase());
                         },

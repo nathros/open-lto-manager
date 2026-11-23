@@ -197,7 +197,7 @@
 		"x-mark": {
 			"tabler": "icons/outline/x.svg",
 			"remix": "icons/System/close-fill.svg",
-			"iconoir": "icons/regular/xmark.svg",
+			"iconoir": "icons/regular/xmark-square.svg",
 			"sargam": "Icons/Line/si_Close.svg"
 		}
 	}

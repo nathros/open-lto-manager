@@ -24,7 +24,7 @@ pub enum InputType {
     Radio,
     //range,
     //reset,
-    Search,
+    //Search,
     //submit,
     //tel,
     Text,
@@ -51,7 +51,7 @@ impl InputType {
             InputType::Radio => "radio",
             //InputType::range => "range",
             //InputType::reset => "reset",
-            InputType::Search => "search",
+            //InputType::Search => "search",
             //InputType::submit => "submit",
             //InputType::tel => "tel",
             InputType::Text => "text",
@@ -149,7 +149,7 @@ pub fn InputBarcode(props: InputProps) -> Element {
                     label { "{props.label}:" }
                 }
                 div { class: Css::GAP_S, style: "display:flex",
-                    div {
+                    label {
                         class: Css::INPUT_WRAPPER,
                         style: "position:relative;flex:1",
                         input {
