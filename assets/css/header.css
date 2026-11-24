@@ -85,6 +85,9 @@
 	position-area: bottom span-left;
 	animation: float-down 250ms ease forwards;
 }
+.header-dropdown-content.top /* impl Css::TOP */ {
+	position-area: top span-left;
+}
 .header-dropdown-content.nested /* impl Css::HEADER_DROPDOWN_NESTED */ {
 	right: calc(anchor(left) + 2px);
 	top: calc(anchor(top) - var(--padding-s, rem) - 1px);

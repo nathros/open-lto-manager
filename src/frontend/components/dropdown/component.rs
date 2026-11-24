@@ -1,6 +1,9 @@
 use dioxus::prelude::*;
 
-use crate::frontend::{components::dropdown::dropdown_config::DropDownConfig, css::Css};
+use crate::{
+    either,
+    frontend::{components::dropdown::dropdown_config::DropDownConfig, css::Css},
+};
 
 #[component]
 pub fn DropDown(props: DropDownConfig) -> Element {
@@ -14,7 +17,7 @@ pub fn DropDown(props: DropDownConfig) -> Element {
         }
         div {
             id: menu_id,
-            class: Css::HEADER_DROPDOWN_CONTENT,
+            class: [Css::HEADER_DROPDOWN_CONTENT, either!(props.top, Css::TOP, "")].concat(),
             "anchor": props.anchor_id,
             popover: "auto",
             {props.children}

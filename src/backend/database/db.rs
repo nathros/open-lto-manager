@@ -11,7 +11,6 @@ use crate::{
             file::table_file::TableFile,
             job::table_job::TableJob,
             job_metadata::table_job_metadata::TableJobMetadata,
-            label_preset::table_label_preset::TableLabelPreset,
             manufacturer::table_manufacturer::TableManufacturer,
             setting::table_setting::TableSetting,
             table::{RecordUpdate, TableCreate, TableUpdate},
@@ -32,23 +31,35 @@ const DB_VERSION_LATEST: i64 = 0;
 fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, String> {
     let current_database_version: i64;
 
-    match TableSetting::create_table(&conn) {
+    match TableUser::create_table(&conn) {
         Ok(created) => {
             if created {
-                match TableSetting::<SettingEmpty>::new_table_init(&conn, DB_VERSION_LATEST) {
-                    Ok(_) => current_database_version = DB_VERSION_LATEST,
-                    Err(e) => return Err(format!("Failed to init settings table {}", e)),
+                info!("TableUser created");
+            }
+            match TableSetting::create_table(&conn) {
+                Ok(created) => {
+                    if created {
+                        match TableSetting::<SettingEmpty>::new_table_init(&conn, DB_VERSION_LATEST)
+                        {
+                            Ok(_) => current_database_version = DB_VERSION_LATEST,
+                            Err(e) => {
+                                return Err(format!("Failed to init settings table {}", e));
+                            }
+                        }
+                    } else {
+                        // If TableSetting does not exist then this a brand new database
+                        match TableSetting::<RecordMisc<SettingTableVersion>>::get(&conn) {
+                            Ok(v) => current_database_version = v.data,
+                            Err(e) => return Err(format!("Failed to get table version {}", e)),
+                        };
+                    }
                 }
-            } else {
-                // If TableSetting does not exist then this a brand new database
-                match TableSetting::<RecordMisc<SettingTableVersion>>::get(&conn) {
-                    Ok(v) => current_database_version = v.data,
-                    Err(e) => return Err(format!("Failed to get table version {}", e)),
-                };
+                Err(e) => return Err(format!("TableVersion creation error {}", e)),
             }
         }
-        Err(e) => return Err(format!("TableVersion creation error {}", e)),
+        Err(e) => return Err(format!("TableUser creation error {}", e)),
     }
+
     info!(
         "Database version: {}, latest is: {}",
         current_database_version, DB_VERSION_LATEST
@@ -59,7 +70,7 @@ fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, Str
     let tables: Vec<(&str, &CreateTableFn, &UpdateTableFn)> = vec![
         (
             "TableUser",
-            &TableUser::create_table,
+            &|_| -> Result<bool, Error> { Ok(false) }, // Already created
             &TableUser::update_table,
         ),
         (
@@ -87,11 +98,6 @@ fn database_init(conn: rusqlite::Connection) -> Result<rusqlite::Connection, Str
             "TableJobMetadata",
             &TableJobMetadata::create_table,
             &TableJobMetadata::update_table,
-        ),
-        (
-            "TableLabelPreset",
-            &TableLabelPreset::create_table,
-            &TableLabelPreset::update_table,
         ),
     ];
 

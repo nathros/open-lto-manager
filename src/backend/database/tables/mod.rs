@@ -1,7 +1,6 @@
 pub mod file;
 pub mod job;
 pub mod job_metadata;
-pub mod label_preset;
 pub mod manufacturer;
 pub mod setting;
 pub mod table;

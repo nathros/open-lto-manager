@@ -1,6 +1,28 @@
 use super::validator::Validator;
 
 impl Validator<String> {
+    pub fn with_not_empty(mut self) -> Self {
+        self.check_fn
+            .push(Box::new(move |value: &String| -> Option<String> {
+                if value.is_empty() {
+                    return Some("Cannot be empty".to_string());
+                }
+                None
+            }));
+        self
+    }
+
+    pub fn no_duplicates(mut self, entries: Vec<String>) -> Self {
+        self.check_fn
+            .push(Box::new(move |value: &String| -> Option<String> {
+                if entries.iter().find(|e| *e == value).is_some() {
+                    return Some(format!("'{}' already exists", value));
+                }
+                None
+            }));
+        self
+    }
+
     pub fn with_expected_length(mut self, len: usize) -> Self {
         self.check_fn
             .push(Box::new(move |value: &String| -> Option<String> {
@@ -43,6 +65,42 @@ mod tests {
 
     #[test]
     fn expected_length() {
+        assert!(
+            Validator::<String>::create()
+                .with_not_empty()
+                .validate(&"test".to_string())
+                .is_none(),
+        );
+        assert!(
+            Validator::<String>::create()
+                .with_not_empty()
+                .validate(&"".to_string())
+                .is_some(),
+        );
+
+        assert!(
+            Validator::<String>::create()
+                .no_duplicates(vec![])
+                .validate(&"test".to_string())
+                .is_none(),
+        );
+        assert!(
+            Validator::<String>::create()
+                .no_duplicates(vec!["a".to_string(), "b".to_string(), "TEST".to_string()])
+                .validate(&"test".to_string())
+                .is_none(),
+        );
+        assert!(
+            Validator::<String>::create()
+                .no_duplicates(vec![
+                    "a".to_string(),
+                    "test".to_string(),
+                    "TEST".to_string()
+                ])
+                .validate(&"test".to_string())
+                .is_some(),
+        );
+
         assert!(
             Validator::<String>::create()
                 .with_expected_length(5)

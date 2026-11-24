@@ -16,15 +16,23 @@ pub struct RecordMisc<T> {
 #[repr(i64)]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Hash, Sequence, Clone, Copy)]
 pub enum SettingsKey {
+    // System settings
     None = 0,
     Version = 1,
+
+    // User settings offset
+    UserLabelPreset = 10000,
 }
 
 impl From<i64> for SettingsKey {
     fn from(value: i64) -> Self {
         match value {
+            // System
             _ if value == SettingsKey::None as i64 => SettingsKey::None,
             _ if value == SettingsKey::Version as i64 => SettingsKey::Version,
+
+            // User
+            _ if value == SettingsKey::UserLabelPreset as i64 => SettingsKey::UserLabelPreset,
             _ => SettingsKey::None,
         }
     }

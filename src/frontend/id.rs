@@ -25,6 +25,9 @@ pub enum Id {
     FileViewerSettingsAnchorPhysical,
     FileViewerContextMenuPhysical,
 
+    GenerateLabelPresetMenu,
+    GenerateLabelPresetDialog,
+
     ModalJob,
     ModalSandpitError,
     ModalSandpitWarning,
@@ -57,6 +60,9 @@ impl Id {
             Id::FileViewerContextMenuVirtual => "fv-v-con",
             Id::FileViewerSettingsAnchorPhysical => "fv-p-set",
             Id::FileViewerContextMenuPhysical => "fv-p-con",
+
+            Id::GenerateLabelPresetMenu => "gl-menu",
+            Id::GenerateLabelPresetDialog => "gl-dia",
 
             Id::ModalJob => "modal-b_job",
             Id::ModalSandpitError => "modal-sandpit_e",

@@ -262,7 +262,7 @@ pub mod tests {
             },
         },
         shared::models::database::user::{
-            model_user::{ColourMode, FileTheme, IconTheme},
+            model_user::{ColourMode, FileTheme, IconTheme, RecordUserConfig},
             model_user_sensitive::{HashAlgorithm, RecordUser},
         },
     };
@@ -282,6 +282,14 @@ pub mod tests {
             conn.table_exists(None, "user").unwrap(),
             "create_table() reported Ok but table does not exist"
         );
+    }
+
+    pub fn any_user(db: &rusqlite::Connection) -> RecordUserConfig {
+        TableUser::<RecordUserConfig>::get_all(db)
+            .unwrap()
+            .first()
+            .unwrap()
+            .clone()
     }
 
     pub fn create_additional_user(db: &rusqlite::Connection) -> RecordUser {

@@ -4,20 +4,25 @@ use serde_json::json;
 use crate::{
     backend::api::{
         api_generate_lto_label::{GENERATE_PDF_LABEL_DOWNLOAD, generate_label_preview},
+        api_settings_user::{del_label_preset, get_user_preset, save_label_preset},
         api_tape_type::list_type_type_labels,
     },
     frontend::{
-        components::card::Card,
+        components::{card::Card, dropdown::component::DropDown},
         css::Css,
         elements::{
-            button::Button,
+            button::{Button, FakeButton},
             input::{Input, InputType},
             select::Select,
         },
         forms::validator::{TValidator, Validator},
         icons::Icons,
-        js::js_download_file,
-        modules::tab::{Tab, TabLabel},
+        id::Id,
+        js::{js_close, js_download_file, js_show_modal},
+        modules::{
+            dialog::Dialog,
+            tab::{Tab, TabLabel},
+        },
     },
     shared::{
         r#const::Const,
@@ -53,6 +58,7 @@ pub fn GenLabel() -> Element {
 fn GenLabelInner() -> Element {
     let mut options = use_signal(|| LabelOptions::default());
     let previews = use_loader(move || generate_label_preview(options()))?;
+    let mut presets = use_loader(move || get_user_preset())?;
 
     let types = use_loader(list_type_type_labels)?;
 
@@ -74,6 +80,19 @@ fn GenLabelInner() -> Element {
             .with_max_length(Const::CODE_39_LTO_USABLE_LEN)
             .with_only_allowed_chars(Const::BARCODE_ALLOWED_CHARS),
     );
+
+    let (mut preset_name, mut preset_name_error, preset_name_validator) = (
+        use_signal(|| "".to_string()),
+        use_signal(|| None),
+        Validator::<String>::create()
+            .with_not_empty()
+            .with_max_length(24)
+            .no_duplicates(presets().iter().map(|f| f.name.clone()).collect()),
+    );
+    use_memo(move || {
+        preset_name_error.set(preset_name_validator.validate(&preset_name()));
+    });
+
     let (mut quantity_error, n_validator) = (
         use_signal(|| None),
         Validator::<usize>::create()
@@ -109,6 +128,22 @@ fn GenLabelInner() -> Element {
             || start_index_error().is_some());
         form_valid.set(valid);
     });
+
+    let save_preset = move || async move {
+        match save_label_preset(preset_name(), options()).await {
+            Ok(added) => {
+                if !added {
+                    preset_name_error.set(Some("Failed to add".to_string()));
+                } else {
+                    presets.restart(); // Refetch
+                    preset_name.set("".to_string());
+                }
+            }
+            Err(e) => {
+                preset_name_error.set(Some(format!("Failed to add {}", e)));
+            }
+        }
+    };
 
     let label_tab = rsx! {
         form { class: Css::FORM_GRID,
@@ -435,7 +470,7 @@ fn GenLabelInner() -> Element {
                         },
                     }
                     Button {
-                        text: "Reset".to_string(),
+                        text: "Default".to_string(),
                         icon: Icons::RESTORE,
                         primary: true,
                         onclick: move |_| {
@@ -447,12 +482,81 @@ fn GenLabelInner() -> Element {
                             options.set(replace);
                         },
                     }
-                    Button {
-                        text: "".to_string(),
-                        icon: Icons::STAR,
-                        onclick: move |_| async move {
-                            let _ = document::eval("alert('Not ready yet');").await;
+                    DropDown {
+                        anchor_id: Id::GenerateLabelPresetMenu.as_str(),
+                        anchor: rsx! {
+                            FakeButton { icon: Icons::STAR }
                         },
+                        top: true,
+                        for (index , preset) in presets().iter().enumerate() {
+                            div {
+                                class: [Css::ICON_LIST_ITEM, Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE].concat(),
+                                onclick: move |_evt: Event<MouseData>| async move {
+                                    if let Some(found) = presets().get(index) {
+                                        options.set(found.options.clone());
+                                        for (index, ty) in types().iter().enumerate() {
+                                            if ty.designation == found.options.designation {
+                                                selected_type.set(index as i64);
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                },
+                                span { "{preset.name}" }
+                                span {
+                                    class: static_concat!(
+                                        Css::ICON, Css::SM, Icons::X_MARK, Css::FLOAT_RIGHT, Css::ICON_LIST_BTN
+                                    ),
+                                    onclick: move |evt: Event<MouseData>| async move {
+                                        evt.stop_propagation(); // Stop call parent onclick above
+                                        if let Some(found) = presets().get(index)
+                                            && let Ok(_del) = del_label_preset(found.id).await // Refetch
+                                        {
+                                            presets.restart();
+                                        }
+                                    },
+                                }
+                            }
+                        }
+                        hr {}
+                        div {
+                            class: [Css::ICON_LIST_ITEM, Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE].concat(),
+                            onclick: move |_evt: Event<MouseData>| async move {
+                                js_show_modal(Id::GenerateLabelPresetDialog.as_str());
+                            },
+                            span { class: static_concat!(Css::ICON, Css::SM, Icons::SAVE) }
+                            span { "Save preset" }
+                        }
+                    }
+                }
+            }
+            Dialog {
+                id: Id::GenerateLabelPresetDialog.as_str(),
+                button_bar: true,
+                button_bar_save: true,
+                button_bar_close: true,
+                button_bar_save_disabled: preset_name_error().is_some(),
+                button_bar_save_click: move |_evt: Event<MouseData>| async move { save_preset().await },
+                form {
+                    class: Css::FORM_GRID,
+                    onsubmit: move |evt| {
+                        evt.prevent_default(); // Refresh on Enter
+                    },
+                    Input {
+                        type_: InputType::Text,
+                        label: "Preset Name".to_string(),
+                        oninput: move |evt: Event<FormData>| {
+                            preset_name.set(evt.value());
+                        },
+                        onkeydown: move |evt: Event<KeyboardData>| async move {
+                            if evt.code() == Code::Enter && preset_name_error().is_none() {
+                                save_preset().await;
+                                js_close(Id::GenerateLabelPresetDialog.as_str());
+                            }
+                        },
+                        value: preset_name(),
+                        validation: preset_name_error,
                     }
                 }
             }

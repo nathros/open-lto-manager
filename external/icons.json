@@ -74,6 +74,12 @@
 			"iconoir": "icons/regular/test-tube.svg",
 			"sargam": "Icons/Line/si_Traffic_cone.svg"
 		},
+		"save": {
+			"tabler": "icons/filled/device-floppy.svg",
+			"remix": "icons/Device/save-fill.svg",
+			"iconoir": "icons/regular/floppy-disk.svg",
+			"sargam": "../iconoir/icons/regular/floppy-disk.svg"
+		},
 		"dashboard": {
 			"tabler": "icons/outline/layout-dashboard.svg",
 			"remix": "icons/System/dashboard-fill.svg",

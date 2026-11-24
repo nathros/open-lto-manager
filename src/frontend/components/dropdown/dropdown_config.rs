@@ -8,6 +8,10 @@ pub struct DropDownConfig {
     #[props]
     pub anchor: Element,
 
+    // Menu anchor at top
+    #[props(default = false)]
+    pub top: bool,
+
     #[props]
     pub children: Element,
 }

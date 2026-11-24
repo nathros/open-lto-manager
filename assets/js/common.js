@@ -2,6 +2,10 @@ function showModal(id) {
 	document.getElementById(id).showModal();
 }
 
+function close(id) {
+	document.getElementById(id).close();
+}
+
 function hidePopover(id) {
 	document.getElementById(id).hidePopover();
 }

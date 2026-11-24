@@ -1,5 +1,6 @@
 .btn /* impl Css::BTN */ {
 	display: inline-flex;
+	align-items: center;
 	gap: var(--padding-s);
 	padding: var(--padding-s);
 	border-radius: var(--radius);
@@ -48,4 +49,12 @@
 	border: none;
 	padding: 0;
 	font: inherit;
+}
+.btn-bar /* impl Css::BTN_BAR */ {
+	display: flex;
+	justify-content: right;
+	border-top: var(--border);
+	gap: var(--padding-s);
+	padding-top: var(--padding-m);
+	margin-top: var(--padding-m);
 }

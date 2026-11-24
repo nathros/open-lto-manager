@@ -10,7 +10,7 @@ pub mod tests {
         let all_settings: Vec<T> = all::<T>().collect::<Vec<_>>();
         all_settings.iter().for_each(|setting| {
             assert_eq!(
-                *setting,
+                *setting,                  // TODO avoid closure use
                 T::from(convert(setting)), // Unable to find #[repr(i64)] trait, so cast is done outside
                 "impl From<i64> for Enum {{}} is missing an entry"
             );

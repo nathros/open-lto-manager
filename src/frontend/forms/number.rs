@@ -45,7 +45,7 @@ impl<D: PrimInt + Debug> Validator<D> {
                 if let Some(check) = value.to_i64()
                     && check > number
                 {
-                    return Some(format!("Maximim of: {}", number));
+                    return Some(format!("Maximum of: {}", number));
                 }
                 None
             }));

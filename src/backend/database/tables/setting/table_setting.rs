@@ -25,8 +25,12 @@ impl TableCreate<RecordMisc<SettingEmpty>> for TableSetting<RecordMisc<SettingEm
         db.execute(
             "CREATE TABLE IF NOT EXISTS setting (
                 id INTEGER PRIMARY KEY,
-                key INTEGER NOT NULL,
-                value BLOB NOT NULL
+                user_id INTEGER,
+                key_primary INTEGER NOT NULL,
+                key_secondary TEXT,
+                value BLOB NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES user(id),
+                UNIQUE(user_id, key_primary, key_secondary)
             );",
             (),
         )?;
@@ -44,7 +48,7 @@ impl TableUpdate<RecordMisc<SettingEmpty>> for TableSetting<RecordMisc<SettingEm
 impl RecordInsert<RecordMisc<i64>> for TableSetting<RecordMisc<i64>> {
     fn insert(db: &Connection, record: &RecordMisc<i64>) -> Result<i64, rusqlite::Error> {
         db.execute(
-            "INSERT INTO setting (key, value) VALUES (?1, ?2)",
+            "INSERT INTO setting (key_primary, value) VALUES (?1, ?2)",
             params![record.key, record.data],
         )?;
         Ok(db.last_insert_rowid())
@@ -55,10 +59,10 @@ impl TableSetting<RecordMisc<i64>> {
     pub fn get(db: &Connection) -> Result<RecordMisc<i64>, rusqlite::Error> {
         db.prepare(
             "SELECT
-                key,
+                key_primary,
                 value
                 FROM setting
-                WHERE key = ?1",
+                WHERE key_primary = ?1",
         )?
         .query_one([SettingsKey::Version], |row| TableSetting::fill(row, 0))
     }
@@ -68,7 +72,7 @@ impl RecordUpdate<RecordMisc<i64>> for TableSetting<RecordMisc<i64>> {
     fn update(db: &Connection, record: &RecordMisc<i64>) -> Result<usize, rusqlite::Error> {
         db.execute(
             "UPDATE setting SET value = ?1
-                WHERE key = ?2;",
+                WHERE key_primary = ?2;",
             params![record.data, record.key],
         )
     }
@@ -97,75 +101,53 @@ impl TableSetting<SettingEmpty> {
         TableSetting::<RecordMisc<SettingTableVersion>>::insert(db, &version.into())?;
         Ok(true)
     }
-}
 
-/*
-impl Table<RecordVersion, RecordVersion> for TableVersion {
-    fn create_table(db: &Connection) -> Result<bool, Error> {
-
-    }
-
-    fn update_table(_db: &Connection, _current_version: i64) -> Result<bool, Error> {
-
-    }
-
-    fn get(db: &Connection, _record_id: i64) -> Result<RecordVersion, Error> {
-        db.prepare("SELECT * FROM version WHERE id = ?1")?
-            .query_one([1], |row| TableVersion::fill(row, 0))
-    }
-
-    fn insert_record(db: &Connection, record: &RecordVersion) -> Result<i64, Error> {
+    pub fn delete_user_setting(
+        db: &Connection,
+        record_id: i64,
+        user_id: i64,
+    ) -> Result<usize, rusqlite::Error> {
         db.execute(
-            "INSERT INTO version (version_number) VALUES (?1)",
-            params![record.version_number],
-        )?;
-        Ok(db.last_insert_rowid())
-    }
-
-    fn insert_batch(db: &Connection, records: &[RecordVersion]) -> Result<usize, Error> {
-        let mut count = 0;
-        let mut prepared = db.prepare("INSERT INTO version (version_number) VALUES (?1)")?;
-        for record in records {
-            count += prepared.execute(params![record.version_number])?;
-        }
-        Ok(count)
-    }
-
-    fn update_record(db: &Connection, _record: &RecordVersion) -> Result<usize, Error> {
-        db.execute(
-            "UPDATE version SET version = ?1
-                WHERE id = 1;",
-            params![1],
+            // Only if this user owns this record
+            "DELETE FROM setting WHERE id = ?1 AND user_id = ?2;",
+            params![record_id, user_id],
         )
     }
 
-    fn delete_record(_db: &Connection, _record_id: i64) -> Result<usize, Error> {
-        Err(Error::InvalidParameterName(
-            "Do not remove from Version table".to_string(),
-        ))
-    }
+    pub const SELECT_BY_USER_ID_AND_KEY_PRIMARY: &str = //
+        "SELECT
+            id,
+            key_secondary,
+            value
+        FROM setting
+        WHERE user_id = ?1 AND key_primary = ?2";
 
-    fn clear_table(_db: &Connection) -> Result<usize, rusqlite::Error> {
-        Err(Error::InvalidParameterName(
-            "Do not clear Version table".to_string(),
-        ))
-    }
+    pub const INSERT_NO_NULLS: &str = //
+        "INSERT INTO setting (
+            user_id,
+            key_primary,
+            key_secondary,
+            value)
+        VALUES (?1, ?2, ?3, ?4)";
 
-    fn fill(row: &Row<'_>, _offset: usize) -> Result<RecordVersion, Error> {
-        Ok(RecordVersion {
-            version_number: row.get(1)?,
-        })
-    }
+    pub const UPDATE_ALL: &str = //
+        "UPDATE setting SET
+            user_id = ?1,
+            key_primary = ?2,
+            key_secondary = ?3,
+            value = ?4
+        WHERE id = ?5";
 }
-*/
+
 #[cfg(test)]
-mod tests {
+pub mod tests {
     use crate::{
         backend::database::{
             db::tests::create_test_database,
             tables::{
                 setting::table_setting::TableSetting,
                 table::{RecordInsert, RecordUpdate, TableCreate},
+                tape,
             },
         },
         shared::models::database::setting::{
@@ -174,7 +156,8 @@ mod tests {
         },
     };
 
-    fn create_table(conn: &rusqlite::Connection) {
+    pub fn create_table(conn: &rusqlite::Connection) {
+        tape::table_tape::tests::create_table(conn);
         assert!(
             !conn.table_exists(None, "setting").unwrap(),
             "New table should be empty"
