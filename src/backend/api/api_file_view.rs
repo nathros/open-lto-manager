@@ -21,6 +21,18 @@ pub async fn fv_virtual_files_in_dir(path: String) -> Result<FileView> {
     })
 }
 
+#[post("/api/fv/virtual/add", user_id: crate::backend::auth::UserIdSession)]
+pub async fn fv_virtual_new_dir(name: String, parent: String) -> Result<bool> {
+    use crate::backend::database::{db::DB, tables::file::table_file::TableFile};
+
+    DB.with(|db: &std::sync::LazyLock<rusqlite::Connection>| {
+        match TableFile::<FileView>::add_new_dir(db, user_id.0, name, parent) {
+            Ok(added) => Ok(added),
+            Err(e) => Err(e)?,
+        }
+    })
+}
+
 #[post("/api/fv/physical/explore")]
 pub async fn fv_physical_files_in_dir(mut path: String) -> Result<FileView> {
     use std::{

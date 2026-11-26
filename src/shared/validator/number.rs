@@ -1,13 +1,13 @@
 use num_traits::int::PrimInt;
-use std::fmt::Debug;
+use std::{fmt::Debug, rc::Rc};
 use tracing::error;
 
-use super::validator::Validator;
+use super::validator_base::Validator;
 
 impl<D: PrimInt + Debug> Validator<D> {
     /*pub fn with_min_number(mut self, num: usize) -> Self {
         self.check_fn
-            .push(Box::new(move |value: &D| -> Option<String> {
+            .push(Rc::new(move |value: &D| -> Option<String> {
                 if let Some(number) = D::from(num)
                     && number > *value
                 {
@@ -24,7 +24,7 @@ impl<D: PrimInt + Debug> Validator<D> {
             i64::MIN
         });
         self.check_fn
-            .push(Box::new(move |value: &D| -> Option<String> {
+            .push(Rc::new(move |value: &D| -> Option<String> {
                 if let Some(check) = value.to_i64()
                     && check < number
                 {
@@ -41,7 +41,7 @@ impl<D: PrimInt + Debug> Validator<D> {
             i64::MIN
         });
         self.check_fn
-            .push(Box::new(move |value: &D| -> Option<String> {
+            .push(Rc::new(move |value: &D| -> Option<String> {
                 if let Some(check) = value.to_i64()
                     && check > number
                 {
@@ -55,7 +55,7 @@ impl<D: PrimInt + Debug> Validator<D> {
 
 #[cfg(test)]
 mod tests {
-    use crate::frontend::forms::validator::{TValidator, Validator};
+    use crate::shared::validator::validator_base::{TValidator, Validator};
 
     #[test]
     fn min_number() {

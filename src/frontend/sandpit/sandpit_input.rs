@@ -4,9 +4,9 @@ use crate::{
     frontend::{
         css::Css,
         elements::input::{Input, InputType},
-        forms::validator::{TValidator, Validator},
         icons::Icons,
     },
+    shared::validator::validator_base::{TValidator, Validator},
     static_concat,
 };
 

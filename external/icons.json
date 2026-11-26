@@ -176,6 +176,12 @@
 			"iconoir": "icons/regular/edit.svg",
 			"sargam": "Icons/Line/si_Edit_detailed.svg"
 		},
+		"dir-plus": {
+			"tabler": "icons/outline/folder-plus.svg",
+			"remix": "icons/Document/folder-add-fill.svg",
+			"iconoir": "icons/regular/folder-plus.svg",
+			"sargam": "../iconoir/icons/regular/folder-plus.svg"
+		},
 		"dir-up": {
 			"tabler": "icons/outline/folder-up.svg",
 			"remix": "icons/Arrows/corner-right-up-fill.svg",

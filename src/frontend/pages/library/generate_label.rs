@@ -15,14 +15,11 @@ use crate::{
             input::{Input, InputType},
             select::Select,
         },
-        forms::validator::{TValidator, Validator},
+        forms::components::dialog_field::DialogField,
         icons::Icons,
         id::Id,
-        js::{js_close, js_download_file, js_show_modal},
-        modules::{
-            dialog::Dialog,
-            tab::{Tab, TabLabel},
-        },
+        js::{js_download_file, js_show_modal},
+        modules::tab::{Tab, TabLabel},
     },
     shared::{
         r#const::Const,
@@ -33,6 +30,7 @@ use crate::{
             },
             select_option::{vec_into, vec_into_enum, vec_into_enum_default},
         },
+        validator::validator_base::{TValidator, Validator},
     },
     static_concat,
 };
@@ -81,18 +79,6 @@ fn GenLabelInner() -> Element {
             .with_only_allowed_chars(Const::BARCODE_ALLOWED_CHARS),
     );
 
-    let (mut preset_name, mut preset_name_error, preset_name_validator) = (
-        use_signal(|| "".to_string()),
-        use_signal(|| None),
-        Validator::<String>::create()
-            .with_not_empty()
-            .with_max_length(24)
-            .no_duplicates(presets().iter().map(|f| f.name.clone()).collect()),
-    );
-    use_memo(move || {
-        preset_name_error.set(preset_name_validator.validate(&preset_name()));
-    });
-
     let (mut quantity_error, n_validator) = (
         use_signal(|| None),
         Validator::<usize>::create()
@@ -129,18 +115,17 @@ fn GenLabelInner() -> Element {
         form_valid.set(valid);
     });
 
-    let save_preset = move || async move {
-        match save_label_preset(preset_name(), options()).await {
+    let save_preset = move |value: String, options: LabelOptions| async move {
+        match save_label_preset(value, options).await {
             Ok(added) => {
-                if !added {
-                    preset_name_error.set(Some("Failed to add".to_string()));
-                } else {
+                if added {
                     presets.restart(); // Refetch
-                    preset_name.set("".to_string());
+                } else {
+                    error!("Failed to add"); // TODO add snackbar component to show error to user
                 }
             }
             Err(e) => {
-                preset_name_error.set(Some(format!("Failed to add {}", e)));
+                error!("Failed to add {}", e);
             }
         }
     };
@@ -519,7 +504,9 @@ fn GenLabelInner() -> Element {
                                 }
                             }
                         }
-                        hr {}
+                        if !presets().is_empty() {
+                            hr {}
+                        }
                         div {
                             class: [Css::ICON_LIST_ITEM, Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE].concat(),
                             onclick: move |_evt: Event<MouseData>| async move {
@@ -531,34 +518,18 @@ fn GenLabelInner() -> Element {
                     }
                 }
             }
-            Dialog {
+            DialogField {
                 id: Id::GenerateLabelPresetDialog.as_str(),
-                button_bar: true,
-                button_bar_save: true,
-                button_bar_close: true,
-                button_bar_save_disabled: preset_name_error().is_some(),
-                button_bar_save_click: move |_evt: Event<MouseData>| async move { save_preset().await },
-                form {
-                    class: Css::FORM_GRID,
-                    onsubmit: move |evt| {
-                        evt.prevent_default(); // Refresh on Enter
-                    },
-                    Input {
-                        type_: InputType::Text,
-                        label: "Preset Name".to_string(),
-                        oninput: move |evt: Event<FormData>| {
-                            preset_name.set(evt.value());
-                        },
-                        onkeydown: move |evt: Event<KeyboardData>| async move {
-                            if evt.code() == Code::Enter && preset_name_error().is_none() {
-                                save_preset().await;
-                                js_close(Id::GenerateLabelPresetDialog.as_str());
-                            }
-                        },
-                        value: preset_name(),
-                        validation: preset_name_error,
-                    }
-                }
+                label: "Preset Name",
+                validator: Validator::<String>::create()
+                    .with_not_empty()
+                    .with_max_length(24)
+                    .no_duplicates(presets().iter().map(|f| f.name.clone()).collect()),
+                save: use_callback(move |value: String| {
+                    spawn(async move {
+                        save_preset(value, options()).await;
+                    });
+                }),
             }
             Card {
                 div { class: [Css::PDF_PREVIEW, options().font.as_str()].concat(),

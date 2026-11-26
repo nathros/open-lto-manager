@@ -16,7 +16,6 @@ use crate::{
             select::Select,
             vertical_divider::VerticalDivider,
         },
-        forms::validator::{TValidator, Validator},
         level::Level,
     },
     shared::{
@@ -29,6 +28,7 @@ use crate::{
             },
             select_option::{SelectOption, vec_into},
         },
+        validator::validator_base::{TValidator, Validator},
     },
     static_concat,
 };

@@ -22,6 +22,7 @@ pub enum Id {
 
     FileViewerSettingsAnchorVirtual,
     FileViewerContextMenuVirtual,
+    FileViewerNewFolder,
     FileViewerSettingsAnchorPhysical,
     FileViewerContextMenuPhysical,
 
@@ -58,6 +59,7 @@ impl Id {
 
             Id::FileViewerSettingsAnchorVirtual => "fv-v-set",
             Id::FileViewerContextMenuVirtual => "fv-v-con",
+            Id::FileViewerNewFolder => "fv-v-dir",
             Id::FileViewerSettingsAnchorPhysical => "fv-p-set",
             Id::FileViewerContextMenuPhysical => "fv-p-con",
 

@@ -7,6 +7,8 @@ use rusqlite::{
 };
 use std::fmt;
 
+#[cfg(feature = "server")]
+use crate::backend::database::db::database_generic_error;
 use crate::shared::models::select_option::EnumStr;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
@@ -129,10 +131,7 @@ impl ToSql for LabelOptions {
     fn to_sql(&self) -> rusqlite::Result<ToSqlOutput<'_>> {
         match serde_json::to_string(self) {
             Ok(o) => Ok(o.into()),
-            Err(e) => Err(rusqlite::Error::SqliteFailure(
-                ffi::Error::new(e.column() as i32),
-                Some(format!("{}", e)),
-            )),
+            Err(e) => Err(database_generic_error(e.to_string())),
         }
     }
 }

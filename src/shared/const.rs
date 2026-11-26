@@ -18,4 +18,7 @@ impl Const {
     pub const CODE_39_LTO_DESIGNATION_LEN: usize = 2;
     pub const BARCODE_VALID_CHARS: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -$%./+*";
     pub const BARCODE_ALLOWED_CHARS: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -$%./+";
+
+    pub const FILENAME_DISALLOW: &str = "/\0";
+    pub const FILENAME_MAX_LEN: usize = 64;
 }

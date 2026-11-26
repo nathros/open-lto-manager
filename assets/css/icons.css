@@ -75,6 +75,9 @@
 	.icon.edit {
 		mask-image: url(/assets/icons-tabler.svg#edit);
 	}
+	.icon.dir-plus {
+		mask-image: url(/assets/icons-tabler.svg#dir-plus);
+	}
 	.icon.dir-up {
 		mask-image: url(/assets/icons-tabler.svg#dir-up);
 	}
@@ -166,6 +169,9 @@
 	}
 	.icon.edit {
 		mask-image: url(/assets/icons-remix.svg#edit);
+	}
+	.icon.dir-plus {
+		mask-image: url(/assets/icons-remix.svg#dir-plus);
 	}
 	.icon.dir-up {
 		mask-image: url(/assets/icons-remix.svg#dir-up);
@@ -259,6 +265,9 @@
 	.icon.edit {
 		mask-image: url(/assets/icons-iconoir.svg#edit);
 	}
+	.icon.dir-plus {
+		mask-image: url(/assets/icons-iconoir.svg#dir-plus);
+	}
 	.icon.dir-up {
 		mask-image: url(/assets/icons-iconoir.svg#dir-up);
 	}
@@ -350,6 +359,9 @@
 	}
 	.icon.edit {
 		mask-image: url(/assets/icons-sargam.svg#edit);
+	}
+	.icon.dir-plus {
+		mask-image: url(/assets/icons-sargam.svg#dir-plus);
 	}
 	.icon.dir-up {
 		mask-image: url(/assets/icons-sargam.svg#dir-up);

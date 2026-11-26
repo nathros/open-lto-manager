@@ -1,5 +1,5 @@
 use dioxus::prelude::info;
-use rusqlite::{Connection, Error, params};
+use rusqlite::{Connection, Error, ffi, params};
 use std::{
     io::ErrorKind,
     sync::{LazyLock, Mutex},
@@ -186,6 +186,10 @@ pub fn backup_database(db: &Connection, path: String) -> Result<usize, rusqlite:
 pub fn sqlite_version(db: &Connection) -> Result<String, rusqlite::Error> {
     db.prepare("select sqlite_version()")?
         .query_one([], |row| row.get::<usize, String>(0))
+}
+
+pub fn database_generic_error(error: String) -> rusqlite::Error {
+    rusqlite::Error::SqliteFailure(ffi::Error::new(1), Some(error)) // (1) SQLITE_ERROR
 }
 
 thread_local! {

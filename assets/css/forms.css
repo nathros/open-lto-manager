@@ -4,6 +4,11 @@
 }
 .form-grid.md {
 	min-width: 14rem;
+	max-width: 14rem;
+}
+.form-grid.lg {
+	min-width: 28rem;
+	max-width: 28rem;
 }
 .select,
 .input {

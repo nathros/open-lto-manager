@@ -5,7 +5,9 @@ use std::path;
 
 use crate::{
     backend::api::{
-        api_file_view::{fv_physical_files_in_dir, fv_virtual_files_in_dir, fv_working_dir},
+        api_file_view::{
+            fv_physical_files_in_dir, fv_virtual_files_in_dir, fv_virtual_new_dir, fv_working_dir,
+        },
         api_user::update_user,
     },
     either,
@@ -18,13 +20,17 @@ use crate::{
             input::{Input, InputType},
             loading::Loading,
         },
+        forms::components::dialog_field::DialogField,
         icons::Icons,
         id::Id,
-        js::js_show_context_menu,
+        js::{js_show_context_menu, js_show_modal},
     },
-    shared::models::{
-        database::user::model_user::{FileTheme, RecordUserConfig},
-        file_view::FileView,
+    shared::{
+        models::{
+            database::user::model_user::{FileTheme, RecordUserConfig},
+            file_view::FileView,
+        },
+        validator::validators::Validators,
     },
     static_concat,
 };
@@ -105,6 +111,21 @@ pub fn FileViewer(props: FileViewerProps) -> Element {
         .forget();
     });
 
+    let new_dir = move |name: String| async move {
+        match fv_virtual_new_dir(name, current_path()).await {
+            Ok(added) => {
+                if added {
+                    fetch_dir.restart();
+                } else {
+                    error!("Failed to add");
+                }
+            }
+            Err(e) => {
+                error!("Failed to add {}", e);
+            }
+        }
+    };
+
     rsx! {
         if let file_theme = current_user().unwrap_or_default().file_theme {
             div { class: Css::FILE_VIEWER,
@@ -120,17 +141,51 @@ pub fn FileViewer(props: FileViewerProps) -> Element {
                 match &*fetch_dir.read_unchecked() {
                     Some(dir) => {
                         rsx! {
-                            if let Some(_found_dir) = &dir.current_dir
-                            {
+                            if let Some(_found_dir) = &dir.current_dir {
                                 div {
                                     class: Css::FILE_VIEWER_TABLE_CONTAINER,
                                     oncontextmenu: move |evt: MouseEvent| {
                                         evt.prevent_default();
-                                        js_show_context_menu(Id::FileViewerContextMenuVirtual.as_str(), &evt);
+                                        js_show_context_menu(
+                                            either!(
+                                                props.is_virtual, Id::FileViewerContextMenuPhysical.as_str(),
+                                                Id::FileViewerContextMenuVirtual.as_str()
+                                            ),
+                                            &evt,
+                                        );
                                     },
-                                    if !props.is_virtual {
+                                    if props.is_virtual {
+                                        ContextMenu { anchor_id: Id::FileViewerContextMenuPhysical.as_str(),
+                                            div {
+                                                class: [Css::ICON_LIST_ITEM, Css::FLEX_ROW, Css::FLEX_ALIGN_CENTRE].concat(),
+                                                onclick: move |_evt: Event<MouseData>| async move {
+                                                    js_show_modal(Id::FileViewerNewFolder.as_str());
+                                                },
+                                                span { class: static_concat!(Css::ICON, Css::SM, Icons::DIR_PLUS) }
+                                                span { "New Folder" }
+                                            }
+                                        }
+                                        DialogField {
+                                            id: Id::FileViewerNewFolder.as_str(),
+                                            label: "Name",
+                                            validator: Validators::virtual_dir_name(
+                                                dir
+                                                    .children
+                                                    .iter()
+                                                    .filter(|d| d.is_dir)
+                                                    .map(|d| d.file_name.clone())
+                                                    .collect(),
+                                            ),
+                                            save: use_callback(move |value: String| {
+                                                spawn(async move {
+                                                    new_dir(value).await;
+                                                });
+                                            }),
+                                        }
+                                    }
+                                    table {
                                         ContextMenu { anchor_id: Id::FileViewerContextMenuVirtual.as_str(),
-                                            p { "item" }
+                                            p { "{props.is_virtual}" }
                                             p { "item" }
                                             p { "item" }
                                             p { "item" }
